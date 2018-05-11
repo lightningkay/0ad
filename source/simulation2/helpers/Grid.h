@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -46,34 +46,76 @@ public:
 		reset();
 	}
 
-	Grid(const Grid& g)
+	Grid(const Grid& g) : m_W(0), m_H(0), m_Data(NULL), m_DirtyID(0)
 	{
-		m_Data = NULL;
 		*this = g;
 	}
 
 	Grid& operator=(const Grid& g)
 	{
-		if (this != &g)
+		if (this == &g)
+			return *this;
+
+		m_DirtyID = g.m_DirtyID;
+		if (m_W == g.m_W && m_H == g.m_H)
 		{
-			m_W = g.m_W;
-			m_H = g.m_H;
-			m_DirtyID = g.m_DirtyID;
-			delete[] m_Data;
-			if (g.m_Data)
-			{
-				m_Data = new T[m_W * m_H];
-				memcpy(m_Data, g.m_Data, m_W*m_H*sizeof(T));
-			}
-			else
-				m_Data = NULL;
+			memcpy(m_Data, g.m_Data, m_W*m_H*sizeof(T));
+			return *this;
 		}
+
+		m_W = g.m_W;
+		m_H = g.m_H;
+		delete[] m_Data;
+		if (g.m_Data)
+		{
+			m_Data = new T[m_W * m_H];
+			memcpy(m_Data, g.m_Data, m_W*m_H*sizeof(T));
+		}
+		else
+			m_Data = NULL;
 		return *this;
+	}
+
+	void swap(Grid& g)
+	{
+		std::swap(m_DirtyID, g.m_DirtyID);
+		std::swap(m_Data, g.m_Data);
+		std::swap(m_H, g.m_H);
+		std::swap(m_W, g.m_W);
 	}
 
 	~Grid()
 	{
 		delete[] m_Data;
+	}
+
+	bool operator==(const Grid& g) const
+	{
+		if (!compare_sizes(&g) || m_DirtyID != g.m_DirtyID)
+			return false;
+
+		return memcmp(m_Data, g.m_Data, m_W*m_H*sizeof(T)) == 0;
+	}
+
+	bool blank() const
+	{
+		return m_W == 0 && m_H == 0;
+	}
+
+	bool any_set_in_square(int i0, int j0, int i1, int j1) const
+	{
+	#if GRID_BOUNDS_DEBUG
+		ENSURE(i0 >= 0 && j0 >= 0 && i1 <= m_W && j1 <= m_H);
+	#endif
+		for (int j = j0; j < j1; ++j)
+		{
+			int sum = 0;
+			for (int i = i0; i < i1; ++i)
+				sum += m_Data[j*m_W + i];
+			if (sum > 0)
+				return true;
+		}
+		return false;
 	}
 
 	void reset()
@@ -92,6 +134,18 @@ public:
 			m_Data[i] += g.m_Data[i];
 	}
 
+	void bitwise_or(const Grid& g)
+	{
+		if (this == &g)
+			return;
+
+#if GRID_BOUNDS_DEBUG
+		ENSURE(g.m_W == m_W && g.m_H == m_H);
+#endif
+		for (int i = 0; i < m_H*m_W; ++i)
+			m_Data[i] |= g.m_Data[i];
+	}
+
 	void set(int i, int j, const T& value)
 	{
 #if GRID_BOUNDS_DEBUG
@@ -106,6 +160,12 @@ public:
 		ENSURE(0 <= i && i < m_W && 0 <= j && j < m_H);
 #endif
 		return m_Data[j*m_W + i];
+	}
+
+	template<typename U>
+	bool compare_sizes(const Grid<U>* g) const
+	{
+		return g && m_W == g->m_W && m_H == g->m_H;
 	}
 
 	u16 m_W, m_H;
@@ -186,17 +246,36 @@ public:
 };
 
 /**
- * Structure holding grid dirtiness informations, for clever updates
- *
- * Note: globallyDirty should be used to know which parts of the grid have been changed after an update, 
- * whereas globalRecompute should be used during the update itself, to avoid unnecessary recomputations.
+ * Structure holding grid dirtiness informations, for clever updates.
  */
 struct GridUpdateInformation
 {
 	bool dirty;
 	bool globallyDirty;
-	bool globalRecompute;
 	Grid<u8> dirtinessGrid;
+
+	/**
+	 * Update the information with additionnal needed updates, then erase the source of additions.
+	 * This can usually be optimized through a careful memory management.
+	 */
+	void MergeAndClear(GridUpdateInformation& b)
+	{
+		ENSURE(dirtinessGrid.compare_sizes(&b.dirtinessGrid));
+
+		bool wasDirty = dirty;
+
+		dirty |= b.dirty;
+		globallyDirty |= b.globallyDirty;
+
+		// If the current grid is useless, swap it
+		if (!wasDirty)
+			dirtinessGrid.swap(b.dirtinessGrid);
+		// If the new grid isn't used, don't bother updating it
+		else if (dirty && !globallyDirty)
+			dirtinessGrid.bitwise_or(b.dirtinessGrid);
+
+		b.Clean();
+	}
 
 	/**
 	 * Mark everything as clean
@@ -205,7 +284,6 @@ struct GridUpdateInformation
 	{
 		dirty = false;
 		globallyDirty = false;
-		globalRecompute = false;
 		dirtinessGrid.reset();
 	}
 };

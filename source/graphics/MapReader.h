@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ public:
 
 	// LoadMap: try to load the map from given file; reinitialise the scene to new data if successful
 	void LoadMap(const VfsPath& pathname, JSRuntime* rt, JS::HandleValue settings, CTerrain*, WaterManager*, SkyManager*, CLightEnv*, CGameView*,
-		CCinemaManager*, CTriggerManager*, CPostprocManager* pPostproc, CSimulation2*, const CSimContext*, 
+		CCinemaManager*, CTriggerManager*, CPostprocManager* pPostproc, CSimulation2*, const CSimContext*,
 	        int playerID, bool skipEntities);
 
 	void LoadRandomMap(const CStrW& scriptFile, JSRuntime* rt, JS::HandleValue settings, CTerrain*, WaterManager*, SkyManager*, CLightEnv*, CGameView*, CCinemaManager*, CTriggerManager*, CPostprocManager* pPostproc_, CSimulation2*, int playerID);
@@ -86,9 +86,6 @@ private:
 	// read entity data from the XML file
 	int ReadXMLEntities();
 
-	// clean up everything used during delayed load
-	int DelayLoadFinished();
-	
 	// Copy random map settings over to sim
 	int LoadRMSettings();
 
@@ -108,7 +105,7 @@ private:
 	int ParseCamera();
 
 
-	// size of map 
+	// size of map
 	ssize_t m_PatchesPerSide;
 	// heightmap for map
 	std::vector<u16> m_Heightmap;
@@ -128,7 +125,6 @@ private:
 
 	CMapGenerator* m_MapGen;
 
-	// state latched by LoadMap and held until DelayedLoadFinished
 	CFileUnpacker unpacker;
 	CTerrain* pTerrain;
 	WaterManager* pWaterMan;
@@ -176,7 +172,7 @@ public:
 	 * }
 	 * @endcode
 	 */
-	void GetMapSettings(ScriptInterface& scriptInterface, JS::MutableHandleValue);
+	void GetMapSettings(const ScriptInterface& scriptInterface, JS::MutableHandleValue);
 
 private:
 	CStr m_ScriptSettings;

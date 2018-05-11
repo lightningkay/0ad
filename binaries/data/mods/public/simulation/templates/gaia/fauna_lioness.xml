@@ -24,14 +24,14 @@
   <Sound>
     <SoundGroups>
       <select>actor/fauna/animal/lion_select.xml</select>
-      <attack>actor/fauna/animal/lion_attack.xml</attack>
-      <death>actor/fauna/animal/lion_select.xml</death>
+      <attack_melee>actor/fauna/animal/lion_attack.xml</attack_melee>
+      <death>actor/fauna/animal/lion_death.xml</death>
     </SoundGroups>
   </Sound>
   <UnitMotion>
-    <WalkSpeed>3.0</WalkSpeed>
+    <WalkSpeed op="mul">0.45</WalkSpeed>
     <Run>
-      <Speed>15.0</Speed>
+      <Speed op="mul">0.45</Speed>
     </Run>
   </UnitMotion>
   <VisualActor>

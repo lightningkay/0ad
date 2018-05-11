@@ -222,7 +222,7 @@ BuildingAI.prototype.StartTimer = function()
 BuildingAI.prototype.GetDefaultArrowCount = function()
 {
 	var arrowCount = +this.template.DefaultArrowCount;
-	return ApplyValueModificationsToEntity("BuildingAI/DefaultArrowCount", arrowCount, this.entity);
+	return Math.round(ApplyValueModificationsToEntity("BuildingAI/DefaultArrowCount", arrowCount, this.entity));
 };
 
 BuildingAI.prototype.GetMaxArrowCount = function()
@@ -300,7 +300,7 @@ BuildingAI.prototype.FireArrows = function()
 		arrowsToFire = this.arrowsLeft;
 	else
 		arrowsToFire = Math.min(
-		    Math.round(2 * Math.random() * this.GetArrowCount() / roundCount),
+		    randIntInclusive(0, 2 * this.GetArrowCount() / roundCount),
 		    this.arrowsLeft
 		);
 
@@ -338,7 +338,7 @@ BuildingAI.prototype.FireArrows = function()
 		if (selectedTarget && this.CheckTargetVisible(selectedTarget))
 		{
 			cmpAttack.PerformAttack(attackType, selectedTarget);
-			PlaySound("attack", this.entity);
+			PlaySound("attack_" + attackType.toLowerCase(), this.entity);
 			continue;
 		}
 

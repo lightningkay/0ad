@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -18,16 +18,17 @@
 #ifndef INCLUDED_GAME
 #define INCLUDED_GAME
 
-#include "ps/Errors.h"
 #include <vector>
 
+#include "ps/Errors.h"
+#include "ps/Filesystem.h"
 #include "scriptinterface/ScriptVal.h"
 #include "simulation2/helpers/Player.h"
 
 class CWorld;
 class CSimulation2;
 class CGameView;
-class CNetTurnManager;
+class CTurnManager;
 class IReplayLogger;
 struct CColor;
 
@@ -77,7 +78,7 @@ class CGame
 	 */
 	player_id_t m_ViewedPlayerID;
 
-	CNetTurnManager* m_TurnManager;
+	CTurnManager* m_TurnManager;
 
 public:
 	CGame(bool disableGraphics = false, bool replayLog = true);
@@ -91,7 +92,7 @@ public:
 	void StartGame(JS::MutableHandleValue attribs, const std::string& savedState);
 	PSRETURN ReallyStartGame();
 
-	bool StartVisualReplay(const std::string& replayPath);
+	bool StartVisualReplay(const OsPath& replayPath);
 
 	/**
 	 * Periodic heartbeat that controls the process. performs all per-frame updates.
@@ -113,6 +114,14 @@ public:
 	void SetViewedPlayerID(player_id_t playerID);
 
 	/**
+	 * Check if the game is finished by testing if there's a winner.
+	 * It is used to end a non visual autostarted game.
+	 *
+	 * @return true if there's a winner, false otherwise.
+	 */
+	bool IsGameFinished() const;
+
+	/**
 	 * Retrieving player colors from scripts is slow, so this updates an
 	 * internal cache of all players' colors.
 	 * Call this just before rendering, so it will always have the latest
@@ -130,6 +139,16 @@ public:
 	inline bool IsGameStarted() const
 	{
 		return m_GameStarted;
+	}
+
+	/**
+	 * Get if the graphics is disabled.
+	 *
+	 * @return bool true if the m_GameView is NULL, false otherwise.
+	 */
+	inline bool IsGraphicsDisabled() const
+	{
+		return !m_GameView;
 	}
 
 	/**
@@ -178,16 +197,16 @@ public:
 	inline float GetSimRate() const
 	{	return m_SimRate; }
 
-	inline std::string GetReplayPath() const
+	inline OsPath GetReplayPath() const
 	{	return m_ReplayPath; }
 
 	/**
 	 * Replace the current turn manager.
 	 * This class will take ownership of the pointer.
 	 */
-	void SetTurnManager(CNetTurnManager* turnManager);
+	void SetTurnManager(CTurnManager* turnManager);
 
-	CNetTurnManager* GetTurnManager() const
+	CTurnManager* GetTurnManager() const
 	{	return m_TurnManager; }
 
 	IReplayLogger& GetReplayLogger() const
@@ -204,7 +223,7 @@ private:
 	bool m_IsSavedGame; // true if loading a saved game; false for a new game
 
 	int LoadVisualReplayData();
-	std::string m_ReplayPath;
+	OsPath m_ReplayPath;
 	bool m_IsVisualReplay;
 	std::istream* m_ReplayStream;
 	u32 m_FinalReplayTurn;

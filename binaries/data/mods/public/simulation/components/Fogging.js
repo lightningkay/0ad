@@ -33,11 +33,10 @@ Fogging.prototype.Activate = function()
 	{
 		// Load a mirage for each player who has already seen the entity
 		let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
+		let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
 		for (let player = 0; player < numPlayers; ++player)
-		{
-			if (this.seen[player])
+			if (this.seen[player] && cmpRangeManager.GetLosVisibility(this.entity, player) != "visible")
 				this.LoadMirage(player);
-		}
 	}
 };
 
@@ -113,9 +112,17 @@ Fogging.prototype.LoadMirage = function(player)
 	cmpMirageVisualActor.SetActorSeed(cmpParentVisualActor.GetActorSeed());
 
 	// Store valuable information into the mirage component (especially for the GUI)
+	var cmpIdentity = Engine.QueryInterface(this.entity, IID_Identity);
+	if (cmpIdentity)
+		cmpMirage.CopyIdentity(cmpIdentity);
+
 	var cmpFoundation = Engine.QueryInterface(this.entity, IID_Foundation);
 	if (cmpFoundation)
 		cmpMirage.CopyFoundation(cmpFoundation);
+
+	var cmpRepairable = Engine.QueryInterface(this.entity, IID_Repairable);
+	if (cmpRepairable && !cmpFoundation)
+		cmpMirage.CopyRepairable(cmpRepairable);
 
 	var cmpHealth = Engine.QueryInterface(this.entity, IID_Health);
 	if (cmpHealth)

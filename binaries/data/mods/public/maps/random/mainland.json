@@ -3,9 +3,8 @@
 		"Name" : "Mainland",
 		"Script" : "mainland.js",
 		"Description" : "A typical map without any water.",
-		"BaseTerrain" : ["medit_sea_depths"],
-		"BaseHeight" : 3,
-		"Preview" : "mainland.png",
+		"Preview" : "mainland_temperate.png",
+		"SupportedBiomes": "generic/",
 		"CircularMap" : true
 	}
 }

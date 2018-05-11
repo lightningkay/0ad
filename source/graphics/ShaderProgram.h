@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ enum
  * the shader .xml file. Alternatively (and more efficiently, if used very frequently),
  * call GetTextureBinding/GetUniformBinding and pass its return value as the ID.
  * Setting uniforms that the shader .xml doesn't support is harmless.
- * 
+ *
  * For a high-level overview of shaders and materials, see
  * http://trac.wildfiregames.com/wiki/MaterialSystem
  */
@@ -71,7 +71,7 @@ public:
 	typedef CStrIntern texture_id_t;
 	typedef CStrIntern uniform_id_t;
 	typedef std::pair<int, GLenum> frag_index_pair_t;
-	
+
 	/**
 	 * Construct based on ARB vertex/fragment program files.
 	 */
@@ -92,7 +92,7 @@ public:
 	 * Construct an instance of a pre-defined fixed-function pipeline setup.
 	 */
 	static CShaderProgram* ConstructFFP(const std::string& id, const CShaderDefines& defines);
-	
+
 	/**
 	 * Represents a uniform attribute or texture binding.
 	 * For uniforms:
@@ -180,12 +180,12 @@ public:
 
 	// Vertex attribute pointers (equivalent to glVertexPointer etc):
 
-	virtual void VertexPointer(GLint size, GLenum type, GLsizei stride, void* pointer);
-	virtual void NormalPointer(GLenum type, GLsizei stride, void* pointer);
-	virtual void ColorPointer(GLint size, GLenum type, GLsizei stride, void* pointer);
-	virtual void TexCoordPointer(GLenum texture, GLint size, GLenum type, GLsizei stride, void* pointer);
-	virtual void VertexAttribPointer(attrib_id_t id, GLint size, GLenum type, GLboolean normalized, GLsizei stride, void* pointer);
-	virtual void VertexAttribIPointer(attrib_id_t id, GLint size, GLenum type, GLsizei stride, void* pointer);
+	virtual void VertexPointer(GLint size, GLenum type, GLsizei stride, const void* pointer);
+	virtual void NormalPointer(GLenum type, GLsizei stride, const void* pointer);
+	virtual void ColorPointer(GLint size, GLenum type, GLsizei stride, const void* pointer);
+	virtual void TexCoordPointer(GLenum texture, GLint size, GLenum type, GLsizei stride, const void* pointer);
+	virtual void VertexAttribPointer(attrib_id_t id, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer);
+	virtual void VertexAttribIPointer(attrib_id_t id, GLint size, GLenum type, GLsizei stride, const void* pointer);
 
 	/**
 	 * Checks that all the required vertex attributes have been set.

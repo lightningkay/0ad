@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -57,7 +57,6 @@ void (*Atlas_GLSetCurrent)(void* cavas);
 void (*Atlas_GLSwapBuffers)(void* canvas);
 void (*Atlas_NotifyEndOfFrame)();
 void (*Atlas_DisplayError)(const wchar_t* text, size_t flags);
-void (*Atlas_ReportError)();
 namespace AtlasMessage
 {
 	void* (*ShareableMallocFptr)(size_t);
@@ -110,11 +109,11 @@ static void* RunEngine(void* data)
 
 	const CmdLineArgs args = *reinterpret_cast<const CmdLineArgs*>(data);
 
-	MessagePasserImpl* msgPasser = (MessagePasserImpl*)AtlasMessage::g_MessagePasser;	
+	MessagePasserImpl* msgPasser = (MessagePasserImpl*)AtlasMessage::g_MessagePasser;
 
 	// Register all the handlers for message which might be passed back
 	RegisterHandlers();
-	
+
 	// Override ah_display_error to pass all errors to the Atlas UI
 	// TODO: this doesn't work well because it doesn't pause the game thread
 	//  and the error box is ugly, so only use it if we fix those issues
@@ -122,7 +121,7 @@ static void* RunEngine(void* data)
 	AppHooks hooks = {0};
 	hooks.display_error = AtlasDisplayError;
 	app_hooks_update(&hooks);
-	
+
 	// Disable the game's cursor rendering
 	extern CStrW g_CursorName;
 	g_CursorName = L"";
@@ -159,7 +158,7 @@ static void* RunEngine(void* data)
 			recent_activity = true;
 
 		//////////////////////////////////////////////////////////////////////////
-		
+
 		{
 			IMessage* msg;
 			while ((msg = msgPasser->Retrieve()) != NULL)
@@ -218,7 +217,7 @@ static void* RunEngine(void* data)
 
 		// Pump SDL events (e.g. hotkeys)
 		SDL_Event_ ev;
-		while (in_poll_event(&ev))
+		while (in_poll_priority_event(&ev))
 			in_dispatch_event(&ev);
 
 		if (g_GUI)
@@ -272,7 +271,7 @@ static void* RunEngine(void* data)
 	return NULL;
 }
 
-bool BeginAtlas(const CmdLineArgs& args, const DllLoader& dll) 
+bool BeginAtlas(const CmdLineArgs& args, const DllLoader& dll)
 {
 	// Load required symbols from the DLL
 	try
@@ -285,7 +284,6 @@ bool BeginAtlas(const CmdLineArgs& args, const DllLoader& dll)
 		dll.LoadSymbol("Atlas_GLSwapBuffers", Atlas_GLSwapBuffers);
 		dll.LoadSymbol("Atlas_NotifyEndOfFrame", Atlas_NotifyEndOfFrame);
 		dll.LoadSymbol("Atlas_DisplayError", Atlas_DisplayError);
-		dll.LoadSymbol("Atlas_ReportError", Atlas_ReportError);
 		dll.LoadSymbol("ShareableMalloc", ShareableMallocFptr);
 		dll.LoadSymbol("ShareableFree", ShareableFreeFptr);
 	}

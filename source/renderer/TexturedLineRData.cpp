@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -60,10 +60,10 @@ void CTexturedLineRData::Render(const SOverlayTexturedLine& line, const CShaderP
 	u8* indexBase = m_VBIndices->m_Owner->Bind();
 
 	shader->AssertPointersBound();
-	glDrawElements(GL_TRIANGLES, m_VBIndices->m_Count, GL_UNSIGNED_SHORT, indexBase + sizeof(u16)*m_VBIndices->m_Index); 
+	glDrawElements(GL_TRIANGLES, m_VBIndices->m_Count, GL_UNSIGNED_SHORT, indexBase + sizeof(u16)*m_VBIndices->m_Index);
 
 	g_Renderer.GetStats().m_DrawCalls++;
-	g_Renderer.GetStats().m_OverlayTris += m_VBIndices->m_Count/3; 
+	g_Renderer.GetStats().m_OverlayTris += m_VBIndices->m_Count/3;
 }
 
 void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
@@ -85,9 +85,6 @@ void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
 		return;
 	}
 
-	const CTerrain& terrain = line.m_SimContext->GetTerrain();
-	CmpPtr<ICmpWaterManager> cmpWaterManager(*line.m_SimContext, SYSTEM_ENTITY);
-
 	float v = 0.f;
 	std::vector<SVertex> vertices;
 	std::vector<u16> indices;
@@ -103,13 +100,13 @@ void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
 
 	CVector3D p0;
 	CVector3D p1(line.m_Coords[0], 0, line.m_Coords[1]);
-	CVector3D p2(line.m_Coords[(1 % n)*2], 0, line.m_Coords[(1 % n)*2+1]);
+	CVector3D p2(line.m_Coords[2], 0, line.m_Coords[3]);
 
 	if (closed)
 		// grab the ending point so as to close the loop
 		p0 = CVector3D(line.m_Coords[(n-1)*2], 0, line.m_Coords[(n-1)*2+1]);
 	else
-		// we don't want to loop around and use the direction towards the other end of the line, so create an artificial p0 that 
+		// we don't want to loop around and use the direction towards the other end of the line, so create an artificial p0 that
 		// extends the p2 -> p1 direction, and use that point instead
 		p0 = p1 + (p1 - p2);
 
@@ -120,7 +117,10 @@ void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
 	// each point was floating on water, for normal computation later)
 
 	// TODO: if we ever support more than one water level per map, recompute this per point
-	float w = cmpWaterManager->GetExactWaterLevel(p0.X, p0.Z);
+	CmpPtr<ICmpWaterManager> cmpWaterManager(*line.m_SimContext, SYSTEM_ENTITY);
+	float w = cmpWaterManager ? cmpWaterManager->GetExactWaterLevel(p0.X, p0.Z) : 0.f;
+
+	const CTerrain& terrain = line.m_SimContext->GetTerrain();
 
 	p0.Y = terrain.GetExactGroundLevel(p0.X, p0.Z);
 	if (p0.Y < w)
@@ -160,7 +160,7 @@ void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
 			b *= line.m_Thickness / l;
 
 		// Push vertices and indices for each quad in GL_TRIANGLES order. The two triangles of each quad are indexed using
-		// the winding orders (BR, BL, TR) and (TR, BL, TR) (where BR is bottom-right of this iteration's quad, TR top-right etc).
+		// the winding orders (BR, BL, TR) and (TR, BL, TL) (where BR is bottom-right of this iteration's quad, TR top-right etc).
 		SVertex vertex1(p1 + b + norm*OverlayRenderer::OVERLAY_VOFFSET, 0.f, v);
 		SVertex vertex2(p1 - b + norm*OverlayRenderer::OVERLAY_VOFFSET, 1.f, v);
 		vertices.push_back(vertex1);
@@ -175,7 +175,7 @@ void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
 			indices.push_back(index1);
 			indices.push_back(index2);
 		}
-		else 
+		else
 		{
 			u16 index1Prev = vertices.size() - 4; // index of the vertex1 in the previous iteration (BR of this quad)
 			u16 index2Prev = vertices.size() - 3; // index of the vertex2 in the previous iteration (BL of this quad)
@@ -224,18 +224,37 @@ void CTexturedLineRData::Update(const SOverlayTexturedLine& line)
 	if (closed)
 	{
 		// close the path
-		indices.push_back(vertices.size()-2);
-		indices.push_back(vertices.size()-1);
-		indices.push_back(0);
+		if (n % 2 == 0)
+		{
+			indices.push_back(vertices.size()-2);
+			indices.push_back(vertices.size()-1);
+			indices.push_back(0);
 
-		indices.push_back(0);
-		indices.push_back(vertices.size()-1);
-		indices.push_back(1);
+			indices.push_back(0);
+			indices.push_back(vertices.size()-1);
+			indices.push_back(1);
+		}
+		else
+		{
+			// add two vertices to have the good UVs for the last quad
+			SVertex vertex1(vertices[0].m_Position, 0.f, 1.f);
+			SVertex vertex2(vertices[1].m_Position, 1.f, 1.f);
+			vertices.push_back(vertex1);
+			vertices.push_back(vertex2);
+
+			indices.push_back(vertices.size()-4);
+			indices.push_back(vertices.size()-3);
+			indices.push_back(vertices.size()-2);
+
+			indices.push_back(vertices.size()-2);
+			indices.push_back(vertices.size()-3);
+			indices.push_back(vertices.size()-1);
+		}
 	}
 	else
 	{
 		// Create start and end caps. On either end, this is done by taking the centroid between the last and second-to-last pair of
-		// vertices that was generated along the path (i.e. the vertex1's and vertex2's from above), taking a directional vector 
+		// vertices that was generated along the path (i.e. the vertex1's and vertex2's from above), taking a directional vector
 		// between them, and drawing the line cap in the plane given by the two butt-end corner points plus said vector.
 		std::vector<u16> capIndices;
 		std::vector<SVertex> capVertices;
@@ -333,28 +352,28 @@ void CTexturedLineRData::CreateLineCap(const SOverlayTexturedLine& line, const C
 			radius *= 1.5f; // make it a bit sharper (note that we don't use the radius for the butt-end corner points so it should be ok)
 			centerVertex.m_UVs[0] = 0.480f; // slight visual correction to make the texture match up better at the corner points
 		}
-		// fall-through
+		FALLTHROUGH;
 	case SOverlayTexturedLine::LINECAP_ROUND:
 		{
-			// Draw a rounded line cap in the 3D plane of the line specified by the two corner points and the normal vector of the 
+			// Draw a rounded line cap in the 3D plane of the line specified by the two corner points and the normal vector of the
 			// line's direction. The terrain normal at the centroid between the two corner points is perpendicular to this plane.
-			// The way this works is by taking a vector from the corner points' centroid to one of the corner points (which is then 
-			// of radius length), and rotate it around the terrain normal vector in that centroid. This will rotate the vector in 
+			// The way this works is by taking a vector from the corner points' centroid to one of the corner points (which is then
+			// of radius length), and rotate it around the terrain normal vector in that centroid. This will rotate the vector in
 			// the line's plane, producing the desired rounded cap.
 
-			// To please OpenGL's winding order, this angle needs to be negated depending on whether we start rotating from 
-			// the (center -> corner1) or (center -> corner2) vector. For the (center -> corner2) vector, we apparently need to use 
+			// To please OpenGL's winding order, this angle needs to be negated depending on whether we start rotating from
+			// the (center -> corner1) or (center -> corner2) vector. For the (center -> corner2) vector, we apparently need to use
 			// the negated angle.
 			float stepAngle = -(float)(M_PI/(roundCapPoints-1));
 
 			// Push the vertices in triangle fan order (easy to generate GL_TRIANGLES indices for afterwards)
-			// Note that we're manually adding the corner vertices instead of having them be generated by the rotating vector. 
+			// Note that we're manually adding the corner vertices instead of having them be generated by the rotating vector.
 			// This is because we want to support an overly large radius to make the sharp line ending look sharper.
-			verticesOut.push_back(centerVertex); 
+			verticesOut.push_back(centerVertex);
 			verticesOut.push_back(SVertex(corner2, 0.f, 0.f));
 
 			// Get the base vector that we will incrementally rotate in the cap plane to produce the radial sample points.
-			// Normally corner2 - centerPoint would suffice for this since it is of radius length, but we want to support custom 
+			// Normally corner2 - centerPoint would suffice for this since it is of radius length, but we want to support custom
 			// radii to support tuning the 'sharpness' of sharp end caps (see above)
 			CVector3D rotationBaseVector = (corner2 - centerPoint).Normalized() * radius;
 			// Calculate the normal vector of the plane in which we're going to be drawing the line cap. This is the vector that
@@ -370,45 +389,45 @@ void CTexturedLineRData::CreateLineCap(const SOverlayTexturedLine& line, const C
 				quatRotation.FromAxisAngle(capPlaneNormal, i * stepAngle);
 				CVector3D worldPos3D = centerPoint + quatRotation.Rotate(rotationBaseVector);
 
-				// Let v range from 0 to 1 as we move along the semi-circle, keep u fixed at 0 (i.e. curve the left vertical edge 
+				// Let v range from 0 to 1 as we move along the semi-circle, keep u fixed at 0 (i.e. curve the left vertical edge
 				// of the texture around the edge of the semicircle)
 				float u = 0.f;
 				float v = clamp((i/(float)(roundCapPoints-1)), 0.f, 1.f); // pos, u, v
 				verticesOut.push_back(SVertex(worldPos3D, u, v));
 			}
 
-			// connect back to the other butt-end corner point to complete the semicircle 
-			verticesOut.push_back(SVertex(corner1, 0.f, 1.f)); 
+			// connect back to the other butt-end corner point to complete the semicircle
+			verticesOut.push_back(SVertex(corner1, 0.f, 1.f));
 
-			// now push indices in GL_TRIANGLES order; vertices[indexOffset] is the center vertex, vertices[indexOffset + 1] is the 
-			// first corner point, then a bunch of radial samples, and then at the end we have the other corner point again. So: 
+			// now push indices in GL_TRIANGLES order; vertices[indexOffset] is the center vertex, vertices[indexOffset + 1] is the
+			// first corner point, then a bunch of radial samples, and then at the end we have the other corner point again. So:
 			for (int i=1; i < roundCapPoints; ++i)
 			{
-				indicesOut.push_back(indexOffset); // center vertex 
-				indicesOut.push_back(indexOffset + i); 
-				indicesOut.push_back(indexOffset + i + 1); 
+				indicesOut.push_back(indexOffset); // center vertex
+				indicesOut.push_back(indexOffset + i);
+				indicesOut.push_back(indexOffset + i + 1);
 			}
 		}
 		break;
 
 	case SOverlayTexturedLine::LINECAP_SQUARE:
 		{
-			// Extend the (corner1 -> corner2) vector along the direction normal and draw a square line ending consisting of 
+			// Extend the (corner1 -> corner2) vector along the direction normal and draw a square line ending consisting of
 			// three triangles (sort of like a triangle fan)
 			// NOTE: The order in which the vertices are pushed out determines the visibility, as they
 			// are rendered only one-sided; the wrong order of vertices will make the cap visible only from the bottom.
 			verticesOut.push_back(centerVertex);
 			verticesOut.push_back(SVertex(corner2, 0.f, 0.f));
-			verticesOut.push_back(SVertex(corner2 + (lineDirectionNormal * (line.m_Thickness)), 0.f, 0.33333f)); // extend butt corner point 2 along the normal vector 
-			verticesOut.push_back(SVertex(corner1 + (lineDirectionNormal * (line.m_Thickness)), 0.f, 0.66666f)); // extend butt corner point 1 along the normal vector 
-			verticesOut.push_back(SVertex(corner1, 0.f, 1.0f)); // push butt corner point 1 
+			verticesOut.push_back(SVertex(corner2 + (lineDirectionNormal * (line.m_Thickness)), 0.f, 0.33333f)); // extend butt corner point 2 along the normal vector
+			verticesOut.push_back(SVertex(corner1 + (lineDirectionNormal * (line.m_Thickness)), 0.f, 0.66666f)); // extend butt corner point 1 along the normal vector
+			verticesOut.push_back(SVertex(corner1, 0.f, 1.0f)); // push butt corner point 1
 
-			for (int i=1; i < 4; ++i) 
-			{ 
-				indicesOut.push_back(indexOffset); // center point 
-				indicesOut.push_back(indexOffset + i); 
+			for (int i=1; i < 4; ++i)
+			{
+				indicesOut.push_back(indexOffset); // center point
+				indicesOut.push_back(indexOffset + i);
 				indicesOut.push_back(indexOffset + i + 1);
-			} 
+			}
 		}
 		break;
 

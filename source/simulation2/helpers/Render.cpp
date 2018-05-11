@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -204,21 +204,21 @@ void SimRender::ConstructSquareOnGround(const CSimContext& context, float x, flo
 
 void SimRender::ConstructBoxOutline(const CBoundingBoxAligned& bound, SOverlayLine& overlayLine)
 {
-	overlayLine.m_Coords.clear(); 
+	overlayLine.m_Coords.clear();
 
 	if (bound.IsEmpty())
 		return;
 
 	const CVector3D& pMin = bound[0];
 	const CVector3D& pMax = bound[1];
-	
-	// floor square 
+
+	// floor square
 	overlayLine.PushCoords(pMin.X, pMin.Y, pMin.Z);
 	overlayLine.PushCoords(pMax.X, pMin.Y, pMin.Z);
 	overlayLine.PushCoords(pMax.X, pMin.Y, pMax.Z);
 	overlayLine.PushCoords(pMin.X, pMin.Y, pMax.Z);
 	overlayLine.PushCoords(pMin.X, pMin.Y, pMin.Z);
-	// roof square 
+	// roof square
 	overlayLine.PushCoords(pMin.X, pMax.Y, pMin.Z);
 	overlayLine.PushCoords(pMax.X, pMax.Y, pMin.Z);
 	overlayLine.PushCoords(pMax.X, pMax.Y, pMax.Z);
@@ -259,7 +259,7 @@ void SimRender::ConstructBoxOutline(const CBoundingBoxOriented& box, SOverlayLin
 void SimRender::ConstructGimbal(const CVector3D& center, float radius, SOverlayLine& out, size_t numSteps)
 {
 	ENSURE(numSteps > 0 && numSteps % 4 == 0); // must be a positive multiple of 4
-	
+
 	out.m_Coords.clear();
 
 	size_t fullCircleSteps = numSteps;
@@ -272,7 +272,7 @@ void SimRender::ConstructGimbal(const CVector3D& center, float radius, SOverlayL
 
 	// first draw a quarter of XZ gimbal; then complete the XY gimbal; then continue the XZ gimbal and finally add the YZ gimbal
 	// (that way we can keep a single continuous line)
-	
+
 	// -- XZ GIMBAL (PART 1/2) -----------------------------------------------
 
 	CQuaternion xzRotation;
@@ -561,13 +561,6 @@ void SimRender::ConstructDashedLine(const std::vector<CVector2D>& keyPoints, SDa
 
 }
 
-void SimRender::AngularStepFromChordLen(const float maxChordLength, const float radius, float& out_stepAngle, unsigned& out_numSteps)
-{
-	float maxAngle = Geometry::ChordToCentralAngle(maxChordLength, radius);
-	out_numSteps = ceilf(float(2*M_PI)/maxAngle);
-	out_stepAngle = float(2*M_PI)/out_numSteps;
-}
-
 // TODO: this serves a similar purpose to SplitLine above, but is more general. Also, SplitLine seems to be implemented more
 // efficiently, might be nice to take some cues from it
 void SimRender::SubdividePoints(std::vector<CVector2D>& points, float maxSegmentLength, bool closed)
@@ -606,4 +599,42 @@ void SimRender::SubdividePoints(std::vector<CVector2D>& points, float maxSegment
 	}
 
 	points.swap(newPoints);
+}
+
+void SimRender::ConstructTexturedLineBox(SOverlayTexturedLine& overlay, const CVector2D& origin,
+		const CFixedVector3D& rotation, const float sizeX, const float sizeZ)
+{
+	float s = sinf(-rotation.Y.ToFloat());
+	float c = cosf(-rotation.Y.ToFloat());
+
+	CVector2D unitX(c, s);
+	CVector2D unitZ(-s, c);
+
+	// Add half the line thickness to the radius so that we get an 'outside' stroke of the footprint shape
+	const float halfSizeX = sizeX / 2.f + overlay.m_Thickness / 2.f;
+	const float halfSizeZ = sizeZ / 2.f + overlay.m_Thickness / 2.f;
+
+	std::vector<CVector2D> points;
+	points.push_back(CVector2D(origin + unitX * halfSizeX + unitZ * (-halfSizeZ)));
+	points.push_back(CVector2D(origin + unitX * (-halfSizeX) + unitZ * (-halfSizeZ)));
+	points.push_back(CVector2D(origin + unitX * (-halfSizeX) + unitZ * halfSizeZ));
+	points.push_back(CVector2D(origin + unitX * halfSizeX + unitZ * halfSizeZ));
+
+	SimRender::SubdividePoints(points, TERRAIN_TILE_SIZE / 3.f, overlay.m_Closed);
+	overlay.PushCoords(points);
+}
+
+void SimRender::ConstructTexturedLineCircle(SOverlayTexturedLine& overlay, const CVector2D& origin, const float overlay_radius)
+{
+	const float radius = overlay_radius + overlay.m_Thickness / 3.f;
+
+	size_t numSteps = ceilf(float(2 * M_PI) * radius / (TERRAIN_TILE_SIZE / 3.f));
+	for (size_t i = 0; i < numSteps; ++i)
+	{
+		float angle = i * float(2 * M_PI) / numSteps;
+		float px = origin.X + radius * sinf(angle);
+		float pz = origin.Y + radius * cosf(angle);
+
+		overlay.PushCoords(px, pz);
+	}
 }

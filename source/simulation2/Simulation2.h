@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -54,8 +54,9 @@ public:
 	CSimulation2(CUnitManager* unitManager, shared_ptr<ScriptRuntime> rt, CTerrain* terrain);
 	~CSimulation2();
 
-	void EnableOOSLog();
 	void EnableSerializationTest();
+	void EnableRejoinTest(int rejoinTestTurn);
+	void EnableOOSLog();
 
 	/**
 	 * Load all scripts in the specified directory (non-recursively),
@@ -165,7 +166,7 @@ public:
 	 * (This mustn't be used when e.g. loading saved games, only when starting new ones.)
 	 * This calls the InitGame function defined in helpers/InitGame.js.
 	 */
-	void InitGame(JS::HandleValue data);
+	void InitGame();
 
 	void Update(int turnLength);
 	void Update(int turnLength, const std::vector<SimulationCommand>& commands);

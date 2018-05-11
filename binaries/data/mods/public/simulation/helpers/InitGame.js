@@ -6,10 +6,10 @@ function PreInitGame()
 {
 	// We need to replace skirmish "default" entities with real ones.
 	// This needs to happen before AI initialization (in InitGame).
-	// And we need to flush destroyed entities otherwise the AI gets the wrong game state in 
+	// And we need to flush destroyed entities otherwise the AI gets the wrong game state in
 	// the beginning and a bunch of "destroy" messages on turn 0, which just shouldn't happen.
 	Engine.BroadcastMessage(MT_SkirmishReplace, {});
-	Engine.FlushDestroyedEntities(); 
+	Engine.FlushDestroyedEntities();
 
 	let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
 	for (let i = 1; i < numPlayers; ++i) // ignore gaia
@@ -42,7 +42,10 @@ function InitGame(settings)
 	}
 
 	// Sandbox, Very Easy, Easy, Medium, Hard, Very Hard
-	let rate = [ 0.50, 0.64, 0.80, 1.00, 1.25, 1.56 ];
+	// rate apply on resource stockpiling as gathering and trading
+	// time apply on building, upgrading, packing, training and technologies
+	let rate = [ 0.42, 0.56, 0.75, 1.00, 1.25, 1.56 ];
+	let time = [ 1.40, 1.25, 1.10, 1.00, 1.00, 1.00 ];
 	let cmpAIManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_AIManager);
 	for (let i = 0; i < settings.PlayerData.length; ++i)
 	{
@@ -51,11 +54,12 @@ function InitGame(settings)
 		if (settings.PlayerData[i] && settings.PlayerData[i].AI && settings.PlayerData[i].AI != "")
 		{
 			let AIDiff = +settings.PlayerData[i].AIDiff;
-			cmpAIManager.AddPlayer(settings.PlayerData[i].AI, i, AIDiff);
+			cmpAIManager.AddPlayer(settings.PlayerData[i].AI, i, AIDiff, settings.PlayerData[i].AIBehavior || "random");
 			cmpPlayer.SetAI(true);
 			AIDiff = Math.min(AIDiff, rate.length - 1);
 			cmpPlayer.SetGatherRateMultiplier(rate[AIDiff]);
 			cmpPlayer.SetTradeRateMultiplier(rate[AIDiff]);
+			cmpPlayer.SetTimeMultiplier(time[AIDiff]);
 		}
 		if (settings.PopulationCap)
 			cmpPlayer.SetMaxPopulation(settings.PopulationCap);
@@ -72,8 +76,6 @@ function InitGame(settings)
 	// Map or player data (handicap...) dependent initialisations of components (i.e. garrisoned units)
 	Engine.BroadcastMessage(MT_InitGame, {});
 
-	let seed = settings.AISeed ? settings.AISeed : 0;
-	cmpAIManager.SetRNGSeed(seed);
 	cmpAIManager.TryLoadSharedComponent();
 	cmpAIManager.RunGamestateInit();
 }

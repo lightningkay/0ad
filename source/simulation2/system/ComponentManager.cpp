@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@
 #include "lib/utf8.h"
 #include "ps/CLogger.h"
 #include "ps/Filesystem.h"
+#include "ps/scripting/JSInterface_VFS.h"
 
 /**
  * Used for script-only message types.
@@ -40,9 +41,9 @@ public:
 	virtual int GetType() const { return mtid; }
 	virtual const char* GetScriptHandlerName() const { return handlerName.c_str(); }
 	virtual const char* GetScriptGlobalHandlerName() const { return globalHandlerName.c_str(); }
-	virtual JS::Value ToJSVal(ScriptInterface& UNUSED(scriptInterface)) const { return msg.get(); }
+	virtual JS::Value ToJSVal(const ScriptInterface& UNUSED(scriptInterface)) const { return msg.get(); }
 
-	CMessageScripted(ScriptInterface& scriptInterface, int mtid, const std::string& name, JS::HandleValue msg) :
+	CMessageScripted(const ScriptInterface& scriptInterface, int mtid, const std::string& name, JS::HandleValue msg) :
 		mtid(mtid), handlerName("On" + name), globalHandlerName("OnGlobal" + name), msg(scriptInterface.GetJSRuntime(), msg)
 	{
 	}
@@ -62,12 +63,12 @@ CComponentManager::CComponentManager(CSimContext& context, shared_ptr<ScriptRunt
 
 	m_ScriptInterface.SetCallbackData(static_cast<void*> (this));
 	m_ScriptInterface.ReplaceNondeterministicRNG(m_RNG);
-	m_ScriptInterface.LoadGlobalScripts();
 
 	// For component script tests, the test system sets up its own scripted implementation of
 	// these functions, so we skip registering them here in those cases
 	if (!skipScriptFunctions)
 	{
+		JSI_VFS::RegisterScriptFunctions_Simulation(m_ScriptInterface);
 		m_ScriptInterface.RegisterFunction<void, int, std::string, JS::HandleValue, CComponentManager::Script_RegisterComponentType> ("RegisterComponentType");
 		m_ScriptInterface.RegisterFunction<void, int, std::string, JS::HandleValue, CComponentManager::Script_RegisterSystemComponentType> ("RegisterSystemComponentType");
 		m_ScriptInterface.RegisterFunction<void, int, std::string, JS::HandleValue, CComponentManager::Script_ReRegisterComponentType> ("ReRegisterComponentType");
@@ -83,10 +84,10 @@ CComponentManager::CComponentManager(CSimContext& context, shared_ptr<ScriptRunt
 		m_ScriptInterface.RegisterFunction<int, std::string, CComponentManager::Script_AddLocalEntity> ("AddLocalEntity");
 		m_ScriptInterface.RegisterFunction<void, int, CComponentManager::Script_DestroyEntity> ("DestroyEntity");
 		m_ScriptInterface.RegisterFunction<void, CComponentManager::Script_FlushDestroyedEntities> ("FlushDestroyedEntities");
-		m_ScriptInterface.RegisterFunction<JS::Value, std::wstring, CComponentManager::Script_ReadJSONFile> ("ReadJSONFile");
-		m_ScriptInterface.RegisterFunction<JS::Value, std::wstring, CComponentManager::Script_ReadCivJSONFile> ("ReadCivJSONFile");
-		m_ScriptInterface.RegisterFunction<std::vector<std::string>, std::wstring, bool, CComponentManager::Script_FindJSONFiles> ("FindJSONFiles");
 	}
+
+	// Globalscripts may use VFS script functions
+	m_ScriptInterface.LoadGlobalScripts();
 
 	// Define MT_*, IID_* as script globals, and store their names
 #define MESSAGE(name) m_ScriptInterface.SetGlobal("MT_" #name, (int)MT_##name);
@@ -100,6 +101,7 @@ CComponentManager::CComponentManager(CSimContext& context, shared_ptr<ScriptRunt
 #undef COMPONENT
 
 	m_ScriptInterface.SetGlobal("INVALID_ENTITY", (int)INVALID_ENTITY);
+	m_ScriptInterface.SetGlobal("INVALID_PLAYER", (int)INVALID_PLAYER);
 	m_ScriptInterface.SetGlobal("SYSTEM_ENTITY", (int)SYSTEM_ENTITY);
 
 	m_ComponentsByInterface.resize(IID__LastNative);
@@ -494,10 +496,10 @@ void CComponentManager::Script_DestroyEntity(ScriptInterface::CxPrivate* pCxPriv
 	componentManager->DestroyComponentsSoon(ent);
 }
 
-void CComponentManager::Script_FlushDestroyedEntities(ScriptInterface::CxPrivate *pCxPrivate) 
-{ 
-	CComponentManager* componentManager = static_cast<CComponentManager*> (pCxPrivate->pCBData); 
-	componentManager->FlushDestroyedComponents(); 
+void CComponentManager::Script_FlushDestroyedEntities(ScriptInterface::CxPrivate *pCxPrivate)
+{
+	CComponentManager* componentManager = static_cast<CComponentManager*> (pCxPrivate->pCBData);
+	componentManager->FlushDestroyedComponents();
 }
 
 void CComponentManager::ResetState()
@@ -525,7 +527,7 @@ void CComponentManager::ResetState()
 	m_ComponentsByTypeId.clear();
 
 	// Delete all SEntityComponentCaches
-	std::map<entity_id_t, SEntityComponentCache*>::iterator ccit = m_ComponentCaches.begin();
+	std::unordered_map<entity_id_t, SEntityComponentCache*>::iterator ccit = m_ComponentCaches.begin();
 	for (; ccit != m_ComponentCaches.end(); ++ccit)
 		free(ccit->second);
 	m_ComponentCaches.clear();
@@ -546,7 +548,7 @@ void CComponentManager::SetRNGSeed(u32 seed)
 void CComponentManager::RegisterComponentType(InterfaceId iid, ComponentTypeId cid, AllocFunc alloc, DeallocFunc dealloc,
 		const char* name, const std::string& schema)
 {
-	ComponentType c(CT_Native, iid, alloc, dealloc, name, schema, std::move(DefPersistentRooted<JS::Value>()));
+	ComponentType c(CT_Native, iid, alloc, dealloc, name, schema, DefPersistentRooted<JS::Value>());
 	m_ComponentTypesById.insert(std::make_pair(cid, std::move(c)));
 	m_ComponentTypeIdsByName[name] = cid;
 }
@@ -554,7 +556,7 @@ void CComponentManager::RegisterComponentType(InterfaceId iid, ComponentTypeId c
 void CComponentManager::RegisterComponentTypeScriptWrapper(InterfaceId iid, ComponentTypeId cid, AllocFunc alloc,
 		DeallocFunc dealloc, const char* name, const std::string& schema)
 {
-	ComponentType c(CT_ScriptWrapper, iid, alloc, dealloc, name, schema, std::move(DefPersistentRooted<JS::Value>()));
+	ComponentType c(CT_ScriptWrapper, iid, alloc, dealloc, name, schema, DefPersistentRooted<JS::Value>());
 	m_ComponentTypesById.insert(std::make_pair(cid, std::move(c)));
 	m_ComponentTypeIdsByName[name] = cid;
 	// TODO: merge with RegisterComponentType
@@ -741,7 +743,7 @@ IComponent* CComponentManager::ConstructComponent(CEntityHandle ent, ComponentTy
 {
 	JSContext* cx = m_ScriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	std::map<ComponentTypeId, ComponentType>::const_iterator it = m_ComponentTypesById.find(cid);
 	if (it == m_ComponentTypesById.end())
 	{
@@ -829,7 +831,7 @@ CEntityHandle CComponentManager::AllocateEntityHandle(entity_id_t ent)
 
 CEntityHandle CComponentManager::LookupEntityHandle(entity_id_t ent, bool allowCreate)
 {
-	std::map<entity_id_t, SEntityComponentCache*>::iterator it;
+	std::unordered_map<entity_id_t, SEntityComponentCache*>::iterator it;
 	it = m_ComponentCaches.find(ent);
 	if (it == m_ComponentCaches.end())
 	{
@@ -858,7 +860,7 @@ entity_id_t CComponentManager::AddEntity(const std::wstring& templateName, entit
 		return INVALID_ENTITY;
 	}
 
-	const CParamNode* tmpl = cmpTemplateManager->LoadTemplate(ent, utf8_from_wstring(templateName), -1);
+	const CParamNode* tmpl = cmpTemplateManager->LoadTemplate(ent, utf8_from_wstring(templateName));
 	if (!tmpl)
 		return INVALID_ENTITY; // LoadTemplate will have reported the error
 
@@ -909,10 +911,6 @@ void CComponentManager::FlushDestroyedComponents()
 		std::vector<entity_id_t> queue;
 		queue.swap(m_DestructionQueue);
 
-		// Flatten all the dynamic subscriptions to ensure there are no dangling
-		// references in the 'removed' lists to components we're going to delete
-		FlattenDynamicSubscriptions();
-
 		for (std::vector<entity_id_t>::iterator it = queue.begin(); it != queue.end(); ++it)
 		{
 			entity_id_t ent = *it;
@@ -920,6 +918,11 @@ void CComponentManager::FlushDestroyedComponents()
 
 			CMessageDestroy msg(ent);
 			PostMessage(ent, msg);
+
+			// Flatten all the dynamic subscriptions to ensure there are no dangling
+			// references in the 'removed' lists to components we're going to delete
+			// Some components may have dynamically unsubscribed following the Destroy message
+			FlattenDynamicSubscriptions();
 
 			// Destroy the components, and remove from m_ComponentsByTypeId:
 			std::map<ComponentTypeId, std::map<entity_id_t, IComponent*> >::iterator iit = m_ComponentsByTypeId.begin();
@@ -1099,7 +1102,7 @@ void CComponentManager::SendGlobalMessage(entity_id_t ent, const CMessage& msg)
 	}
 }
 
-std::string CComponentManager::GenerateSchema()
+std::string CComponentManager::GenerateSchema() const
 {
 	std::string numericOperation =
 		"<optional>"
@@ -1182,61 +1185,4 @@ std::string CComponentManager::GenerateSchema()
 	schema += "</grammar>";
 
 	return schema;
-}
-
-JS::Value CComponentManager::Script_ReadJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& fileName)
-{
-	return ReadJSONFile(pCxPrivate, L"simulation/data", fileName);
-}
-
-JS::Value CComponentManager::Script_ReadCivJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& fileName)
-{
-	return ReadJSONFile(pCxPrivate, L"simulation/data/civs", fileName);
-}
-
-JS::Value CComponentManager::ReadJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filePath, const std::wstring& fileName)
-{
-	CComponentManager* componentManager = static_cast<CComponentManager*> (pCxPrivate->pCBData);
-	JSContext* cx = pCxPrivate->pScriptInterface->GetContext();
-	JSAutoRequest rq(cx);
-
-	VfsPath path = VfsPath(filePath) / fileName;
-	JS::RootedValue out(cx);
-	componentManager->GetScriptInterface().ReadJSONFile(path, &out);
-	return out;
-}
-	
-Status CComponentManager::FindJSONFilesCallback(const VfsPath& pathname, const CFileInfo& UNUSED(fileInfo), const uintptr_t cbData)
-{
-	FindJSONFilesCallbackData* data = (FindJSONFilesCallbackData*)cbData;
-	
-	VfsPath pathstem = pathname.ChangeExtension(L"");
-	// Strip the root from the path
-	std::wstring name = pathstem.string().substr(data->path.string().length());
-
-	data->templates.push_back(std::string(name.begin(), name.end()));
-
-	return INFO::OK;
-}
-
-std::vector<std::string> CComponentManager::Script_FindJSONFiles(ScriptInterface::CxPrivate* UNUSED(pCxPrivate), const std::wstring& subPath, bool recursive)
-{
-	FindJSONFilesCallbackData cbData;
-	cbData.path = VfsPath(L"simulation/data/" + subPath + L"/");
-	
-	int dir_flags = 0;
-	if (recursive) {
-		dir_flags = vfs::DIR_RECURSIVE;
-	}
-
-	// Find all simulation/data/{subPath}/*.json recursively
-	Status ret = vfs::ForEachFile(g_VFS, cbData.path, FindJSONFilesCallback, (uintptr_t)&cbData, L"*.json", dir_flags);
-	if (ret != INFO::OK)
-	{
-		// Some error reading directory
-		wchar_t error[200];
-		LOGERROR("Error reading directory '%s': %s", cbData.path.string8(), utf8_from_wstring(StatusDescription(ret, error, ARRAY_SIZE(error))));
-	}
-	
-	return cbData.templates;
 }

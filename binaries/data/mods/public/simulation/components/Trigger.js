@@ -11,6 +11,9 @@ Trigger.prototype.eventNames =
 	"CinemaPathEnded",
 	"CinemaQueueEnded",
 	"ConstructionStarted",
+	"DiplomacyChanged",
+	"Deserialized",
+	"InitGame",
 	"Interval",
 	"OwnershipChanged",
 	"PlayerCommand",
@@ -27,6 +30,9 @@ Trigger.prototype.eventNames =
 
 Trigger.prototype.Init = function()
 {
+	// Difficulty used by trigger scripts (as defined in data/settings/trigger_difficulties.json).
+	this.difficulty = undefined;
+
 	this.triggerPoints = {};
 
 	// Each event has its own set of actions determined by the map maker.
@@ -219,9 +225,14 @@ Trigger.prototype.CallEvent = function(event, data)
 			this.DoAction({ "action": action, "data":data });
 };
 
+Trigger.prototype.OnGlobalInitGame = function(msg)
+{
+	this.CallEvent("InitGame", {});
+};
+
 Trigger.prototype.OnGlobalConstructionFinished = function(msg)
 {
-	this.CallEvent("StructureBuilt", { "building": msg.newentity });
+	this.CallEvent("StructureBuilt", { "building": msg.newentity, "foundation": msg.entity });
 };
 
 Trigger.prototype.OnGlobalTrainingFinished = function(msg)
@@ -249,6 +260,11 @@ Trigger.prototype.OnGlobalCinemaQueueEnded = function(msg)
 	this.CallEvent("CinemaQueueEnded", msg);
 };
 
+Trigger.prototype.OnGlobalDeserialized = function(msg)
+{
+	this.CallEvent("Deserialized", msg);
+};
+
 Trigger.prototype.OnGlobalOwnershipChanged = function(msg)
 {
 	this.CallEvent("OwnershipChanged", msg);
@@ -265,18 +281,42 @@ Trigger.prototype.OnGlobalPlayerWon = function(msg)
 	this.CallEvent("PlayerWon", msg);
 };
 
+Trigger.prototype.OnGlobalDiplomacyChanged = function(msg)
+{
+	this.CallEvent("DiplomacyChanged", msg);
+};
+
 /**
  * Execute a function after a certain delay.
  *
- * @param {Number} time - delay in milleseconds
- * @param {String} action - Name of the action function
- * @param {Object} data - will be passed to the action function
+ * @param {Number} time - Delay in milliseconds.
+ * @param {String} action - Name of the action function.
+ * @param {Object} data - Arbitrary object that will be passed to the action function.
+ * @return {Number} The ID of the timer, so it can be stopped later.
  */
-Trigger.prototype.DoAfterDelay = function(miliseconds, action, data)
+Trigger.prototype.DoAfterDelay = function(time, action, data)
 {
 	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
+	return cmpTimer.SetTimeout(SYSTEM_ENTITY, IID_Trigger, "DoAction", time, {
+		"action": action,
+		"data": data
+	});
+};
 
-	return cmpTimer.SetTimeout(SYSTEM_ENTITY, IID_Trigger, "DoAction", miliseconds, {
+/**
+ * Execute a function each time a certain delay has passed.
+ *
+ * @param {Number} interval - Interval in milleseconds between consecutive calls.
+ * @param {String} action - Name of the action function.
+ * @param {Object} data - Arbitrary object that will be passed to the action function.
+ * @param {Number} [start] - Optional initial delay in milleseconds before starting the calls.
+ *                           If not given, interval will be used.
+ * @return {Number} the ID of the timer, so it can be stopped later.
+ */
+Trigger.prototype.DoRepeatedly = function(time, action, data, start)
+{
+	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
+	return cmpTimer.SetInterval(SYSTEM_ENTITY, IID_Trigger, "DoAction", start !== undefined ? start : time, time, {
 		"action": action,
 		"data": data
 	});
@@ -291,6 +331,19 @@ Trigger.prototype.DoAction = function(msg)
 		this[msg.action](msg.data || null);
 	else
 		warn("Trigger.js: called a trigger action '" + msg.action + "' that wasn't found");
+};
+
+/**
+ * Level of difficulty used by trigger scripts.
+ */
+Trigger.prototype.GetDifficulty = function()
+{
+	return this.difficulty;
+};
+
+Trigger.prototype.SetDifficulty = function(diff)
+{
+	this.difficulty = diff;
 };
 
 Engine.RegisterSystemComponentType(IID_Trigger, "Trigger", Trigger);

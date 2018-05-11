@@ -6,14 +6,12 @@
       structures/athen_theatron
       structures/athen_prytaneion
       structures/athen_royal_stoa
-      structures/{civ}_wonder
     </Entities>
   </Builder>
   <Cost>
     <Resources>
-      <food>25</food>
-      <wood>50</wood>
-      <metal>25</metal>
+      <food op="add">-25</food>
+      <metal op="add">25</metal>
     </Resources>
   </Cost>
   <Identity>
@@ -22,7 +20,7 @@
     <SelectionGroupName>units/athen_infantry_javelinist_b</SelectionGroupName>
     <GenericName>Thracian Peltast</GenericName>
     <SpecificName>Peltastḗs Thrâx</SpecificName>
-    <History>Peltasts were javelinists originating in Thrace but their form of combat was widely copied by the Hellenes, Macedonians, and Persians. Equipped with a small oval or crescent shield, a peltast would charge at enemy formations whilst hurling his javelins then fall back to avoid close combat. They wore no armor and were at a significant disadvantage against heavy infantry and cavalry, relying on their speed and skill for survival. Thracians sold their services to Hellene cities as mercenaries and added a much needed ranged and skirmishing ability to Hellenic armies.</History>
+    <VisibleClasses datatype="tokens">Mercenary</VisibleClasses>
     <Icon>units/hele_infantry_javelinist.png</Icon>
     <RequiredTechnology>phase_town</RequiredTechnology>
   </Identity>

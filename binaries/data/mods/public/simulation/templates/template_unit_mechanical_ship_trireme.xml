@@ -7,10 +7,13 @@
       <Crush>0.0</Crush>
       <MaxRange>55.0</MaxRange>
       <MinRange>0.0</MinRange>
-      <ProjectileSpeed>60.0</ProjectileSpeed>
+      <ProjectileSpeed>75.0</ProjectileSpeed>
+      <Gravity>9.81</Gravity>
       <PrepareTime>1000</PrepareTime>
       <RepeatTime>2000</RepeatTime>
-      <Spread>1.5</Spread>
+      <Spread>2.0</Spread>
+      <Delay>0</Delay>
+      <PreferredClasses datatype="tokens">Ship Human</PreferredClasses>
     </Ranged>
   </Attack>
   <BuildingAI>
@@ -34,9 +37,9 @@
   <GarrisonHolder>
     <Max>30</Max>
     <EjectHealth>0</EjectHealth>
-    <EjectClassesOnDestroy datatype="tokens">Female Infantry Dog</EjectClassesOnDestroy>
+    <EjectClassesOnDestroy datatype="tokens">FemaleCitizen Infantry Healer Dog</EjectClassesOnDestroy>
     <List datatype="tokens">Support Infantry Cavalry Dog Siege Elephant</List>
-    <BuffHeal>1</BuffHeal>
+    <BuffHeal>0</BuffHeal>
     <LoadingRange>10</LoadingRange>
     <Pickup>true</Pickup>
   </GarrisonHolder>
@@ -49,11 +52,16 @@
     <RequiredTechnology>phase_town</RequiredTechnology>
     <Tooltip>Garrison units for transport and to increase firepower.</Tooltip>
   </Identity>
+  <Loot>
+    <xp>100</xp>
+    <wood>30</wood>
+    <metal>20</metal>
+  </Loot>
   <ResourceGatherer disable=""/>
   <Sound>
     <SoundGroups>
-      <attack>attack/weapon/arrowfly.xml</attack>
-      <attack_impact>attack/impact/arrow_metal.xml</attack_impact>
+      <attack_impact_ranged>attack/impact/arrow_metal.xml</attack_impact_ranged>
+      <attack_ranged>attack/weapon/arrowfly.xml</attack_ranged>
     </SoundGroups>
   </Sound>
   <StatusBars>
@@ -62,9 +70,9 @@
     <HeightOffset>6.0</HeightOffset>
   </StatusBars>
   <UnitMotion>
-    <WalkSpeed>16</WalkSpeed>
+    <WalkSpeed op="mul">1.8</WalkSpeed>
     <Run>
-      <Speed>20.0</Speed>
+      <Speed op="mul">1.8</Speed>
     </Run>
   </UnitMotion>
 </Entity>

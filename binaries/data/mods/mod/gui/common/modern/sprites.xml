@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-  - This file contains the sprites for the 'modern' style GUI.
-  -
-  -->
-
 <sprites>
-
 	<!--
 	==========================================
 	- Scrollbar -
@@ -49,7 +43,6 @@
 			texture_size = "0 0 1024 256"
 			size = "12 100%-268 100%-12 100%-12"
 		/>
-
 		<image texture = "global/modern/shadow-high.png"
 			texture_size = "1024 256 0 0"
 			size = "12 22 100%-12 268"
@@ -78,9 +71,7 @@
 			real_texture_placement = "32 32 0 0"
 			size = "50%+122 4 50%+154 37"
 		/>
-
 	</sprite>
-
 	<!--
 	==========================================
 	- Dialog -
@@ -100,7 +91,6 @@
 			texture_size = "0 0 1024 128"
 			size = "4 100%-132 100%-4 100%-4"
 		/>
-
 		<image texture = "global/modern/shadow-low.png"
 			texture_size = "1024 128 0 0"
 			size = "4 0 100%-4 128"
@@ -130,12 +120,12 @@
 		<image texture = "global/modern/dialog-deco-bottom.png"
 			real_texture_placement = "0 0 64 32"
 			texture_size = "64 0 0 32"
-			size = "-31 100%-23 33 100%+9"
+			size = "-31 100%-22 33 100%+10"
 		/>
 		<image texture = "global/modern/dialog-deco-bottom.png"
 			real_texture_placement = "0 0 64 32"
 			texture_size = "0 0 64 32"
-			size = "100%-31 100%-23 100%+33 100%+9"
+			size = "100%-31 100%-22 100%+33 100%+10"
 		/>
 
 		<!-- title frame -->
@@ -152,39 +142,28 @@
 			size = "50%+102 0%-18 50%+134 15"
 		/>
 	</sprite>
-
-		<!--
-	==========================================
-	- Panel -
-	==========================================
-	-->
-	<sprite name = "ModernPanel">
-
-		<!-- background -->
-		<image backcolor = "12 12 12"/>
-		<image texture = "global/modern/background.png"
-			texture_size = "0 0 1024 1024"
-			size = "12 22 100%-12 100%-12"
-		/>
-
-		<!-- shading -->
-		<!-- we just mirror the same texture on the top and bottom -->
-		<image texture = "global/modern/shadow-high.png"
-			texture_size = "0 0 1024 256"
-			size = "12 100%-268 100%-12 100%-12"
-		/>
-
-		<image texture = "global/modern/shadow-high.png"
-			texture_size = "1024 256 0 0"
-			size = "12 22 100%-12 268"
-		/>
-	</sprite>
 	<!--
 	==========================================
 	- Box -
 	==========================================
 	-->
 	<sprite name="ModernDarkBoxGold">
+		<!-- borders -->
+		<image texture = "global/modern/gold-separator.png"
+			real_texture_placement = "0 0 806 1"
+			size = "0 0 100% 1"
+		/>
+		<image texture = "global/modern/gold-separator.png"
+			real_texture_placement = "0 0 806 1"
+			size = "0 100%-1 100% 100%"
+		/>
+		<!-- background -->
+		<image backcolor = "12 12 12 100"
+			size = "0 1 100% 100%-1"
+		/>
+	</sprite>
+	<sprite name="ModernDarkBoxGoldDisabled">
+		<effect grayscale=""/>
 		<!-- borders -->
 		<image texture = "global/modern/gold-separator.png"
 			real_texture_placement = "0 0 806 1"
@@ -211,6 +190,21 @@
 		/>
 		<!-- background -->
 		<image backcolor = "12 12 12 100"
+			size = "0 1 100% 100%-1"
+		/>
+	</sprite>
+	<sprite name="ModernDarkBoxWhiteInvalid">
+		<!-- borders -->
+		<image texture = "global/modern/white-separator.png"
+			real_texture_placement = "0 0 806 1"
+			size = "0 0 100% 1"
+		/>
+		<image texture = "global/modern/white-separator.png"
+			real_texture_placement = "0 0 806 1"
+			size = "0 100%-1 100% 100%"
+		/>
+		<!-- background -->
+		<image backcolor = "127 0 0 100"
 			size = "0 1 100% 100%-1"
 		/>
 	</sprite>
@@ -414,290 +408,96 @@
 			size="100%-8 100%-8 100% 100%"
 		/>
 	</sprite>
-	<!-- YELLOW -->
-	<sprite name="ModernButtonYellow">
-		<!-- Left -->
-		<image texture="global/modern/button/yellow-unselected-left-top.png"
-			real_texture_placement="0 0 8 8"
-			size="0 0 8 8"
+	<!--
+	==========================================
+	- Progress Bar -
+	==========================================
+	-->
+	<sprite name="ModernProgressBarBackground">
+		<image
+			texture="global/modern/progressbar/background_end.png"
+			real_texture_placement="3 0 8 32"
+			size="0 50%-16 5 50%+16"
 		/>
-		<image texture="global/modern/button/yellow-unselected-left-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="0 8 8 100%-8"
+		<image
+			texture="global/modern/progressbar/background_end.png"
+			real_texture_placement="6 0 7 32"
+			size="5 50%-16 100%-5 50%+16"
 		/>
-		<image texture="global/modern/button/yellow-unselected-left-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="0 100%-8 8 100%"
-		/>
-		<!-- Center -->
-		<image texture="global/modern/button/yellow-unselected-center-top.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 0 100%-8 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-center-center.png"
-			real_texture_placement="0 0 128 16"
-			texture_size="0 0 128 16"
-			size="8 8 100%-8 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-center-bottom.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 100%-8 100%-8 100%"
-		/>
-		<!-- Right -->
-		<image texture="global/modern/button/yellow-unselected-right-top.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 0 100% 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-right-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="100%-8 8 100% 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-right-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 100%-8 100% 100%"
+		<image
+			texture="global/modern/progressbar/background_end.png"
+			real_texture_placement="8 0 3 32"
+			size="100%-5 50%-16 100% 50%+16"
 		/>
 	</sprite>
-	<sprite name="ModernButtonYellowOver">
-		<effect add_color="60 42 42 0"/>
-		<!-- Left -->
-		<image texture="global/modern/button/yellow-unselected-left-top.png"
-			real_texture_placement="0 0 8 8"
-			size="0 0 8 8"
+	<sprite name="ModernProgressBar">
+		<image
+			texture="global/modern/progressbar/bar_end.png"
+			real_texture_placement="3 0 4 32"
+			size="-1 50%-16 0 50%+16"
 		/>
-		<image texture="global/modern/button/yellow-unselected-left-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="0 8 8 100%-8"
+		<image
+			texture="global/modern/progressbar/bar_end.png"
+			real_texture_placement="6 0 7 32"
+			size="0 50%-16 100% 50%+16"
 		/>
-		<image texture="global/modern/button/yellow-unselected-left-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="0 100%-8 8 100%"
-		/>
-		<!-- Center -->
-		<image texture="global/modern/button/yellow-unselected-center-top.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 0 100%-8 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-center-center.png"
-			real_texture_placement="0 0 128 16"
-			texture_size="0 0 128 16"
-			size="8 8 100%-8 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-center-bottom.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 100%-8 100%-8 100%"
-		/>
-		<!-- Right -->
-		<image texture="global/modern/button/yellow-unselected-right-top.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 0 100% 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-right-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="100%-8 8 100% 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-right-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 100%-8 100% 100%"
+		<image
+			texture="global/modern/progressbar/bar_end.png"
+			real_texture_placement="4 0 3 32"
+			size="100% 50%-16 100%+1 50%+16"
 		/>
 	</sprite>
-	<sprite name="ModernButtonYellowDisabled">
-		<effect grayscale=""/>
-		<!-- Left -->
-		<image texture="global/modern/button/yellow-unselected-left-top.png"
-			real_texture_placement="0 0 8 8"
-			size="0 0 8 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-left-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="0 8 8 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-left-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="0 100%-8 8 100%"
-		/>
-		<!-- Center -->
-		<image texture="global/modern/button/yellow-unselected-center-top.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 0 100%-8 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-center-center.png"
-			real_texture_placement="0 0 128 16"
-			texture_size="0 0 128 16"
-			size="8 8 100%-8 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-center-bottom.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 100%-8 100%-8 100%"
-		/>
-		<!-- Right -->
-		<image texture="global/modern/button/yellow-unselected-right-top.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 0 100% 8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-right-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="100%-8 8 100% 100%-8"
-		/>
-		<image texture="global/modern/button/yellow-unselected-right-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 100%-8 100% 100%"
-		/>
+	<!--
+	==========================================
+	- Horizontal Tabs -
+	==========================================
+	-->
+	<sprite name="ModernTabHorizontalForeground">
+		<image backcolor="255 255 255 40" size="0 0 100% 100%"/>
+		<!-- Left, Top, Right Edge -->
+		<image backcolor="gold" size="0 0 2 100%"/>
+		<image backcolor="gold" size="2 0 100%-2 2"/>
+		<image backcolor="gold" size="100%-2 0 100% 100%"/>
 	</sprite>
-	<!-- GRAY -->
-	<sprite name="ModernButtonGray">
-		<!-- Background -->
-		<image texture="global/modern/button/gray-unselected-background.png"
-			real_texture_placement="0 0 512 128"
-			texture_size="0 0 512 128"
-			size="2 2 100%-2 100%-2"
-		/>
-		<!-- Left -->
-		<image texture="global/modern/button/gray-unselected-left-top.png"
-			real_texture_placement="0 0 8 8"
-			size="0 0 8 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-left-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="0 8 8 100%-8"
-		/>
-		<image texture="global/modern/button/gray-unselected-left-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="0 100%-8 8 100%"
-		/>
-		<!-- Center -->
-		<image texture="global/modern/button/gray-unselected-center-top.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 0 100%-8 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-center-bottom.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 100%-8 100%-8 100%"
-		/>
-		<!-- Right -->
-		<image texture="global/modern/button/gray-unselected-right-top.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 0 100% 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-right-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="100%-8 8 100% 100%-8"
-		/>
-		<image texture="global/modern/button/gray-unselected-right-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 100%-8 100% 100%"
-		/>
+
+	<sprite name="ModernTabHorizontalBackground">
+		<image backcolor="50 35 0 120" size="0 0 100% 100%"/>
+		<!-- Left, Top, Right Edge -->
+		<image backcolor="gold" size="0 0 1 100%"/>
+		<image backcolor="gold" size="1 0 100%-1 1"/>
+		<image backcolor="gold" size="100%-1 0 100% 100%"/>
 	</sprite>
-	<sprite name="ModernButtonGrayOver">
-		<!-- Background -->
-		<image texture="global/modern/button/gray-unselected-background.png"
-			real_texture_placement="0 0 512 128"
-			texture_size="0 0 512 128"
-			size="2 2 100%-2 100%-2"
-		>
-			<effect add_color="42 42 42 0"/>
-		</image>
-		<!-- Left -->
-		<image texture="global/modern/button/gray-unselected-left-top.png"
-			real_texture_placement="0 0 8 8"
-			size="0 0 8 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-left-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="0 8 8 100%-8"
-		/>
-		<image texture="global/modern/button/gray-unselected-left-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="0 100%-8 8 100%"
-		/>
-		<!-- Center -->
-		<image texture="global/modern/button/gray-unselected-center-top.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 0 100%-8 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-center-bottom.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 100%-8 100%-8 100%"
-		/>
-		<!-- Right -->
-		<image texture="global/modern/button/gray-unselected-right-top.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 0 100% 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-right-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="100%-8 8 100% 100%-8"
-		/>
-		<image texture="global/modern/button/gray-unselected-right-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 100%-8 100% 100%"
-		/>
+	<sprite name="ModernTabHorizontalSpacer">
+		<image backcolor="gold" size="0 0 100% 100%"/>
 	</sprite>
-	<sprite name="ModernButtonGrayDisabled">
-		<!-- Background -->
-		<image texture="global/modern/button/gray-unselected-background.png"
-			real_texture_placement="0 0 512 128"
-			texture_size="0 0 512 128"
-			size="2 2 100%-2 100%-2"
-		/>
-		<!-- Left -->
-		<image texture="global/modern/button/gray-unselected-left-top.png"
-			real_texture_placement="0 0 8 8"
-			size="0 0 8 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-left-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="0 8 8 100%-8"
-		/>
-		<image texture="global/modern/button/gray-unselected-left-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="0 100%-8 8 100%"
-		/>
-		<!-- Center -->
-		<image texture="global/modern/button/gray-unselected-center-top.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 0 100%-8 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-center-bottom.png"
-			real_texture_placement="0 0 128 8"
-			texture_size="0 0 128 8"
-			size="8 100%-8 100%-8 100%"
-		/>
-		<!-- Right -->
-		<image texture="global/modern/button/gray-unselected-right-top.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 0 100% 8"
-		/>
-		<image texture="global/modern/button/gray-unselected-right-center.png"
-			real_texture_placement="0 0 8 16"
-			texture_size="0 0 8 16"
-			size="100%-8 8 100% 100%-8"
-		/>
-		<image texture="global/modern/button/gray-unselected-right-bottom.png"
-			real_texture_placement="0 0 8 8"
-			size="100%-8 100%-8 100% 100%"
-		/>
+	<sprite name="ModernTabHorizontalFrame">
+		<image backcolor="255 255 255 40" size="0 0 100% 100%"/>
+		<!-- Left, Right, Bottom Edge -->
+		<image backcolor="gold" size="0 0 2 100%"/>
+		<image backcolor="gold" size="100%-2 0 100% 100%"/>
+		<image backcolor="gold" size="2 100%-2 100%-2 100%"/>
+	</sprite>
+	<!--
+	==========================================
+	- Vertical Tabs -
+	==========================================
+	-->
+	<sprite name="ModernTabVerticalBackground">
+		<image backcolor="50 35 0 120" size="0 0 100% 100%"/>
+		<!-- Left, Top, Right, Bottom Edge -->
+		<image backcolor="gold" size="0 0 1 100%"/>
+		<image backcolor="gold" size="1 0 100%-1 1"/>
+		<image backcolor="gold" size="100%-1 0 100% 100%"/>
+		<image backcolor="gold" size="0 100%-1 100% 100%"/>
+	</sprite>
+
+	<sprite name="ModernTabVerticalForeground">
+		<image backcolor="255 255 255 40" size="0 0 100% 100%"/>
+		<!-- Left, Top, Right, Bottom Edge -->
+		<image backcolor="gold" size="0 0 2 100%"/>
+		<image backcolor="gold" size="2 0 100%-2 2"/>
+		<image backcolor="gold" size="100%-2 0 100% 100%"/>
+		<image backcolor="gold" size="2 100%-2 100%-2 100%"/>
 	</sprite>
 	<!--
 	==========================================
@@ -722,7 +522,35 @@
 	- Misc. -
 	==========================================
 	-->
+	<sprite name = "ModernWindowCornerBottomRight">
+		<!-- background -->
+		<image backcolor = "12 12 12"/>
+		<image texture = "global/modern/background.png"
+			texture_size = "0 0 1024 1024"
+			size = "0 0 100%-12 100%-12"
+		/>
+
+		<!-- shading -->
+		<image texture = "global/modern/shadow-high.png"
+			texture_size = "0 0 1024 256"
+			size = "0 100%-268 100%-12 100%-12"
+		/>
+
+		<!-- bottom edge -->
+		<image texture = "global/modern/border.png"
+			real_texture_placement = "0 0 2048 8"
+			size = "0 100%-16 100%-10 100%-8"
+		/>
+	</sprite>
 	<sprite name = "ModernDropDownArrow">
+		<image texture = "global/modern/dropdown-arrow.png"
+			real_texture_placement = "0 0 16 16"
+			texture_size="0 0 16 16"
+			size="0 6 16 22"
+		/>
+	</sprite>
+	<sprite name = "ModernDropDownArrowDisabled">
+		<effect grayscale=""/>
 		<image texture = "global/modern/dropdown-arrow.png"
 			real_texture_placement = "0 0 16 16"
 			texture_size="0 0 16 16"
@@ -796,6 +624,55 @@
 	<sprite name="ModernGearPressed">
 		<image texture="global/modern/gear-press.png"
 			texture_size="0 0 24 24"
+		/>
+	</sprite>
+	<sprite name="ModernSliderButton">
+		<image texture="global/modern/tick-on.png"
+			real_texture_placement="0 0 27 27"
+			size="50%-10 50%-10 50%+11 50%+11"
+		/>
+	</sprite>
+	<sprite name="ModernSliderLine">
+		<image texture="global/modern/gold-separator.png"
+			real_texture_placement="0 0 806 1"
+			size="0 50%-1 100% 50%+1"
+		/>
+	</sprite>
+
+	<sprite name="ModernArrowDownRed">
+		<effect add_color="123 53 53"/>
+		<image texture="global/modern/arrow_down_128x128.png"
+			size="0 4 100% 100%"
+		/>
+	</sprite>
+	<sprite name="ModernArrowDownRedBright">
+		<effect add_color="166 96 96"/>
+		<image texture="global/modern/arrow_down_128x128.png"
+			size="0 4 100% 100%"
+		/>
+	</sprite>
+	<sprite name="ModernArrowDownGrey">
+		<effect	add_color="35 35 35"/>
+		<image texture="global/modern/arrow_down_128x128.png"
+			size="0 4 100% 100%"
+		/>
+	</sprite>
+	<sprite name="ModernArrowUpRed">
+		<effect add_color="123 53 53"/>
+		<image texture="global/modern/arrow_up_128x128.png"
+			size="0 4 100% 100%"
+		/>
+	</sprite>
+	<sprite name="ModernArrowUpRedBright">
+		<effect add_color="166 96 96"/>
+		<image texture="global/modern/arrow_up_128x128.png"
+			size="0 4 100% 100%"
+		/>
+	</sprite>
+	<sprite name="ModernArrowUpGrey">
+		<effect	add_color="35 35 35"/>
+		<image texture="global/modern/arrow_up_128x128.png"
+			size="0 4 100% 100%"
 		/>
 	</sprite>
 </sprites>

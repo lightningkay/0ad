@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Wildfire Games
+/* Copyright (C) 2010 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -78,7 +78,6 @@ extern void stats_cb_start();
 extern void stats_cb_finish();
 
 // file_cache
-extern void stats_cache(CacheRet cr, size_t size);
 extern void stats_block_cache(CacheRet cr);
 
 // archive builder
@@ -108,7 +107,6 @@ public:
 };
 #define stats_cb_start()
 #define stats_cb_finish()
-#define stats_cache(cr, size)
 #define stats_block_cache(cr)
 #define stats_ab_connection(already_exists)
 #define file_stats_dump()

@@ -9,14 +9,19 @@
     <Classes datatype="tokens">SeaCreature</Classes>
     <Civ>gaia</Civ>
     <GenericName>Cetacean</GenericName>
-    <Tooltip>Kill, then collect food from this bountiful oceanic resource.</Tooltip>
+    <Tooltip>Kill, then gather food from this bountiful oceanic resource.</Tooltip>
     <Icon>gaia/fauna_fish.png</Icon>
   </Identity>
   <Loot>
     <xp>10</xp>
   </Loot>
+  <Obstruction>
+    <BlockMovement>false</BlockMovement>
+    <BlockPathfinding>false</BlockPathfinding>
+  </Obstruction>
   <Position>
     <Floating>true</Floating>
+    <FloatDepth>0.0</FloatDepth>
   </Position>
   <ResourceSupply>
     <KillBeforeGather>true</KillBeforeGather>
@@ -48,9 +53,9 @@
   </UnitAI>
   <UnitMotion>
     <PassabilityClass>ship-small</PassabilityClass>
-    <WalkSpeed>11.5</WalkSpeed>
+    <WalkSpeed op="mul">1.8</WalkSpeed>
     <Run>
-      <Speed>15.0</Speed>
+      <Speed op="mul">1.8</Speed>
     </Run>
   </UnitMotion>
 </Entity>

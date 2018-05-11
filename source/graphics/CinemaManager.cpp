@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -20,10 +20,12 @@
 #include <sstream>
 #include <string>
 
-#include "graphics/Camera.h"
 #include "graphics/CinemaManager.h"
+
+#include "graphics/Camera.h"
 #include "graphics/GameView.h"
 #include "gui/CGUI.h"
+#include "gui/GUIutil.h"
 #include "gui/GUIManager.h"
 #include "gui/IGUIObject.h"
 #include "lib/ogl.h"
@@ -32,10 +34,13 @@
 #include "maths/Vector3D.h"
 #include "maths/Vector4D.h"
 #include "ps/CLogger.h"
+#include "ps/ConfigDB.h"
 #include "ps/CStr.h"
 #include "ps/Game.h"
 #include "ps/GameSetup/Config.h"
 #include "ps/Hotkey.h"
+#include "ps/World.h"
+#include "simulation2/components/ICmpCinemaManager.h"
 #include "simulation2/components/ICmpOverlayRenderer.h"
 #include "simulation2/components/ICmpRangeManager.h"
 #include "simulation2/components/ICmpSelectable.h"
@@ -51,144 +56,135 @@ CCinemaManager::CCinemaManager()
 {
 }
 
-void CCinemaManager::AddPath(const CStrW& name, const CCinemaPath& path)
+void CCinemaManager::Update(const float deltaRealTime) const
 {
-	if (m_CinematicSimulationData.m_Paths.find(name) != m_CinematicSimulationData.m_Paths.end())
-	{
-		LOGWARNING("Path with name '%s' already exists", name.ToUTF8());
-		return;
-	}
-	m_CinematicSimulationData.m_Paths[name] = path;
-}
-
-void CCinemaManager::AddPathToQueue(const CStrW& name)
-{
-	if (!HasPath(name))
-	{
-		LOGWARNING("Path with name '%s' doesn't exist", name.ToUTF8());
-		return;
-	}
-	m_CinematicSimulationData.m_PathQueue.push_back(m_CinematicSimulationData.m_Paths[name]);
-}
-
-void CCinemaManager::ClearQueue()
-{
-	m_CinematicSimulationData.m_PathQueue.clear();
-}
-
-void CCinemaManager::SetAllPaths(const std::map<CStrW, CCinemaPath>& paths)
-{
-	m_CinematicSimulationData.m_Paths = paths;
-}
-
-bool CCinemaManager::HasPath(const CStrW& name) const
-{
-	return m_CinematicSimulationData.m_Paths.find(name) != m_CinematicSimulationData.m_Paths.end();
-}
-
-void CCinemaManager::SetEnabled(bool enabled)
-{
-	// TODO: maybe assert?
-	if (m_CinematicSimulationData.m_PathQueue.empty() && enabled)
-	{
-		enabled = false;
-		m_CinematicSimulationData.m_Paused = true;
-	}
-
-	if (m_CinematicSimulationData.m_Enabled == enabled)
+	CmpPtr<ICmpCinemaManager> cmpCinemaManager(g_Game->GetSimulation2()->GetSimContext().GetSystemEntity());
+	if (!cmpCinemaManager)
 		return;
 
-	// TODO: Enabling/Disabling does not work if the session GUI page is not the top page.
-	// This can happen in various situations, for example when the player wins/looses the game
-	// while the cinematic is running (a message box is the top page in this case). 
-	// It might be better to disable the whole GUI during the cinematic instead of a specific 
-	// GUI object.
-	
-	// sn - session gui object
-	IGUIObject *sn = g_GUI->FindObjectByName("sn");
-	CmpPtr<ICmpRangeManager> cmpRangeManager(g_Game->GetSimulation2()->GetSimContext().GetSystemEntity());
-	CmpPtr<ICmpTerritoryManager> cmpTerritoryManager(g_Game->GetSimulation2()->GetSimContext().GetSystemEntity());
-
-	// GUI visibility
-	if (sn)
-	{
-		if (enabled)
-			sn->SetSetting("hidden", L"true");
-		else
-			sn->SetSetting("hidden", L"false");
-	}
-
-	// Overlay visibility
-	g_Renderer.SetOptionBool(CRenderer::Option::OPT_SILHOUETTES, !enabled);
-	if (cmpRangeManager)
-	{
-		if (enabled)
-			m_CinematicSimulationData.m_MapRevealed = cmpRangeManager->GetLosRevealAll(-1);
-		// TODO: improve m_MapRevealed state and without fade in
-		cmpRangeManager->SetLosRevealAll(-1, enabled);
-	}
-	if (cmpTerritoryManager)
-		cmpTerritoryManager->SetVisibility(!enabled);
-	ICmpSelectable::SetOverrideVisibility(!enabled);
-	ICmpOverlayRenderer::SetOverrideVisibility(!enabled);
-
-	m_CinematicSimulationData.m_Enabled = enabled;
+	if (IsPlaying())
+		cmpCinemaManager->PlayQueue(deltaRealTime, g_Game->GetView()->GetCamera());
 }
 
-void CCinemaManager::Play()
+void CCinemaManager::Render() const
 {
-	m_CinematicSimulationData.m_Paused = false;
-}
-
-void CCinemaManager::Stop()
-{
-	m_CinematicSimulationData.m_PathQueue.clear();
-}
-
-void CCinemaManager::Update(const float deltaRealTime)
-{
-	if (g_Game->m_Paused != m_CinematicSimulationData.m_Paused)
-	{
-		m_CinematicSimulationData.m_Paused = g_Game->m_Paused;
-
-		// sn - session gui object
-		IGUIObject *sn = g_GUI->FindObjectByName("sn");
-
-		// GUI visibility
-		if (sn)
-		{
-			if (m_CinematicSimulationData.m_Paused)
-				sn->SetSetting("hidden", L"false");
-			else
-				sn->SetSetting("hidden", L"true");
-		}
-	}
-
-	if (m_CinematicSimulationData.m_PathQueue.empty() || !m_CinematicSimulationData.m_Enabled || m_CinematicSimulationData.m_Paused)
-		return;
-	
-	if (HotkeyIsPressed("leave"))
-	{
-		// TODO: implement skip
-	}
-	
-	m_CinematicSimulationData.m_PathQueue.front().Play(deltaRealTime);
-}
-
-void CCinemaManager::Render()
-{
-	if (GetEnabled())
-	{
+	if (IsEnabled())
 		DrawBars();
-		return;
-	}
-	
-	if (!m_DrawPaths)
+	else if (m_DrawPaths)
+		DrawPaths();
+}
+
+void CCinemaManager::DrawPaths() const
+{
+	CmpPtr<ICmpCinemaManager> cmpCinemaManager(g_Game->GetSimulation2()->GetSimContext().GetSystemEntity());
+	if (!cmpCinemaManager)
 		return;
 
-	// draw all paths
-	for (const std::pair<CStrW, CCinemaPath>& p : m_CinematicSimulationData.m_Paths)
-		p.second.Draw();
+	for (const std::pair<CStrW, CCinemaPath>& p : cmpCinemaManager->GetPaths())
+	{
+		DrawSpline(p.second, CColor(0.2f, 0.2f, 1.f, 0.9f), 128, true);
+		DrawNodes(p.second, CColor(0.1f, 1.f, 0.f, 1.f));
+
+		if (p.second.GetTargetSpline().GetAllNodes().empty())
+			continue;
+
+		DrawSpline(p.second.GetTargetSpline(), CColor(1.f, 0.3f, 0.4f, 0.9f), 128, true);
+		DrawNodes(p.second.GetTargetSpline(), CColor(1.f, 0.1f, 0.f, 1.f));
+	}
+}
+
+void CCinemaManager::DrawSpline(const RNSpline& spline, const CColor& splineColor, int smoothness, bool lines) const
+{
+	if (spline.GetAllNodes().size() < 2)
+		return;
+	if (spline.GetAllNodes().size() == 2 && lines)
+		smoothness = 2;
+
+	float start = spline.MaxDistance.ToFloat() / smoothness;
+	float time = 0;
+
+#if CONFIG2_GLES
+	#warning TODO : implement CCinemaPath on GLES
+#else
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glColor4f(splineColor.r, splineColor.g, splineColor.b, splineColor.a);
+	if (lines)
+	{
+		glLineWidth(1.8f);
+		glEnable(GL_LINE_SMOOTH);
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i <= smoothness; ++i)
+		{
+			time = start * i / spline.MaxDistance.ToFloat();
+			CVector3D tmp = spline.GetPosition(time);
+			glVertex3f(tmp.X, tmp.Y, tmp.Z);
+		}
+		glEnd();
+
+		// Height indicator
+		if (g_Game && g_Game->GetWorld() && g_Game->GetWorld()->GetTerrain())
+		{
+			glLineWidth(1.1f);
+			glBegin(GL_LINES);
+			for (int i = 0; i <= smoothness; ++i)
+			{
+				time = start * i / spline.MaxDistance.ToFloat();
+				CVector3D tmp = spline.GetPosition(time);
+				float groundY = g_Game->GetWorld()->GetTerrain()->GetExactGroundLevel(tmp.X, tmp.Z);
+				glVertex3f(tmp.X, tmp.Y, tmp.Z);
+				glVertex3f(tmp.X, groundY, tmp.Z);
+			}
+			glEnd();
+		}
+
+		glDisable(GL_LINE_SMOOTH);
+		glLineWidth(1.0f);
+	}
+	else
+	{
+		smoothness /= 2;
+		start = spline.MaxDistance.ToFloat() / smoothness;
+		glEnable(GL_POINT_SMOOTH);
+		glPointSize(3.0f);
+		glBegin(GL_POINTS);
+		for (int i = 0; i <= smoothness; ++i)
+		{
+			time = start * i / spline.MaxDistance.ToFloat();
+			CVector3D tmp = spline.GetPosition(time);
+			glVertex3f(tmp.X, tmp.Y, tmp.Z);
+		}
+		glEnd();
+		glPointSize(1.0f);
+		glDisable(GL_POINT_SMOOTH);
+	}
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+
+#endif
+}
+
+void CCinemaManager::DrawNodes(const RNSpline& spline, const CColor& nodeColor) const
+{
+#if CONFIG2_GLES
+	#warning TODO : implement CCinemaPath on GLES
+#else
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_POINT_SMOOTH);
+	glPointSize(7.0f);
+	glColor4f(nodeColor.r, nodeColor.g, nodeColor.b, nodeColor.a);
+	glBegin(GL_POINTS);
+
+	for (const SplineData& node : spline.GetAllNodes())
+		glVertex3f(node.Position.X.ToFloat(), node.Position.Y.ToFloat(), node.Position.Z.ToFloat());
+
+	glEnd();
+	glPointSize(1.0f);
+	glDisable(GL_POINT_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
+#endif
 }
 
 void CCinemaManager::DrawBars() const
@@ -242,48 +238,15 @@ void CCinemaManager::DrawBars() const
 #endif
 }
 
-InReaction cinema_manager_handler(const SDL_Event_* ev)
+bool CCinemaManager::IsEnabled() const
 {
-	// put any events that must be processed even if inactive here
-	if (!g_Game || !g_Game->IsGameStarted())
-		return IN_PASS;
-
-	CCinemaManager* pCinemaManager = g_Game->GetView()->GetCinema();
-
-	return pCinemaManager->HandleEvent(ev);
-}
-
-InReaction CCinemaManager::HandleEvent(const SDL_Event_* ev)
-{
-	switch (ev->ev.type)
-	{
-	case SDL_MOUSEBUTTONDOWN:
-	case SDL_MOUSEBUTTONUP:
-		if (GetEnabled() && !m_CinematicSimulationData.m_Paused)
-			return IN_HANDLED;
-	default:
-		return IN_PASS;
-	}
-}
-
-bool CCinemaManager::GetEnabled() const
-{
-	return m_CinematicSimulationData.m_Enabled;
+	CmpPtr<ICmpCinemaManager> cmpCinemaManager(g_Game->GetSimulation2()->GetSimContext().GetSystemEntity());
+	return cmpCinemaManager && cmpCinemaManager->IsEnabled();
 }
 
 bool CCinemaManager::IsPlaying() const
 {
-	return !m_CinematicSimulationData.m_Paused;
-}
-
-const std::map<CStrW, CCinemaPath>& CCinemaManager::GetAllPaths()
-{
-	return m_CinematicSimulationData.m_Paths;
-}
-
-CinematicSimulationData* CCinemaManager::GetCinematicSimulationData()
-{
-	return &m_CinematicSimulationData;
+	return IsEnabled() && g_Game && !g_Game->m_Paused;
 }
 
 bool CCinemaManager::GetPathsDrawing() const

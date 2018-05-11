@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@
 
 #include "lib/byte_order.h"
 
-CStdDeserializer::CStdDeserializer(ScriptInterface& scriptInterface, std::istream& stream) :
-	m_ScriptInterface(scriptInterface), m_Stream(stream), 
+CStdDeserializer::CStdDeserializer(const ScriptInterface& scriptInterface, std::istream& stream) :
+	m_ScriptInterface(scriptInterface), m_Stream(stream),
 	m_dummyObject(scriptInterface.GetJSRuntime())
 {
 	JSContext* cx = m_ScriptInterface.GetContext();
@@ -44,7 +44,6 @@ CStdDeserializer::CStdDeserializer(ScriptInterface& scriptInterface, std::istrea
 
 CStdDeserializer::~CStdDeserializer()
 {
-	FreeScriptBackrefs();
 	JS_RemoveExtraGCRootsTracer(m_ScriptInterface.GetJSRuntime(), CStdDeserializer::Trace, this);
 }
 
@@ -104,7 +103,7 @@ void CStdDeserializer::RequireBytesInStream(size_t numBytes)
 	// but that doesn't work (at least on MSVC) since in_avail isn't
 	// guaranteed to return the actual number of bytes available; see e.g.
 	// http://social.msdn.microsoft.com/Forums/en/vclanguage/thread/13009a88-933f-4be7-bf3d-150e425e66a6#70ea562d-8605-4742-8851-1bae431ce6ce
-	
+
 	// Instead we'll just verify that it's not an extremely large number:
 	if (numBytes > 64*MiB)
 		throw PSERROR_Deserialize_OutOfBounds("RequireBytesInStream");
@@ -121,26 +120,9 @@ void CStdDeserializer::GetScriptBackref(u32 tag, JS::MutableHandleObject ret)
 	ret.set(m_ScriptBackrefs[tag]);
 }
 
-u32 CStdDeserializer::ReserveScriptBackref()
-{
-	m_ScriptBackrefs.push_back(JS::Heap<JSObject*>(m_dummyObject));
-	return m_ScriptBackrefs.size()-1;
-}
-
-void CStdDeserializer::SetReservedScriptBackref(u32 tag, JS::HandleObject obj)
-{
-	ENSURE(m_ScriptBackrefs[tag] == m_dummyObject);
-	m_ScriptBackrefs[tag] = JS::Heap<JSObject*>(obj);
-}
-
-void CStdDeserializer::FreeScriptBackrefs()
-{
-	m_ScriptBackrefs.clear();
-}
-
 ////////////////////////////////////////////////////////////////
 
-jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject appendParent)
+JS::Value CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject appendParent)
 {
 	JSContext* cx = m_ScriptInterface.GetContext();
 	JSAutoRequest rq(cx);
@@ -202,6 +184,8 @@ jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject
 
 			if (hasCustomDeserialize)
 			{
+				AddScriptBackref(obj);
+
 				JS::RootedValue serialize(cx);
 				if (!JS_GetProperty(cx, obj, "Serialize", &serialize))
 					throw PSERROR_Serialize_ScriptError("JS_GetProperty failed");
@@ -214,9 +198,7 @@ jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject
 
 				JS::RootedValue objVal(cx, JS::ObjectValue(*obj));
 				m_ScriptInterface.CallFunctionVoid(objVal, "Deserialize", data);
-				
-				AddScriptBackref(obj);
-				
+
 				return JS::ObjectValue(*obj);
 			}
 		}
@@ -352,7 +334,8 @@ jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject
 		NumberU32_Unbounded("length", length);
 
 		// To match the serializer order, we reserve the typed array's backref tag here
-		u32 arrayTag = ReserveScriptBackref();
+		JS::RootedObject arrayObj(cx);
+		AddScriptBackref(arrayObj);
 
 		// Get buffer object
 		JS::RootedValue bufferVal(cx, ReadScriptVal("buffer", JS::NullPtr()));
@@ -364,7 +347,6 @@ jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject
 		if (!JS_IsArrayBufferObject(bufferObj))
 			throw PSERROR_Deserialize_ScriptError("js_IsArrayBuffer failed");
 
-		JS::RootedObject arrayObj(cx);
 		switch(arrayType)
 		{
 		case SCRIPT_TYPED_ARRAY_INT8:
@@ -400,8 +382,6 @@ jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject
 		if (!arrayObj)
 			throw PSERROR_Deserialize_ScriptError("js_CreateTypedArrayWithBuffer failed");
 
-		SetReservedScriptBackref(arrayTag, arrayObj);
-
 		return JS::ObjectValue(*arrayObj);
 	}
 	case SCRIPT_TYPE_ARRAY_BUFFER:
@@ -423,38 +403,37 @@ jsval CStdDeserializer::ReadScriptVal(const char* UNUSED(name), JS::HandleObject
 	case SCRIPT_TYPE_OBJECT_MAP:
 	{
 		JS::RootedObject obj(cx, JS::NewMapObject(cx));
+		AddScriptBackref(obj);
+
 		u32 mapSize;
 		NumberU32_Unbounded("map size", mapSize);
 
-		// To match the serializer order, we reserve the map's backref tag here
-		u32 mapTag = ReserveScriptBackref();
-		
 		for (u32 i=0; i<mapSize; ++i)
 		{
 			JS::RootedValue key(cx, ReadScriptVal("map key", JS::NullPtr()));
 			JS::RootedValue value(cx, ReadScriptVal("map value", JS::NullPtr()));
 			JS::MapSet(cx, obj, key, value);
 		}
-		SetReservedScriptBackref(mapTag, obj);
+
 		return JS::ObjectValue(*obj);
 	}
 	case SCRIPT_TYPE_OBJECT_SET:
 	{
-		u32 setSize;
-		NumberU32_Unbounded("set size", setSize);
 		JS::RootedValue setVal(cx);
 		m_ScriptInterface.Eval("(new Set())", &setVal);
 
-		// To match the serializer order, we reserve the set's backref tag here
-		u32 setTag = ReserveScriptBackref();
+		JS::RootedObject setObj(cx, &setVal.toObject());
+		AddScriptBackref(setObj);
+
+		u32 setSize;
+		NumberU32_Unbounded("set size", setSize);
 
 		for (u32 i=0; i<setSize; ++i)
 		{
 			JS::RootedValue value(cx, ReadScriptVal("set value", JS::NullPtr()));
 			m_ScriptInterface.CallFunctionVoid(setVal, "add", value);
 		}
-		JS::RootedObject setObj(cx, &setVal.toObject());
-		SetReservedScriptBackref(setTag, setObj);
+
 		return setVal;
 	}
 	default:
@@ -486,6 +465,9 @@ void CStdDeserializer::ScriptString(const char* name, JS::MutableHandleString ou
 #error TODO: probably need to convert JS strings from little-endian
 #endif
 
+	JSContext* cx = m_ScriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
 	bool isLatin1;
 	Bool("isLatin1", isLatin1);
 	if (isLatin1)
@@ -493,7 +475,7 @@ void CStdDeserializer::ScriptString(const char* name, JS::MutableHandleString ou
 		std::vector<JS::Latin1Char> str;
 		ReadStringLatin1(name, str);
 
-		out.set(JS_NewStringCopyN(m_ScriptInterface.GetContext(), (const char*)str.data(), str.size()));
+		out.set(JS_NewStringCopyN(cx, (const char*)str.data(), str.size()));
 		if (!out)
 			throw PSERROR_Deserialize_ScriptError("JS_NewStringCopyN failed");
 	}
@@ -502,7 +484,7 @@ void CStdDeserializer::ScriptString(const char* name, JS::MutableHandleString ou
 		utf16string str;
 		ReadStringUTF16(name, str);
 
-		out.set(JS_NewUCStringCopyN(m_ScriptInterface.GetContext(), (const char16_t*)str.data(), str.length()));
+		out.set(JS_NewUCStringCopyN(cx, (const char16_t*)str.data(), str.length()));
 		if (!out)
 			throw PSERROR_Deserialize_ScriptError("JS_NewUCStringCopyN failed");
 	}
@@ -517,7 +499,7 @@ void CStdDeserializer::ScriptObjectAppend(const char* name, JS::HandleValue objV
 {
 	JSContext* cx = m_ScriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	if (!objVal.isObject())
 		throw PSERROR_Deserialize_ScriptError();
 

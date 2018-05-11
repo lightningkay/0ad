@@ -1,24 +1,37 @@
-RMS.LoadLibrary("rmgen");
-RMS.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmgen");
+Engine.LoadLibrary("rmgen-common");
+Engine.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmbiome");
 
-InitMap();
+setSelectedBiome();
 
-randomizeBiome();
-initMapSettings();
+const heightLand = 1;
+const heightBarrier = 30;
+
+var g_Map = new RandomMap(heightLand, g_Terrains.mainTerrain);
+
 initTileClasses();
 
-resetTerrain(g_Terrains.mainTerrain, g_TileClasses.land, 1);
-RMS.SetProgress(10);
+const mapCenter = g_Map.getCenter();
 
-addBases("line", 0.2, 0.08);
-RMS.SetProgress(20);
+createArea(
+	new MapBoundsPlacer(),
+	new TileClassPainter(g_TileClasses.land));
+
+Engine.SetProgress(10);
+
+const teamsArray = getTeamsArray();
+const startAngle = randomAngle();
+createBasesByPattern("line", fractionToTiles(0.2), fractionToTiles(0.08), startAngle);
+Engine.SetProgress(20);
 
 placeBarriers();
-RMS.SetProgress(40);
+Engine.SetProgress(40);
 
 addElements(shuffleArray([
 	{
 		"func": addBluffs,
+		"baseHeight": heightLand,
 		"avoid": [
 			g_TileClasses.bluff, 20,
 			g_TileClasses.hill, 5,
@@ -66,7 +79,7 @@ addElements(shuffleArray([
 		"amounts": ["few"]
 	}
 ]));
-RMS.SetProgress(50);
+Engine.SetProgress(50);
 
 addElements([
 	{
@@ -101,7 +114,7 @@ addElements([
 		"amounts": ["normal"]
 	}
 ]);
-RMS.SetProgress(60);
+Engine.SetProgress(60);
 
 addElements(shuffleArray([
 	{
@@ -159,7 +172,7 @@ addElements(shuffleArray([
 		"amounts": ["few", "normal", "many", "tons"]
 	}
 ]));
-RMS.SetProgress(80);
+Engine.SetProgress(80);
 
 addElements(shuffleArray([
 	{
@@ -217,47 +230,53 @@ addElements(shuffleArray([
 		"amounts": g_AllAmounts
 	}
 ]));
-RMS.SetProgress(90);
+Engine.SetProgress(90);
 
-ExportMap();
+placePlayersNomad(
+	g_TileClasses.player,
+	avoidClasses(
+		g_TileClasses.bluff, 4,
+		g_TileClasses.water, 4,
+		g_TileClasses.spine, 4,
+		g_TileClasses.plateau, 4,
+		g_TileClasses.forest, 1,
+		g_TileClasses.metal, 4,
+		g_TileClasses.rock, 4,
+		g_TileClasses.mountain, 4,
+		g_TileClasses.animals, 2));
 
-// place the mountainous barriers between the teams
+g_Map.ExportMap();
+
 function placeBarriers()
 {
 	var spineTerrain = g_Terrains.dirt;
 
-	if (g_MapInfo.biome == g_BiomeSnowy)
+	if (currentBiome() == "generic/snowy")
 		spineTerrain = g_Terrains.tier1Terrain;
 
-	if (g_MapInfo.biome == g_BiomeAlpine || g_MapInfo.biome == g_BiomeSavanna)
+	if (currentBiome() == "generic/alpine" || currentBiome() == "generic/savanna")
 		spineTerrain = g_Terrains.tier2Terrain;
 
-	if (g_MapInfo.biome == g_BiomeAutumn)
+	if (currentBiome() == "generic/autumn")
 		spineTerrain = g_Terrains.tier4Terrain;
 
-	// create mountain ranges
-	for (var i = 0; i < g_MapInfo.teams.length; ++i)
+	let spineCount = isNomad() ? randIntInclusive(1, 4) : teamsArray.length;
+
+	for (let i = 0; i < spineCount; ++i)
 	{
-		var tang = g_MapInfo.startAngle + (i + 0.5) * TWO_PI / g_MapInfo.teams.length;
-
-		var fx = fractionToTiles(0.5);
-		var fz = fractionToTiles(0.5);
-
-		var mStartCo = 0.07;
-		var mStopCo = 0.42;
 		var mSize = 8;
 		var mWaviness = 0.6;
 		var mOffset = 0.5;
 		var mTaper = -1.5;
 
-		if (g_MapInfo.teams.length > 3 || g_MapInfo.mapSize <= 192)
+		if (spineCount > 3 || g_Map.getSize() <= 192)
 		{
 			mWaviness = 0.2;
 			mOffset = 0.2;
 			mTaper = -1;
 		}
 
-		if (g_MapInfo.teams.length >= 5)
+		if (spineCount >= 5)
 		{
 			mSize = 4;
 			mWaviness = 0.2;
@@ -265,11 +284,17 @@ function placeBarriers()
 			mTaper = -0.7;
 		}
 
-		// place barrier
-		var placer = new PathPlacer(fractionToTiles(0.5 + mStartCo * cos(tang)), fractionToTiles(0.5 + mStartCo * sin(tang)), fractionToTiles(0.5 + mStopCo * cos(tang)), fractionToTiles(0.5 + mStopCo * sin(tang)), scaleByMapSize(14, mSize), mWaviness, 0.1, mOffset, mTaper);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, spineTerrain], [2]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 30, 2);
-		createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.spine)], avoidClasses(g_TileClasses.player, 5, g_TileClasses.baseResource, 5));
+		let angle = startAngle + (i + 0.5) * 2 * Math.PI / spineCount;
+		let start = Vector2D.add(mapCenter, new Vector2D(fractionToTiles(0.075), 0).rotate(-angle));
+		let end = Vector2D.add(mapCenter, new Vector2D(fractionToTiles(0.42), 0).rotate(-angle));
+		createArea(
+			new PathPlacer(start, end, scaleByMapSize(14, mSize), mWaviness, 0.1, mOffset, mTaper),
+			[
+				new LayeredPainter([g_Terrains.cliff, spineTerrain], [2]),
+				new SmoothElevationPainter(ELEVATION_SET, heightBarrier, 2),
+				new TileClassPainter(g_TileClasses.spine)
+			],
+			avoidClasses(g_TileClasses.player, 5, g_TileClasses.baseResource, 5));
 	}
 
 	addElements([

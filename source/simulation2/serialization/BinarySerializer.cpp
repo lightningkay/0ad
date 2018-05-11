@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -54,8 +54,8 @@ static u8 GetArrayType(js::Scalar::Type arrayType)
 	}
 }
 
-CBinarySerializerScriptImpl::CBinarySerializerScriptImpl(ScriptInterface& scriptInterface, ISerializer& serializer) :
-	m_ScriptInterface(scriptInterface), m_Serializer(serializer), m_ScriptBackrefs(scriptInterface.GetRuntime()), 
+CBinarySerializerScriptImpl::CBinarySerializerScriptImpl(const ScriptInterface& scriptInterface, ISerializer& serializer) :
+	m_ScriptInterface(scriptInterface), m_Serializer(serializer), m_ScriptBackrefs(scriptInterface.GetRuntime()),
 	m_SerializablePrototypes(new ObjectIdCache<std::wstring>(scriptInterface.GetRuntime())), m_ScriptBackrefsNext(1)
 {
 	m_ScriptBackrefs.init();
@@ -236,7 +236,7 @@ void CBinarySerializerScriptImpl::HandleScriptVal(JS::HandleValue val)
 			{
 				m_Serializer.NumberU8_Unbounded("type", SCRIPT_TYPE_OBJECT_MAP);
 				m_Serializer.NumberU32_Unbounded("map size", JS::MapSize(cx, obj));
-				
+
 				JS::RootedValue keyValueIterator(cx);
 				if (!JS::MapEntries(cx, obj, &keyValueIterator))
 					throw PSERROR_Serialize_ScriptError("JS::MapEntries failed");
@@ -260,7 +260,7 @@ void CBinarySerializerScriptImpl::HandleScriptVal(JS::HandleValue val)
 					JS::RootedValue value(cx);
 					ENSURE(JS_GetElement(cx, keyValuePairObj, 0, &key));
 					ENSURE(JS_GetElement(cx, keyValuePairObj, 1, &value));
-					
+
 					HandleScriptVal(key);
 					HandleScriptVal(value);
 				}
@@ -383,13 +383,13 @@ void CBinarySerializerScriptImpl::HandleScriptVal(JS::HandleValue val)
 		// To reduce the size of the serialized data, we handle integers and doubles separately.
 		// We can't check for val.isInt32 and val.isDouble directly, because integer numbers are not guaranteed
 		// to be represented as integers. A number like 33 could be stored as integer on the computer of one player
-		// and as double on the other player's computer. That would cause out of sync errors in multiplayer games because 
+		// and as double on the other player's computer. That would cause out of sync errors in multiplayer games because
 		// their binary representation and thus the hash would be different.
-		
+
 		double d;
 		d = val.toNumber();
 		i32 integer;
-		
+
 		if (JS_DoubleIsInt32(d, &integer))
 		{
 			m_Serializer.NumberU8_Unbounded("type", SCRIPT_TYPE_INT);
@@ -465,7 +465,10 @@ u32 CBinarySerializerScriptImpl::GetScriptBackrefTag(JS::HandleObject obj)
 	if (m_ScriptBackrefs.find(obj, tag))
 		return tag;
 
-	m_ScriptBackrefs.add(m_ScriptInterface.GetContext(), obj, m_ScriptBackrefsNext);
+	JSContext* cx = m_ScriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	m_ScriptBackrefs.add(cx, obj, m_ScriptBackrefsNext);
 
 	m_ScriptBackrefsNext++;
 	// Return a non-tag number so callers know they need to serialize the object

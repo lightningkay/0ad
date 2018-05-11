@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -22,11 +22,13 @@
 #include "maths/Vector2D.h"
 #include "maths/Vector3D.h"
 #include "maths/FixedVector3D.h"
+#include "ps/CStrIntern.h"
 #include "ps/Shapes.h"
 
 class CTerrain;
 class CSimContext;
 class CTexturedLineRData;
+struct SOverlayDescriptor;
 
 /**
  * Line-based overlay, with world-space coordinates, rendered in the world
@@ -52,7 +54,7 @@ struct SOverlayLine
 /**
  * Textured line overlay, with world-space coordinates, rendered in the world onto the terrain.
  * Designed for relatively static textured lines, i.e. territory borders, originally.
- * 
+ *
  * Once submitted for rendering, instances must not be copied afterwards. The reason is that they
  * are assigned rendering data that is unique to the submitted instance, and non-transferable to
  * any copies that would otherwise be made. Amongst others, this restraint includes that they must
@@ -104,11 +106,11 @@ struct SOverlayTexturedLine
 	const CSimContext* m_SimContext;
 
 	/**
-	 * Cached renderer data, because expensive to compute. Allocated by the renderer when necessary 
+	 * Cached renderer data, because expensive to compute. Allocated by the renderer when necessary
 	 * for rendering purposes.
-	 * 
-	 * Note: the rendering data may be shared between copies of this object to prevent having to 
-	 * recompute it, while at the same time maintaining copyability of this object (see also docs on 
+	 *
+	 * Note: the rendering data may be shared between copies of this object to prevent having to
+	 * recompute it, while at the same time maintaining copyability of this object (see also docs on
 	 * CTexturedLineRData).
 	 */
 	shared_ptr<CTexturedLineRData> m_RenderData;
@@ -119,6 +121,11 @@ struct SOverlayTexturedLine
 	 * default value is returned.
 	 */
 	static LineCapType StrToLineCapType(const std::wstring& str);
+
+	/**
+	 * Creates the texture specified by the given overlay descriptor and assigns it to this overlay.
+	 */
+	void CreateOverlayTexture(const SOverlayDescriptor* overlayDescriptor);
 
 	void PushCoords(const float x, const float z) { m_Coords.push_back(x); m_Coords.push_back(z); }
 	void PushCoords(const CVector2D& v) { PushCoords(v.X, v.Y); }
@@ -161,6 +168,27 @@ struct SOverlaySphere
 	CVector3D m_Center;
 	float m_Radius;
 	CColor m_Color;
+};
+
+enum EOverlayType
+{
+	/// A single textured quad overlay, intended for entities that move around much, like units (e.g. foot soldiers, etc).
+	DYNAMIC_QUAD,
+	/// A more complex textured line overlay, composed of several textured line segments.
+	STATIC_OUTLINE,
+};
+
+struct SOverlayDescriptor
+{
+	EOverlayType m_Type;
+	CStrIntern m_QuadTexture;
+	CStrIntern m_QuadTextureMask;
+	CStrIntern m_LineTexture;
+	CStrIntern m_LineTextureMask;
+	float m_LineThickness;
+	int m_Radius;
+
+	SOverlayDescriptor() : m_LineThickness(0) { }
 };
 
 // TODO: OverlayText

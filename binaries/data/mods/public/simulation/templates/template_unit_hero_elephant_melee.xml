@@ -3,29 +3,17 @@
   <Armour>
     <Hack>10</Hack>
     <Pierce>10</Pierce>
-    <Crush>12</Crush>
+    <Crush>25</Crush>
   </Armour>
   <Attack replace="">
     <Melee>
-      <Hack>17.5</Hack>
+      <Hack>20.0</Hack>
       <Pierce>0</Pierce>
-      <Crush>25.0</Crush>
+      <Crush>50.0</Crush>
       <MaxRange>8.0</MaxRange>
+      <PrepareTime>500</PrepareTime>
       <RepeatTime>1000</RepeatTime>
-      <Bonuses>
-        <BonusStructures>
-          <Classes>Structure</Classes>
-          <Multiplier>1.5</Multiplier>
-        </BonusStructures>
-        <BonusCav>
-          <Classes>Cavalry</Classes>
-          <Multiplier>2</Multiplier>
-        </BonusCav>
-        <BonusGates>
-          <Classes>Gates</Classes>
-          <Multiplier>1.5</Multiplier>
-        </BonusGates>
-      </Bonuses>
+      <PreferredClasses datatype="tokens">Structure</PreferredClasses>
     </Melee>
   </Attack>
   <Cost>
@@ -44,17 +32,16 @@
     <Max>2000</Max>
   </Health>
   <Identity>
-    <Classes datatype="tokens">Elephant</Classes>
-    <VisibleClasses datatype="tokens">Melee</VisibleClasses>
+    <VisibleClasses datatype="tokens">Elephant Melee</VisibleClasses>
   </Identity>
   <Sound>
     <SoundGroups>
       <select>actor/fauna/animal/elephant_select.xml</select>
       <order_walk>actor/fauna/animal/elephant_order.xml</order_walk>
-      <order_attack>actor/fauna/animal/elephant_attack.xml</order_attack>
+      <order_attack>actor/fauna/animal/elephant_attack_order.xml</order_attack>
       <order_gather>actor/fauna/animal/elephant_order.xml</order_gather>
       <order_garrison>actor/fauna/animal/elephant_order.xml</order_garrison>
-      <attack>actor/fauna/animal/elephant_attack.xml</attack>
+      <attack_melee>actor/fauna/animal/elephant_attack.xml</attack_melee>
       <walk>actor/mounted/movement/walk.xml</walk>
       <run>actor/mounted/movement/walk.xml</run>
       <death>actor/fauna/animal/elephant_death.xml</death>
@@ -62,11 +49,10 @@
     </SoundGroups>
   </Sound>
   <UnitMotion>
-    <WalkSpeed>8.5</WalkSpeed>
+    <PassabilityClass>large</PassabilityClass>
+    <WalkSpeed op="mul">0.95</WalkSpeed>
     <Run>
-      <Speed>14.0</Speed>
-      <Range>1000.0</Range>
-      <RangeMin>10.0</RangeMin>
+      <Speed op="mul">0.95</Speed>
     </Run>
   </UnitMotion>
   <Vision>

@@ -1,4 +1,33 @@
 /**
+ * Loads history and gameplay data of all civs.
+ *
+ * @param selectableOnly {boolean} - Only load civs that can be selected
+ *        in the gamesetup. Scenario maps might set non-selectable civs.
+ */
+function loadCivFiles(selectableOnly)
+{
+	let propertyNames = [
+		"Code", "Culture", "Name", "Emblem", "History", "Music", "Factions", "CivBonuses", "TeamBonuses",
+		"Structures", "StartEntities", "Formations", "AINames", "SkirmishReplacements", "SelectableInGameSetup"];
+
+	let civData = {};
+
+	for (let filename of Engine.ListDirectoryFiles("simulation/data/civs/", "*.json", false))
+	{
+		let data = Engine.ReadJSONFile(filename);
+
+		for (let prop of propertyNames)
+			if (data[prop] === undefined)
+				throw new Error(filename + " doesn't contain " + prop);
+
+		if (!selectableOnly || data.SelectableInGameSetup)
+			civData[data.Code] = data;
+	}
+
+	return civData;
+}
+
+/**
  * Gets an array of all classes for this identity template
  */
 function GetIdentityClasses(template)
@@ -27,34 +56,35 @@ function GetVisibleIdentityClasses(template)
 }
 
 /**
- * Check if the classes given in the identity template
- * match a list of classes
- * @param classes List of the classes to check against
- * @param match Either a string in the form
+ * Check if a given list of classes matches another list of classes.
+ * Useful f.e. for checking identity classes.
+ *
+ * @param classes - List of the classes to check against.
+ * @param match - Either a string in the form
  *     "Class1 Class2+Class3"
  * where spaces are handled as OR and '+'-signs as AND,
- * and ! is handled as NOT, thus Class1+!Class2 = Class1 AND NOT Class2
+ * and ! is handled as NOT, thus Class1+!Class2 = Class1 AND NOT Class2.
  * Or a list in the form
  *     [["Class1"], ["Class2", "Class3"]]
- * where the outer list is combined as OR, and the inner lists are AND-ed
+ * where the outer list is combined as OR, and the inner lists are AND-ed.
  * Or a hybrid format containing a list of strings, where the list is
- * combined as OR, and the strings are split by space and '+' and AND-ed
+ * combined as OR, and the strings are split by space and '+' and AND-ed.
  *
  * @return undefined if there are no classes or no match object
  * true if the the logical combination in the match object matches the classes
- * false otherwise
+ * false otherwise.
  */
 function MatchesClassList(classes, match)
 {
 	if (!match || !classes)
 		return undefined;
-	// transform the string to an array
+	// Transform the string to an array
 	if (typeof match == "string")
 		match = match.split(/\s+/);
 
-	for (var sublist of match)
+	for (let sublist of match)
 	{
-		// if the elements are still strings, split them by space or by '+'
+		// If the elements are still strings, split them by space or by '+'
 		if (typeof sublist == "string")
 			sublist = sublist.split(/[+\s]+/);
 		if (sublist.every(c => (c[0] == "!" && classes.indexOf(c.substr(1)) == -1)
@@ -66,40 +96,78 @@ function MatchesClassList(classes, match)
 }
 
 /**
+ * Gets the value originating at the value_path as-is, with no modifiers applied.
+ *
+ * @param {object} template - A valid template as returned from a template loader.
+ * @param {string} value_path - Route to value within the xml template structure.
+ * @return {number}
+ */
+function GetBaseTemplateDataValue(template, value_path)
+{
+	let current_value = template;
+	for (let property of value_path.split("/"))
+		current_value = current_value[property] || 0;
+	return +current_value;
+}
+
+/**
+ * Gets the value originating at the value_path with the modifiers dictated by the mod_key applied.
+ *
+ * @param {object} template - A valid template as returned from a template loader.
+ * @param {string} value_path - Route to value within the xml template structure.
+ * @param {string} mod_key - Tech modification key, if different from value_path.
+ * @param {number} player - Optional player id.
+ * @param {object} modifiers - Value modifiers from auto-researched techs, unit upgrades,
+ *                             etc. Optional as only used if no player id provided.
+ * @return {number} Modifier altered value.
+ */
+function GetModifiedTemplateDataValue(template, value_path, mod_key, player, modifiers={})
+{
+	let current_value = GetBaseTemplateDataValue(template, value_path);
+	mod_key = mod_key || value_path;
+
+	if (player)
+		current_value = ApplyValueModificationsToTemplate(mod_key, current_value, player, template);
+	else if (modifiers)
+		current_value = GetTechModifiedProperty(modifiers, GetIdentityClasses(template.Identity), mod_key, current_value);
+
+	// Using .toFixed() to get around spidermonkey's treatment of numbers (3 * 1.1 = 3.3000000000000003 for instance).
+	return +current_value.toFixed(8);
+}
+
+/**
  * Get information about a template with or without technology modifications.
  *
  * NOTICE: The data returned here should have the same structure as
  * the object returned by GetEntityState and GetExtendedEntityState!
  *
- * @param template A valid template as returned by the template loader.
- * @param player An optional player id to get the technology modifications
- *               of properties.
- * @param auraTemplates An object in the form of {key: {auraName: "", auraDescription: ""}}
+ * @param {object} template - A valid template as returned by the template loader.
+ * @param {number} player - An optional player id to get the technology modifications
+ *                          of properties.
+ * @param {object} auraTemplates - In the form of { key: { "auraName": "", "auraDescription": "" } }.
+ * @param {object} resources - An instance of the Resources prototype.
+ * @param {object} damageTypes - An instance of the DamageTypes prototype.
+ * @param {object} modifiers - Modifications from auto-researched techs, unit upgrades
+ *                             etc. Optional as only used if there's no player
+ *                             id provided.
  */
-function GetTemplateDataHelper(template, player, auraTemplates)
+function GetTemplateDataHelper(template, player, auraTemplates, resources, damageTypes, modifiers={})
 {
-	// Return data either from template (in tech tree) or sim state (ingame)
-	let getEntityValue = function(tech_type) {
-
-		let current_value = template;
-		for (let property of tech_type.split("/"))
-			current_value = current_value[property] || 0;
-		current_value = +current_value;
-
-		if (!player)
-			return current_value;
-
-		return ApplyValueModificationsToTemplate(tech_type, current_value, player, template);
+	// Return data either from template (in tech tree) or sim state (ingame).
+	// @param {string} value_path - Route to the value within the template.
+	// @param {string} mod_key - Modification key, if not the same as the value_path.
+	let getEntityValue = function(value_path, mod_key) {
+		return GetModifiedTemplateDataValue(template, value_path, mod_key, player, modifiers);
 	};
 
 	let ret = {};
 
 	if (template.Armour)
-		ret.armour = {
-			"hack": getEntityValue("Armour/Hack"),
-			"pierce": getEntityValue("Armour/Pierce"),
-			"crush": getEntityValue("Armour/Crush")
-		};
+	{
+		ret.armour = {};
+		for (let damageType of damageTypes.GetTypes())
+			ret.armour[damageType] = getEntityValue("Armour/" + damageType);
+	}
 
 	if (template.Attack)
 	{
@@ -115,47 +183,61 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 					"value": getAttackStat("Value")
 				};
 			else
+			{
 				ret.attack[type] = {
-					"hack": getAttackStat("Hack"),
-					"pierce": getAttackStat("Pierce"),
-					"crush": getAttackStat("Crush"),
 					"minRange": getAttackStat("MinRange"),
 					"maxRange": getAttackStat("MaxRange"),
 					"elevationBonus": getAttackStat("ElevationBonus")
 				};
+				for (let damageType of damageTypes.GetTypes())
+					ret.attack[type][damageType] = getAttackStat(damageType);
 
+				ret.attack[type].elevationAdaptedRange = Math.sqrt(ret.attack[type].maxRange *
+					(2 * ret.attack[type].elevationBonus + ret.attack[type].maxRange));
+			}
 			ret.attack[type].repeatTime = getAttackStat("RepeatTime");
 
 			if (template.Attack[type].Splash)
+			{
 				ret.attack[type].splash = {
-					"hack": getAttackStat("Splash/Hack"),
-					"pierce": getAttackStat("Splash/Pierce"),
-					"crush": getAttackStat("Splash/Crush"),
 					// true if undefined
-					"friendlyFire": template.Attack[type].Splash.FriendlyFire != "false"
+					"friendlyFire": template.Attack[type].Splash.FriendlyFire != "false",
+					"shape": template.Attack[type].Splash.Shape
 				};
+				for (let damageType of damageTypes.GetTypes())
+					ret.attack[type].splash[damageType] = getAttackStat("Splash/" + damageType);
+			}
 		}
 	}
 
-	if (template.Auras)
+	if (template.DeathDamage)
+	{
+		ret.deathDamage = {
+			"friendlyFire": template.DeathDamage.FriendlyFire != "false"
+		};
+		for (let damageType of damageTypes.GetTypes())
+			ret.deathDamage[damageType] = getEntityValue("DeathDamage/" + damageType);
+	}
+
+	if (template.Auras && auraTemplates)
 	{
 		ret.auras = {};
 		for (let auraID of template.Auras._string.split(/\s+/))
 		{
 			let aura = auraTemplates[auraID];
-			if (aura.auraName)
-				ret.auras[auraID] = {
+			ret.auras[auraID] = {
 					"name": aura.auraName,
-					"description": aura.auraDescription || null
+					"description": aura.auraDescription || null,
+					"radius": aura.radius || null
 				};
 		}
 	}
 
 	if (template.BuildingAI)
 		ret.buildingAI = {
-			"defaultArrowCount": getEntityValue("BuildingAI/DefaultArrowCount"),
+			"defaultArrowCount": Math.round(getEntityValue("BuildingAI/DefaultArrowCount")),
 			"garrisonArrowMultiplier": getEntityValue("BuildingAI/GarrisonArrowMultiplier"),
-			"maxArrowCount": getEntityValue("BuildingAI/MaxArrowCount")
+			"maxArrowCount": Math.round(getEntityValue("BuildingAI/MaxArrowCount"))
 		};
 
 	if (template.BuildRestrictions)
@@ -175,10 +257,10 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 			};
 
 			if (template.BuildRestrictions.Distance.MinDistance)
-				ret.buildRestrictions.distance.min = +template.BuildRestrictions.Distance.MinDistance;
+				ret.buildRestrictions.distance.min = getEntityValue("BuildRestrictions/Distance/MinDistance");
 
 			if (template.BuildRestrictions.Distance.MaxDistance)
-				ret.buildRestrictions.distance.max = +template.BuildRestrictions.Distance.MaxDistance;
+				ret.buildRestrictions.distance.max = getEntityValue("BuildRestrictions/Distance/MaxDistance");
 		}
 	}
 
@@ -190,17 +272,8 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 	if (template.Cost)
 	{
 		ret.cost = {};
-		if (template.Cost.Resources.food)
-			ret.cost.food = getEntityValue("Cost/Resources/food");
-
-		if (template.Cost.Resources.wood)
-			ret.cost.wood = getEntityValue("Cost/Resources/wood");
-
-		if (template.Cost.Resources.stone)
-			ret.cost.stone = getEntityValue("Cost/Resources/stone");
-
-		if (template.Cost.Resources.metal)
-			ret.cost.metal = getEntityValue("Cost/Resources/metal");
+		for (let resCode in template.Cost.Resources)
+			ret.cost[resCode] = getEntityValue("Cost/Resources/" + resCode);
 
 		if (template.Cost.Population)
 			ret.cost.population = getEntityValue("Cost/Population");
@@ -234,7 +307,7 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 		};
 
 		if (template.GarrisonHolder.Max)
-			ret.garrisonHolder.max = getEntityValue("GarrisonHolder/Max");
+			ret.garrisonHolder.capacity = getEntityValue("GarrisonHolder/Max");
 	}
 
 	if (template.Heal)
@@ -243,6 +316,31 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 			"range": getEntityValue("Heal/Range"),
 			"rate": getEntityValue("Heal/Rate")
 		};
+
+	if (template.ResourceGatherer)
+	{
+		ret.resourceGatherRates = {};
+		let baseSpeed = getEntityValue("ResourceGatherer/BaseSpeed");
+		for (let type in template.ResourceGatherer.Rates)
+			ret.resourceGatherRates[type] = getEntityValue("ResourceGatherer/Rates/"+ type) * baseSpeed;
+	}
+
+	if (template.ResourceTrickle)
+	{
+		ret.resourceTrickle = {
+			"interval": +template.ResourceTrickle.Interval,
+			"rates": {}
+		};
+		for (let type in template.ResourceTrickle.Rates)
+			ret.resourceTrickle.rates[type] = getEntityValue("ResourceTrickle/Rates/" + type);
+	}
+
+	if (template.Loot)
+	{
+		ret.loot = {};
+		for (let type in template.Loot)
+			ret.loot[type] = getEntityValue("Loot/"+ type);
+	}
 
 	if (template.Obstruction)
 	{
@@ -289,9 +387,10 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 			"generic": template.Identity.GenericName
 		};
 		ret.icon = template.Identity.Icon;
-		ret.tooltip =  template.Identity.Tooltip;
+		ret.tooltip = template.Identity.Tooltip;
 		ret.requiredTechnology = template.Identity.RequiredTechnology;
 		ret.visibleIdentityClasses = GetVisibleIdentityClasses(template.Identity);
+		ret.nativeCiv = template.Identity.Civ;
 	}
 
 	if (template.UnitMotion)
@@ -301,6 +400,30 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 		};
 		if (template.UnitMotion.Run)
 			ret.speed.run = getEntityValue("UnitMotion/Run/Speed");
+	}
+
+	if (template.Upgrade)
+	{
+		ret.upgrades = [];
+		for (let upgradeName in template.Upgrade)
+		{
+			let upgrade = template.Upgrade[upgradeName];
+
+			let cost = {};
+			if (upgrade.Cost)
+				for (let res in upgrade.Cost)
+					cost[res] = getEntityValue("Upgrade/" + upgradeName + "/Cost/" + res, "Upgrade/Cost/" + res);
+			if (upgrade.Time)
+				cost.time = getEntityValue("Upgrade/" + upgradeName + "/Time", "Upgrade/Time");
+
+			ret.upgrades.push({
+				"entity": upgrade.Entity,
+				"tooltip": upgrade.Tooltip,
+				"cost": cost,
+				"icon": upgrade.Icon || undefined,
+				"requiredTechnology": upgrade.RequiredTechnology || undefined
+			});
+		}
 	}
 
 	if (template.ProductionQueue)
@@ -316,68 +439,102 @@ function GetTemplateDataHelper(template, player, auraTemplates)
 		};
 
 	if (template.WallSet)
+	{
 		ret.wallSet = {
 			"templates": {
 				"tower": template.WallSet.Templates.Tower,
 				"gate": template.WallSet.Templates.Gate,
+				"fort": template.WallSet.Templates.Fort || "structures/" + template.Identity.Civ + "_fortress",
 				"long": template.WallSet.Templates.WallLong,
 				"medium": template.WallSet.Templates.WallMedium,
-				"short": template.WallSet.Templates.WallShort,
+				"short": template.WallSet.Templates.WallShort
 			},
 			"maxTowerOverlap": +template.WallSet.MaxTowerOverlap,
-			"minTowerOverlap": +template.WallSet.MinTowerOverlap,
+			"minTowerOverlap": +template.WallSet.MinTowerOverlap
 		};
+		if (template.WallSet.Templates.WallEnd)
+			ret.wallSet.templates.end = template.WallSet.Templates.WallEnd;
+		if (template.WallSet.Templates.WallCurves)
+			ret.wallSet.templates.curves = template.WallSet.Templates.WallCurves.split(" ");
+	}
 
 	if (template.WallPiece)
-		ret.wallPiece = { "length": +template.WallPiece.Length };
+		ret.wallPiece = {
+			"length": +template.WallPiece.Length,
+			"angle": +(template.WallPiece.Orientation || 1) * Math.PI,
+			"indent": +(template.WallPiece.Indent || 0),
+			"bend": +(template.WallPiece.Bend || 0) * Math.PI
+		};
 
 	return ret;
 }
 
 /**
- * Get information about a technology template.
- * @param template A valid template as obtained by loading the tech JSON file.
- * @param civ Civilization for which the specific name should be returned.
+ * Get basic information about a technology template.
+ * @param {object} template - A valid template as obtained by loading the tech JSON file.
+ * @param {string} civ - Civilization for which the tech requirements should be calculated.
  */
-function GetTechnologyDataHelper(template, civ)
+function GetTechnologyBasicDataHelper(template, civ)
 {
-	var ret = {};
-
-	// Get specific name for this civ or else the generic specific name
-	var specific;
-	if (template.specificName)
-	{
-		if (template.specificName[civ])
-			specific = template.specificName[civ];
-		else
-			specific = template.specificName['generic'];
-	}
-
-	ret.name = {
-		"specific": specific,
-		"generic": template.genericName,
+	return {
+		"name": {
+			"generic": template.genericName
+		},
+		"icon": template.icon ? "technologies/" + template.icon : undefined,
+		"description": template.description,
+		"reqs": DeriveTechnologyRequirements(template, civ),
+		"modifications": template.modifications,
+		"affects": template.affects,
+		"replaces": template.replaces
 	};
+}
 
-	ret.icon = template.icon ? "technologies/" + template.icon : null;
+/**
+ * Get information about a technology template.
+ * @param {object} template - A valid template as obtained by loading the tech JSON file.
+ * @param {string} civ - Civilization for which the specific name and tech requirements should be returned.
+ */
+function GetTechnologyDataHelper(template, civ, resources)
+{
+	let ret = GetTechnologyBasicDataHelper(template, civ);
 
-	ret.cost = {
-		"food": template.cost ? +template.cost.food : 0,
-		"wood": template.cost ? +template.cost.wood : 0,
-		"metal": template.cost ? +template.cost.metal : 0,
-		"stone": template.cost ? +template.cost.stone : 0,
-		"time": template.researchTime ? +template.researchTime : 0,
-	}
+	if (template.specificName)
+		ret.name.specific = template.specificName[civ] || template.specificName.generic;
+
+	ret.cost = { "time": template.researchTime ? +template.researchTime : 0 };
+	for (let type of resources.GetCodes())
+		ret.cost[type] = +(template.cost && template.cost[type] || 0);
 
 	ret.tooltip = template.tooltip;
 	ret.requirementsTooltip = template.requirementsTooltip || "";
 
-	if (template.requirements && template.requirements.class)
-		ret.classRequirements = {
-			"class": template.requirements.class,
-			"number": template.requirements.number
-		};
-
-	ret.description = template.description;
-
 	return ret;
+}
+
+function calculateCarriedResources(carriedResources, tradingGoods)
+{
+	var resources = {};
+
+	if (carriedResources)
+		for (let resource of carriedResources)
+			resources[resource.type] = (resources[resource.type] || 0) + resource.amount;
+
+	if (tradingGoods && tradingGoods.amount)
+		resources[tradingGoods.type] =
+			(resources[tradingGoods.type] || 0) +
+			(tradingGoods.amount.traderGain || 0) +
+			(tradingGoods.amount.market1Gain || 0) +
+			(tradingGoods.amount.market2Gain || 0);
+
+	return resources;
+}
+
+/**
+ * Remove filter prefix (mirage, corpse, etc) from template name.
+ *
+ * ie. filter|dir/to/template -> dir/to/template
+ */
+function removeFiltersFromTemplateName(templateName)
+{
+	return templateName.split("|").pop();
 }

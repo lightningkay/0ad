@@ -69,7 +69,7 @@ Formation.prototype.Schema =
 				"<text a:help='example text: \"1..1,1..-1:animation1;2..2,1..-1;animation2\", this will set animation1 for the first row, and animation2 for the second row. The first part of the numbers (1..1 and 2..2) means the row range. Every row between (and including) those values will switch animations. The second part of the numbers (1..-1) denote the columns inside those rows that will be affected. Note that in both cases, you can use -1 for the last row/column, -2 for the second to last, etc.'/>" +
 			"</element>" +
 		"</zeroOrMore>" +
-	"</element>";	
+	"</element>";
 
 var g_ColumnDistanceThreshold = 128; // distance at which we'll switch between column/box formations
 
@@ -97,7 +97,7 @@ Formation.prototype.Init = function()
 		var differentAnimations = animations[animationName].split(/\s*;\s*/);
 		this.animations[animationName] = [];
 		// loop over the different rectangulars that will map to different animations
-		for each (var rectAnimation in differentAnimations)
+		for (var rectAnimation of differentAnimations)
 		{
 			var rect, replacementAnimationName;
 			[rect, replacementAnimationName] = rectAnimation.split(/\s*:\s*/);
@@ -165,13 +165,13 @@ Formation.prototype.GetMembers = function()
 Formation.prototype.GetClosestMember = function(ent, filter)
 {
 	var cmpEntPosition = Engine.QueryInterface(ent, IID_Position);
-	if (!cmpEntPosition)
+	if (!cmpEntPosition || !cmpEntPosition.IsInWorld())
 		return INVALID_ENTITY;
 
 	var entPosition = cmpEntPosition.GetPosition2D();
 	var closestMember = INVALID_ENTITY;
 	var closestDistance = Infinity;
-	for each (var member in this.members)
+	for (var member of this.members)
 	{
 		if (filter && !filter(ent))
 			continue;
@@ -214,7 +214,7 @@ Formation.prototype.GetPrimaryMember = function()
 Formation.prototype.GetFormationAnimation = function(entity, defaultAnimation)
 {
 	var animationGroup = this.animations[defaultAnimation];
-	if (!animationGroup || this.columnar)
+	if (!animationGroup || this.columnar || !this.memberPositions[entity])
 		return defaultAnimation;
 	var row = this.memberPositions[entity].row;
 	var column = this.memberPositions[entity].column;
@@ -294,14 +294,10 @@ Formation.prototype.SetMembers = function(ents)
 {
 	this.members = ents;
 
-	var cmpTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
-	var templateName = cmpTemplateManager.GetCurrentTemplateName(this.entity);
-
-	for each (var ent in this.members)
+	for (var ent of this.members)
 	{
 		var cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 		cmpUnitAI.SetFormationController(this.entity);
-		cmpUnitAI.SetLastFormationTemplate(templateName);
 
 		var cmpAuras = Engine.QueryInterface(ent, IID_Auras);
 		if (cmpAuras && cmpAuras.HasFormationAura())
@@ -329,14 +325,14 @@ Formation.prototype.RemoveMembers = function(ents)
 	this.members = this.members.filter(function(e) { return ents.indexOf(e) == -1; });
 	this.inPosition = this.inPosition.filter(function(e) { return ents.indexOf(e) == -1; });
 
-	for each (var ent in ents)
+	for (var ent of ents)
 	{
 		var cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 		cmpUnitAI.UpdateWorkOrders();
 		cmpUnitAI.SetFormationController(INVALID_ENTITY);
 	}
 
-	for each (var ent in this.formationMembersWithAura)
+	for (var ent of this.formationMembersWithAura)
 	{
 		var cmpAuras = Engine.QueryInterface(ent, IID_Auras);
 		cmpAuras.RemoveFormationBonus(ents);
@@ -367,30 +363,26 @@ Formation.prototype.RemoveMembers = function(ents)
 Formation.prototype.AddMembers = function(ents)
 {
 	this.offsets = undefined;
-	this.inPosition = []; 
+	this.inPosition = [];
 
-	for each (var ent in this.formationMembersWithAura)
+	for (let ent of this.formationMembersWithAura)
 	{
-		var cmpAuras = Engine.QueryInterface(ent, IID_Auras);
-		cmpAuras.RemoveFormationBonus(ents);
-
-		// the unit with the aura is also removed from the formation
-		if (ents.indexOf(ent) !== -1)
-			cmpAuras.RemoveFormationBonus(this.members);
+		let cmpAuras = Engine.QueryInterface(ent, IID_Auras);
+		cmpAuras.ApplyFormationBonus(ents);
 	}
 
 	this.members = this.members.concat(ents);
 
-	for each (var ent in this.members)
+	for (let ent of ents)
 	{
-		var cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
+		let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 		cmpUnitAI.SetFormationController(this.entity);
-		
-		var cmpAuras = Engine.QueryInterface(ent, IID_Auras);
+
+		let cmpAuras = Engine.QueryInterface(ent, IID_Auras);
 		if (cmpAuras && cmpAuras.HasFormationAura())
 		{
 			this.formationMembersWithAura.push(ent);
-			cmpAuras.ApplyFormationBonus(ents);
+			cmpAuras.ApplyFormationBonus(this.members);
 		}
 	}
 
@@ -421,13 +413,13 @@ Formation.prototype.FindInPosition = function()
  */
 Formation.prototype.Disband = function()
 {
-	for each (var ent in this.members)
+	for (var ent of this.members)
 	{
 		var cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 		cmpUnitAI.SetFormationController(INVALID_ENTITY);
 	}
 
-	for each (var ent in this.formationMembersWithAura)
+	for (var ent of this.formationMembersWithAura)
 	{
 		var cmpAuras = Engine.QueryInterface(ent, IID_Auras);
 		cmpAuras.RemoveFormationBonus(this.members);
@@ -457,7 +449,7 @@ Formation.prototype.MoveMembersIntoFormation = function(moveCenter, force)
 	var active = [];
 	var positions = [];
 
-	for each (var ent in this.members)
+	for (var ent of this.members)
 	{
 		var cmpPosition = Engine.QueryInterface(ent, IID_Position);
 		if (!cmpPosition || !cmpPosition.IsInWorld())
@@ -470,7 +462,7 @@ Formation.prototype.MoveMembersIntoFormation = function(moveCenter, force)
 		positions.push(pos);
 	}
 
-	var avgpos = Vector2D.avg(positions);
+	var avgpos = Vector2D.average(positions);
 
 	// Reposition the formation if we're told to or if we don't already have a position
 	var cmpPosition = Engine.QueryInterface(this.entity, IID_Position);
@@ -517,8 +509,8 @@ Formation.prototype.MoveMembersIntoFormation = function(moveCenter, force)
 		var cmpUnitAI = Engine.QueryInterface(offset.ent, IID_UnitAI);
 		if (!cmpUnitAI)
 			continue;
-		
-		var data = 
+
+		var data =
 		{
 			"target": this.entity,
 			"x": offset.x,
@@ -538,7 +530,7 @@ Formation.prototype.MoveToMembersCenter = function()
 {
 	var positions = [];
 
-	for each (var ent in this.members)
+	for (var ent of this.members)
 	{
 		var cmpPosition = Engine.QueryInterface(ent, IID_Position);
 		if (!cmpPosition || !cmpPosition.IsInWorld())
@@ -547,7 +539,7 @@ Formation.prototype.MoveToMembersCenter = function()
 		positions.push(cmpPosition.GetPosition2D());
 	}
 
-	var avgpos = Vector2D.avg(positions);
+	var avgpos = Vector2D.average(positions);
 
 	var cmpPosition = Engine.QueryInterface(this.entity, IID_Position);
 	var inWorld = cmpPosition.IsInWorld();
@@ -564,7 +556,7 @@ Formation.prototype.MoveToMembersCenter = function()
 Formation.prototype.GetAvgFootprint = function(active)
 {
 	var footprints = [];
-	for each (var ent in active)
+	for (var ent of active)
 	{
 		var cmpFootprint = Engine.QueryInterface(ent, IID_Footprint);
 		if (cmpFootprint)
@@ -574,7 +566,7 @@ Formation.prototype.GetAvgFootprint = function(active)
 		return {"width":1, "depth": 1};
 
 	var r = {"width": 0, "depth": 0};
-	for each (var shape in footprints)
+	for (var shape of footprints)
 	{
 		if (shape.type == "circle")
 		{
@@ -604,9 +596,9 @@ Formation.prototype.ComputeFormationOffsets = function(active, positions)
 		var sortingClasses = this.sortingClasses.slice();
 	sortingClasses.push("Unknown");
 
-	// the entities will be assigned to positions in the formation in 
+	// the entities will be assigned to positions in the formation in
 	// the same order as the types list is ordered
-	var types = {}; 
+	var types = {};
 	for (var i = 0; i < sortingClasses.length; ++i)
 		types[sortingClasses[i]] = [];
 
@@ -667,7 +659,7 @@ Formation.prototype.ComputeFormationOffsets = function(active, positions)
 
 		for (var i = 0; i < count; ++i)
 		{
-			var obj = new Vector2D(Math.random()*width, Math.random()*width);
+			var obj = new Vector2D(randFloat(0, width), randFloat(0, width));
 			obj.row = 1;
 			obj.column = i + 1;
 			offsets.push(obj);
@@ -720,13 +712,9 @@ Formation.prototype.ComputeFormationOffsets = function(active, positions)
 					x += side * centerGap / 2;
 				}
 				var column = Math.ceil(n/2) + Math.ceil(c/2) * side;
-				var r1 = 0;
-				var r2 = 0;
-				if (this.sloppyness != 0)
-				{
-					r1 = (Math.random() * 2 - 1) * this.sloppyness;
-					r2 = (Math.random() * 2 - 1) * this.sloppyness;
-				}
+				var r1 = randFloat(-1, 1) * this.sloppyness;
+				var r2 = randFloat(-1, 1) * this.sloppyness;
+
 				offsets.push(new Vector2D(x + r1, z + r2));
 				offsets[offsets.length - 1].row = r+1;
 				offsets[offsets.length - 1].column = column;
@@ -741,7 +729,7 @@ Formation.prototype.ComputeFormationOffsets = function(active, positions)
 	// make sure the average offset is zero, as the formation is centered around that
 	// calculating offset distances without a zero average makes no sense, as the formation
 	// will jump to a different position any time
-	var avgoffset = Vector2D.avg(offsets);
+	var avgoffset = Vector2D.average(offsets);
 	offsets.forEach(function (o) {o.sub(avgoffset);});
 
 	// sort the available places in certain ways
@@ -750,7 +738,7 @@ Formation.prototype.ComputeFormationOffsets = function(active, positions)
 	if (this.sortingOrder == "fillFromTheSides")
 		offsets.sort(function(o1, o2) { return Math.abs(o1.x) < Math.abs(o2.x);});
 	else if (this.sortingOrder == "fillToTheCenter")
-		offsets.sort(function(o1, o2) { 
+		offsets.sort(function(o1, o2) {
 			return Math.max(Math.abs(o1.x), Math.abs(o1.y)) < Math.max(Math.abs(o2.x), Math.abs(o2.y));
 		});
 
@@ -769,7 +757,7 @@ Formation.prototype.ComputeFormationOffsets = function(active, positions)
 			continue;
 		var usedOffsets = offsets.splice(-t.length);
 		var usedRealPositions = realPositions.splice(-t.length);
-		for each (var entPos in t)
+		for (var entPos of t)
 		{
 			var closestOffsetId = this.TakeClosestOffset(entPos, usedRealPositions, usedOffsets);
 			usedRealPositions.splice(closestOffsetId, 1);
@@ -813,14 +801,14 @@ Formation.prototype.GetRealOffsetPositions = function(offsets, pos)
 	var offsetPositions = [];
 	var {sin, cos} = this.GetEstimatedOrientation(pos);
 	// calculate the world positions
-	for each (var o in offsets)
+	for (var o of offsets)
 		offsetPositions.push(new Vector2D(pos.x + o.y * sin + o.x * cos, pos.y + o.y * cos - o.x * sin));
 
 	return offsetPositions;
 };
 
 /**
- * calculate the estimated rotation of the formation 
+ * calculate the estimated rotation of the formation
  * based on the first unitAI target position when ordered to walk,
  * based on the current rotation in other cases
  * Return the sine and cosine of the angle
@@ -861,7 +849,7 @@ Formation.prototype.ComputeMotionParameters = function()
 	var maxRadius = 0;
 	var minSpeed = Infinity;
 
-	for each (var ent in this.members)
+	for (var ent of this.members)
 	{
 		var cmpUnitMotion = Engine.QueryInterface(ent, IID_UnitMotion);
 		if (cmpUnitMotion)
@@ -875,7 +863,7 @@ Formation.prototype.ComputeMotionParameters = function()
 
 Formation.prototype.ShapeUpdate = function()
 {
-	// Check the distance to twin formations, and merge if when 
+	// Check the distance to twin formations, and merge if when
 	// the formations could collide
 	for (var i = this.twinFormations.length - 1; i >= 0; --i)
 	{
@@ -906,7 +894,9 @@ Formation.prototype.ShapeUpdate = function()
 
 		// merge the members from the twin formation into this one
 		// twin formations should always have exactly the same orders
-		this.AddMembers(cmpOtherFormation.members);
+		let otherMembers = cmpOtherFormation.members;
+		cmpOtherFormation.RemoveMembers(otherMembers);
+		this.AddMembers(otherMembers);
 		Engine.DestroyEntity(this.twinFormations[i]);
 		this.twinFormations.splice(i,1);
 	}
@@ -968,7 +958,7 @@ Formation.prototype.RegisterTwinFormation = function(entity)
 
 Formation.prototype.DeleteTwinFormations = function()
 {
-	for each (var ent in this.twinFormations)
+	for (var ent of this.twinFormations)
 	{
 		var cmpFormation = Engine.QueryInterface(ent, IID_Formation);
 		if (cmpFormation)
@@ -1008,7 +998,7 @@ Formation.prototype.LoadFormation = function(newTemplate)
 	else
 		cmpNewUnitAI.MoveIntoFormation();
 
-	Engine.BroadcastMessage(MT_EntityRenamed, {"entity": this.entity, "newentity": newFormation});
+	Engine.PostMessage(this.entity, MT_EntityRenamed, { "entity": this.entity, "newentity": newFormation });
 };
 
 Engine.RegisterComponentType(IID_Formation, "Formation", Formation);

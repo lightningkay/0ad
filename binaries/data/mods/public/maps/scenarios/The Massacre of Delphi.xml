@@ -21,8 +21,6 @@
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.947266</Murkiness>
 				<Tint r="0" g="0.501961" b="1"/>
-				<ReflectionTint r="0.27451" g="0.294118" b="0.584314"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -41,7 +39,6 @@
 	<ScriptSettings><![CDATA[
 {
   "Description": "The Celts invade Greece. Fight through the central valley or cut through the rich highlands in order to secure the lands around Delphi!",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Massacre of Delphi",
@@ -68,7 +65,10 @@
     }
   ],
   "Preview": "massacre_of_delphi.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -5481,7 +5481,7 @@
 			<Orientation y="2.43306"/>
 		</Entity>
 		<Entity uid="1242">
-			<Template>gaia/special_treasure_golden_fleece</Template>
+			<Template>gaia/treasure/golden_fleece</Template>
 			<Player>0</Player>
 			<Position x="102.00948" z="180.85462"/>
 			<Orientation y="2.35621"/>
@@ -11325,7 +11325,7 @@
 			<Orientation y="0.8225"/>
 		</Entity>
 		<Entity uid="2434">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="427.81281" z="441.07132"/>
 			<Orientation y="-2.34433"/>
@@ -11463,7 +11463,7 @@
 			<Orientation y="0.90285"/>
 		</Entity>
 		<Entity uid="2458">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="742.35499" z="756.52662"/>
 			<Orientation y="2.35621"/>
@@ -15867,7 +15867,7 @@
 			<Orientation y="2.29314"/>
 		</Entity>
 		<Entity uid="3228">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="369.42203" z="468.71137"/>
 			<Orientation y="2.35621"/>

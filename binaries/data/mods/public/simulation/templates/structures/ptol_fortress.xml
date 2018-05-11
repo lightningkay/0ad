@@ -13,9 +13,7 @@
   </Obstruction>
   <ProductionQueue>
     <Entities datatype="tokens">
-      units/{civ}_hero_ptolemy_I
-      units/{civ}_hero_ptolemy_IV
-      units/{civ}_hero_cleopatra
+      units/{civ}_champion_infantry_pikeman
       units/{civ}_champion_cavalry
       units/{civ}_champion_elephant
     </Entities>
@@ -30,4 +28,8 @@
   <VisualActor>
     <Actor>structures/ptolemies/fortress.xml</Actor>
   </VisualActor>
+  <WallPiece>
+    <Length>24.0</Length>
+    <Indent>8.7</Indent>
+  </WallPiece>
 </Entity>

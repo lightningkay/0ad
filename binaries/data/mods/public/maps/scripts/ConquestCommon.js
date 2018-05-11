@@ -1,102 +1,62 @@
-Trigger.prototype.ConquestHandlerOwnerShipChanged = function(msg)
+Trigger.prototype.ConquestOwnershipChanged = function(msg)
 {
-	if (!this.conquestDataInit || !this.conquestClassFilter)
+	if (!this.conquestDataInit)
 		return;
 
-	if (!TriggerHelper.EntityHasClass(msg.entity, this.conquestClassFilter))
-		return;
-
-	if (msg.from == -1)
-		return;
-
-	if (msg.to > 0 && this.conquestEntitiesByPlayer[msg.to])
-		this.conquestEntitiesByPlayer[msg.to].push(msg.entity);
-
-	if (!this.conquestEntitiesByPlayer[msg.from])
+	for (let query of this.conquestQueries)
 	{
-		if (msg.from)
-			warn("ConquestHandlerOwnerShipChanged: Unknow player " + msg.from);
-		return;	
-	}
+		if (!TriggerHelper.EntityMatchesClassList(msg.entity, query.classFilter))
+			continue;
 
-	let entities = this.conquestEntitiesByPlayer[msg.from];
-	let index = entities.indexOf(msg.entity);
+		if (msg.to > 0)
+			query.entitiesByPlayer[msg.to].push(msg.entity);
 
-	if (index >= 0)
-	{
-		entities.splice(index, 1);
+		if (msg.from <= 0)
+			continue;
+
+		let entities = query.entitiesByPlayer[msg.from];
+		let index = entities.indexOf(msg.entity);
+		if (index != -1)
+			entities.splice(index, 1);
+
 		if (!entities.length)
 		{
 			let cmpPlayer = QueryPlayerIDInterface(msg.from);
 			if (cmpPlayer)
-				cmpPlayer.SetState("defeated");
+				cmpPlayer.SetState("defeated", query.defeatReason);
 		}
 	}
-}
-
-Trigger.prototype.ConquestAddStructure = function(msg)
-{
-	if (!this.conquestClassFilter || !TriggerHelper.EntityHasClass(msg.building, this.conquestClassFilter))
-		return;
-
-	let cmpOwnership = Engine.QueryInterface(msg.building, IID_Ownership);
-	if (!cmpOwnership)
-	{
-		warn("ConquestAddStructure: Structure without Owner");
-		return;
-	}
-
-	let player = cmpOwnership.GetOwner();
-	if (!this.conquestEntitiesByPlayer[player])
-	{
-		if (player != 0)
-			warn("ConquestAddStructure: Unknown player " + player);
-		return;	
-	}
-
-	if (this.conquestEntitiesByPlayer[player].indexOf(msg.building) >= 0)
-		return;
-
-	this.conquestEntitiesByPlayer[player].push(msg.building);
-}
-
-Trigger.prototype.ConquestTrainingFinished = function(msg)
-{
-	if (msg.owner == 0 || !this.conquestClassFilter || !msg.entities.length || !msg.entities.every(elem => TriggerHelper.EntityHasClass(elem, this.conquestClassFilter)))
-		return;
-
-	let player = msg.owner;
-	if (!this.conquestEntitiesByPlayer[player])
-	{
-		warn("ConquestTrainingFinished: Unknown player " + player);
-		return;	
-	}
-	this.conquestEntitiesByPlayer[player].push(...msg.entities);
 };
 
 Trigger.prototype.ConquestStartGameCount = function()
 {
-	if (!this.conquestClassFilter)
+	if (!this.conquestQueries.length)
 	{
-		warn("ConquestStartGameCount: conquestClassFilter undefined");
+		warn("ConquestStartGameCount: no conquestQueries set");
 		return;
 	}
 
 	let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
+	let entitiesByPlayer = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetAllPlayers().map(playerID =>
+		cmpRangeManager.GetEntitiesByPlayer(playerID));
 
-	let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
-	for (let i = 1; i < numPlayers; ++i)
-	{
-		let filterEntity = ent => TriggerHelper.EntityHasClass(ent, this.conquestClassFilter) 
-			&& !Engine.QueryInterface(ent, IID_Foundation);
-		this.conquestEntitiesByPlayer[i] = [...cmpRangeManager.GetEntitiesByPlayer(i).filter(filterEntity)];
-	}
+	for (let query of this.conquestQueries)
+		query.entitiesByPlayer = entitiesByPlayer.map(
+			ents => ents.filter(
+				ent => TriggerHelper.EntityMatchesClassList(ent, query.classFilter)));
 
 	this.conquestDataInit = true;
 };
 
-var cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
+Trigger.prototype.ConquestAddVictoryCondition = function(data)
+{
+	this.conquestQueries.push(data);
+};
 
-cmpTrigger.conquestEntitiesByPlayer = {};
-cmpTrigger.conquestDataInit = false;
-cmpTrigger.conquestClassFilter = "";
+{
+	let cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
+	cmpTrigger.conquestDataInit = false;
+	cmpTrigger.conquestQueries = [];
+	cmpTrigger.RegisterTrigger("OnOwnershipChanged", "ConquestOwnershipChanged", { "enabled": true });
+	cmpTrigger.DoAfterDelay(0, "ConquestStartGameCount", null);
+}

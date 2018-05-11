@@ -28,76 +28,6 @@
 	==========================================
 	-->
 
-	<style name="CenteredButtonText"
-		font="sans-bold-stroke-14"
-		textcolor="white"
-		text_align="center"
-		text_valign="center"
-	/>
-
-	<style name="LeftButtonText"
-		font="sans-bold-stroke-14"
-		textcolor="white"
-		text_align="left"
-		text_valign="top"
-	/>
-
-	<style name="RightButtonText"
-		font="sans-bold-stroke-14"
-		textcolor="white"
-		text_align="right"
-		text_valign="top"
-	/>
-
-	<style name="LeftLabelText"
-		font="sans-bold-stroke-14"
-		textcolor="gold"
-		text_align="left"
-		text_valign="center"
-	/>
-
-	<style name="RightLabelText"
-		font="sans-bold-stroke-14"
-		textcolor="gold"
-		text_align="right"
-		text_valign="center"
-	/>
-
-	<style name="CenteredLabelText"
-		font="sans-bold-stroke-14"
-		textcolor="gold"
-		text_align="center"
-		text_valign="center"
-	/>
-
-	<style name="LeftTabLabelText"
-		font="sans-bold-stroke-14"
-		textcolor="gold"
-		text_align="left"
-		text_valign="top"
-	/>
-
-	<style name="RightTabLabelText"
-		font="sans-bold-stroke-14"
-		textcolor="gold"
-		text_align="right"
-		text_valign="top"
-	/>
-
-	<style name="CenteredTabLabelText"
-		font="sans-bold-stroke-14"
-		textcolor="gold"
-		text_align="center"
-		text_valign="top"
-	/>
-
-	<style name="SmallLeftLabelText"
-		font="sans-12"
-		textcolor="white"
-		text_align="left"
-		text_valign="top"
-	/>
-
 	<style name="TitleText"
 		font="sans-bold-stroke-14"
 		textcolor="white"
@@ -163,6 +93,7 @@
 		sprite_pressed="StoneButtonFancyGlow"
 		font="sans-bold-stroke-14"
 		textcolor="white"
+		textcolor_disabled="210 210 210 160"
 		text_align="center"
 		text_valign="center"
 		sound_pressed="audio/interface/ui/ui_button_click.ogg"
@@ -190,4 +121,30 @@
 		text_align="left"
 		text_valign="top"
 	/>
+
+	<style name="ChatPanel"
+		buffer_zone="5"
+		font="sans-13"
+		scrollbar="true"
+		scrollbar_style="ModernScrollBar"
+		scroll_bottom="true"
+		textcolor="white"
+		textcolor_selected="gold"
+		text_align="left"
+		text_valign="center"
+	/>
+
+	<style name="TutorialPanel"
+		buffer_zone="8"
+		font="sans-bold-14"
+		scrollbar="true"
+		scrollbar_style="ModernScrollBar"
+		scroll_bottom="true"
+		textcolor="white"
+		textcolor_selected="black"
+		text_align="left"
+		text_valign="center"
+		sprite="ModernDarkBoxGold"
+	/>
+
 </styles>

@@ -6,6 +6,7 @@
 	"History":"Sparta was a prominent city-state in ancient Greece, and its dominant military power on land from circa 650 B.C. Spartan culture was obsessed with military training and excellence, with rigorous training for boys beginning at age seven. Thanks to its military might, Sparta led a coalition of Greek forces during the Greco-Persian Wars, and won over Athens in the Peloponnesian Wars, though at great cost.",
 	"Music":[
 			{"File":"Helen_Leaves_Sparta.ogg", "Type":"peace"},
+			{"File":"Peaks_of_Atlas.ogg", "Type":"peace"},
 			{"File":"Forging_a_City-State.ogg", "Type":"peace"},
 			{"File":"The_Hellespont.ogg", "Type":"peace"}
 		],
@@ -81,7 +82,7 @@
 		{
 			"Name":"Peloponnesian League",
 			"History":"Much of the Peloponnese was subject to Sparta in one way or another. This loose confederation, with Sparta as its leader, was later dubbed the Peloponnesian League by historians, but in ancient times was called 'The Lacedaemonians and their allies.'",
-			"Description":"Allies can train Spartiates."
+			"Description":"Increases the health for citizen-soldier infantry spearmen by 10% for allies of Spartan players."
 		}
 	],
 	"Structures":
@@ -105,6 +106,11 @@
 			"Special":"Train heroes and Spartiates and research technologies related to them."
 		}
 	],
+	"WallSets":
+	[
+		"other/wallset_palisade",
+		"structures/spart_wallset_stone"
+	],
 	"StartEntities":
 	[
 		{
@@ -117,7 +123,7 @@
 		{
 			"Template": "units/spart_infantry_spearman_b",
 			"Count": 2
-		},		
+		},
 		{
 			"Template": "units/spart_infantry_javelinist_b",
 			"Count": 2
@@ -128,17 +134,17 @@
 	],
 	"Formations":
 	[
-		"formations/null",
-		"formations/box",
-		"formations/column_closed",
-		"formations/line_closed",
-		"formations/column_open",
-		"formations/line_open",
-		"formations/flank",
-		"formations/skirmish",
-		"formations/wedge",
-		"formations/battle_line",
-		"formations/phalanx"
+		"special/formations/null",
+		"special/formations/box",
+		"special/formations/column_closed",
+		"special/formations/line_closed",
+		"special/formations/column_open",
+		"special/formations/line_open",
+		"special/formations/flank",
+		"special/formations/skirmish",
+		"special/formations/wedge",
+		"special/formations/battle_line",
+		"special/formations/phalanx"
 	],
 	"AINames":
 	[

@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding:utf-8 -*-
 #
-# Copyright (C) 2016 Wildfire Games.
+# Copyright (C) 2018 Wildfire Games.
 # This file is part of 0 A.D.
 #
 # 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,18 +33,23 @@ import json, os, glob, re
 
 # Credited languages - Keep in sync with source/tools/dist/remove-incomplete-translations.sh
 langs = {
+    'ast': 'Asturianu',
     'bg': 'Български',
     'ca': 'Català',
-    'cs': 'Ceština',
+    'cs': 'Čeština',
     'de': 'Deutsch',
+    'el': 'Ελληνικά',
     'en_GB': 'English (UK)',
     'es': 'Español',
+    'eu': 'Euskara',
     'fr': 'Français',
     'gd': 'Gàidhlig',
     'gl': 'Galego',
     'hu': 'Magyar',
     'id': 'Bahasa Indonesia',
     'it': 'Italiano',
+    'ms': 'Bahasa Melayu',
+    'nb': 'Norsk bokmål',
     'nl': 'Nederlands',
     'pl': 'Polski',
     'pt_BR': 'Português (Brasil)',
@@ -52,7 +57,8 @@ langs = {
     'ru': 'Русский',
     'sk': 'Slovenčina',
     'sv': 'Svenska',
-    'tr': 'Türkçe'}
+    'tr': 'Türkçe',
+    'uk': 'Українська'}
 
 root = '../../../'
 

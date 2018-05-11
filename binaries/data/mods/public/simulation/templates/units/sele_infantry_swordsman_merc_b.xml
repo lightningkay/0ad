@@ -4,9 +4,14 @@
     <Entities datatype="tokens">
       structures/sele_military_colony
       structures/sele_library
-      structures/sele_wonder
     </Entities>
   </Builder>
+  <Cost>
+    <Resources>
+      <food op="add">-25</food>
+      <metal op="add">25</metal>
+    </Resources>
+  </Cost>
   <Identity>
     <Civ>sele</Civ>
     <Lang>greek</Lang>
@@ -15,7 +20,6 @@
     <SpecificName>Rhomphaiaphoros Thrakikós</SpecificName>
     <Icon>units/sele_infantry_swordsman.png</Icon>
     <VisibleClasses datatype="tokens">Mercenary</VisibleClasses>
-    <History>Thracian tribesmen who wield the fearsome rhomphaia polearm weapon in combat. They were ubiquitous mercenary swordsmen and skirmishers throughout Hellenistic times, sometimes even serving in two opposing armies.</History>
     <RequiredTechnology>phase_town</RequiredTechnology>
   </Identity>
   <Promotion>

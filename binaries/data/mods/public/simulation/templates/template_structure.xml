@@ -45,16 +45,28 @@
   <Fogging/>
   <Guard/>
   <Health>
+    <DamageVariants>
+      <lightdamage>0.85</lightdamage>
+      <mediumdamage>0.65</mediumdamage>
+      <heavydamage>0.35</heavydamage>
+    </DamageVariants>
     <DeathType>corpse</DeathType>
     <RegenRate>0</RegenRate>
     <IdleRegenRate>0</IdleRegenRate>
-    <Undeletable>false</Undeletable>
     <Unhealable>true</Unhealable>
   </Health>
   <Identity>
     <GenericName>Structure</GenericName>
     <Classes datatype="tokens">Structure ConquestCritical</Classes>
+    <Undeletable>false</Undeletable>
   </Identity>
+  <Loot>
+    <xp>0</xp>
+    <food>0</food>
+    <wood>10</wood>
+    <stone>0</stone>
+    <metal>0</metal>
+  </Loot>
   <Minimap>
     <Type>structure</Type>
   </Minimap>
@@ -63,9 +75,10 @@
     <BlockMovement>true</BlockMovement>
     <BlockPathfinding>true</BlockPathfinding>
     <BlockFoundation>true</BlockFoundation>
-    <BlockConstruction>true</BlockConstruction>
+    <BlockConstruction>false</BlockConstruction>
     <DisableBlockMovement>false</DisableBlockMovement>
     <DisableBlockPathfinding>false</DisableBlockPathfinding>
+    <DeleteUponConstruction>false</DeleteUponConstruction>
   </Obstruction>
   <OverlayRenderer/>
   <ProductionQueue>
@@ -82,13 +95,14 @@
     <MarkerTemplate>special/rallypoint</MarkerTemplate>
     <LineTexture>art/textures/misc/rallypoint_line.png</LineTexture>
     <LineTextureMask>art/textures/misc/rallypoint_line_mask.png</LineTextureMask>
-    <LineThickness>0.2</LineThickness>
-    <LineColor r="35" g="86" b="188"/>
+    <LineThickness>0.25</LineThickness>
     <LineDashColor r="158" g="11" b="15"/>
     <LineStartCap>square</LineStartCap>
     <LineEndCap>round</LineEndCap>
     <LinePassabilityClass>default</LinePassabilityClass>
   </RallyPointRenderer>
+  <RangeOverlayManager/>
+  <RangeOverlayRenderer/>
   <Repairable>
     <RepairTimeRatio>2.0</RepairTimeRatio>
   </Repairable>
@@ -107,8 +121,8 @@
       <constructed>interface/complete/building/complete_universal.xml</constructed>
       <death>attack/destruction/building_collapse_large.xml</death>
       <attacked>interface/alarm/alarm_attackplayer.xml</attacked>
-      <attack>attack/weapon/arrowfly.xml</attack>
-      <attack_impact>attack/impact/arrow_metal.xml</attack_impact>
+      <attack_ranged>attack/weapon/arrowfly.xml</attack_ranged>
+      <attack_impact_ranged>attack/impact/arrow_metal.xml</attack_impact_ranged>
     </SoundGroups>
   </Sound>
   <StatusBars>
@@ -128,6 +142,9 @@
   <Vision>
     <Range>40</Range>
   </Vision>
+  <VisionSharing>
+    <Bribable>false</Bribable>
+  </VisionSharing>
   <VisualActor>
     <ConstructionPreview/>
     <SilhouetteDisplay>false</SilhouetteDisplay>

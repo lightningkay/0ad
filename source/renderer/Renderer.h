@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ class CSimulation2;
 class CTextureManager;
 class CTimeManager;
 class RenderPathVertexShader;
-class ScriptInterface;
+class ShadowMap;
 class SkyManager;
 class TerrainRenderer;
 class WaterManager;
@@ -75,7 +75,7 @@ public:
 	enum Option {
 		OPT_NOVBO,
 		OPT_SHADOWS,
-		OPT_WATERUGLY,
+		OPT_WATEREFFECTS,
 		OPT_WATERFANCYEFFECTS,
 		OPT_WATERREALDEPTH,
 		OPT_WATERREFLECTION,
@@ -84,6 +84,7 @@ public:
 		OPT_SHADOWPCF,
 		OPT_PARTICLES,
 		OPT_PREFERGLSL,
+		OPT_FOG,
 		OPT_SILHOUETTES,
 		OPT_SHOWSKY,
 		OPT_SMOOTHLOS,
@@ -137,8 +138,8 @@ public:
 	struct Options {
 		bool m_NoVBO;
 		bool m_Shadows;
-		
-		bool m_WaterUgly;
+
+		bool m_WaterEffects;
 		bool m_WaterFancyEffects;
 		bool m_WaterRealDepth;
 		bool m_WaterRefraction;
@@ -153,6 +154,7 @@ public:
 		bool m_PreferGLSL;
 		bool m_ForceAlphaTest;
 		bool m_GPUSkinning;
+		bool m_Fog;
 		bool m_Silhouettes;
 		bool m_SmoothLOS;
 		bool m_ShowSky;
@@ -256,12 +258,17 @@ public:
 	}
 
 	// set the mode to render subsequent terrain patches
-	void SetTerrainRenderMode(ERenderMode mode) { m_TerrainRenderMode=mode; }
+	void SetTerrainRenderMode(ERenderMode mode) { m_TerrainRenderMode = mode; }
 	// get the mode to render subsequent terrain patches
 	ERenderMode GetTerrainRenderMode() const { return m_TerrainRenderMode; }
 
+	// set the mode to render subsequent water patches
+	void SetWaterRenderMode(ERenderMode mode) { m_WaterRenderMode = mode; }
+	// get the mode to render subsequent water patches
+	ERenderMode GetWaterRenderMode() const { return m_WaterRenderMode; }
+
 	// set the mode to render subsequent models
-	void SetModelRenderMode(ERenderMode mode) { m_ModelRenderMode=mode; }
+	void SetModelRenderMode(ERenderMode mode) { m_ModelRenderMode = mode; }
 	// get the mode to render subsequent models
 	ERenderMode GetModelRenderMode() const { return m_ModelRenderMode; }
 
@@ -318,9 +325,9 @@ public:
 	CFontManager& GetFontManager();
 
 	CShaderDefines GetSystemShaderDefines() { return m_SystemShaderDefines; }
-	
+
 	CTimeManager& GetTimeManager();
-	
+
 	CPostprocManager& GetPostprocManager();
 
 	/**
@@ -330,7 +337,12 @@ public:
 	 */
 	const Caps& GetCapabilities() const { return m_Caps; }
 
-	static void RegisterScriptFunctions(ScriptInterface& scriptInterface);
+	ShadowMap& GetShadowMap();
+
+	/**
+	 * Resets the render state to default, that was before a game started
+	 */
+	void ResetState();
 
 protected:
 	friend struct CRendererInternals;
@@ -406,6 +418,8 @@ protected:
 	int m_Height;
 	// current terrain rendering mode
 	ERenderMode m_TerrainRenderMode;
+	// current water rendering mode
+	ERenderMode m_WaterRenderMode;
 	// current model rendering mode
 	ERenderMode m_ModelRenderMode;
 

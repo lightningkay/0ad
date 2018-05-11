@@ -1,7 +1,7 @@
 /**
  * Used to highlight hotkeys in tooltip descriptions.
  */
-var g_HotkeyColor = "255 251 131";
+var g_HotkeyTags = {"color": "255 251 131" };
 
 /**
  * Concatenate integer color values to a string (for use in GUI objects)
@@ -17,10 +17,25 @@ function rgbToGuiColor(color, alpha)
 	if (color && ("r" in color) && ("g" in color) && ("b" in color))
 		ret = color.r + " " + color.g + " " + color.b;
 
-	if (alpha)
+	if (alpha !== undefined)
 		ret += " " + alpha;
 
 	return ret;
+}
+
+function guiToRgbColor(string)
+{
+	let color = string.split(" ");
+	if (color.length != 3 && color.length != 4 ||
+	    color.some(num => !Number.isInteger(+num) || num < 0 || num > 255))
+		return undefined;
+
+	return {
+		"r": +color[0],
+		"g": +color[1],
+		"b": +color[2],
+		"alpha": color.length == 4 ? +color[3] : undefined
+	};
 }
 
 /**
@@ -32,7 +47,7 @@ function rgbToGuiColor(color, alpha)
  */
 function sameColor(color1, color2)
 {
-    return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
+	return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
 }
 
 /**
@@ -45,7 +60,7 @@ function sameColor(color1, color2)
  */
 function colorDistance(color1, color2)
 {
-	return Math.sqrt(Math.pow(color2.r - color1.r, 2) + Math.pow(color2.g - color1.g, 2) + Math.pow(color2.b - color1.b, 2));
+	return Math.euclidDistance3D(color1.r, color1.g, color1.b, color2.r, color2.g, color2.b);
 }
 
 /**
@@ -84,9 +99,15 @@ function rgbToHsl(r, g, b)
 		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 		switch (max)
 		{
-			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-			case g: h = (b - r) / d + 2; break;
-			case b: h = (r - g) / d + 4; break;
+		case r:
+			h = (g - b) / d + (g < b ? 6 : 0);
+			break;
+		case g:
+			h = (b - r) / d + 2;
+			break;
+		case b:
+			h = (r - g) / d + 4;
+			break;
 		}
 		h /= 6;
 	}
@@ -107,11 +128,16 @@ function hslToRgb(h, s, l)
 {
 	function hue2rgb(p, q, t)
 	{
-		if (t < 0) t += 1;
-		if (t > 1) t -= 1;
-		if (t < 1/6) return p + (q - p) * 6 * t;
-		if (t < 1/2) return q;
-		if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+		if (t < 0)
+			t += 1;
+		if (t > 1)
+			t -= 1;
+		if (t < 1/6)
+			return p + (q - p) * 6 * t;
+		if (t < 1/2)
+			return q;
+		if (t < 2/3)
+			return p + (q - p) * (2/3 - t) * 6;
 		return p;
 	}
 
@@ -135,12 +161,31 @@ function colorizeHotkey(text, hotkey)
 	let key = Engine.ConfigDB_GetValue("user", "hotkey." + hotkey);
 
 	if (!key || key.toLowerCase() == "unused")
-		return "";
+		key = sprintf(translate("Unassigned hotkey: %(hotkeyName)s"), {
+			"hotkeyName": hotkey
+		});
 
 	return sprintf(text, {
-		"hotkey":
-			"[color=\"" + g_HotkeyColor + "\"]" +
-			"\\[" + key + "]" +
-			"[/color]"
+		"hotkey": setStringTags("\\[" + key + "]", g_HotkeyTags)
 	});
+}
+
+/**
+ * The autocomplete hotkey is hardcoded in SDLK_TAB of CInput.cpp,
+ * as we don't want hotkeys interfering with typing text.
+ */
+function colorizeAutocompleteHotkey(string)
+{
+	return sprintf(string || translate("Press %(hotkey)s to autocomplete playernames."), {
+		"hotkey":
+			setStringTags("\\[" + translateWithContext("hotkey", "Tab") + "]", g_HotkeyTags)
+	});
+}
+
+/**
+ * Adds grey font if savegame/replay is not compatible.
+ */
+function compatibilityColor(text, isCompatible)
+{
+	return isCompatible ? text : coloredText(text, "96 96 96");
 }

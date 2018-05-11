@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ QUERYHANDLER(GetObjectsList)
 	CmpPtr<ICmpTemplateManager> cmpTemplateManager(*g_Game->GetSimulation2(), SYSTEM_ENTITY);
 	if (cmpTemplateManager)
 	{
-		std::vector<std::string> names = cmpTemplateManager->FindAllPlaceableTemplates(true);
+		std::vector<std::string> names = cmpTemplateManager->FindAllTemplates(true);
 
 		for (std::vector<std::string>::iterator it = names.begin(); it != names.end(); ++it)
 		{
@@ -145,7 +145,10 @@ static CColor GetOwnerPlayerColor(PlayerColorMap& colorMap, entity_id_t id)
 			entity_id_t playerEnt = cmpPlayerManager->GetPlayerByID(owner);
 			CmpPtr<ICmpPlayer> cmpPlayer(sim, playerEnt);
 			if (cmpPlayer)
-				color = colorMap[owner] = cmpPlayer->GetColor();
+			{
+				colorMap[owner] = cmpPlayer->GetDisplayedColor();
+				color = colorMap[owner];
+			}
 		}
 	}
 	return color;
@@ -247,27 +250,26 @@ QUERYHANDLER(GetObjectSettings)
 QUERYHANDLER(GetObjectMapSettings)
 {
 	std::vector<entity_id_t> ids = *msg->ids;
-	
+
 	CmpPtr<ICmpTemplateManager> cmpTemplateManager(*g_Game->GetSimulation2(), SYSTEM_ENTITY);
 	ENSURE(cmpTemplateManager);
-	
+
 	XML_Start();
 	{
 		XML_Element("Entities");
 		{
-			for (size_t i = 0; i < ids.size(); i++)
+			for (entity_id_t id : ids)
 			{
-				entity_id_t id = (entity_id_t)ids[i];
 				XML_Element("Entity");
 				{
 					//Template name
 					XML_Setting("Template", cmpTemplateManager->GetCurrentTemplateName(id));
-					
+
 					//Player
 					CmpPtr<ICmpOwnership> cmpOwnership(*g_Game->GetSimulation2(), id);
 					if (cmpOwnership)
 						XML_Setting("Player", (int)cmpOwnership->GetOwner());
-					
+
 					//Adding position to make some relative position later
 					CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
 					if (cmpPosition)
@@ -296,7 +298,7 @@ QUERYHANDLER(GetObjectMapSettings)
 			}
 		}
 	}
-	
+
 	const CStr& data = XML_GetOutput();
 	msg->xmldata = std::wstring(data.begin(), data.end());
 }
@@ -414,11 +416,9 @@ MESSAGEHANDLER(ObjectPreviewToEntity)
 	PlayerColorMap playerColor;
 
 	//I need to re create the objects finally delete preview objects
-	std::vector<entity_id_t>::const_iterator i;
-	for (i = g_PreviewEntitiesID.begin(); i != g_PreviewEntitiesID.end(); i++)
+	for (entity_id_t ent : g_PreviewEntitiesID)
 	{
 		//Get template
-		entity_id_t ent = *i;
 		std::string templateName = cmpTemplateManager->GetCurrentTemplateName(ent);
 		std::wstring wTemplateName(templateName.begin() + 8, templateName.end());
 		//Create new entity
@@ -469,17 +469,17 @@ MESSAGEHANDLER(MoveObjectPreview)
 	if (g_PreviewEntitiesID.size()==0)
 		return;
 
-	//TODO:Change pivot 
+	//TODO:Change pivot
 	entity_id_t referenceEntity = *g_PreviewEntitiesID.begin();
 
 	// All selected objects move relative to a pivot object,
 	//	so get its position and whether it's floating
 	CFixedVector3D referencePos;
-	
+
 	CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), referenceEntity);
 	if (cmpPosition && cmpPosition->IsInWorld())
 		referencePos = cmpPosition->GetPosition();
-		
+
 
 	// Calculate directional vector of movement for pivot object,
 	//	we apply the same movement to all objects
@@ -513,15 +513,9 @@ MESSAGEHANDLER(ObjectPreview)
 		if (g_PreviewEntityID != INVALID_ENTITY && msg->cleanObjectPreviews)
 		{
 			//Time to delete all preview objects
-			if (g_PreviewEntitiesID.size() > 0)
-			{
-				std::vector<entity_id_t>::const_iterator i;
-				for (i = g_PreviewEntitiesID.begin(); i != g_PreviewEntitiesID.end(); i++)
-				{
-					g_Game->GetSimulation2()->DestroyEntity(*i);
-				}
-				g_PreviewEntitiesID.clear();
-			}
+			for (entity_id_t ent : g_PreviewEntitiesID)
+				g_Game->GetSimulation2()->DestroyEntity(ent);
+			g_PreviewEntitiesID.clear();
 		}
 
 		// Create the new entity
@@ -532,7 +526,7 @@ MESSAGEHANDLER(ObjectPreview)
 			g_PreviewEntityID = g_Game->GetSimulation2()->AddLocalEntity(L"preview|" + *msg->id);
 			g_PreviewEntitiesID.push_back(g_PreviewEntityID);
 		}
-		
+
 
 		g_PreviewUnitName = *msg->id;
 	}
@@ -544,7 +538,7 @@ MESSAGEHANDLER(ObjectPreview)
 		CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), g_PreviewEntityID);
 		if (cmpPosition)
 		{
-			CVector3D pos = GetUnitPos(msg->pos, cmpPosition->IsFloating());
+			CVector3D pos = GetUnitPos(msg->pos, cmpPosition->CanFloat());
 			cmpPosition->JumpTo(entity_pos_t::FromFloat(pos.X), entity_pos_t::FromFloat(pos.Z));
 
 			float angle;
@@ -587,7 +581,7 @@ BEGIN_COMMAND(CreateObject)
 	void Do()
 	{
 		// Calculate the position/orientation to create this unit with
-		
+
 		m_Pos = GetUnitPos(msg->pos, true); // don't really care about floating
 
 		if (msg->usetarget)
@@ -649,7 +643,7 @@ QUERYHANDLER(PickObject)
 {
 	float x, y;
 	msg->pos->GetScreenSpace(x, y);
-	
+
 	// Normally this function would be called with a player ID to check LOS,
 	//	but in Atlas the entire map is revealed, so just pass INVALID_PLAYER
 	entity_id_t ent = EntitySelection::PickEntityAtPoint(*g_Game->GetSimulation2(), *g_Game->GetView()->GetCamera(), x, y, INVALID_PLAYER, msg->selectActors);;
@@ -713,12 +707,10 @@ QUERYHANDLER(PickSimilarObjects)
 MESSAGEHANDLER(ResetSelectionColor)
 {
 	UNUSED2(msg);
-	if (g_Selection.empty())
-		return;
 
-	for (size_t i = 0; i < g_Selection.size(); ++i)
+	for (entity_id_t ent : g_Selection)
 	{
-		CmpPtr<ICmpVisual> cmpVisual(*g_Game->GetSimulation2(), g_Selection[i]);
+		CmpPtr<ICmpVisual> cmpVisual(*g_Game->GetSimulation2(), ent);
 		if (cmpVisual)
 			cmpVisual->SetShadingColor(fixed::FromDouble(1), fixed::FromDouble(1), fixed::FromDouble(1), fixed::FromDouble(1));
 	}
@@ -727,8 +719,7 @@ MESSAGEHANDLER(ResetSelectionColor)
 BEGIN_COMMAND(MoveObjects)
 {
 	// Mapping from object to position
-	typedef std::map<entity_id_t, CVector3D> ObjectPositionMap;
-	ObjectPositionMap m_PosOld, m_PosNew;
+	std::map<entity_id_t, CVector3D> m_PosOld, m_PosNew;
 
 	void Do()
 	{
@@ -742,7 +733,7 @@ BEGIN_COMMAND(MoveObjects)
 		CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), (entity_id_t)msg->pivot);
 		if (cmpPosition && cmpPosition->IsInWorld())
 		{
-			pivotFloating = cmpPosition->IsFloating();
+			pivotFloating = cmpPosition->CanFloat();
 			CFixedVector3D pivotFixed = cmpPosition->GetPosition();
 			pivotPos = CVector3D(pivotFixed.X.ToFloat(), pivotFixed.Y.ToFloat(), pivotFixed.Z.ToFloat());
 		}
@@ -752,9 +743,8 @@ BEGIN_COMMAND(MoveObjects)
 		CVector3D targetPos = GetUnitPos(msg->pos, pivotFloating);
 		CVector3D dir = targetPos - pivotPos;
 
-		for (size_t i = 0; i < ids.size(); ++i)
+		for (entity_id_t id : ids)
 		{
-			entity_id_t id = (entity_id_t)ids[i];
 			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
 			if (!cmpPosition || !cmpPosition->IsInWorld())
 			{
@@ -767,28 +757,25 @@ BEGIN_COMMAND(MoveObjects)
 				CFixedVector3D posFixed = cmpPosition->GetPosition();
 				CVector3D pos = CVector3D(posFixed.X.ToFloat(), posFixed.Y.ToFloat(), posFixed.Z.ToFloat());
 				m_PosNew[id] = pos + dir;
-				m_PosOld[id] = pos;			
+				m_PosOld[id] = pos;
 			}
 		}
 
 		SetPos(m_PosNew);
 	}
 
-	void SetPos(ObjectPositionMap& map)
+	void SetPos(const std::map<entity_id_t, CVector3D>& map)
 	{
-		ObjectPositionMap::iterator it;
-		for (it = map.begin(); it != map.end(); ++it)
+		for (const std::pair<entity_id_t, CVector3D>& p : map)
 		{
-			entity_id_t id = (entity_id_t)it->first;
-			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
+			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), p.first);
 			if (!cmpPosition)
 				return;
 
 			// Set 2D position, ignoring height
-			CVector3D pos = it->second;
-			cmpPosition->JumpTo(entity_pos_t::FromFloat(pos.X), entity_pos_t::FromFloat(pos.Z));
+			cmpPosition->JumpTo(entity_pos_t::FromFloat(p.second.X), entity_pos_t::FromFloat(p.second.Z));
 
-			CheckObstructionAndUpdateVisual(id);
+			CheckObstructionAndUpdateVisual(p.first);
 		}
 	}
 
@@ -813,10 +800,8 @@ END_COMMAND(MoveObjects)
 
 BEGIN_COMMAND(RotateObjectsFromCenterPoint)
 {
-	typedef std::map<entity_id_t, CVector3D> ObjectPositionMap;
-	typedef std::map<entity_id_t, float> ObjectAngleMap;
-	ObjectPositionMap m_PosOld, m_PosNew;
-	ObjectAngleMap m_AngleOld, m_AngleNew;
+	std::map<entity_id_t, CVector3D> m_PosOld, m_PosNew;
+	std::map<entity_id_t, float> m_AngleOld, m_AngleNew;
 	CVector3D m_CenterPoint;
 	float m_AngleInitialRotation;
 
@@ -827,11 +812,11 @@ BEGIN_COMMAND(RotateObjectsFromCenterPoint)
 		CVector3D minPos;
 		CVector3D maxPos;
 
-		// Compute min position and max position
-		for (size_t i = 0; i < ids.size(); ++i)
-		{
-			entity_id_t id = ids[i];
+		bool first = true;
 
+		// Compute min position and max position
+		for (entity_id_t id : ids)
+		{
 			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
 			if (!cmpPosition)
 				continue;
@@ -841,7 +826,9 @@ BEGIN_COMMAND(RotateObjectsFromCenterPoint)
 			m_PosOld[id] = cmpPosition->GetPosition();
 			m_AngleOld[id] = cmpPosition->GetRotation().Y.ToFloat();
 
-			if (i == 0) {
+			if (first)
+			{
+				first = false;
 				minPos = pos;
 				maxPos = pos;
 				m_CenterPoint.Y = pos.Y;
@@ -869,27 +856,24 @@ BEGIN_COMMAND(RotateObjectsFromCenterPoint)
 		m_AngleInitialRotation = atan2(target.X-m_CenterPoint.X, target.Z-m_CenterPoint.Z);
 	}
 
-	void SetPos(ObjectPositionMap position, ObjectAngleMap angle)
+	void SetPos(const std::map<entity_id_t, CVector3D>& position, const std::map<entity_id_t, float>& angle)
 	{
-		ObjectPositionMap::iterator it;
-		for (it = position.begin(); it != position.end(); ++it)
+		for (const std::pair<entity_id_t, CVector3D>& p : position)
 		{
-			entity_id_t id = it->first;
-			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
+			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), p.first);
 			if (!cmpPosition)
 				return;
 
 			// Set 2D position, ignoring height
-			CVector3D pos = it->second;
-			cmpPosition->JumpTo(entity_pos_t::FromFloat(pos.X), entity_pos_t::FromFloat(pos.Z));
+			cmpPosition->JumpTo(entity_pos_t::FromFloat(p.second.X), entity_pos_t::FromFloat(p.second.Z));
 
 			if (msg->rotateObject)
-				cmpPosition->SetYRotation(entity_angle_t::FromFloat(angle[id]));
+				cmpPosition->SetYRotation(entity_angle_t::FromFloat(angle.at(p.first)));
 
 		}
 
-		for (it = position.begin(); it != position.end(); ++it)
-			CheckObstructionAndUpdateVisual(it->first);
+		for (const std::pair<entity_id_t, CVector3D>& p: position)
+			CheckObstructionAndUpdateVisual(p.first);
 	}
 
 	void Redo()
@@ -907,10 +891,8 @@ BEGIN_COMMAND(RotateObjectsFromCenterPoint)
 		float globalAngle = m_AngleInitialRotation - newAngle;
 
 		// Recalculate positions
-		for (size_t i = 0; i < ids.size(); ++i)
+		for (entity_id_t id : ids)
 		{
-			entity_id_t id = ids[i];
-
 			CVector3D pos = m_PosOld[id];
 			float angle = atan2(pos.X - m_CenterPoint.X, pos.Z - m_CenterPoint.Z);
 			float localAngle = angle + (globalAngle - angle);
@@ -955,17 +937,14 @@ END_COMMAND(RotateObjectsFromCenterPoint)
 
 BEGIN_COMMAND(RotateObject)
 {
-	typedef std::map<entity_id_t, float> ObjectAngleMap;
-	ObjectAngleMap m_AngleOld, m_AngleNew;
+	std::map<entity_id_t, float> m_AngleOld, m_AngleNew;
 
 	void Do()
 	{
 		std::vector<entity_id_t> ids = *msg->ids;
 
-		for (size_t i = 0; i < ids.size(); ++i)
+		for (entity_id_t id : ids)
 		{
-			entity_id_t id = (entity_id_t)ids[i];
-
 			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
 			if (!cmpPosition)
 				return;
@@ -981,17 +960,15 @@ BEGIN_COMMAND(RotateObject)
 		SetAngle(m_AngleNew);
 	}
 
-	void SetAngle(ObjectAngleMap angles)
+	void SetAngle(const std::map<entity_id_t, float>& angles)
 	{
-		ObjectAngleMap::iterator it;
-		for (it = angles.begin(); it != angles.end(); ++it)
+		for (const std::pair<entity_id_t, float>& p : angles)
 		{
-			entity_id_t id = (entity_id_t)it->first;
-			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), id);
+			CmpPtr<ICmpPosition> cmpPosition(*g_Game->GetSimulation2(), p.first);
 			if (!cmpPosition)
 				return;
 
-			cmpPosition->SetYRotation(entity_angle_t::FromFloat(it->second));
+			cmpPosition->SetYRotation(entity_angle_t::FromFloat(p.second));
 		}
 	}
 

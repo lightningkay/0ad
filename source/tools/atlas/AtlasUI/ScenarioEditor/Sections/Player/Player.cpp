@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -201,7 +201,7 @@ public:
 			wxChoice* teamCtrl = new wxChoice(this, wxID_ANY);
 			boxSizer->Add(new DefaultCheckbox(this, ID_DefaultTeam, teamCtrl), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 			boxSizer->AddSpacer(5);
-			boxSizer->Add(new wxStaticText(this, wxID_ANY, _("Team")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
+			boxSizer->Add(new wxStaticText(this, wxID_ANY, _("Team")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 			boxSizer->AddSpacer(5);
 			teamCtrl->Append(_("None"));
 			teamCtrl->Append(_T("1"));
@@ -226,14 +226,14 @@ public:
 			// Camera
 			wxStaticBoxSizer* cameraSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Starting Camera"));
 			wxGridSizer* gridSizer = new wxGridSizer(3);
-			wxButton* cameraSet = new wxButton(this, ID_CameraSet, _("Set"));
+			wxButton* cameraSet = new wxButton(this, ID_CameraSet, _("Set"), wxDefaultPosition, wxSize(48, -1));
 			gridSizer->Add(Tooltipped(cameraSet,
 				_("Set player camera to this view")), wxSizerFlags().Expand());
-			wxButton* cameraView = new wxButton(this, ID_CameraView, _("View"));
+			wxButton* cameraView = new wxButton(this, ID_CameraView, _("View"), wxDefaultPosition, wxSize(48, -1));
 			cameraView->Enable(false);
 			gridSizer->Add(Tooltipped(cameraView,
 				_("View the player camera")), wxSizerFlags().Expand());
-			wxButton* cameraClear = new wxButton(this, ID_CameraClear, _("Clear"));
+			wxButton* cameraClear = new wxButton(this, ID_CameraClear, _("Clear"), wxDefaultPosition, wxSize(48, -1));
 			cameraClear->Enable(false);
 			gridSizer->Add(Tooltipped(cameraClear,
 				_("Clear player camera")), wxSizerFlags().Expand());
@@ -295,7 +295,7 @@ private:
 		if (colorDlg.ShowModal() == wxID_OK)
 		{
 			m_Controls.color->SetBackgroundColour(colorDlg.GetColourData().GetColour());
-			
+
 			// Pass event on to next handler
 			evt.Skip();
 		}
@@ -328,7 +328,7 @@ private:
 	bool m_CameraDefined;
 	wxString m_Name;
 	size_t m_PlayerID;
-	
+
 	PlayerPageControls m_Controls;
 
 	DECLARE_EVENT_TABLE();
@@ -464,7 +464,7 @@ private:
 		if (!m_InGUIUpdate)
 		{
 			wxASSERT(evt.GetInt() > 0);
-			
+
 			// When wxMessageBox pops up, wxSpinCtrl loses focus, which
 			//	forces another EVT_SPINCTRL event, which we don't want
 			//	to handle, so we check here for a change
@@ -472,7 +472,7 @@ private:
 			{
 				return;	// No change
 			}
-			
+
 			size_t oldNumPlayers = m_NumPlayers;
 			m_NumPlayers = evt.GetInt();
 
@@ -560,7 +560,7 @@ PlayerSettingsControl::PlayerSettingsControl(wxWindow* parent, ScenarioEditor& s
 	SetSizer(sizer);
 
 	wxBoxSizer* boxSizer = new wxBoxSizer(wxHORIZONTAL);
-	boxSizer->Add(new wxStaticText(this, wxID_ANY, _("Num players")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
+	boxSizer->Add(new wxStaticText(this, wxID_ANY, _("Num players")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 	wxSpinCtrl* numPlayersSpin = new wxSpinCtrl(this, ID_NumPlayers, wxEmptyString, wxDefaultPosition, wxSize(40, -1));
 	numPlayersSpin->SetValue(MAX_NUM_PLAYERS);
 	numPlayersSpin->SetRange(1, MAX_NUM_PLAYERS);
@@ -605,14 +605,14 @@ void PlayerSettingsControl::CreateWidgets()
 	AtIter playerDefs = m_PlayerDefaults["item"];
 	if (playerDefs.defined())
 		++playerDefs;	// Skip gaia
-	
+
 	for (size_t i = 0; i < MAX_NUM_PLAYERS; ++i)
 	{
 		// Create new player tab and get controls
 		wxString name(_("Unknown"));
 		if (playerDefs["Name"].defined())
 			name = playerDefs["Name"];
-		
+
 		PlayerPageControls controls = m_Players->AddPlayer(name, i);
 		m_PlayerControls.push_back(controls);
 
@@ -629,7 +629,6 @@ void PlayerSettingsControl::CreateWidgets()
 			aiChoice->Append(ais[j]->GetName(), new wxStringClientData(ais[j]->GetID()));
 		aiChoice->SetSelection(0);
 
-		// Only increment AtIters if they are defined
 		if (playerDefs.defined())
 			++playerDefs;
 	}
@@ -820,15 +819,15 @@ void PlayerSettingsControl::ReadFromEngine()
 			info.rX = (float)(*camRot["x"]).getDouble();
 			info.rY = (float)(*camRot["y"]).getDouble();
 			info.rZ = (float)(*camRot["z"]).getDouble();
-			
+
 			controls.page->SetCamera(info, true);
 		}
 		else
 			controls.page->SetCamera(sCameraInfo(), false);
 
-		// Only increment AtIters if they are defined
 		if (player.defined())
 			++player;
+
 		if (playerDefs.defined())
 			++playerDefs;
 	}
@@ -846,6 +845,10 @@ AtObj PlayerSettingsControl::UpdateSettingsObject()
 	players.set("@array", L"");
 
 	wxASSERT(m_NumPlayers <= MAX_NUM_PLAYERS);
+
+	AtIter playerDefs = m_PlayerDefaults["item"];
+	if (playerDefs.defined())
+		++playerDefs;	// Skip gaia
 
 	for (size_t i = 0; i < m_NumPlayers; ++i)
 	{
@@ -865,6 +868,8 @@ AtObj PlayerSettingsControl::UpdateSettingsObject()
 			wxStringClientData* str = dynamic_cast<wxStringClientData*>(choice->GetClientObject(choice->GetSelection()));
 			player.set("Civ", str->GetData());
 		}
+		else
+			player.set("Civ", playerDefs["Civ"]);
 
 		// color
 		if (controls.color->IsEnabled())
@@ -933,8 +938,11 @@ AtObj PlayerSettingsControl::UpdateSettingsObject()
 		player.set("StartingCamera", camObj);
 
 		players.add("item", player);
+
+		if (playerDefs.defined())
+			++playerDefs;
 	}
-	
+
 	m_MapSettings.set("PlayerData", players);
 
 	return m_MapSettings;
@@ -956,8 +964,14 @@ void PlayerSettingsControl::SendToEngine()
 PlayerSidebar::PlayerSidebar(ScenarioEditor& scenarioEditor, wxWindow* sidebarContainer, wxWindow* bottomBarContainer)
 	: Sidebar(scenarioEditor, sidebarContainer, bottomBarContainer), m_Loaded(false)
 {
-	m_PlayerSettingsCtrl = new PlayerSettingsControl(this, m_ScenarioEditor);
-	m_MainSizer->Add(m_PlayerSettingsCtrl, wxSizerFlags().Expand());
+	wxSizer* scrollSizer = new wxBoxSizer(wxVERTICAL);
+	wxScrolledWindow* scrolledWindow = new wxScrolledWindow(this);
+	scrolledWindow->SetScrollRate(10, 10);
+	scrolledWindow->SetSizer(scrollSizer);
+	m_MainSizer->Add(scrolledWindow, wxSizerFlags().Proportion(1).Expand());
+
+	m_PlayerSettingsCtrl = new PlayerSettingsControl(scrolledWindow, m_ScenarioEditor);
+	scrollSizer->Add(m_PlayerSettingsCtrl, wxSizerFlags().Expand());
 }
 
 void PlayerSidebar::OnCollapse(wxCollapsiblePaneEvent& WXUNUSED(evt))

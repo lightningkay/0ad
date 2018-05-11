@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -63,46 +63,51 @@ public:
 		Init(paramNode);
 	}
 
-	virtual bool IsLoaded()
+	virtual bool IsLoaded() const
 	{
 		return m_Terrain->GetVerticesPerSide() != 0;
 	}
 
-	virtual CFixedVector3D CalcNormal(entity_pos_t x, entity_pos_t z)
+	virtual CFixedVector3D CalcNormal(entity_pos_t x, entity_pos_t z) const
 	{
 		CFixedVector3D normal;
 		m_Terrain->CalcNormalFixed((x / (int)TERRAIN_TILE_SIZE).ToInt_RoundToZero(), (z / (int)TERRAIN_TILE_SIZE).ToInt_RoundToZero(), normal);
 		return normal;
 	}
 
-	virtual CVector3D CalcExactNormal(float x, float z)
+	virtual CVector3D CalcExactNormal(float x, float z) const
 	{
 		return m_Terrain->CalcExactNormal(x, z);
 	}
 
-	virtual entity_pos_t GetGroundLevel(entity_pos_t x, entity_pos_t z)
+	virtual entity_pos_t GetGroundLevel(entity_pos_t x, entity_pos_t z) const
 	{
 		// TODO: this can crash if the terrain heightmap isn't initialised yet
 
 		return m_Terrain->GetExactGroundLevelFixed(x, z);
 	}
 
-	virtual float GetExactGroundLevel(float x, float z)
+	virtual float GetExactGroundLevel(float x, float z) const
 	{
 		return m_Terrain->GetExactGroundLevel(x, z);
 	}
 
-	virtual u16 GetTilesPerSide()
+	virtual u16 GetTilesPerSide() const
 	{
 		ssize_t tiles = m_Terrain->GetTilesPerSide();
-		
+
 		if (tiles == -1)
 			return 0;
 		ENSURE(1 <= tiles && tiles <= 65535);
 		return (u16)tiles;
 	}
 
-	virtual u16 GetVerticesPerSide()
+	virtual u32 GetMapSize() const
+	{
+		return GetTilesPerSide() * TERRAIN_TILE_SIZE;
+	}
+
+	virtual u16 GetVerticesPerSide() const
 	{
 		ssize_t vertices = m_Terrain->GetVerticesPerSide();
 		ENSURE(1 <= vertices && vertices <= 65535);
@@ -137,14 +142,11 @@ public:
 					entity_pos_t::FromInt(tiles*(int)TERRAIN_TILE_SIZE),
 					vertices);
 		}
-		
+
 		if (ReloadWater && CRenderer::IsInitialised())
 		{
 			g_Renderer.GetWaterManager()->SetMapSize(vertices);
-			g_Renderer.GetWaterManager()->RecomputeBlurredNormalMap();
-			g_Renderer.GetWaterManager()->RecomputeDistanceHeightmap();
-			g_Renderer.GetWaterManager()->RecomputeWindStrength();
-			g_Renderer.GetWaterManager()->CreateWaveMeshes();
+			g_Renderer.GetWaterManager()->RecomputeWaterData();
 		}
 		MakeDirty(0, 0, tiles+1, tiles+1);
 	}

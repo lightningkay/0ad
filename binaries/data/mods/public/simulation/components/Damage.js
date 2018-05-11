@@ -1,8 +1,8 @@
 function Damage() {}
 
-Damage.prototype.Schema = 
+Damage.prototype.Schema =
 	"<a:component type='system'/><empty/>";
-	
+
 Damage.prototype.Init = function()
 {
 };
@@ -15,14 +15,13 @@ Damage.prototype.Init = function()
  */
 Damage.prototype.InterpolatedLocation = function(ent, lateness)
 {
-	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
-	let turnLength = cmpTimer.GetLatestTurnLength() / 1000;
 	let cmpTargetPosition = Engine.QueryInterface(ent, IID_Position);
 	if (!cmpTargetPosition || !cmpTargetPosition.IsInWorld()) // TODO: handle dead target properly
 		return undefined;
 	let curPos = cmpTargetPosition.GetPosition();
 	let prevPos = cmpTargetPosition.GetPreviousPosition();
-	lateness /= 1000;
+	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
+	let turnLength = cmpTimer.GetLatestTurnLength();
 	return new Vector3D(
 			(curPos.x * (turnLength - lateness) + prevPos.x * lateness) / turnLength,
 			0,
@@ -41,24 +40,42 @@ Damage.prototype.TestCollision = function(ent, point, lateness)
 	let targetPosition = this.InterpolatedLocation(ent, lateness);
 	if (!targetPosition)
 		return false;
-	
+
 	let cmpFootprint = Engine.QueryInterface(ent, IID_Footprint);
 	if (!cmpFootprint)
 		return false;
-	
+
 	let targetShape = cmpFootprint.GetShape();
 
 	if (!targetShape)
 		return false;
 
-	if (targetShape.type === 'circle')
-		// Use VectorDistanceSquared and square targetShape.radius to avoid square roots.
-		return targetPosition.horizDistanceTo(point) < (targetShape.radius * targetShape.radius);
+	if (targetShape.type == "circle")
+		return targetPosition.horizDistanceToSquared(point) < targetShape.radius * targetShape.radius;
 
-	let angle = Engine.QueryInterface(ent, IID_Position).GetRotation().y;
-	let distance = Vector2D.from3D(Vector3D.sub(point, targetPosition)).rotate(-angle);
+	if (targetShape.type == "square")
+	{
+		let angle = Engine.QueryInterface(ent, IID_Position).GetRotation().y;
+		let distance = Vector2D.from3D(Vector3D.sub(point, targetPosition)).rotate(-angle);
+		return Math.abs(distance.x) < targetShape.width / 2 && Math.abs(distance.y) < targetShape.depth / 2;
+	}
 
-	return distance.x < Math.abs(targetShape.width/2) && distance.y < Math.abs(targetShape.depth/2);
+	warn("TestCollision called with an invalid footprint shape");
+	return false;
+};
+
+/**
+ * Get the list of players affected by the damage.
+ * @param {number}  attackerOwner - the player id of the attacker.
+ * @param {boolean} friendlyFire - a flag indicating if allied entities are also damaged.
+ * @return {number[]} - the ids of players need to be damaged
+ */
+Damage.prototype.GetPlayersToDamage = function(attackerOwner, friendlyFire)
+{
+	if (!friendlyFire)
+		return QueryPlayerIDInterface(attackerOwner).GetEnemies();
+
+	return Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetAllPlayers();
 };
 
 /**
@@ -73,45 +90,55 @@ Damage.prototype.TestCollision = function(ent, point, lateness)
  * @param {boolean}  data.isSplash - a flag indicating if it's splash damage.
  * @param {Vector3D} data.position - the expected position of the target.
  * @param {number}   data.projectileId - the id of the projectile.
- * @param {Vector3D} data.direction - The unit vector defining the direction
+ * @param {Vector3D} data.direction - the unit vector defining the direction.
+ * @param {Object}   data.bonus - the attack bonus template from the attacker.
+ * @param {string}   data.attackImpactSound - the name of the sound emited on impact.
  * ***When splash damage***
  * @param {boolean}  data.friendlyFire - a flag indicating if allied entities are also damaged.
  * @param {number}   data.radius - the radius of the splash damage.
  * @param {string}   data.shape - the shape of the splash range.
+ * @param {Object}   data.splashBonus - the attack bonus template from the attacker.
+ * @param {Object}   data.splashStrengths - data of the form { 'hack': number, 'pierce': number, 'crush': number }.
  */
 Damage.prototype.MissileHit = function(data, lateness)
 {
 	if (!data.position)
 		return;
-	
+
+	let cmpSoundManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_SoundManager);
+	if (cmpSoundManager && data.attackImpactSound)
+		cmpSoundManager.PlaySoundGroupAtPosition(data.attackImpactSound, data.position);
+
 	// Do this first in case the direct hit kills the target
 	if (data.isSplash)
 	{
-		let playersToDamage = !data.friendlyFire ? QueryPlayerIDInterface(data.attackerOwner).GetEnemies() : null;
-
 		this.CauseSplashDamage({
 			"attacker": data.attacker,
 			"origin": Vector2D.from3D(data.position),
 			"radius": data.radius,
 			"shape": data.shape,
-			"strengths": data.strengths,
+			"strengths": data.splashStrengths,
+			"splashBonus": data.splashBonus,
 			"direction": data.direction,
-			"playersToDamage": playersToDamage,
+			"playersToDamage": this.GetPlayersToDamage(data.attackerOwner, data.friendlyFire),
 			"type": data.type,
 			"attackerOwner": data.attackerOwner
 		});
 	}
 
 	let cmpProjectileManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_ProjectileManager);
-	
+
 	// Deal direct damage if we hit the main target
-	if (this.TestCollision(data.target, data.position, lateness))
+	// and if the target has DamageReceiver (not the case for a mirage for example)
+	let cmpDamageReceiver = Engine.QueryInterface(data.target, IID_DamageReceiver);
+	if (cmpDamageReceiver && this.TestCollision(data.target, data.position, lateness))
 	{
+		data.multiplier = GetDamageBonus(data.target, data.bonus);
 		this.CauseDamage(data);
 		cmpProjectileManager.RemoveProjectile(data.projectileId);
 		return;
 	}
-	
+
 	let targetPosition = this.InterpolatedLocation(data.target, lateness);
 	if (!targetPosition)
 		return;
@@ -119,22 +146,22 @@ Damage.prototype.MissileHit = function(data, lateness)
 	// If we didn't hit the main target look for nearby units
 	let cmpPlayer = QueryPlayerIDInterface(data.attackerOwner);
 	let ents = this.EntitiesNearPoint(Vector2D.from3D(data.position), targetPosition.horizDistanceTo(data.position) * 2, cmpPlayer.GetEnemies());
-	
 	for (let ent of ents)
+	{
 		if (!this.TestCollision(ent, data.position, lateness))
-		{
-			this.CauseDamage({
-				"strengths": data.strengths,
-				"target": ent,
-				"attacker": data.attacker,
-				"multiplier": data.multiplier,
-				"type": data.type,
-				"attackerOwner": data.attackerOwner
-			});
+			continue;
 
-			cmpProjectileManager.RemoveProjectile(data.projectileId);
-			break;
-		}
+		this.CauseDamage({
+			"strengths": data.strengths,
+			"target": ent,
+			"attacker": data.attacker,
+			"multiplier": GetDamageBonus(ent, data.bonus),
+			"type": data.type,
+			"attackerOwner": data.attackerOwner
+		});
+		cmpProjectileManager.RemoveProjectile(data.projectileId);
+		break;
+	}
 };
 
 /**
@@ -147,14 +174,16 @@ Damage.prototype.MissileHit = function(data, lateness)
  * @param {Object}   data.strengths - data of the form { 'hack': number, 'pierce': number, 'crush': number }.
  * @param {string}   data.type - the type of damage.
  * @param {number}   data.attackerOwner - the player id of the attacker.
- * @param {Vector3D} data.direction - the unit vector defining the direction.
- * @param {number[]} [data.playersToDamage] - the array of player id's to damage.
+ * @param {Vector3D} [data.direction] - the unit vector defining the direction. Needed for linear splash damage.
+ * @param {Object}   data.splashBonus - the attack bonus template from the attacker.
+ * @param {number[]} data.playersToDamage - the array of player id's to damage.
  */
 Damage.prototype.CauseSplashDamage = function(data)
 {
 	// Get nearby entities and define variables
 	let nearEnts = this.EntitiesNearPoint(data.origin, data.radius, data.playersToDamage);
 	let damageMultiplier = 1;
+
 	// Cycle through all the nearby entities and damage it appropriately based on its distance from the origin.
 	for (let ent of nearEnts)
 	{
@@ -166,17 +195,19 @@ Damage.prototype.CauseSplashDamage = function(data)
 			// Get position of entity relative to splash origin.
 			let relativePos = entityPosition.sub(data.origin);
 
+			// Get the position relative to the missile direction.
+			let direction = Vector2D.from3D(data.direction);
+			let parallelPos = relativePos.dot(direction);
+			let perpPos = relativePos.cross(direction);
+
 			// The width of linear splash is one fifth of the normal splash radius.
 			let width = data.radius / 5;
 
-			// Effectivly rotate the axis to align with the missile direction.
-			let parallelDist = relativePos.dot(data.direction); // z axis
-			let perpDist = Math.abs(relativePos.cross(data.direction)); // y axis
-
-			// Check that the unit is within the distance at which it will get damaged.
-			if (parallelDist > -width && perpDist < width) // If in radius, quadratic falloff in both directions
-				damageMultiplier = (data.radius * data.radius - parallelDist * parallelDist) / (data.radius * data.radius) *
-								   (width * width - perpDist * perpDist) / (width * width);
+			// Check that the unit is within the distance splash width of the line starting at the missile's
+			// landing point which extends in the direction of the missile for length splash radius.
+			if (parallelPos >= 0 && Math.abs(perpPos) < width) // If in radius, quadratic falloff in both directions
+				damageMultiplier = (1 - parallelPos * parallelPos / (data.radius * data.radius)) *
+					(1 - perpPos * perpPos / (width * width));
 			else
 				damageMultiplier = 0;
 		}
@@ -184,6 +215,10 @@ Damage.prototype.CauseSplashDamage = function(data)
 		{
 			warn("The " + data.shape + " splash damage shape is not implemented!");
 		}
+
+		if (data.splashBonus)
+			damageMultiplier *= GetDamageBonus(ent, data.splashBonus);
+
 		// Call CauseDamage which reduces the hitpoints, posts network command, plays sounds....
 		this.CauseDamage({
 			"strengths": data.strengths,
@@ -202,7 +237,7 @@ Damage.prototype.CauseSplashDamage = function(data)
  * @param {Object} data.strengths - data in the form of { 'hack': number, 'pierce': number, 'crush': number }.
  * @param {number} data.target - the entity id of the target.
  * @param {number} data.attacker - the entity id og the attacker.
- * @param {number} data.multiplier - the damage multiplier (between 0 and 1).
+ * @param {number} data.multiplier - the damage multiplier.
  * @param {string} data.type - the type of damage.
  * @param {number} data.attackerOwner - the player id of the attacker.
  */
@@ -212,7 +247,7 @@ Damage.prototype.CauseDamage = function(data)
 	if (!cmpDamageReceiver)
 		return;
 
-	let targetState = cmpDamageReceiver.TakeDamage(data.strengths.hack * data.multiplier, data.strengths.pierce * data.multiplier, data.strengths.crush * data.multiplier);
+	let targetState = cmpDamageReceiver.TakeDamage(data.strengths, data.multiplier);
 
 	let cmpPromotion = Engine.QueryInterface(data.attacker, IID_Promotion);
 	let cmpLoot = Engine.QueryInterface(data.target, IID_Loot);
@@ -224,8 +259,6 @@ Damage.prototype.CauseDamage = function(data)
 		this.TargetKilled(data.attacker, data.target, data.attackerOwner);
 
 	Engine.PostMessage(data.target, MT_Attacked, { "attacker": data.attacker, "target": data.target, "type": data.type, "damage": -targetState.change, "attackerOwner": data.attackerOwner });
-
-	PlaySound("attack_impact", data.attacker);
 };
 
 /**
@@ -253,8 +286,8 @@ Damage.prototype.EntitiesNearPoint = function(origin, radius, players)
 Damage.prototype.TargetKilled = function(attacker, target, attackerOwner)
 {
 	let cmpAttackerOwnership = Engine.QueryInterface(attacker, IID_Ownership);
-	let atkOwner =  cmpAttackerOwnership && cmpAttackerOwnership.GetOwner() != -1 ? cmpAttackerOwnership.GetOwner() : attackerOwner;
-	
+	let atkOwner = cmpAttackerOwnership && cmpAttackerOwnership.GetOwner() != INVALID_PLAYER ? cmpAttackerOwnership.GetOwner() : attackerOwner;
+
 	// Add to killer statistics.
 	let cmpKillerPlayerStatisticsTracker = QueryPlayerIDInterface(atkOwner, IID_StatisticsTracker);
 	if (cmpKillerPlayerStatisticsTracker)
@@ -269,5 +302,5 @@ Damage.prototype.TargetKilled = function(attacker, target, attackerOwner)
 	if (cmpLooter)
 		cmpLooter.Collect(target);
 };
-	
+
 Engine.RegisterSystemComponentType(IID_Damage, "Damage", Damage);

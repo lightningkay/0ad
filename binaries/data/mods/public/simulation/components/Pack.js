@@ -76,7 +76,7 @@ Pack.prototype.Unpack = function()
 
 	let cmpVisual = Engine.QueryInterface(this.entity, IID_Visual);
 	if (cmpVisual)
-		cmpVisual.SelectAnimation("unpacking", true, 1.0, "unpacking");
+		cmpVisual.SelectAnimation("unpacking", true, 1.0);
 };
 
 Pack.prototype.CancelPack = function()
@@ -91,15 +91,14 @@ Pack.prototype.CancelPack = function()
 	// Clear animation
 	let cmpVisual = Engine.QueryInterface(this.entity, IID_Visual);
 	if (cmpVisual)
-		cmpVisual.SelectAnimation("idle", false, 1.0, "");
+		cmpVisual.SelectAnimation("idle", false, 1.0);
 };
 
 Pack.prototype.GetPackTime = function()
 {
 	let cmpPlayer = QueryOwnerInterface(this.entity, IID_Player);
 
-	return ApplyValueModificationsToEntity("Pack/Time", +this.template.Time, this.entity) *
-		cmpPlayer.GetCheatTimeMultiplier();
+	return ApplyValueModificationsToEntity("Pack/Time", +this.template.Time, this.entity) * cmpPlayer.GetTimeMultiplier();
 };
 
 Pack.prototype.GetElapsedTime = function()
@@ -109,7 +108,7 @@ Pack.prototype.GetElapsedTime = function()
 
 Pack.prototype.GetProgress = function()
 {
-	return this.elapsedTime / this.GetPackTime();
+	return Math.min(this.elapsedTime / this.GetPackTime(), 1);
 };
 
 Pack.prototype.SetElapsedTime = function(time)
@@ -128,6 +127,7 @@ Pack.prototype.PackProgress = function(data, lateness)
 
 	this.CancelTimer();
 	this.packed = !this.packed;
+	this.packing = false;
 
 	Engine.PostMessage(this.entity, MT_PackFinished, { "packed": this.packed });
 

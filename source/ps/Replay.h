@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 #ifndef INCLUDED_REPLAY
 #define INCLUDED_REPLAY
 
+#include "ps/CStr.h"
 #include "scriptinterface/ScriptTypes.h"
 
 struct SimulationCommand;
@@ -73,7 +74,7 @@ class CReplayLogger : public IReplayLogger
 {
 	NONCOPYABLE(CReplayLogger);
 public:
-	CReplayLogger(ScriptInterface& scriptInterface);
+	CReplayLogger(const ScriptInterface& scriptInterface);
 	~CReplayLogger();
 
 	virtual void StartGame(JS::MutableHandleValue attribs);
@@ -82,7 +83,7 @@ public:
 	virtual OsPath GetDirectory() const;
 
 private:
-	ScriptInterface& m_ScriptInterface;
+	const ScriptInterface& m_ScriptInterface;
 	std::ostream* m_Stream;
 	OsPath m_Directory;
 };
@@ -96,11 +97,13 @@ public:
 	CReplayPlayer();
 	~CReplayPlayer();
 
-	void Load(const std::string& path);
-	void Replay(bool serializationtest, bool ooslog);
+	void Load(const OsPath& path);
+	void Replay(bool serializationtest, int rejointestturn, bool ooslog);
 
 private:
 	std::istream* m_Stream;
+	CStr ModListToString(const std::vector<std::vector<CStr>>& list) const;
+	void CheckReplayMods(const ScriptInterface& scriptInterface, JS::HandleValue attribs) const;
 };
 
 #endif // INCLUDED_REPLAY

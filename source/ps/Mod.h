@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -20,8 +20,30 @@
 
 #include "ps/CStr.h"
 #include "ps/GameSetup/CmdLineArgs.h"
+#include "scriptinterface/ScriptInterface.h"
 
 extern std::vector<CStr> g_modsLoaded;
 extern CmdLineArgs g_args;
 
+namespace Mod
+{
+	JS::Value GetAvailableMods(const ScriptInterface& scriptInterface);
+
+	/**
+	 * Get the loaded mods and their version.
+	 * "user" mod and "mod" mod are ignored as they are irrelevant for compatibility checks.
+	 *
+	 * @param scriptInterface the ScriptInterface in which to create the return data.
+	 * @return list of loaded mods with the format [[modA, versionA], [modB, versionB], ...]
+	 */
+	JS::Value GetLoadedModsWithVersions(const ScriptInterface& scriptInterface);
+
+	/**
+	 * Gets info (version and mods loaded) on the running engine
+	 *
+	 * @param scriptInterface the ScriptInterface in which to create the return data.
+	 * @return list of objects containing data
+	 */
+	JS::Value GetEngineInfo(const ScriptInterface& scriptInterface);
+}
 #endif // INCLUDED_MOD

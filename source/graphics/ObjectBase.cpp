@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -60,6 +60,7 @@ void CObjectBase::LoadVariant(const CXeromyces& XeroFile, const XMBElement& vari
 	AT(event);
 	AT(file);
 	AT(frequency);
+	AT(id);
 	AT(load);
 	AT(maxheight);
 	AT(minheight);
@@ -115,7 +116,7 @@ void CObjectBase::LoadVariant(const CXeromyces& XeroFile, const XMBElement& vari
 			XERO_ITER_EL(option, textures_element)
 			{
 				ENSURE(textures_element.GetNodeName() == el_texture);
-				
+
 				Samp samp;
 				XERO_ITER_ATTR(textures_element, se)
 				{
@@ -163,6 +164,8 @@ void CObjectBase::LoadVariant(const CXeromyces& XeroFile, const XMBElement& vari
 				{
 					if (ae.Name == at_name)
 						anim.m_AnimName = ae.Value;
+					else if (ae.Name == at_id)
+						anim.m_ID = ae.Value;
 					else if (ae.Name == at_frequency)
 						anim.m_Frequency = ae.Value.ToInt();
 					else if (ae.Name == at_file)
@@ -365,20 +368,17 @@ std::vector<u8> CObjectBase::CalculateVariationKey(const std::vector<std::set<CS
 		}
 
 		choices.push_back(match);
-
 		// Remember which props were chosen, so we can call CalculateVariationKey on them
 		// at the end.
-		Variant& var ((*grp)[match]);
-		for (std::vector<Prop>::iterator it = var.m_Props.begin(); it != var.m_Props.end(); ++it)
-		{
-			// Erase all existing props which are overridden by this variant:
-			for (std::vector<Prop>::iterator it = var.m_Props.begin(); it != var.m_Props.end(); ++it)
-				chosenProps.erase(it->m_PropPointName);
-			// and then insert the new ones:
-			for (std::vector<Prop>::iterator it = var.m_Props.begin(); it != var.m_Props.end(); ++it)
-				if (! it->m_ModelName.empty())
-					chosenProps.insert(make_pair(it->m_PropPointName, it->m_ModelName));
-		}
+		// Erase all existing props which are overridden by this variant:
+		Variant& var((*grp)[match]);
+
+		for (const Prop& prop : var.m_Props)
+			chosenProps.erase(prop.m_PropPointName);
+		// and then insert the new ones:
+		for (const Prop& prop : var.m_Props)
+			if (!prop.m_ModelName.empty())
+				chosenProps.insert(make_pair(prop.m_PropPointName, prop.m_ModelName));
 	}
 
 	// Load each prop, and add their CalculateVariationKey to our key:
@@ -458,7 +458,7 @@ const CObjectBase::Variation CObjectBase::BuildVariation(const std::vector<u8>& 
 		// and then insert the new ones:
 		for (std::vector<CObjectBase::Anim>::iterator it = var.m_Anims.begin(); it != var.m_Anims.end(); ++it)
 			variation.anims.insert(make_pair(it->m_AnimName, *it));
-		
+
 		// Same for samplers, though perhaps not strictly necessary:
 		for (std::vector<CObjectBase::Samp>::iterator it = var.m_Samplers.begin(); it != var.m_Samplers.end(); ++it)
 			variation.samplers.erase(it->m_SamplerName.string());
@@ -563,7 +563,7 @@ std::set<CStr> CObjectBase::CalculateRandomRemainingSelections(rng_t& rng, const
 					if (randNum < 0)
 					{
 						remainingSelections.insert((*grp)[i].m_VariantName);
-						// (If this change to 'remainingSelections' interferes with earlier choices, then 
+						// (If this change to 'remainingSelections' interferes with earlier choices, then
 						// we'll get some non-fatal inconsistencies that just break the randomness. But that
 						// shouldn't happen, much.)
 						// (As an example, suppose you have a group with variants "a" and "b", and another
@@ -583,16 +583,13 @@ std::set<CStr> CObjectBase::CalculateRandomRemainingSelections(rng_t& rng, const
 		// Remember which props were chosen, so we can call CalculateRandomVariation on them
 		// at the end.
 		Variant& var ((*grp)[match]);
-		for (std::vector<Prop>::iterator it = var.m_Props.begin(); it != var.m_Props.end(); ++it)
-		{
-			// Erase all existing props which are overridden by this variant:
-			for (std::vector<Prop>::iterator it = var.m_Props.begin(); it != var.m_Props.end(); ++it)
-				chosenProps.erase(it->m_PropPointName);
-			// and then insert the new ones:
-			for (std::vector<Prop>::iterator it = var.m_Props.begin(); it != var.m_Props.end(); ++it)
-				if (! it->m_ModelName.empty())
-					chosenProps.insert(make_pair(it->m_PropPointName, it->m_ModelName));
-		}
+		// Erase all existing props which are overridden by this variant:
+		for (const Prop& prop : var.m_Props)
+			chosenProps.erase(prop.m_PropPointName);
+		// and then insert the new ones:
+		for (const Prop& prop : var.m_Props)
+			if (!prop.m_ModelName.empty())
+				chosenProps.insert(make_pair(prop.m_PropPointName, prop.m_ModelName));
 	}
 
 	// Load each prop, and add their required selections to ours:

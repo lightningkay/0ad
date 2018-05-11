@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -24,10 +24,10 @@
 #include "lobby/IXmppClient.h"
 #include "ps/Profile.h"
 #include "scriptinterface/ScriptInterface.h"
-#include "third_party/encryption/pkcs5_pbkdf2.h"
-#include "third_party/encryption/sha.h"
 
-void JSI_Lobby::RegisterScriptFunctions(ScriptInterface& scriptInterface)
+#include "third_party/encryption/pkcs5_pbkdf2.h"
+
+void JSI_Lobby::RegisterScriptFunctions(const ScriptInterface& scriptInterface)
 {
 	// Lobby functions
 	scriptInterface.RegisterFunction<bool, &JSI_Lobby::HasXmppClient>("HasXmppClient");
@@ -39,9 +39,8 @@ void JSI_Lobby::RegisterScriptFunctions(ScriptInterface& scriptInterface)
 	scriptInterface.RegisterFunction<void, &JSI_Lobby::StopXmppClient>("StopXmppClient");
 	scriptInterface.RegisterFunction<void, &JSI_Lobby::ConnectXmppClient>("ConnectXmppClient");
 	scriptInterface.RegisterFunction<void, &JSI_Lobby::DisconnectXmppClient>("DisconnectXmppClient");
-	scriptInterface.RegisterFunction<void, &JSI_Lobby::SendGetGameList>("SendGetGameList");
+	scriptInterface.RegisterFunction<bool, &JSI_Lobby::IsXmppClientConnected>("IsXmppClientConnected");
 	scriptInterface.RegisterFunction<void, &JSI_Lobby::SendGetBoardList>("SendGetBoardList");
-	scriptInterface.RegisterFunction<void, &JSI_Lobby::SendGetRatingList>("SendGetRatingList");
 	scriptInterface.RegisterFunction<void, std::wstring, &JSI_Lobby::SendGetProfile>("SendGetProfile");
 	scriptInterface.RegisterFunction<void, JS::HandleValue, &JSI_Lobby::SendRegisterGame>("SendRegisterGame");
 	scriptInterface.RegisterFunction<void, JS::HandleValue, &JSI_Lobby::SendGameReport>("SendGameReport");
@@ -49,11 +48,11 @@ void JSI_Lobby::RegisterScriptFunctions(ScriptInterface& scriptInterface)
 	scriptInterface.RegisterFunction<void, std::wstring, std::wstring, &JSI_Lobby::SendChangeStateGame>("SendChangeStateGame");
 	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::GetPlayerList>("GetPlayerList");
 	scriptInterface.RegisterFunction<void, &JSI_Lobby::LobbyClearPresenceUpdates>("LobbyClearPresenceUpdates");
-	scriptInterface.RegisterFunction<int, &JSI_Lobby::LobbyGetMucMessageCount>("LobbyGetMucMessageCount");
 	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::GetGameList>("GetGameList");
 	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::GetBoardList>("GetBoardList");
 	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::GetProfile>("GetProfile");
-	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::LobbyGuiPollMessage>("LobbyGuiPollMessage");
+	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::LobbyGuiPollNewMessage>("LobbyGuiPollNewMessage");
+	scriptInterface.RegisterFunction<JS::Value, &JSI_Lobby::LobbyGuiPollHistoricMessages>("LobbyGuiPollHistoricMessages");
 	scriptInterface.RegisterFunction<void, std::wstring, &JSI_Lobby::LobbySendMessage>("LobbySendMessage");
 	scriptInterface.RegisterFunction<void, std::wstring, &JSI_Lobby::LobbySetPlayerPresence>("LobbySetPlayerPresence");
 	scriptInterface.RegisterFunction<void, std::wstring, &JSI_Lobby::LobbySetNick>("LobbySetNick");
@@ -69,7 +68,7 @@ void JSI_Lobby::RegisterScriptFunctions(ScriptInterface& scriptInterface)
 
 bool JSI_Lobby::HasXmppClient(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
 {
-	return (g_XmppClient ? true : false);
+	return g_XmppClient;
 }
 
 bool JSI_Lobby::IsRankedGame(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
@@ -120,11 +119,10 @@ void JSI_Lobby::DisconnectXmppClient(ScriptInterface::CxPrivate* UNUSED(pCxPriva
 	g_XmppClient->disconnect();
 }
 
-void JSI_Lobby::SendGetGameList(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
+bool JSI_Lobby::IsXmppClientConnected(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
 {
-	if (!g_XmppClient)
-		return;
-	g_XmppClient->SendIqGetGameList();
+	ENSURE(g_XmppClient);
+	return g_XmppClient->isConnected();
 }
 
 void JSI_Lobby::SendGetBoardList(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
@@ -132,13 +130,6 @@ void JSI_Lobby::SendGetBoardList(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
 	if (!g_XmppClient)
 		return;
 	g_XmppClient->SendIqGetBoardList();
-}
-
-void JSI_Lobby::SendGetRatingList(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
-{
-	if (!g_XmppClient)
-		return;
-	g_XmppClient->SendIqGetRatingList();
 }
 
 void JSI_Lobby::SendGetProfile(ScriptInterface::CxPrivate* UNUSED(pCxPrivate), const std::wstring& player)
@@ -185,7 +176,7 @@ JS::Value JSI_Lobby::GetPlayerList(ScriptInterface::CxPrivate* pCxPrivate)
 
 	JSContext* cx = pCxPrivate->pScriptInterface->GetContext();
 	JSAutoRequest rq(cx);
-		
+
 	JS::RootedValue playerList(cx);
 	g_XmppClient->GUIGetPlayerList(*(pCxPrivate->pScriptInterface), &playerList);
 
@@ -198,11 +189,6 @@ void JSI_Lobby::LobbyClearPresenceUpdates(ScriptInterface::CxPrivate* UNUSED(pCx
 		return;
 
 	g_XmppClient->ClearPresenceUpdates();
-}
-
-int JSI_Lobby::LobbyGetMucMessageCount(ScriptInterface::CxPrivate* UNUSED(pCxPrivate))
-{
-	return g_XmppClient ? g_XmppClient->GetMucMessageCount() : 0;
 }
 
 JS::Value JSI_Lobby::GetGameList(ScriptInterface::CxPrivate* pCxPrivate)
@@ -247,25 +233,27 @@ JS::Value JSI_Lobby::GetProfile(ScriptInterface::CxPrivate* pCxPrivate)
 	return profileFetch;
 }
 
-JS::Value JSI_Lobby::LobbyGuiPollMessage(ScriptInterface::CxPrivate* pCxPrivate)
+JS::Value JSI_Lobby::LobbyGuiPollNewMessage(ScriptInterface::CxPrivate* pCxPrivate)
 {
 	if (!g_XmppClient)
 		return JS::UndefinedValue();
 
-	JSContext* cx = pCxPrivate->pScriptInterface->GetContext();
-	JSAutoRequest rq(cx);
-	
-	JS::RootedValue poll(cx);
-	g_XmppClient->GuiPollMessage(*(pCxPrivate->pScriptInterface), &poll);
+	return g_XmppClient->GuiPollNewMessage(*(pCxPrivate->pScriptInterface));
+}
 
-	return poll;
+JS::Value JSI_Lobby::LobbyGuiPollHistoricMessages(ScriptInterface::CxPrivate* pCxPrivate)
+{
+	if (!g_XmppClient)
+		return JS::UndefinedValue();
+
+	return g_XmppClient->GuiPollHistoricMessages(*(pCxPrivate->pScriptInterface));
 }
 
 void JSI_Lobby::LobbySendMessage(ScriptInterface::CxPrivate* UNUSED(pCxPrivate), const std::wstring& message)
 {
 	if (!g_XmppClient)
 		return;
-		
+
 	g_XmppClient->SendMUCMessage(utf8_from_wstring(message));
 }
 
@@ -332,10 +320,25 @@ std::wstring JSI_Lobby::LobbyGetPlayerRole(ScriptInterface::CxPrivate* UNUSED(pC
 }
 
 // Non-public secure PBKDF2 hash function with salting and 1,337 iterations
+//
+// TODO: We should use libsodium's crypto_pwhash instead of this. The first reason is that
+// libsodium doesn't propose a bare PBKDF2 hash in its API and it's too bad to rely on custom
+// code when we have a fully-fledged library available; the second reason is that Argon2 (the
+// default algorithm for crypto_pwhash) is better than what we use (and it's the default one
+// in the lib for a reason).
+// However changing the hashing method should be planned carefully, by trying to login with a
+// password hashed the old way, and, if successful, updating the password in the database using
+// the new hashing method. Dropping the old hashing code can only be done either by giving users
+// a way to reset their password, or by keeping track of successful password updates and dropping
+// old unused accounts after some time.
 std::string JSI_Lobby::EncryptPassword(const std::string& password, const std::string& username)
 {
-	const int DIGESTSIZE = SHA_DIGEST_SIZE;
+	ENSURE(sodium_init() >= 0);
+
+	const int DIGESTSIZE = crypto_hash_sha256_BYTES;
 	const int ITERATIONS = 1337;
+
+	cassert(DIGESTSIZE == 32);
 
 	static const unsigned char salt_base[DIGESTSIZE] = {
 			244, 243, 249, 244, 32, 33, 34, 35, 10, 11, 12, 13, 14, 15, 16, 17,
@@ -343,10 +346,13 @@ std::string JSI_Lobby::EncryptPassword(const std::string& password, const std::s
 
 	// initialize the salt buffer
 	unsigned char salt_buffer[DIGESTSIZE] = {0};
-	SHA256 hash;
-	hash.update(salt_base, sizeof(salt_base));
-	hash.update(username.c_str(), username.length());
-	hash.finish(salt_buffer);
+	crypto_hash_sha256_state state;
+	crypto_hash_sha256_init(&state);
+
+	crypto_hash_sha256_update(&state, salt_base, sizeof(salt_base));
+	crypto_hash_sha256_update(&state, (unsigned char*)username.c_str(), username.length());
+
+	crypto_hash_sha256_final(&state, salt_buffer);
 
 	// PBKDF2 to create the buffer
 	unsigned char encrypted[DIGESTSIZE];

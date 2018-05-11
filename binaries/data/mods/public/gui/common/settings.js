@@ -15,6 +15,12 @@ const g_MaxTeams = 4;
 const g_SettingsDirectory = "simulation/data/settings/";
 
 /**
+ * Directory containing all biomes supported for random map scripts.
+ */
+const g_BiomesDirectory = "maps/random/rmbiome/";
+
+
+/**
  * An object containing all values given by setting name.
  * Used by lobby, gamesetup, session, summary screen and replay menu.
  */
@@ -31,21 +37,24 @@ function loadSettingsValues()
 	var settings = {
 		"AIDescriptions": loadAIDescriptions(),
 		"AIDifficulties": loadAIDifficulties(),
+		"AIBehaviors": loadAIBehaviors(),
 		"Ceasefire": loadCeasefire(),
-		"WonderDurations": loadWonderDuration(),
+		"VictoryDurations": loadVictoryDuration(),
 		"GameSpeeds": loadSettingValuesFile("game_speeds.json"),
 		"MapTypes": loadMapTypes(),
 		"MapSizes": loadSettingValuesFile("map_sizes.json"),
+		"Biomes": loadBiomes(),
 		"PlayerDefaults": loadPlayerDefaults(),
 		"PopulationCapacities": loadPopulationCapacities(),
 		"StartingResources": loadSettingValuesFile("starting_resources.json"),
-		"VictoryConditions": loadVictoryConditions()
+		"VictoryConditions": loadVictoryConditions(),
+		"TriggerDifficulties": loadSettingValuesFile("trigger_difficulties.json")
 	};
 
 	if (Object.keys(settings).some(key => settings[key] === undefined))
 		return undefined;
 
-	return settings;
+	return deepfreeze(settings);
 }
 
 /**
@@ -131,12 +140,35 @@ function loadAIDifficulties()
 	];
 }
 
-/**
- * Loads available wonder-victory times
- */
-function loadWonderDuration()
+function loadAIBehaviors()
 {
-	var jsonFile = "wonder_times.json";
+	return [
+		{
+			"Name": "random",
+			"Title": translateWithContext("aiBehavior", "Random"),
+			"Default": true
+		},
+		{
+			"Name": "balanced",
+			"Title": translateWithContext("aiBehavior", "Balanced"),
+		},
+		{
+			"Name": "defensive",
+			"Title": translateWithContext("aiBehavior", "Defensive")
+		},
+		{
+			"Name": "aggressive",
+			"Title": translateWithContext("aiBehavior", "Aggressive")
+		}
+	];
+}
+
+/**
+ * Loads available victory times for victory conditions like Wonder and Capture the Relic.
+ */
+function loadVictoryDuration()
+{
+	var jsonFile = "victory_times.json";
 	var json = Engine.ReadJSONFile(g_SettingsDirectory + jsonFile);
 
 	if (!json || json.Default === undefined || !json.Times || !Array.isArray(json.Times))
@@ -148,7 +180,7 @@ function loadWonderDuration()
 	return json.Times.map(duration => ({
 		"Duration": duration,
 		"Default": duration == json.Default,
-		"Title": sprintf(translatePluralWithContext("wonder victory", "%(min)s minute", "%(min)s minutes", duration), { "min": duration })
+		"Title": sprintf(translatePluralWithContext("victory duration", "%(min)s minute", "%(min)s minutes", duration), { "min": duration })
 	}));
 }
 
@@ -186,51 +218,55 @@ function loadMapTypes()
 		{
 			"Name": "skirmish",
 			"Title": translateWithContext("map", "Skirmish"),
+			"Description": translate("A map with a predefined landscape and number of players. Freely select the other gamesettings."),
 			"Default": true
 		},
 		{
 			"Name": "random",
-			"Title": translateWithContext("map", "Random")
+			"Title": translateWithContext("map", "Random"),
+			"Description": translate("Create a unique map with a different resource distribution each time. Freely select the number of players and teams.")
 		},
 		{
 			"Name": "scenario",
-			"Title": translateWithContext("map", "Scenario")
+			"Title": translateWithContext("map", "Scenario"),
+			"Description": translate("A map with a predefined landscape and matchsettings.")
 		}
 	];
 }
 
+function loadBiomes()
+{
+	return listFiles(g_BiomesDirectory, ".json", true).filter(biomeID => biomeID != "defaultbiome").map(biomeID => {
+		let description = Engine.ReadJSONFile(g_BiomesDirectory + biomeID + ".json").Description;
+		return {
+			"Id": biomeID,
+			"Title": translateWithContext("biome definition", description.Title),
+			"Description": description.Description ? translateWithContext("biome definition", description.Description) : "",
+			"Preview": description.Preview || undefined
+		};
+	});
+}
+
 /**
- * Loads available gametypes.
+ * Loads available victoryCondtions from json files.
  *
  * @returns {Array|undefined}
  */
 function loadVictoryConditions()
 {
-	const subdir = "victory_conditions/";
+	let subdir = "victory_conditions/";
 
-	const files = Engine.BuildDirEntList(g_SettingsDirectory + subdir, "*.json", false).map(
-		file => file.substr(g_SettingsDirectory.length));
-
-	var victoryConditions = files.map(file => {
-		let vc = loadSettingValuesFile(file);
-		if (vc)
-			vc.Name = file.substr(subdir.length, file.length - (subdir + ".json").length);
-		return vc;
+	let victoryConditions = listFiles(g_SettingsDirectory + subdir, ".json", false).map(victoryScriptName => {
+		let victoryCondition = loadSettingValuesFile(subdir + victoryScriptName + ".json");
+		if (victoryCondition)
+			victoryCondition.Name = victoryScriptName;
+		return victoryCondition;
 	});
 
-	if (victoryConditions.some(vc => vc == undefined))
+	if (victoryConditions.some(victoryCondition => victoryCondition == undefined))
 		return undefined;
 
-	// TODO: We might support enabling victory conditions separately sometime.
-	// Until then, we supplement the endless gametype here.
-	victoryConditions.push({
-		"Name": "endless",
-		"Title": translate("None"),
-		"Description": translate("Endless game."),
-		"Scripts": []
-	});
-
-	return victoryConditions;
+	return victoryConditions.sort((a, b) => a.GUIOrder - b.GUIOrder || (a.Title > b.Title ? 1 : a.Title > b.Title ? -1 : 0));
 }
 
 /**
@@ -285,7 +321,7 @@ function prepareForDropdown(settingValues)
 	if (!settingValues)
 		return undefined;
 
-	var settings = { "Default": 0 };
+	let settings = { "Default": 0 };
 	for (let index in settingValues)
 	{
 		for (let property in settingValues[index])
@@ -304,7 +340,12 @@ function prepareForDropdown(settingValues)
 		if (settingValues[index].Default)
 			settings.Default = +index;
 	}
-	return settings;
+	return deepfreeze(settings);
+}
+
+function getGameSpeedChoices(allowFastForward)
+{
+	return prepareForDropdown(g_Settings.GameSpeeds.filter(speed => !speed.FastForward || allowFastForward));
 }
 
 /**
@@ -314,7 +355,7 @@ function prepareForDropdown(settingValues)
  */
 function translateAIName(aiName)
 {
-	var description = g_Settings.AIDescriptions.find(ai => ai.id == aiName);
+	let description = g_Settings.AIDescriptions.find(ai => ai.id == aiName);
 	return description ? translate(description.data.name) : translateWithContext("AI name", "Unknown");
 }
 
@@ -325,8 +366,19 @@ function translateAIName(aiName)
  */
 function translateAIDifficulty(index)
 {
-	var difficulty = g_Settings.AIDifficulties[index];
+	let difficulty = g_Settings.AIDifficulties[index];
 	return difficulty ? difficulty.Title : translateWithContext("AI difficulty", "Unknown");
+}
+
+/**
+ * Returns title or placeholder.
+ *
+ * @param {string} aiBehavior - for example "defensive"
+ */
+function translateAIBehavior(aiBehavior)
+{
+	let behavior = g_Settings.AIBehaviors.find(b => b.Name == aiBehavior);
+	return behavior ? behavior.Title : translateWithContext("AI behavior", "Default");
 }
 
 /**
@@ -337,7 +389,7 @@ function translateAIDifficulty(index)
  */
 function translateMapType(mapType)
 {
-	var type = g_Settings.MapTypes.find(t => t.Name == mapType);
+	let type = g_Settings.MapTypes.find(t => t.Name == mapType);
 	return type ? type.Title : translateWithContext("map type", "Unknown");
 }
 
@@ -349,7 +401,7 @@ function translateMapType(mapType)
  */
 function translateMapSize(tiles)
 {
-	var mapSize = g_Settings.MapSizes.find(mapSize => mapSize.Tiles == +tiles);
+	let mapSize = g_Settings.MapSizes.find(size => size.Tiles == +tiles);
 	return mapSize ? mapSize.Name : translateWithContext("map size", "Default");
 }
 
@@ -361,18 +413,18 @@ function translateMapSize(tiles)
  */
 function translatePopulationCapacity(population)
 {
-	var popCap = g_Settings.PopulationCapacities.find(p => p.Population == population);
+	let popCap = g_Settings.PopulationCapacities.find(p => p.Population == population);
 	return popCap ? popCap.Title : translateWithContext("population capacity", "Unknown");
 }
 
 /**
  * Returns title or placeholder.
  *
- * @param {string} gameType - for example "conquest"
+ * @param {string} victoryConditionName - For example "conquest".
  * @returns {string}
  */
-function translateVictoryCondition(gameType)
+function translateVictoryCondition(victoryConditionName)
 {
-	var vc = g_Settings.VictoryConditions.find(vc => vc.Name == gameType);
-	return vc ? vc.Title : translateWithContext("victory condition", "Unknown");
+	let victoryCondition = g_Settings.VictoryConditions.find(victoryCondition => victoryCondition.Name == victoryConditionName);
+	return victoryCondition ? victoryCondition.Title : translate("Unknown Victory Condition");
 }

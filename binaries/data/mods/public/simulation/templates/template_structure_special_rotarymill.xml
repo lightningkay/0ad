@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_structure_special">
-  <Auras datatype="tokens">rotary_mill</Auras>
+  <Auras datatype="tokens">
+    structures/rotary_mill
+  </Auras>
   <Cost>
     <BuildTime>100</BuildTime>
     <PopulationBonus>2</PopulationBonus>
@@ -17,12 +19,16 @@
   </Footprint>
   <GarrisonHolder disable=""/>
   <Identity>
-    <GenericName>Rotary Mill</GenericName>
-    <SpecificName>Melonas</SpecificName>
     <Classes datatype="tokens">-ConquestCritical</Classes>
-    <History>The Celts developed the first rotary flour mill.</History>
+    <GenericName>Rotary Mill</GenericName>
     <Icon>structures/rotarymill.png</Icon>
+    <SpecificName>Melonas</SpecificName>
   </Identity>
+  <Loot>
+    <food>50</food>
+    <wood>25</wood>
+    <stone>15</stone>
+  </Loot>
   <Obstruction>
     <Static width="16.0" depth="16.0"/>
   </Obstruction>

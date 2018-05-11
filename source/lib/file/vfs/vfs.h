@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Wildfire Games
+/* Copyright (C) 2017 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -106,7 +106,7 @@ struct IVFS
 	 * @param pathname
 	 * @param pfileInfo receives information about the file. Passing NULL
 	 *		  suppresses warnings if the file doesn't exist.
-	 * 
+	 *
 	 * @return Status.
 	 **/
 	virtual Status GetFileInfo(const VfsPath& pathname, CFileInfo* pfileInfo) const = 0;
@@ -140,17 +140,14 @@ struct IVFS
 	 * @param fileContents
 	 * @param size [bytes] of the contents, will match that of the file.
 	 * @return Status.
-	 *
-	 * rationale: disallowing partial writes simplifies file cache coherency
-	 * (we need only invalidate cached data when closing a newly written file).
 	 **/
 	virtual Status CreateFile(const VfsPath& pathname, const shared_ptr<u8>& fileContents, size_t size) = 0;
 
 	/**
 	 * Replace a file with the given contents.
-	 * 
+	 *
 	 * @see CreateFile
-	 * 
+	 *
 	 * Used to replace a file if it is already present (even if the file is not
 	 * in the attached vfs directory). Calls CreateFile if the file doesn't yet
 	 * exist.
@@ -162,10 +159,6 @@ struct IVFS
 	 *
 	 * @param pathname
 	 * @param fileContents receives a smart pointer to the contents.
-	 *		  CAVEAT: this will be taken from the file cache if the VFS was
-	 * 		  created with cacheSize != 0 and size < cacheSize. There is no
-	 * 		  provision for Copy-on-Write, which means that such buffers
-	 * 		  must not be modified (this is enforced via mprotect).
 	 * @param size receives the size [bytes] of the file contents.
 	 * @return Status.
 	 **/
@@ -202,8 +195,7 @@ struct IVFS
 	virtual Status GetVirtualPath(const OsPath& realPathname, VfsPath& pathname) = 0;
 
 	/**
-	 * remove file from the virtual directory listing and evict its
-	 * data from the cache.
+	 * remove file from the virtual directory listing.
 	 **/
 	virtual Status RemoveFile(const VfsPath& pathname) = 0;
 
@@ -228,13 +220,9 @@ typedef shared_ptr<IVFS> PIVFS;
 /**
  * create an instance of a Virtual File System.
  *
- * @param cacheSize size [bytes] of memory to reserve for a file cache,
- * or zero to disable it. if small enough to fit, file contents are
- * stored here until no references remain and they are evicted.
- *
  * note: there is no limitation to a single instance, it may make sense
  * to create and destroy VFS instances during each unit test.
  **/
-LIB_API PIVFS CreateVfs(size_t cacheSize);
+LIB_API PIVFS CreateVfs();
 
 #endif	// #ifndef INCLUDED_VFS

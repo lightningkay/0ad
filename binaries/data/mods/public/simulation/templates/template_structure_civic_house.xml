@@ -5,6 +5,7 @@
   </BuildRestrictions>
   <Capturable>
     <CapturePoints>300</CapturePoints>
+    <GarrisonRegenRate>4.0</GarrisonRegenRate>
   </Capturable>
   <Cost>
     <PopulationBonus>5</PopulationBonus>
@@ -14,7 +15,7 @@
     </Resources>
   </Cost>
   <Footprint>
-    <Square width="18.0" depth="18.0"/>
+    <Square width="13.0" depth="13.0"/>
     <Height>5.0</Height>
   </Footprint>
   <GarrisonHolder>
@@ -27,24 +28,16 @@
   </GarrisonHolder>
   <Health>
     <Max>800</Max>
-    <SpawnEntityOnDeath>rubble/rubble_stone_3x3</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_2x2</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <GenericName>House</GenericName>
     <Tooltip>Increase the population limit.</Tooltip>
-    <Classes datatype="tokens">-ConquestCritical</Classes>
     <VisibleClasses datatype="tokens">Village House</VisibleClasses>
     <Icon>structures/house.png</Icon>
   </Identity>
-  <Loot>
-    <xp>100</xp>
-    <food>0</food>
-    <wood>10</wood>
-    <stone>10</stone>
-    <metal>0</metal>
-  </Loot>
   <Obstruction>
-    <Static width="14.0" depth="14.0"/>
+    <Static width="11.0" depth="11.0"/>
   </Obstruction>
   <ProductionQueue>
     <BatchTimeModifier>1.0</BatchTimeModifier>
@@ -54,6 +47,7 @@
     <Technologies datatype="tokens">
       health_females_01
       pop_house_01
+      pop_house_02
       unlock_females_house
     </Technologies>
   </ProductionQueue>
@@ -69,15 +63,18 @@
     <BarHeight>0.6</BarHeight>
     <HeightOffset>8.0</HeightOffset>
   </StatusBars>
+  <TerritoryDecay>
+    <DecayRate>10</DecayRate>
+  </TerritoryDecay>
   <TerritoryInfluence>
     <Root>false</Root>
-    <Radius>20</Radius>
-    <Weight>40000</Weight>
+    <Radius>16</Radius>
+    <Weight>65535</Weight>
   </TerritoryInfluence>
   <Vision>
     <Range>20</Range>
   </Vision>
   <VisualActor>
-    <FoundationActor>structures/fndn_3x3.xml</FoundationActor>
+    <FoundationActor>structures/fndn_2x2.xml</FoundationActor>
   </VisualActor>
 </Entity>

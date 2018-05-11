@@ -1,32 +1,37 @@
 // Limits selection size
-const g_MaxSelectionSize = 200;
+var g_MaxSelectionSize = 200;
 
 // Alpha value of hovered/mouseover/highlighted selection overlays
 // (should probably be greater than always visible alpha value,
 //	see CCmpSelectable)
-const g_HighlightedAlpha = 0.75;
+var g_HighlightedAlpha = 0.75;
 
 function _setHighlight(ents, alpha, selected)
 {
 	if (ents.length)
-		Engine.GuiInterfaceCall("SetSelectionHighlight", { "entities":ents, "alpha":alpha, "selected":selected });
+		Engine.GuiInterfaceCall("SetSelectionHighlight", { "entities": ents, "alpha": alpha, "selected": selected });
 }
 
 function _setStatusBars(ents, enabled)
 {
-	if (ents.length)
-		Engine.GuiInterfaceCall("SetStatusBars", { "entities":ents, "enabled":enabled });
+	if (!ents.length)
+		return;
+	Engine.GuiInterfaceCall("SetStatusBars", {
+		"entities": ents,
+		"enabled": enabled,
+		"showRank": Engine.ConfigDB_GetValue("user", "gui.session.rankabovestatusbar") == "true"
+	});
 }
 
 function _setMotionOverlay(ents, enabled)
 {
 	if (ents.length)
-		Engine.GuiInterfaceCall("SetMotionDebugOverlay", { "entities":ents, "enabled":enabled });
+		Engine.GuiInterfaceCall("SetMotionDebugOverlay", { "entities": ents, "enabled": enabled });
 }
 
 function _playSound(ent)
 {
-	Engine.GuiInterfaceCall("PlaySound", { "name":"select", "entity":ent });
+	Engine.GuiInterfaceCall("PlaySound", { "name": "select", "entity": ent });
 }
 
 /**
@@ -48,46 +53,43 @@ EntityGroups.prototype.add = function(ents)
 {
 	for (let ent of ents)
 	{
-		if (!this.ents[ent])
-		{
-			var entState = GetEntityState(ent);
+		if (this.ents[ent])
+			continue;
+		var entState = GetEntityState(ent);
 
-			// When this function is called during group rebuild, deleted
-			// entities will not yet have been removed, so entities might
-			// still be present in the group despite not existing.
-			if (!entState)
-				continue;
+		// When this function is called during group rebuild, deleted
+		// entities will not yet have been removed, so entities might
+		// still be present in the group despite not existing.
+		if (!entState)
+			continue;
 
-			var templateName = entState.template;
-			var key = GetTemplateData(templateName).selectionGroupName || templateName;
+		var templateName = entState.template;
+		var key = GetTemplateData(templateName).selectionGroupName || templateName;
 
-			// TODO ugly hack, just group them by player too.
-			// Prefix garrisoned unit's selection name with the player they belong to
-			var index = templateName.indexOf("&");
-			if (index != -1 && key.indexOf("&") == -1)
-				key = templateName.slice(0, index+1) + key;
+		// Group the ents by player and template
+		if (entState.player !== undefined)
+			key = "p" + entState.player + "&" + key;
 
-			if (this.groups[key])
-				this.groups[key] += 1;
-			else
-				this.groups[key] = 1;
+		if (this.groups[key])
+			this.groups[key] += 1;
+		else
+			this.groups[key] = 1;
 
-			this.ents[ent] = key;
-		}
+		this.ents[ent] = key;
 	}
 };
 
 EntityGroups.prototype.removeEnt = function(ent)
 {
-	var templateName = this.ents[ent];
+	var key = this.ents[ent];
 
 	// Remove the entity
 	delete this.ents[ent];
-	--this.groups[templateName];
+	--this.groups[key];
 
 	// Remove the entire group
-	if (this.groups[templateName] == 0)
-		delete this.groups[templateName];
+	if (this.groups[key] == 0)
+		delete this.groups[key];
 };
 
 EntityGroups.prototype.rebuildGroup = function(renamed)
@@ -102,61 +104,55 @@ EntityGroups.prototype.rebuildGroup = function(renamed)
 	this.add(toAdd);
 };
 
-EntityGroups.prototype.getCount = function(templateName)
+EntityGroups.prototype.getCount = function(key)
 {
-	return this.groups[templateName];
+	return this.groups[key];
 };
 
 EntityGroups.prototype.getTotalCount = function()
 {
 	let totalCount = 0;
-	for (let templateName in this.groups)
-		totalCount += this.groups[templateName];
+	for (let key in this.groups)
+		totalCount += this.groups[key];
 	return totalCount;
 };
 
-EntityGroups.prototype.getTemplateNames = function()
+EntityGroups.prototype.getKeys = function()
 {
-	//Preserve order even when shuffling units around
-	//Can be optimized by moving the sorting elsewhere
+	// Preserve order even when shuffling units around
+	// Can be optimized by moving the sorting elsewhere
 	return Object.keys(this.groups).sort();
 };
 
-EntityGroups.prototype.getEntsByName = function(templateName)
+EntityGroups.prototype.getEntsByKey = function(key)
 {
 	var ents = [];
 	for (var ent in this.ents)
-		if (this.ents[ent] == templateName)
+		if (this.ents[ent] == key)
 			ents.push(+ent);
 
 	return ents;
 };
 
 /**
- * get a list of entities grouped by templateName
+ * get a list of entities grouped by a key
  */
 EntityGroups.prototype.getEntsGrouped = function()
 {
-	var templateNames = this.getTemplateNames();
-	var list = [];
-	for (var t of templateNames)
-	{
-		list.push({
-			"ents": this.getEntsByName(t),
-			"template": t,
-		});
-	}
-	return list;
+	return this.getKeys().map(key => ({
+		"ents": this.getEntsByKey(key),
+		"key": key
+	}));
 };
 
 /**
  * Gets all ents in every group except ones of the specified group
  */
-EntityGroups.prototype.getEntsByNameInverse = function(templateName)
+EntityGroups.prototype.getEntsByKeyInverse = function(key)
 {
 	var ents = [];
 	for (var ent in this.ents)
-		if (this.ents[ent] != templateName)
+		if (this.ents[ent] != key)
 			ents.push(+ent);
 
 	return ents;
@@ -182,18 +178,13 @@ function EntitySelection()
 }
 
 /**
- * Deselect everything but entities of the chosen type if the modifier is true otherwise deselect just the chosen entity
+ * Deselect everything but entities of the chosen type if inverse is true otherwise deselect just the chosen entity
  */
-EntitySelection.prototype.makePrimarySelection = function(templateName, modifierKey)
+EntitySelection.prototype.makePrimarySelection = function(key, inverse)
 {
-	var template = GetTemplateData(templateName);
-	var key = template.selectionGroupName || templateName;
-
-	var ents = [];
-	if (modifierKey)
-		ents = this.groups.getEntsByNameInverse(key);
-	else
-		ents = this.groups.getEntsByName(key);
+	let ents = inverse ?
+		this.groups.getEntsByKeyInverse(key) :
+		this.groups.getEntsByKey(key);
 
 	this.reset();
 	this.addList(ents);
@@ -275,13 +266,11 @@ EntitySelection.prototype.checkRenamedEntities = function()
 
 		// Reconstruct the selection if at least one entity has been renamed.
 		for (let renamedEntity of renamedEntities)
-		{
 			if (this.selected[renamedEntity.entity])
 			{
 				this.rebuildSelection(renamedLookup);
-				break;
+				return;
 			}
-		}
 	}
 };
 
@@ -344,14 +333,12 @@ EntitySelection.prototype.removeList = function(ents)
 	var removed = [];
 
 	for (let ent of ents)
-	{
 		if (this.selected[ent])
 		{
 			this.groups.removeEnt(ent);
 			removed.push(ent);
 			delete this.selected[ent];
 		}
-	}
 
 	_setHighlight(removed, 0, false);
 	_setStatusBars(removed, false);
@@ -448,8 +435,8 @@ var g_Selection = new EntitySelection();
 g_Selection.isSelection = true;
 
 var g_canMoveIntoFormation = {};
-var g_allBuildableEntities = undefined;
-var g_allTrainableEntities = undefined;
+var g_allBuildableEntities;
+var g_allTrainableEntities;
 
 // Reset cached quantities
 function onSelectionChange()
@@ -458,7 +445,6 @@ function onSelectionChange()
 	g_allBuildableEntities = undefined;
 	g_allTrainableEntities = undefined;
 }
-
 
 /**
  * EntityGroupsContainer class for managing grouped entities
@@ -508,14 +494,12 @@ EntityGroupsContainer.prototype.checkRenamedEntities = function()
 
 		for (let group of this.groups)
 			for (let renamedEntity of renamedEntities)
-			{
 				// Reconstruct the group if at least one entity has been renamed.
 				if (renamedEntity.entity in group.ents)
 				{
 					group.rebuildGroup(renamedLookup);
 					break;
 				}
-			}
 	}
 };
 

@@ -5,8 +5,10 @@
 	"Emblem": "session/portraits/emblems/emblem_mauryans.png",
 	"History": "Founded in 322 B.C. by Chandragupta Maurya, the Mauryan Empire was the first to rule most of the Indian subcontinent, and was one of the largest and most populous empires of antiquity. Its military featured bowmen who used the long-range bamboo longbow, fierce female warriors, chariots, and thousands of armored war elephants. Its philosophers, especially the famous Acharya Chanakya, contributed to such varied fields such as economics, religion, diplomacy, warfare, and good governance. Under the rule of Ashoka the Great, the empire saw 40 years of peace, harmony, and prosperity.",
 	"Music":[
+			{"File":"An_old_Warhorse_goes_to_Pasture.ogg", "Type":"peace"},
 			{"File":"Land_between_the_two_Seas.ogg", "Type":"peace"},
-			{"File":"Karmic Confluence.ogg", "Type":"peace"}
+			{"File":"Eastern_Dreams.ogg", "Type":"peace"},
+			{"File":"Karmic_Confluence.ogg", "Type":"peace"}
 		],
 	"Factions":
 	[
@@ -68,10 +70,10 @@
 	"TeamBonuses":
 	[
 		{
-			"Name": "Evangelism.",
+			"Name": "Ashoka's Religious Support",
 			"History": "Ashoka the Great sent embassies West to spread knowledge of the Buddha.",
-			"Description": "Allied Temple techs -50% cost and research time."
-		} 
+			"Description": "Allied temples and temple technologies -50% cost and research time."
+		}
 	],
 	"Structures":
 	[
@@ -93,6 +95,11 @@
 			"Phase":"City",
 			"Special":"Contentment: +10% Health and +10% resource gathering rates for all citizens and allied citizens within its range. Can be built anywhere except in enemy territory. Max Built: 10."
 		}
+	],
+	"WallSets":
+	[
+		"other/wallset_palisade",
+		"structures/maur_wallset_stone"
 	],
 	"StartEntities":
 	[
@@ -122,16 +129,16 @@
 	],
 	"Formations":
 	[
-		"formations/null",
-		"formations/box",
-		"formations/column_closed",
-		"formations/line_closed",
-		"formations/column_open",
-		"formations/line_open",
-		"formations/flank",
-		"formations/skirmish",
-		"formations/wedge",
-		"formations/battle_line"
+		"special/formations/null",
+		"special/formations/box",
+		"special/formations/column_closed",
+		"special/formations/line_closed",
+		"special/formations/column_open",
+		"special/formations/line_open",
+		"special/formations/flank",
+		"special/formations/skirmish",
+		"special/formations/wedge",
+		"special/formations/battle_line"
 	],
 	"AINames":
 	[

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -50,6 +50,11 @@
 #include "Tools/Common/MiscState.h"
 
 static HighResTimer g_Timer;
+
+/**
+ * wxWidgets only registers the double click on mousedown.
+ */
+static int g_Clicks = 1;
 
 using namespace AtlasMessage;
 
@@ -272,9 +277,12 @@ private:
 		// Button down and double click appear to be mutually exclusive events,
 		//   meaning a second button down event is not sent before a double click
 		if (evt.ButtonDown() || evt.ButtonDClick())
-			POST_MESSAGE(GuiMouseButtonEvent, (evt.GetButton(), true, evt.GetPosition()));
+		{
+			g_Clicks = evt.ButtonDClick() ? 2 : 1;
+			POST_MESSAGE(GuiMouseButtonEvent, (evt.GetButton(), true, evt.GetPosition(), g_Clicks));
+		}
 		else if (evt.ButtonUp())
-			POST_MESSAGE(GuiMouseButtonEvent, (evt.GetButton(), false, evt.GetPosition()));
+			POST_MESSAGE(GuiMouseButtonEvent, (evt.GetButton(), false, evt.GetPosition(), g_Clicks));
 		else if (evt.GetEventType() == wxEVT_MOTION)
 			POST_MESSAGE(GuiMouseMotionEvent, (evt.GetPosition()));
 	}
@@ -327,6 +335,9 @@ enum
 	ID_DumpState,
 	ID_DumpBinaryState,
 
+	ID_Manual,
+	ID_ReportBug,
+
 	ID_Toolbar // must be last in the list
 };
 
@@ -358,7 +369,10 @@ BEGIN_EVENT_TABLE(ScenarioEditor, wxFrame)
 	EVT_MENU(ID_RenderPathFixed, ScenarioEditor::OnRenderPath)
 	EVT_MENU(ID_RenderPathShader, ScenarioEditor::OnRenderPath)
 
-    EVT_MENU_OPEN(ScenarioEditor::OnMenuOpen)
+	EVT_MENU(ID_Manual, ScenarioEditor::OnHelp)
+	EVT_MENU(ID_ReportBug, ScenarioEditor::OnHelp)
+
+	EVT_MENU_OPEN(ScenarioEditor::OnMenuOpen)
 
 	EVT_IDLE(ScenarioEditor::OnIdle)
 END_EVENT_TABLE()
@@ -479,6 +493,38 @@ ScenarioEditor::ScenarioEditor(wxWindow* parent)
 		menuRP->Append(ID_RenderPathShader, _("&Shader (default)"));
 	}
 
+	wxMenu *menuHelp = new wxMenu;
+	menuBar->Append(menuHelp, _("&Help"));
+	{
+		wxFileName helpPath (_T("tools/atlas/"));
+		helpPath.MakeAbsolute(Datafile::GetDataDirectory());
+		helpPath.SetFullName("help.json");
+		if (wxFileExists(helpPath.GetFullPath()))
+		{
+			wxFFile helpFile(helpPath.GetFullPath());
+			wxString helpData;
+			helpFile.ReadAll(&helpData);
+			AtObj data = AtlasObject::LoadFromJSON(std::string(helpData));
+#define ADD_HELP_ITEM(id) \
+				do { \
+					if (!data[#id].hasContent()) \
+						break; \
+					if (!data[#id]["title"].hasContent() || !data[#id]["url"].hasContent()) \
+						break; \
+					menuHelp->Append(ID_##id, _(wxString(data[#id]["title"])), _(wxString(data[#id]["tooltip"]))); \
+					m_HelpData.insert(std::make_pair( \
+						ID_##id, \
+						HelpItem(wxString(data[#id]["title"]), wxString(data[#id]["tooltip"]), wxString(data[#id]["url"])) \
+					)); \
+				} while (0)
+			ADD_HELP_ITEM(Manual);
+			ADD_HELP_ITEM(ReportBug);
+#undef ADD_HELP_ITEM
+		}
+		else
+			wxLogError(_("'%ls' does not exist"), helpPath.GetFullPath().c_str());
+	}
+
 	m_FileHistory.LoadFromSubDir(*wxConfigBase::Get());
 
 
@@ -571,6 +617,7 @@ wxToolBar* ScenarioEditor::OnCreateToolBar(long style, wxWindowID id, const wxSt
 	toolbar->AddToolButton(_("Smooth"),        _("Smooth terrain elevation"),  _T("smoothelevation.png"),  _T("SmoothElevation"),  _T("")/*_T("TerrainSidebar")*/);
 	toolbar->AddToolButton(_("Flatten"),       _("Flatten terrain elevation"), _T("flattenelevation.png"), _T("FlattenElevation"), _T("")/*_T("TerrainSidebar")*/);
 	toolbar->AddToolButton(_("Paint Terrain"), _("Paint terrain texture"),     _T("paintterrain.png"),     _T("PaintTerrain"),     _T("")/*_T("TerrainSidebar")*/);
+	toolbar->AddToolButton(_("Move"),          _("Move cinema path nodes"),    _T("movepath.png"),         _T("TransformPath"),    _T("")/*_T("CinemaSidebar")*/);
 
 	return toolbar;
 }
@@ -680,7 +727,7 @@ bool ScenarioEditor::OpenFile(const wxString& name, const wxString& filename)
 	qry.Post();
 	if (!qry.exists)
 		return false;
-	
+
 	// Deactivate tools, so they don't carry forwards into the new CWorld
 	// and crash.
 	m_ToolManager.SetCurrentTool(_T(""));
@@ -714,9 +761,9 @@ void ScenarioEditor::OnOpen(wxCommandEvent& WXUNUSED(event))
 	MapDialog dlg (NULL, MAPDIALOG_OPEN, m_Icon);
 	if (dlg.ShowModal() == wxID_OK)
 	{
-		wxString filename = dlg.GetFilename();
-		if (!OpenFile(filename, filename))
-			wxLogError(_("Map '%ls' does not exist"), filename.c_str());
+		wxString filePath = dlg.GetSelectedFilePath();
+		if (!OpenFile(filePath, filePath))
+			wxLogError(_("Map '%ls' does not exist"), filePath.c_str());
 	}
 
 	// TODO: Make this a non-undoable command
@@ -729,16 +776,16 @@ void ScenarioEditor::OnImportHeightmap(wxCommandEvent& WXUNUSED(event))
 
 	wxFileDialog dlg (NULL, wxFileSelectorPromptStr,
 		_T(""), _T(""),
-		_T("Valid Image files|*.png;*.jpg;*.bmp|All files (*.*)|*.*"),
+		_T("Valid image files (*.png, *.bmp)|*.png;*.bmp|All files (*.*)|*.*"),
 		wxFD_OPEN);
 	// Set default filter
 	dlg.SetFilterIndex(0);
 
 	if (dlg.ShowModal() != wxID_OK)
 		return;
-	
+
 	OpenFile(_T(""), _T("maps/scenarios/_default.xml"));
-	
+
 	std::wstring image(dlg.GetPath().wc_str());
 	POST_MESSAGE(ImportHeightmap, (image));
 
@@ -799,16 +846,16 @@ void ScenarioEditor::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 	MapDialog dlg(NULL, MAPDIALOG_SAVE, m_Icon);
 	if (dlg.ShowModal() == wxID_OK)
 	{
-		wxString filename(dlg.GetFilename());
-		wxBusyInfo busy(_("Saving ") + filename);
+		wxString filePath(dlg.GetSelectedFilePath());
+		wxBusyInfo busy(_("Saving ") + filePath);
 		wxBusyCursor busyc;
 
 		m_ToolManager.SetCurrentTool(_T(""));
 
-		std::wstring map(filename.wc_str());
+		std::wstring map(filePath.wc_str());
 		POST_MESSAGE(SaveMap, (map));
 
-		SetOpenFilename(filename);
+		SetOpenFilename(filePath);
 
 		// Wait for it to finish saving
 		qPing qry;
@@ -932,6 +979,19 @@ void ScenarioEditor::OnDumpState(wxCommandEvent& event)
 void ScenarioEditor::OnSelectedObjectsChange(const std::vector<ObjectID>& selectedObjects)
 {
     GetMenuBar()->Enable(ID_Copy, !selectedObjects.empty());
+}
+
+void ScenarioEditor::OnHelp(wxCommandEvent& event)
+{
+	std::map<int, HelpItem>::const_iterator it = m_HelpData.find(event.GetId());
+	if (it == m_HelpData.end())
+		return;
+	wxMessageDialog* dialog = new wxMessageDialog(
+		nullptr, _("Do you want to open '" + it->second.m_URL + "'?"),
+		_("Atlas"), wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION
+	);
+	if (dialog->ShowModal() == wxID_YES)
+		wxLaunchDefaultBrowser(it->second.m_URL);
 }
 
 void ScenarioEditor::OnMenuOpen(wxMenuEvent& event)

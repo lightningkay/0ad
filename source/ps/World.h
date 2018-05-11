@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -36,9 +36,9 @@ ERROR_TYPE(Game_World, MapLoadFailed);
 
 class CGame;
 class CUnitManager;
-class CTerritoryManager;
 class CTerrain;
 class CStrW;
+class CMapReader;
 
 /**
  * CWorld is a general data class containing whatever is needed to accurately represent the world.
@@ -51,20 +51,18 @@ class CWorld
 	 * pointer to the CGame object representing the game.
 	 **/
 	CGame *m_pGame;
-	
+
 	/**
 	 * pointer to the CTerrain object representing the height map.
 	 **/
 	CTerrain *m_Terrain;
 
 	/**
-	 * pointer to the CUnitManager that holds all the units in the world. 
+	 * pointer to the CUnitManager that holds all the units in the world.
 	 **/
 	CUnitManager *m_UnitManager;
-	/**
-	 * pointer to the CTerritoryManager that holds territory matrix for the world. 
-	 **/
-	CTerritoryManager *m_TerritoryManager;
+
+	CMapReader* m_MapReader;
 
 public:
 	CWorld(CGame *pGame);
@@ -81,6 +79,11 @@ public:
 	void RegisterInitRMS(const CStrW& scriptFile, JSRuntime* rt, JS::HandleValue settings, int playerID);
 
 	/**
+	 * Explicitly delete m_MapReader once the map has finished loading.
+	 **/
+	int DeleteMapReader();
+
+	/**
 	 * Get the pointer to the terrain object.
 	 *
 	 * @return CTerrain * the value of m_Terrain.
@@ -95,13 +98,6 @@ public:
 	 **/
 	inline CUnitManager &GetUnitManager()
 	{	return *m_UnitManager; }
-	/**
-	 * Get the pointer to the territory manager object.
-	 *
-	 * @return CTerritoryManager * the value of m_TerritoryManager.
-	 **/
-	inline CTerritoryManager *GetTerritoryManager()
-	{	return m_TerritoryManager; }
 };
 
 // rationale: see definition.

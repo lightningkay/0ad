@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Wildfire Games
+/* Copyright (C) 2018 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -46,13 +46,13 @@
 
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 
 class MemoryStream
 {
 public:
-	MemoryStream(rpU8 data, size_t size)
+	MemoryStream(u8* RESTRICT data, size_t size)
 		: data(data), size(size), pos(0)
 	{
 	}
@@ -63,21 +63,21 @@ public:
 		return size-pos;
 	}
 
-	void CopyTo(rpU8 dst, size_t dstSize)
+	void CopyTo(u8* RESTRICT dst, size_t dstSize)
 	{
 		memcpy(dst, data+pos, dstSize);
 		pos += dstSize;
 	}
 
 private:
-	rpU8 data;
+	u8* RESTRICT data;
 	size_t size;
 	size_t pos;
 };
 
 
 // pass data from PNG file in memory to libpng
-static void io_read(png_struct* png_ptr, rpU8 data, png_size_t size)
+static void io_read(png_struct* png_ptr, u8* RESTRICT data, png_size_t size)
 {
 	MemoryStream* stream = (MemoryStream*)png_get_io_ptr(png_ptr);
 	if(stream->RemainingSize() < size)
@@ -127,7 +127,7 @@ static Status png_decode_impl(MemoryStream* stream, png_structp png_ptr, png_inf
 	png_uint_32 w, h;
 	int bit_depth, color_type, interlace_type;
 	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bit_depth, &color_type, &interlace_type, 0, 0);
-	
+
 	// (The following is based on GdkPixbuf's PNG image loader)
 
 	// Convert the following images to 8-bit RGB/RGBA:
@@ -152,7 +152,7 @@ static Status png_decode_impl(MemoryStream* stream, png_structp png_ptr, png_inf
 
 	// Update info after transformations
 	png_read_update_info(png_ptr, info_ptr);
-	
+
 	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bit_depth, &color_type, &interlace_type, 0, 0);
 
 	// make sure format is acceptable:
@@ -166,7 +166,7 @@ static Status png_decode_impl(MemoryStream* stream, png_structp png_ptr, png_inf
 		WARN_RETURN(ERR::TEX_NOT_8BIT_PRECISION);
 	if (!(color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA || color_type == PNG_COLOR_TYPE_GRAY))
 		WARN_RETURN(ERR::TEX_INVALID_COLOR_TYPE);
-	
+
 	const int channels = png_get_channels(png_ptr, info_ptr);
 	if (!(channels == 3 || channels == 4 || channels == 1))
 		WARN_RETURN(ERR::TEX_FMT_INVALID);
@@ -182,7 +182,7 @@ static Status png_decode_impl(MemoryStream* stream, png_structp png_ptr, png_inf
 
 	const size_t img_size = pitch * h;
 	shared_ptr<u8> data;
-	AllocateAligned(data, img_size, pageSize);
+	AllocateAligned(data, img_size, g_PageSize);
 
 	std::vector<RowPtr> rows = tex_codec_alloc_rows(data.get(), h, pitch, TEX_TOP_DOWN, 0);
 	png_read_image(png_ptr, (png_bytepp)&rows[0]);
@@ -269,7 +269,7 @@ static void user_warning_fn(png_structp UNUSED(png_ptr), png_const_charp warning
 TIMER_ADD_CLIENT(tc_png_decode);
 
 // limitation: palette images aren't supported
-Status TexCodecPng::decode(rpU8 data, size_t size, Tex* RESTRICT t) const
+Status TexCodecPng::decode(u8* RESTRICT data, size_t size, Tex* RESTRICT t) const
 {
 TIMER_ACCRUE(tc_png_decode);
 
@@ -298,7 +298,7 @@ TIMER_ACCRUE(tc_png_decode);
 	Status ret = png_decode_impl(&stream, png_ptr, info_ptr, t);
 
 	png_destroy_read_struct(&png_ptr, &info_ptr, 0);
-	
+
 	return ret;
 }
 
@@ -306,7 +306,6 @@ TIMER_ACCRUE(tc_png_decode);
 // limitation: palette images aren't supported
 Status TexCodecPng::encode(Tex* RESTRICT t, DynArray* RESTRICT da) const
 {
-	Status ret = ERR::FAIL;
 	png_infop info_ptr = 0;
 
 	// allocate PNG structures; use default stderr and longjmp error handlers
@@ -315,19 +314,21 @@ Status TexCodecPng::encode(Tex* RESTRICT t, DynArray* RESTRICT da) const
 		WARN_RETURN(ERR::FAIL);
 	info_ptr = png_create_info_struct(png_ptr);
 	if(!info_ptr)
-		goto fail;
-
+	{
+		png_destroy_write_struct(&png_ptr, &info_ptr);
+		WARN_RETURN(ERR::NO_MEM);
+	}
 	// setup error handling
 	if(setjmp(png_jmpbuf(png_ptr)))
 	{
 		// libpng longjmps here after an error
-		goto fail;
+		png_destroy_write_struct(&png_ptr, &info_ptr);
+		WARN_RETURN(ERR::FAIL);
 	}
 
-	ret = png_encode_impl(t, png_ptr, info_ptr, da);
+	Status ret = png_encode_impl(t, png_ptr, info_ptr, da);
 
-	// shared cleanup
-fail:
 	png_destroy_write_struct(&png_ptr, &info_ptr);
+
 	return ret;
 }

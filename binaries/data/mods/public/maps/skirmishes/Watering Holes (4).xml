@@ -18,12 +18,9 @@
 				<Type>clap</Type>
 				<Color r="0.364706" g="0.301961" b="0.231373"/>
 				<Height>5</Height>
-				<Shininess>150</Shininess>
 				<Waviness>1.0</Waviness>
 				<Murkiness>0.863281</Murkiness>
 				<Tint r="0.737255" g="0.592157" b="0.27451"/>
-				<ReflectionTint r="0.611765" g="0.447059" b="0.219608"/>
-				<ReflectionTintStrength>0.258789</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -43,7 +40,6 @@
 {
   "CircularMap": false,
   "Description": "The African savanna is chocked full of animal life for hunting, while the nearby mineral deposits are plentiful. The dry season is approaching and the watering holes are drying up.\u000a\u000aNote: This is a very small \"fast and furious\" map. Iberians do not start with their custom circuit walls.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Watering Holes (4)",
@@ -62,7 +58,10 @@
     }
   ],
   "Preview": "watering_holes_skirmish.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>

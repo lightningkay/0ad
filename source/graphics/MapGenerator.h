@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 #include <boost/random/linear_congruential.hpp>
 
 #include <set>
+#include <string>
 
 class CMapGeneratorWorker;
 
@@ -54,7 +55,7 @@ public:
 	/**
 	 * Get status of the map generator thread
 	 *
-	 * @return Progress percentage 1-100 if active, 0 when finished, or -1 on error 
+	 * @return Progress percentage 1-100 if active, 0 when finished, or -1 on error
 	 */
 	int GetProgress();
 
@@ -78,7 +79,7 @@ private:
  * Thread-safety:
  * - Initialize and constructor/destructor must be called from the main thread.
  * - ScriptInterface created and destroyed by thread
- * - StructuredClone used to return JS map data - jsvals can't be used across threads/runtimes
+ * - StructuredClone used to return JS map data - JS:Values can't be used across threads/runtimes.
  */
 class CMapGeneratorWorker
 {
@@ -97,7 +98,7 @@ public:
 	/**
 	 * Get status of the map generator thread
 	 *
-	 * @return Progress percentage 1-100 if active, 0 when finished, or -1 on error 
+	 * @return Progress percentage 1-100 if active, 0 when finished, or -1 on error
 	 */
 	int GetProgress();
 
@@ -108,28 +109,29 @@ public:
 	 * @return StructuredClone containing map data
 	 */
 	shared_ptr<ScriptInterface::StructuredClone> GetResults();
-	
+
 private:
 // Mapgen
 
 	/**
 	 * Load all scripts of the given library
-	 * 
+	 *
 	 * @param libraryName String specifying name of the library (subfolder of ../maps/random/)
 	 * @return true if all scripts ran successfully, false if there's an error
 	 */
 	bool LoadScripts(const std::wstring& libraryName);
-	
+
 	// callbacks for script functions
 	static bool LoadLibrary(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& name);
 	static void ExportMap(ScriptInterface::CxPrivate* pCxPrivate, JS::HandleValue data);
+	static JS::Value LoadHeightmap(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& src);
+	static JS::Value LoadMapTerrain(ScriptInterface::CxPrivate* pCxPrivate, const std::string& filename);
 	static void SetProgress(ScriptInterface::CxPrivate* pCxPrivate, int progress);
-	static void MaybeGC(ScriptInterface::CxPrivate* pCxPrivate);
-	static std::vector<std::string> GetCivData(ScriptInterface::CxPrivate* pCxPrivate);
 	static CParamNode GetTemplate(ScriptInterface::CxPrivate* pCxPrivate, const std::string& templateName);
 	static bool TemplateExists(ScriptInterface::CxPrivate* pCxPrivate, const std::string& templateName);
 	static std::vector<std::string> FindTemplates(ScriptInterface::CxPrivate* pCxPrivate, const std::string& path, bool includeSubdirectories);
 	static std::vector<std::string> FindActorTemplates(ScriptInterface::CxPrivate* pCxPrivate, const std::string& path, bool includeSubdirectories);
+	static int GetTerrainTileSize(ScriptInterface::CxPrivate* pCxPrivate);
 
 	std::set<std::wstring> m_LoadedLibraries;
 	shared_ptr<ScriptInterface::StructuredClone> m_MapData;

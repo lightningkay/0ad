@@ -1,19 +1,32 @@
 /**
- * Load playable civs.
+ * Display selectable civs only.
  */
-const g_CivData = loadCivData(true);
+const g_CivData = loadCivData(true, false);
+
+/**
+ * Callback function name on closing gui via Engine.PopGuiPage().
+ */
+var g_Callback = "";
+
+var g_SelectedCiv = "";
 
 /**
  * Initialize the dropdown containing all the available civs.
  */
-function init(settings)
+function init(data = {})
 {
+	if (data.callback)
+		g_Callback = data.callback;
+
 	var civList = Object.keys(g_CivData).map(civ => ({ "name": g_CivData[civ].Name, "code": civ })).sort(sortNameIgnoreCase);
 	var civSelection = Engine.GetGUIObjectByName("civSelection");
 
 	civSelection.list = civList.map(civ => civ.name);
 	civSelection.list_data = civList.map(civ => civ.code);
-	civSelection.selected = 0;
+	civSelection.selected = data.civ ? civSelection.list_data.indexOf(data.civ) : 0;
+
+	Engine.GetGUIObjectByName("structreeButton").tooltip = colorizeHotkey(translate("%(hotkey)s: Switch to Structure Tree."), "structree");
+	Engine.GetGUIObjectByName("close").tooltip = colorizeHotkey(translate("%(hotkey)s: Close History."), "cancel");
 }
 
 /**
@@ -21,7 +34,7 @@ function init(settings)
  */
 function bigFirstLetter(str, size)
 {
-	return '[font="sans-bold-'+(size+6)+'"]' + str[0] + '[/font]' + '[font="sans-bold-'+size+'"]' + str.substring(1) + '[/font]';
+	return '[font="sans-bold-' + (size + 6) + '"]' + str[0] + '[/font]' + '[font="sans-bold-' + size + '"]' + str.substring(1) + '[/font]';
 }
 
 /**
@@ -45,7 +58,7 @@ function heading(string, size)
 		if (word.length && word[0].toLowerCase() != word[0])
 			textArray[i] = bigFirstLetter(wordCaps, size);
 		else
-			textArray[i] = '[font="sans-bold-'+size+'"]' + wordCaps + '[/font]';	// TODO: Would not be necessary if we could do nested tags
+			textArray[i] = '[font="sans-bold-' + size + '"]' + wordCaps + '[/font]';	// TODO: Would not be necessary if we could do nested tags
 	}
 
 	return textArray.join(" ");
@@ -71,13 +84,26 @@ function subHeading(obj)
 {
 	if (!obj.Name)
 		return "";
-	let string = '[color="white"][font="sans-bold-14"]' + obj.Name + '[/font] ';
+	let string = '[font="sans-bold-14"]' + obj.Name + '[/font] ';
 	if (obj.History)
 		string += '[icon="iconInfo" tooltip="' + escapeQuotation(obj.History) + '" tooltip_style="civInfoTooltip"]';
 	if (obj.Description)
 		string += '\n     ' + obj.Description;
-	string += '\n[/color]';
-	return string;
+	return coloredText(string + "\n", "white");
+}
+
+function switchToStrucTreePage()
+{
+	Engine.PopGuiPage();
+	Engine.PushGuiPage("page_structree.xml", { "civ": g_SelectedCiv, "callback": g_Callback });
+}
+
+function close()
+{
+	if (g_Callback)
+		Engine.PopGuiPageCB({ "civ": g_SelectedCiv, "page": "page_civinfo.xml" });
+	else
+		Engine.PopGuiPage();
 }
 
 /**
@@ -88,6 +114,8 @@ function subHeading(obj)
 function selectCiv(code)
 {
 	var civInfo = g_CivData[code];
+
+	g_SelectedCiv = code;
 
 	if(!civInfo)
 		error(sprintf("Error loading civ data for \"%(code)s\"", { "code": code }));

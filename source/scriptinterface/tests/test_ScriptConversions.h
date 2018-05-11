@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ class TestScriptConversions : public CxxTest::TestSuite
 		// since they might not be objects. So just use uneval.
 		std::string source;
 		JS::RootedValue global(cx, script.GetGlobalObject());
-		TS_ASSERT(script.CallFunction(global, "uneval", v1, source));
+		TS_ASSERT(script.CallFunction(global, "uneval", source, v1));
 
 		TS_ASSERT_STR_EQUALS(source, expected);
 	}
@@ -63,7 +63,7 @@ class TestScriptConversions : public CxxTest::TestSuite
 
 		std::string source;
 		JS::RootedValue global(cx, script.GetGlobalObject());
-		TS_ASSERT(script.CallFunction(global, "uneval", v1, source));
+		TS_ASSERT(script.CallFunction(global, "uneval", source, v1));
 
 		if (expected)
 			TS_ASSERT_STR_EQUALS(source, expected);
@@ -89,12 +89,12 @@ class TestScriptConversions : public CxxTest::TestSuite
 		T r;
 		JS::RootedValue r1(cx);
 
-		TS_ASSERT(script.CallFunction(u1, func.c_str(), v1, r));
+		TS_ASSERT(script.CallFunction(u1, func.c_str(), r, v1));
 		ScriptInterface::ToJSVal(cx, &r1, r);
 
 		std::string source;
 		JS::RootedValue global(cx, script.GetGlobalObject());
-		TS_ASSERT(script.CallFunction(global, "uneval", r1, source));
+		TS_ASSERT(script.CallFunction(global, "uneval", source, r1));
 
 		TS_ASSERT_STR_EQUALS(source, expected);
 	}
@@ -102,7 +102,7 @@ class TestScriptConversions : public CxxTest::TestSuite
 public:
 	void setUp()
 	{
-		g_VFS = CreateVfs(20 * MiB);
+		g_VFS = CreateVfs();
 		TS_ASSERT_OK(g_VFS->Mount(L"", DataDir()/"mods"/"_test.sim", VFS_MOUNT_MUST_EXIST));
 	}
 
@@ -135,7 +135,7 @@ public:
 		roundtrip<u32>(1073741823, "1073741823"); // JSVAL_INT_MAX
 
 		{
-			TestLogger log; // swallow warnings about values not being stored as INT jsvals
+			TestLogger log; // swallow warnings about values not being stored as integer JS::Values
 			roundtrip<i32>(1073741824, "1073741824"); // JSVAL_INT_MAX+1
 			roundtrip<i32>(-1073741825, "-1073741825"); // JSVAL_INT_MIN-1
 			roundtrip<u32>(1073741824, "1073741824"); // JSVAL_INT_MAX+1
@@ -180,7 +180,7 @@ public:
 		ScriptInterface script("Test", "Test", g_ScriptRuntime);
 		JSContext* cx = script.GetContext();
 		JSAutoRequest rq(cx);
-		
+
 		// using new uninitialized variables each time to be sure the test doesn't succeeed if ToJSVal doesn't touch the value at all.
 		JS::RootedValue val0(cx), val1(cx), val2(cx), val3(cx), val4(cx), val5(cx), val6(cx), val7(cx), val8(cx);
 		ScriptInterface::ToJSVal<i32>(cx, &val0, 0);

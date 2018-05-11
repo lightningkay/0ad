@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
  * along with 0 A.D.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef INCLUDED_JSINTERFACE_RENDERER
 #define INCLUDED_JSINTERFACE_RENDERER
 
@@ -29,26 +28,28 @@ namespace JSI_Renderer
 {
 	std::string GetRenderPath(ScriptInterface::CxPrivate* pCxPrivate);
 	void SetRenderPath(ScriptInterface::CxPrivate* pCxPrivate, const std::string& name);
+	void RecreateShadowMap(ScriptInterface::CxPrivate* pCxPrivate);
 
 	DECLARE_BOOLEAN_SCRIPT_SETTING(Shadows);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(ShadowPCF);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(Particles);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(PreferGLSL);
-	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterUgly);
+	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterEffects);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterFancyEffects);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterRealDepth);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterReflection);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterRefraction);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(WaterShadows);
+	DECLARE_BOOLEAN_SCRIPT_SETTING(Fog);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(Silhouettes);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(ShowSky);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(SmoothLOS);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(Postproc);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(DisplayFrustum);
 
-	void RegisterScriptFunctions(ScriptInterface& scriptInterface);
+	void RegisterScriptFunctions(const ScriptInterface& scriptInterface);
 }
 
 #undef DECLARE_BOOLEAN_SCRIPT_SETTING
 
-#endif
+#endif // INCLUDED_JSINTERFACE_RENDERER

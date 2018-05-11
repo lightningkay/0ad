@@ -59,7 +59,7 @@ Promotion.prototype.Promote = function(promotedTemplateName)
 	// change promoted unit health to the same percent of hitpoints as unit had before promotion
 	var cmpPromotedUnitHealth = Engine.QueryInterface(promotedUnitEntity, IID_Health);
 	var healthFraction = Math.max(0, Math.min(1, cmpCurrentUnitHealth.GetHitpoints() / cmpCurrentUnitHealth.GetMaxHitpoints()));
-	var promotedUnitHitpoints = Math.round(cmpPromotedUnitHealth.GetMaxHitpoints() * healthFraction);
+	var promotedUnitHitpoints = cmpPromotedUnitHealth.GetMaxHitpoints() * healthFraction;
 	cmpPromotedUnitHealth.SetHitpoints(promotedUnitHitpoints);
 
 	var cmpPromotedUnitPromotion = Engine.QueryInterface(promotedUnitEntity, IID_Promotion);
@@ -76,31 +76,55 @@ Promotion.prototype.Promote = function(promotedTemplateName)
 
 	var cmpCurrentUnitAI = Engine.QueryInterface(this.entity, IID_UnitAI);
 	var cmpPromotedUnitAI = Engine.QueryInterface(promotedUnitEntity, IID_UnitAI);
-	var pos = cmpCurrentUnitAI.GetHeldPosition();
-	if (pos)
-		cmpPromotedUnitAI.SetHeldPosition(pos.x, pos.z);
+	var heldPos = cmpCurrentUnitAI.GetHeldPosition();
+	if (heldPos)
+		cmpPromotedUnitAI.SetHeldPosition(heldPos.x, heldPos.z);
 	if (cmpCurrentUnitAI.GetStanceName())
 		cmpPromotedUnitAI.SwitchToStance(cmpCurrentUnitAI.GetStanceName());
 
 	var orders = cmpCurrentUnitAI.GetOrders();
+	if (cmpCurrentUnitPosition.IsInWorld())	// do not cheer if not visibly garrisoned
+		cmpPromotedUnitAI.Cheer();
 	if (cmpCurrentUnitAI.IsGarrisoned())
 		cmpPromotedUnitAI.SetGarrisoned();
-	if (cmpCurrentUnitPosition.IsInWorld())	// do not cheer if not visibly garrisoned
-		cmpPromotedUnitAI.Cheer();	
 	cmpPromotedUnitAI.AddOrders(orders);
 
 	var workOrders = cmpCurrentUnitAI.GetWorkOrders();
 	cmpPromotedUnitAI.SetWorkOrders(workOrders);
-	cmpPromotedUnitAI.SetGuardOf(cmpCurrentUnitAI.IsGuardOf());
 
-	var cmpCurrentUnitGuard = Engine.QueryInterface(this.entity, IID_Guard);
-	var cmpPromotedUnitGuard = Engine.QueryInterface(promotedUnitEntity, IID_Guard);
+	if (cmpCurrentUnitAI.IsGuardOf())
+	{
+		let guarded = cmpCurrentUnitAI.IsGuardOf();
+		let cmpGuard = Engine.QueryInterface(guarded, IID_Guard);
+		if (cmpGuard)
+		{
+			cmpGuard.RenameGuard(this.entity, promotedUnitEntity);
+			cmpPromotedUnitAI.SetGuardOf(guarded);
+		}
+	}
+
+	let cmpCurrentUnitGuard = Engine.QueryInterface(this.entity, IID_Guard);
+	let cmpPromotedUnitGuard = Engine.QueryInterface(promotedUnitEntity, IID_Guard);
 	if (cmpCurrentUnitGuard && cmpPromotedUnitGuard)
-		cmpPromotedUnitGuard.SetEntities(cmpCurrentUnitGuard.GetEntities());
+	{
+		let entities = cmpCurrentUnitGuard.GetEntities();
+		if (entities.length)
+		{
+			cmpPromotedUnitGuard.SetEntities(entities);
+			for (let ent of entities)
+			{
+				let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
+				if (cmpUnitAI)
+					cmpUnitAI.SetGuardOf(promotedUnitEntity);
+			}
+		}
+	}
 
-	Engine.BroadcastMessage(MT_EntityRenamed, { entity: this.entity, newentity: promotedUnitEntity });
+	Engine.PostMessage(this.entity, MT_EntityRenamed, { "entity": this.entity, "newentity": promotedUnitEntity });
 
 	// Destroy current entity
+	if (cmpCurrentUnitPosition && cmpCurrentUnitPosition.IsInWorld())
+		cmpCurrentUnitPosition.MoveOutOfWorld();
 	Engine.DestroyEntity(this.entity);
 	// save the entity id
 	this.promotedUnitEntity = promotedUnitEntity;

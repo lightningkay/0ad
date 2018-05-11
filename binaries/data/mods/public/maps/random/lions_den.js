@@ -1,27 +1,41 @@
-RMS.LoadLibrary("rmgen");
-RMS.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmgen");
+Engine.LoadLibrary("rmgen-common");
+Engine.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmbiome");
 
-InitMap();
+setSelectedBiome();
 
-randomizeBiome();
-initMapSettings();
+const topTerrain = g_Terrains.tier2Terrain;
+
+const heightValley = 0;
+const heightPath = 10;
+const heightDen = 15;
+const heightHill = 50;
+
+var g_Map = new RandomMap(heightHill, topTerrain);
+
+const mapCenter = g_Map.getCenter();
+const numPlayers = getNumPlayers();
+const startAngle = randomAngle();
+
 initTileClasses(["step"]);
+createArea(
+	new MapBoundsPlacer(),
+	new TileClassPainter(g_TileClasses.land));
 
-var topTerrain = g_Terrains.tier2Terrain;
+Engine.SetProgress(10);
 
-resetTerrain(topTerrain, g_TileClasses.land, 50);
-RMS.SetProgress(10);
+createBasesByPattern("radial", fractionToTiles(0.4), fractionToTiles(randFloat(0.05, 0.1)), startAngle);
+Engine.SetProgress(20);
 
-var players = addBases("radial", 0.4, randFloat(0.05, 0.1));
-RMS.SetProgress(20);
-
-createSunkenTerrain(players);
-RMS.SetProgress(30);
+createSunkenTerrain();
+Engine.SetProgress(30);
 
 addElements([
 	{
 		"func": addLayeredPatches,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.dirt, 5,
 			g_TileClasses.forest, 2,
 			g_TileClasses.mountain, 2,
@@ -36,6 +50,7 @@ addElements([
 	{
 		"func": addLayeredPatches,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.dirt, 5,
 			g_TileClasses.forest, 2,
 			g_TileClasses.mountain, 2,
@@ -49,6 +64,7 @@ addElements([
 	{
 		"func": addLayeredPatches,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.dirt, 5,
 			g_TileClasses.forest, 2
 		],
@@ -59,7 +75,10 @@ addElements([
 	},
 	{
 		"func": addDecoration,
-		"avoid": [g_TileClasses.forest, 2],
+		"avoid": [
+			g_TileClasses.baseResource, 5,
+			g_TileClasses.forest, 2
+		],
 		"stay": [g_TileClasses.player, 1],
 		"sizes": ["normal"],
 		"mixes": ["normal"],
@@ -68,6 +87,7 @@ addElements([
 	{
 		"func": addDecoration,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.forest, 2,
 			g_TileClasses.mountain, 2,
 			g_TileClasses.player, 12,
@@ -81,6 +101,7 @@ addElements([
 	{
 		"func": addDecoration,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.forest, 2,
 			g_TileClasses.mountain, 2,
 			g_TileClasses.player, 12
@@ -93,6 +114,7 @@ addElements([
 	{
 		"func": addDecoration,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.forest, 2,
 			g_TileClasses.mountain, 2,
 			g_TileClasses.player, 12
@@ -103,12 +125,13 @@ addElements([
 		"amounts": ["scarce"]
 	}
 ]);
-RMS.SetProgress(40);
+Engine.SetProgress(40);
 
 addElements(shuffleArray([
 	{
 		"func": addMetal,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 3,
 			g_TileClasses.player, 30,
@@ -123,6 +146,7 @@ addElements(shuffleArray([
 	{
 		"func": addMetal,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 3,
 			g_TileClasses.player, 10,
@@ -139,6 +163,7 @@ addElements(shuffleArray([
 	{
 		"func": addStone,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 3,
 			g_TileClasses.player, 30,
@@ -153,6 +178,7 @@ addElements(shuffleArray([
 	{
 		"func": addStone,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 3,
 			g_TileClasses.player, 10,
@@ -169,6 +195,7 @@ addElements(shuffleArray([
 	{
 		"func": addForests,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 18,
 			g_TileClasses.metal, 3,
@@ -183,6 +210,7 @@ addElements(shuffleArray([
 	{
 		"func": addForests,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 3,
 			g_TileClasses.forest, 18,
 			g_TileClasses.metal, 3,
@@ -197,12 +225,13 @@ addElements(shuffleArray([
 		"amounts": ["tons"]
 	}
 ]));
-RMS.SetProgress(60);
+Engine.SetProgress(60);
 
 addElements(shuffleArray([
 	{
 		"func": addBerries,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 30,
 			g_TileClasses.forest, 5,
 			g_TileClasses.metal, 10,
@@ -217,6 +246,7 @@ addElements(shuffleArray([
 	{
 		"func": addBerries,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 30,
 			g_TileClasses.forest, 5,
 			g_TileClasses.metal, 10,
@@ -234,6 +264,7 @@ addElements(shuffleArray([
 		"func": addAnimals,
 		"avoid": [
 			g_TileClasses.animals, 20,
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.forest, 0,
 			g_TileClasses.metal, 1,
 			g_TileClasses.player, 20,
@@ -248,6 +279,7 @@ addElements(shuffleArray([
 		"func": addAnimals,
 		"avoid": [
 			g_TileClasses.animals, 20,
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.forest, 0,
 			g_TileClasses.metal, 1,
 			g_TileClasses.mountain, 5,
@@ -263,6 +295,7 @@ addElements(shuffleArray([
 	{
 		"func": addStragglerTrees,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 7,
 			g_TileClasses.metal, 3,
@@ -277,6 +310,7 @@ addElements(shuffleArray([
 	{
 		"func": addStragglerTrees,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 7,
 			g_TileClasses.metal, 3,
@@ -293,6 +327,8 @@ addElements(shuffleArray([
 	{
 		"func": addStragglerTrees,
 		"avoid": [
+			g_TileClasses.player, 10,
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.berries, 5,
 			g_TileClasses.forest, 3,
 			g_TileClasses.metal, 5,
@@ -304,12 +340,13 @@ addElements(shuffleArray([
 		"amounts": ["tons"]
 	}
 ]));
-RMS.SetProgress(75);
+Engine.SetProgress(75);
 
 addElements([
 	{
 		"func": addDecoration,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.valley, 4,
 			g_TileClasses.player, 4,
 			g_TileClasses.settlement, 4,
@@ -321,12 +358,13 @@ addElements([
 		"amounts": ["tons"]
 	}
 ]);
-RMS.SetProgress(80);
+Engine.SetProgress(80);
 
 addElements([
 	{
 		"func": addProps,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.valley, 4,
 			g_TileClasses.player, 4,
 			g_TileClasses.settlement, 4,
@@ -338,12 +376,13 @@ addElements([
 		"amounts": ["scarce"]
 	}
 ]);
-RMS.SetProgress(85);
+Engine.SetProgress(85);
 
 addElements([
 	{
 		"func": addDecoration,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.player, 4,
 			g_TileClasses.settlement, 4,
 			g_TileClasses.step, 4
@@ -354,12 +393,13 @@ addElements([
 		"amounts": ["tons"]
 	}
 ]);
-RMS.SetProgress(90);
+Engine.SetProgress(90);
 
 addElements([
 	{
 		"func": addProps,
 		"avoid": [
+			g_TileClasses.baseResource, 5,
 			g_TileClasses.player, 4,
 			g_TileClasses.settlement, 4,
 			g_TileClasses.step, 4
@@ -370,138 +410,158 @@ addElements([
 		"amounts": ["scarce"]
 	}
 ]);
-RMS.SetProgress(95);
+Engine.SetProgress(95);
 
-ExportMap();
+placePlayersNomad(
+	g_TileClasses.player,
+	[
+		new HeightConstraint(heightValley, heightPath),
+		avoidClasses(
+			g_TileClasses.forest, 1,
+			g_TileClasses.metal, 4,
+			g_TileClasses.rock, 4,
+			g_TileClasses.animals, 2)
+	]);
 
-// Create the sunken terrain
-function createSunkenTerrain(players)
+g_Map.ExportMap();
+
+function createSunkenTerrain()
 {
 	var base = g_Terrains.mainTerrain;
 	var middle = g_Terrains.dirt;
 	var lower = g_Terrains.tier2Terrain;
 	var road = g_Terrains.road;
 
-	if (g_MapInfo.biome == g_BiomeSnowy)
+	if (currentBiome() == "generic/snowy")
 	{
 		middle = g_Terrains.tier2Terrain;
 		lower = g_Terrains.tier1Terrain;
 	}
 
-	if (g_MapInfo.biome == g_BiomeAlpine)
+	if (currentBiome() == "generic/alpine")
 	{
 		middle = g_Terrains.shore;
 		lower = g_Terrains.tier4Terrain;
 	}
 
-	if (g_MapInfo.biome == g_BiomeMediterranean)
+	if (currentBiome() == "generic/mediterranean")
 	{
 		middle = g_Terrains.tier1Terrain;
 		lower = g_Terrains.forestFloor1;
 	}
 
-	if (g_MapInfo.biome == g_BiomeSavanna)
+	if (currentBiome() == "generic/savanna")
 	{
 		middle = g_Terrains.tier2Terrain;
 		lower = g_Terrains.tier4Terrain;
 	}
 
-	if (g_MapInfo.biome == g_BiomeTropic || g_MapInfo.biome == g_BiomeAutumn)
+	if (currentBiome() == "generic/tropic" || currentBiome() == "generic/autumn")
 		road = g_Terrains.roadWild;
 
-	if (g_MapInfo.biome == g_BiomeAutumn)
+	if (currentBiome() == "generic/autumn")
 		middle = g_Terrains.shore;
 
-	var expSize = g_MapInfo.mapArea * 0.015 / (g_MapInfo.numPlayers / 4);
-	var expDist = 0.1 + (g_MapInfo.numPlayers / 200);
+	var expSize = diskArea(fractionToTiles(0.14)) / numPlayers;
+	var expDist = 0.1 + numPlayers / 200;
 	var expAngle = 0.75;
-	if (g_MapInfo.numPlayers == 2)
+
+	if (numPlayers <= 2)
 	{
-		expSize = g_MapInfo.mapArea * 0.015 / 0.8;
+		expSize = diskArea(fractionToTiles(0.075));
 		expAngle = 0.72;
 	}
 
 	var nRoad = 0.44;
 	var nExp = 0.425;
 
-	if (g_MapInfo.numPlayers < 4)
+	if (numPlayers < 4)
 	{
 		nRoad = 0.42;
 		nExp = 0.4;
 	}
 
-	// Create central valley
-	var placer = new ClumpPlacer(g_MapInfo.mapArea * 0.26, 1, 1, 1, g_MapInfo.centerOfMap, g_MapInfo.centerOfMap);
-	var terrainPainter = new LayeredPainter([g_Terrains.cliff, lower], [3]);
-	var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 0, 3);
-	createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.valley)]);
+	g_Map.log("Creating central valley");
+	createArea(
+		new DiskPlacer(fractionToTiles(0.29), mapCenter),
+		[
+			new LayeredPainter([g_Terrains.cliff, lower], [3]),
+			new SmoothElevationPainter(ELEVATION_SET, heightValley, 3),
+			new TileClassPainter(g_TileClasses.valley)
+		]);
 
-	// Create the center hill
-	var placer = new ClumpPlacer(g_MapInfo.mapArea * 0.14, 1, 1, 1, g_MapInfo.centerOfMap, g_MapInfo.centerOfMap);
-	var terrainPainter = new LayeredPainter([g_Terrains.cliff, topTerrain], [3]);
-	var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, g_MapInfo.mapHeight, 3);
-	createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.mountain)]);
+	g_Map.log("Creating central hill");
+	createArea(
+		new DiskPlacer(fractionToTiles(0.21), mapCenter),
+		[
+			new LayeredPainter([g_Terrains.cliff, topTerrain], [3]),
+			new SmoothElevationPainter(ELEVATION_SET, heightHill, 3),
+			new TileClassPainter(g_TileClasses.mountain)
+		]);
 
-	for(var i = 0; i < players.length; ++i)
+	let getCoords = (distance, playerID, playerIDOffset) => {
+		let angle = startAngle + (playerID + playerIDOffset) * 2 * Math.PI / numPlayers;
+		return Vector2D.add(mapCenter, new Vector2D(fractionToTiles(distance), 0).rotate(-angle)).round();
+	};
+
+	for (let i = 0; i < numPlayers; ++i)
 	{
-		var playerAngle = g_MapInfo.startAngle + i * TWO_PI / g_MapInfo.numPlayers;
-		var pX = round(fractionToTiles(0.5 + 0.4 * cos(playerAngle)));
-		var pZ = round(fractionToTiles(0.5 + 0.4 * sin(playerAngle)));
-		var expX = round(fractionToTiles(0.5 + expDist * cos(g_MapInfo.startAngle + (i + expAngle) * TWO_PI / g_MapInfo.numPlayers)));
-		var expZ = round(fractionToTiles(0.5 + expDist * sin(g_MapInfo.startAngle + (i + expAngle) * TWO_PI / g_MapInfo.numPlayers)));
-		var rearX = round(fractionToTiles(0.5 + 0.47 * cos(playerAngle)));
-		var rearZ = round(fractionToTiles(0.5 + 0.47 * sin(playerAngle)));
-		var prePlayerAngle = g_MapInfo.startAngle + (i - 0.5) * TWO_PI / g_MapInfo.numPlayers;
-		var preX = round(fractionToTiles(0.5 + nRoad * cos(prePlayerAngle)));
-		var preZ = round(fractionToTiles(0.5 + nRoad * sin(prePlayerAngle)));
-		var nextPlayerAngle = g_MapInfo.startAngle + (i + 0.5) * TWO_PI / g_MapInfo.numPlayers;
-		var nextX = round(fractionToTiles(0.5 + nRoad * cos(nextPlayerAngle)));
-		var nextZ = round(fractionToTiles(0.5 + nRoad * sin(nextPlayerAngle)));
+		let playerPosition = getCoords(0.4, i, 0);
 
-		// Create path to expansion
-		var placer = new PathPlacer(pX, pZ, expX, expZ, scaleByMapSize(12, 12), 0.7, 0.5, 0.1, -1);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, middle, road], [3, 4]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 10, 3);
-		createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.step)]);
+		// Path from player to expansion
+		let expansionPosition = getCoords(expDist, i, expAngle);
+		createArea(
+			new PathPlacer(playerPosition, expansionPosition, 12, 0.7, 0.5, 0.1, -1),
+			[
+				new LayeredPainter([g_Terrains.cliff, middle, road], [3, 4]),
+				new SmoothElevationPainter(ELEVATION_SET, heightPath, 3),
+				new TileClassPainter(g_TileClasses.step)
+			]);
 
-		// Create path to neighbor
-		var placer = new PathPlacer(rearX, rearZ, nextX, nextZ, scaleByMapSize(19, 19), 0.4, 0.5, 0.1, -0.6);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, middle, road], [3, 6]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 10, 3);
-		createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.step)]);
+		// Path from player to neighbor
+		for (let neighborOffset of [-0.5, 0.5])
+		{
+			let neighborPosition = getCoords(nRoad, i, neighborOffset);
+			let pathPosition = getCoords(0.47, i, 0);
+			createArea(
+				new PathPlacer(pathPosition, neighborPosition, 19, 0.4, 0.5, 0.1, -0.6),
+				[
+					new LayeredPainter([g_Terrains.cliff, middle, road], [3, 6]),
+					new SmoothElevationPainter(ELEVATION_SET, heightPath, 3),
+					new TileClassPainter(g_TileClasses.step)
+				]);
+		}
 
-		// Create path to neighbor
-		var placer = new PathPlacer(rearX, rearZ, preX, preZ, scaleByMapSize(19, 19), 0.4, 0.5, 0.1, -0.6);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, middle, road], [3, 6]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 10, 3);
-		createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.step)]);
+		// Den
+		createArea(
+			new ClumpPlacer(diskArea(fractionToTiles(0.1)) / (isNomad() ? 2 : 1), 0.9, 0.3, Infinity, playerPosition),
+			[
+				new LayeredPainter([g_Terrains.cliff, base], [3]),
+				new SmoothElevationPainter(ELEVATION_SET, heightDen, 3),
+				new TileClassPainter(g_TileClasses.valley)
+			]);
 
-		// Create the den
-		var placer = new ClumpPlacer(g_MapInfo.mapArea * 0.03, 0.9, 0.3, 1, pX, pZ);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, base], [3]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 15, 3);
-		createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.valley)]);
-
-		// Create the expansion
-		var placer = new ClumpPlacer(expSize, 0.9, 0.3, 1, expX, expZ);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, base], [3]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 15, 3);
-		var area = createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.settlement)], [avoidClasses(g_TileClasses.settlement, 2)]);
-		var unpainter = new TileClassUnPainter(new TileClass(g_MapInfo.mapSize, g_TileClasses.mountain));
-		unpainter.paint(area);
+		// Expansion
+		createArea(
+			new ClumpPlacer(expSize, 0.9, 0.3, Infinity, expansionPosition),
+			[
+				new LayeredPainter([g_Terrains.cliff, base], [3]),
+				new SmoothElevationPainter(ELEVATION_SET, heightDen, 3),
+				new TileClassPainter(g_TileClasses.settlement)
+			],
+			[avoidClasses(g_TileClasses.settlement, 2)]);
 	}
 
-	// Create the neighbor expansions
-	for (var i = 0; i < g_MapInfo.numPlayers; ++i)
+	g_Map.log("Creating the expansions between players");
+	for (let i = 0; i < numPlayers; ++i)
 	{
-		var nextPlayerAngle = g_MapInfo.startAngle + (i + 0.5) * TWO_PI / g_MapInfo.numPlayers;
-		var nextX = round(fractionToTiles(0.5 + nExp * cos(nextPlayerAngle)));
-		var nextZ = round(fractionToTiles(0.5 + nExp * sin(nextPlayerAngle)));
-
-		// Create the neightbor expansion
-		var placer = new ClumpPlacer(expSize, 0.9, 0.3, 1, nextX, nextZ);
-		var terrainPainter = new LayeredPainter([g_Terrains.cliff, lower], [3]);
-		var elevationPainter = new SmoothElevationPainter(ELEVATION_SET, 0, 3);
-		var area = createArea(placer, [terrainPainter, elevationPainter, paintClass(g_TileClasses.settlement)]);
+		let position = getCoords(nExp, i, 0.5);
+		createArea(
+			new ClumpPlacer(expSize, 0.9, 0.3, Infinity, position),
+			[
+				new LayeredPainter([g_Terrains.cliff, lower], [3]),
+				new SmoothElevationPainter(ELEVATION_SET, heightValley, 3),
+				new TileClassPainter(g_TileClasses.settlement)
+			]);
 	}
 }

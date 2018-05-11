@@ -18,7 +18,7 @@
   </Footprint>
   <Health>
     <Max op="mul">0.25</Max>
-    <SpawnEntityOnDeath>rubble/rubble_1x1pal</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_2x2</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>gaia</Civ>
@@ -41,6 +41,6 @@
     <FoundationActor>structures/fndn_1x1pal.xml</FoundationActor>
   </VisualActor>
   <WallPiece>
-    <Length>4.0</Length>
+    <Length>4.8</Length>
   </WallPiece>
 </Entity>

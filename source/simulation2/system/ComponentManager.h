@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@
 #include <boost/unordered_map.hpp>
 
 #include <map>
+#include <unordered_map>
 
 class IComponent;
 class CParamNode;
@@ -48,7 +49,7 @@ public:
 
 private:
 	// Component allocation types
-	typedef IComponent* (*AllocFunc)(ScriptInterface& scriptInterface, JS::HandleValue ctor);
+	typedef IComponent* (*AllocFunc)(const ScriptInterface& scriptInterface, JS::HandleValue ctor);
 	typedef void (*DeallocFunc)(IComponent*);
 
 	// ComponentTypes come in three types:
@@ -113,12 +114,6 @@ private:
 			ctor = std::move(other.ctor);
 		}
 	};
-	
-	struct FindJSONFilesCallbackData
-	{
-		VfsPath path;
-		std::vector<std::string> templates;
-	};
 
 public:
 	CComponentManager(CSimContext&, shared_ptr<ScriptRuntime> rt, bool skipScriptFunctions = false);
@@ -138,7 +133,7 @@ public:
 
 	void RegisterComponentType(InterfaceId, ComponentTypeId, AllocFunc, DeallocFunc, const char*, const std::string& schema);
 	void RegisterComponentTypeScriptWrapper(InterfaceId, ComponentTypeId, AllocFunc, DeallocFunc, const char*, const std::string& schema);
-	
+
 	void MarkScriptedComponentForSystemEntity(CComponentManager::ComponentTypeId cid);
 
 	/**
@@ -302,14 +297,14 @@ public:
 	void SetRNGSeed(u32 seed);
 
 	// Various state serialization functions:
-	bool ComputeStateHash(std::string& outHash, bool quick);
-	bool DumpDebugState(std::ostream& stream, bool includeDebugInfo);
+	bool ComputeStateHash(std::string& outHash, bool quick) const;
+	bool DumpDebugState(std::ostream& stream, bool includeDebugInfo) const;
 	// FlushDestroyedComponents must be called before SerializeState (since the destruction queue
 	// won't get serialized)
-	bool SerializeState(std::ostream& stream);
+	bool SerializeState(std::ostream& stream) const;
 	bool DeserializeState(std::istream& stream);
 
-	std::string GenerateSchema();
+	std::string GenerateSchema() const;
 
 	ScriptInterface& GetScriptInterface() { return m_ScriptInterface; }
 
@@ -331,13 +326,6 @@ private:
 	static int Script_AddLocalEntity(ScriptInterface::CxPrivate* pCxPrivate, const std::string& templateName);
 	static void Script_DestroyEntity(ScriptInterface::CxPrivate* pCxPrivate, int ent);
 	static void Script_FlushDestroyedEntities(ScriptInterface::CxPrivate* pCxPrivate);
-	static JS::Value Script_ReadJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& fileName);
-	static JS::Value Script_ReadCivJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& fileName);
-	static std::vector<std::string> Script_FindJSONFiles(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& subPath, bool recursive);
-	static JS::Value ReadJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filePath, const std::wstring& fileName);
-	
-	// callback function to handle recursively finding files in a directory
-	static Status FindJSONFilesCallback(const VfsPath&, const CFileInfo&, const uintptr_t);
 
 	CMessage* ConstructMessage(int mtid, JS::HandleValue data);
 	void SendGlobalMessage(entity_id_t ent, const CMessage& msg);
@@ -372,7 +360,7 @@ private:
 	std::map<MessageTypeId, CDynamicSubscription> m_DynamicMessageSubscriptionsNonsync;
 	std::map<IComponent*, std::set<MessageTypeId> > m_DynamicMessageSubscriptionsNonsyncByComponent;
 
-	std::map<entity_id_t, SEntityComponentCache*> m_ComponentCaches;
+	std::unordered_map<entity_id_t, SEntityComponentCache*> m_ComponentCaches;
 
 	// TODO: maintaining both ComponentsBy* is nasty; can we get rid of one,
 	// while keeping QueryInterface and PostMessage sufficiently efficient?

@@ -89,9 +89,9 @@ std::vector<float> Brush::GetData() const
 {
 	int width = GetWidth();
 	int height = GetHeight();
-	
+
 	std::vector<float> data (width*height);
-	
+
 	switch (m_Shape)
 	{
 	case CIRCLE:
@@ -244,9 +244,9 @@ void Brush::CreateUI(wxWindow* parent, wxSizer* sizer)
 	// TODO: These are yucky
 	wxFlexGridSizer* spinnerSizer = new wxFlexGridSizer(2, 5, 5);
 	spinnerSizer->AddGrowableCol(1);
-	spinnerSizer->Add(new wxStaticText(parent, wxID_ANY, _("Size")), wxSizerFlags().Align(wxALIGN_CENTER|wxALIGN_RIGHT));
+	spinnerSizer->Add(new wxStaticText(parent, wxID_ANY, _("Size")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT));
 	spinnerSizer->Add(new BrushSizeCtrl(parent, *this), wxSizerFlags().Expand());
-	spinnerSizer->Add(new wxStaticText(parent, wxID_ANY, _("Strength")), wxSizerFlags().Align(wxALIGN_CENTER|wxALIGN_RIGHT));
+	spinnerSizer->Add(new wxStaticText(parent, wxID_ANY, _("Strength")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT));
 	spinnerSizer->Add(new BrushStrengthCtrl(parent, *this), wxSizerFlags().Expand());
 	sizer->Add(spinnerSizer, wxSizerFlags().Expand());
 }

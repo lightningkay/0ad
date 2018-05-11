@@ -21,8 +21,6 @@
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.59082</Murkiness>
 				<Tint r="0.866667" g="0.776471" b="0.486275"/>
-				<ReflectionTint r="0.247059" g="0.501961" b="0.501961"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -42,7 +40,6 @@
 {
   "CircularMap": true,
   "Description": "The rolling Thessalian plain is traversed with narrow streams, easily forded. Wide-open spaces allow for massive expansion, while each player starts the match safe atop a large acropolis.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Thessalian Plains (4)",
@@ -61,24 +58,27 @@
     }
   ],
   "Preview": "boeotian_plains.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
 		<Entity uid="32">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="594.84107" z="835.71131"/>
 			<Orientation y="0.74331"/>
 		</Entity>
 		<Entity uid="33">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="883.0774" z="1439.667"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="34">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="1274.92237" z="866.99476"/>
 			<Orientation y="-0.59447"/>
@@ -1266,7 +1266,7 @@
 			<Orientation y="1.98162"/>
 		</Entity>
 		<Entity uid="252">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="2019.2146" z="977.27625"/>
 			<Orientation y="-1.32882"/>
@@ -40266,29 +40266,39 @@
 			<Orientation y="2.63404"/>
 		</Entity>
 		<Entity uid="7704">
-			<Template>actor|fauna/shark.xml</Template>
+			<Template>gaia/fauna_shark</Template>
+			<Player>0</Player>
 			<Position x="1908.63758" z="1179.9911"/>
 			<Orientation y="-1.64487"/>
+			<Actor seed="17059"/>
 		</Entity>
 		<Entity uid="7705">
-			<Template>actor|fauna/shark.xml</Template>
+			<Template>gaia/fauna_shark</Template>
+			<Player>0</Player>
 			<Position x="1868.84144" z="1014.90528"/>
 			<Orientation y="2.35621"/>
+			<Actor seed="33209"/>
 		</Entity>
 		<Entity uid="7706">
-			<Template>actor|fauna/shark.xml</Template>
+			<Template>gaia/fauna_shark</Template>
+			<Player>0</Player>
 			<Position x="1936.57935" z="896.73572"/>
 			<Orientation y="2.35621"/>
+			<Actor seed="57773"/>
 		</Entity>
 		<Entity uid="7707">
-			<Template>actor|fauna/shark.xml</Template>
+			<Template>gaia/fauna_shark</Template>
+			<Player>0</Player>
 			<Position x="1948.49903" z="661.54175"/>
 			<Orientation y="-0.85442"/>
+			<Actor seed="21002"/>
 		</Entity>
 		<Entity uid="7708">
-			<Template>actor|fauna/shark.xml</Template>
+			<Template>gaia/fauna_shark</Template>
+			<Player>0</Player>
 			<Position x="1785.54932" z="794.0774"/>
 			<Orientation y="2.35621"/>
+			<Actor seed="17740"/>
 		</Entity>
 		<Entity uid="7709">
 			<Template>gaia/fauna_hawk</Template>

@@ -18,12 +18,9 @@
 				<Type>ocean</Type>
 				<Color r="0.129412" g="0.156863" b="0.184314"/>
 				<Height>20.0394</Height>
-				<Shininess>150</Shininess>
 				<Waviness>2.0</Waviness>
 				<Murkiness>0.818359</Murkiness>
 				<Tint r="0.329412" g="0.419608" b="0.501961"/>
-				<ReflectionTint r="0.564706" g="0.513726" b="0.419608"/>
-				<ReflectionTintStrength>0.238281</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -43,7 +40,6 @@
 {
   "CircularMap": true,
   "Description": "Two teams face off across a long, very large saltwater lake.\u000a\u000aFishing can be had in the central lake. The map is also well-endowed with Stone and Metal deposits.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Caspian Sea (2v2)",
@@ -66,7 +62,10 @@
     }
   ],
   "Preview": "caspian_sea_skirmish_2v2.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>

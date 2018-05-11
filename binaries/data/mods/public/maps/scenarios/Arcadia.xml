@@ -21,8 +21,6 @@
 				<Waviness>1.8</Waviness>
 				<Murkiness>0.900391</Murkiness>
 				<Tint r="0.329412" g="0.419608" b="0.501961"/>
-				<ReflectionTint r="0.776471" g="0.74902" b="0.576471"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -42,7 +40,6 @@
 {
   "CircularMap": false,
   "Description": "Springtime in Arcadia, Greece. Spring rains have gorged what would otherwise be dry creek beds throughout the rest of the year, dividing the lands between two warring tribes. \n\nPlayers start on either side of a mountainous region rich in resources. Extra starting buildings help players jumpstart building their new colonies.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Arcadia",
@@ -69,7 +66,10 @@
     }
   ],
   "Preview": "arcadia.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -21583,13 +21583,13 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="4491">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="358.26566" z="316.29844"/>
 			<Orientation y="-1.77085"/>
 		</Entity>
 		<Entity uid="4501">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="22.57499" z="650.9889"/>
 			<Orientation y="1.84865"/>
@@ -21637,7 +21637,7 @@
 			<Orientation y="0.1832"/>
 		</Entity>
 		<Entity uid="4585">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="696.20521" z="206.17661"/>
 			<Orientation y="-2.35447"/>

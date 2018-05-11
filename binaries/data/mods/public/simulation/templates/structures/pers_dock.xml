@@ -5,12 +5,11 @@
     <Height>8.0</Height>
   </Footprint>
   <Health>
-    <SpawnEntityOnDeath>rubble/rubble_pers_dock</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_pers_dock</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>pers</Civ>
     <SpecificName>Nāvašta</SpecificName>
-    <History>Situated on the Mediterranean coast, all Phoenician cities had excellent docks and harbors, the outstanding example being Tyre, which was situated on an island close to the shore.</History>
   </Identity>
   <Obstruction>
     <Static width="23.0" depth="15.0"/>

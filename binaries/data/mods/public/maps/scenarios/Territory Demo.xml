@@ -2,7 +2,6 @@
 
 <Scenario version="6">
 	<Environment>
-		<LightingModel>standard</LightingModel>
 		<SkySet>default</SkySet>
 		<SunColor r="0.709804" g="0.709804" b="0.709804"/>
 		<SunElevation angle="0.785398"/>
@@ -14,12 +13,9 @@
 				<Type>lake</Type>
 				<Color r="0.298039" g="0.34902" b="0.698039"/>
 				<Height>5</Height>
-				<Shininess>150</Shininess>
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.45</Murkiness>
 				<Tint r="0.278431" g="0.298039" b="0.588235"/>
-				<ReflectionTint r="0.278431" g="0.298039" b="0.588235"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -32,7 +28,6 @@
 {
   "CircularMap": true,
   "Description": "A demo map showing the territory effects of each type of structure.",
-  "GameType": "endless",
   "Keywords": [
     "demo"
   ],
@@ -64,7 +59,8 @@
       "Civ": "athen"
     }
   ],
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": []
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -141,7 +137,7 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="23">
-			<Template>structures/cart_wall</Template>
+			<Template>structures/cart_wall_medium</Template>
 			<Player>1</Player>
 			<Position x="382.18241" z="216.2515"/>
 			<Orientation y="2.35621"/>
@@ -213,7 +209,7 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="35">
-			<Template>structures/cart_wall</Template>
+			<Template>structures/cart_wall_medium</Template>
 			<Player>1</Player>
 			<Position x="338.04816" z="122.21552"/>
 			<Orientation y="2.35621"/>

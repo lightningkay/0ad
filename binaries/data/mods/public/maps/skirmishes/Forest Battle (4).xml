@@ -41,7 +41,6 @@
 {
   "CircularMap": true,
   "Description": "A forest battle map where all players fight for supremacy and control over the middle.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Forest Battle (4)",
@@ -60,7 +59,10 @@
     }
   ],
   "Preview": "forest_battle.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -6134,7 +6136,7 @@
 			<Actor seed="46180"/>
 		</Entity>
 		<Entity uid="1229">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="113.12829" z="438.99152"/>
 			<Orientation y="2.35621"/>
@@ -12535,28 +12537,28 @@
 			<Actor seed="63986"/>
 		</Entity>
 		<Entity uid="2269">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="713.64795" z="271.31196"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="23068"/>
 		</Entity>
 		<Entity uid="2270">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="701.67237" z="267.95414"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="48172"/>
 		</Entity>
 		<Entity uid="2271">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="656.00062" z="415.5"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="62032"/>
 		</Entity>
 		<Entity uid="2272">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="654.59327" z="434.02393"/>
 			<Orientation y="2.35621"/>
@@ -12605,14 +12607,14 @@
 			<Actor seed="20456"/>
 		</Entity>
 		<Entity uid="2279">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="377.31434" z="40.58182"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="39574"/>
 		</Entity>
 		<Entity uid="2280">
-			<Template>gaia/fauna_wolf_snow</Template>
+			<Template>gaia/fauna_arctic_wolf</Template>
 			<Player>0</Player>
 			<Position x="378.75657" z="37.87172"/>
 			<Orientation y="2.35621"/>
@@ -17214,35 +17216,35 @@
 			<Actor seed="1450"/>
 		</Entity>
 		<Entity uid="3099">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="392.7949" z="311.45261"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="17952"/>
 		</Entity>
 		<Entity uid="3100">
-			<Template>gaia/special_treasure_stone</Template>
+			<Template>gaia/treasure/stone</Template>
 			<Player>0</Player>
 			<Position x="389.17688" z="304.28943"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="60090"/>
 		</Entity>
 		<Entity uid="3101">
-			<Template>gaia/special_treasure_metal</Template>
+			<Template>gaia/treasure/metal</Template>
 			<Player>0</Player>
 			<Position x="377.87204" z="321.5618"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="58734"/>
 		</Entity>
 		<Entity uid="3103">
-			<Template>gaia/special_treasure_metal</Template>
+			<Template>gaia/treasure/metal</Template>
 			<Player>0</Player>
 			<Position x="389.82688" z="317.57053"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="8296"/>
 		</Entity>
 		<Entity uid="3104">
-			<Template>gaia/special_treasure_metal</Template>
+			<Template>gaia/treasure/metal</Template>
 			<Player>0</Player>
 			<Position x="396.19687" z="327.8798"/>
 			<Orientation y="2.35621"/>

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -581,34 +581,36 @@ static void FocusHeight(CGameViewImpl* m, bool smooth)
 	const CVector3D nearPoint = position + forwards * m->ViewNear;
 	const CVector3D pivotPoint = position + forwards * m->Zoom.GetSmoothedValue();
 
-	const float ground = m->Game->GetWorld()->GetTerrain()->GetExactGroundLevel(nearPoint.X, nearPoint.Z);
+	const float ground = std::max(
+		m->Game->GetWorld()->GetTerrain()->GetExactGroundLevel(nearPoint.X, nearPoint.Z),
+		g_Renderer.GetWaterManager()->m_WaterHeight);
 
 	// filter ground levels for smooth camera movement
 	const float filtered_near_ground = m->Game->GetWorld()->GetTerrain()->GetFilteredGroundLevel(nearPoint.X, nearPoint.Z, near_radius);
 	const float filtered_pivot_ground = m->Game->GetWorld()->GetTerrain()->GetFilteredGroundLevel(pivotPoint.X, pivotPoint.Z, pivot_radius);
 
 	// filtered maximum visible ground level in view
-	const float filtered_ground = std::max(filtered_near_ground, filtered_pivot_ground);
+	const float filtered_ground = std::max(
+		std::max(filtered_near_ground, filtered_pivot_ground),
+		g_Renderer.GetWaterManager()->m_WaterHeight);
 
 	// target camera height above pivot point
 	const float pivot_height = -forwards.Y * (m->Zoom.GetSmoothedValue() - m->ViewNear);
+
 	// minimum camera height above filtered ground level
 	const float min_height = (m->HeightMin + ground - filtered_ground);
 
 	const float target_height = std::max(pivot_height, min_height);
 	const float height = (nearPoint.Y - filtered_ground);
 	const float diff = target_height - height;
+
 	if (fabsf(diff) < 0.0001f)
 		return;
 
 	if (smooth)
-	{
 		m->PosY.AddSmoothly(diff);
-	}
 	else
-	{
 		m->PosY.Add(diff);
-	}
 }
 
 CVector3D CGameView::GetSmoothPivot(CCamera& camera) const
@@ -626,11 +628,9 @@ void CGameView::Update(const float deltaRealTime)
 	if (!g_app_has_focus)
 		return;
 
-	if (m->CinemaManager.GetEnabled())
-	{
-		m->CinemaManager.Update(deltaRealTime);
+	m->CinemaManager.Update(deltaRealTime);
+	if (m->CinemaManager.IsEnabled())
 		return;
-	}
 
 	// Calculate mouse movement
 	static int mouse_last_x = 0;
@@ -1053,7 +1053,7 @@ void CGameView::SetCameraProjection()
 InReaction game_view_handler(const SDL_Event_* ev)
 {
 	// put any events that must be processed even if inactive here
-	if(!g_app_has_focus || !g_Game || !g_Game->IsGameStarted())
+	if (!g_app_has_focus || !g_Game || !g_Game->IsGameStarted() || g_Game->GetView()->GetCinema()->IsEnabled())
 		return IN_PASS;
 
 	CGameView *pView=g_Game->GetView();
@@ -1076,16 +1076,19 @@ InReaction CGameView::HandleEvent(const SDL_Event_* ev)
 			else if (g_Renderer.GetModelRenderMode() == SOLID)
 			{
 				g_Renderer.SetTerrainRenderMode(EDGED_FACES);
+				g_Renderer.SetWaterRenderMode(EDGED_FACES);
 				g_Renderer.SetModelRenderMode(EDGED_FACES);
 			}
 			else if (g_Renderer.GetModelRenderMode() == EDGED_FACES)
 			{
 				g_Renderer.SetTerrainRenderMode(WIREFRAME);
+				g_Renderer.SetWaterRenderMode(WIREFRAME);
 				g_Renderer.SetModelRenderMode(WIREFRAME);
 			}
 			else
 			{
 				g_Renderer.SetTerrainRenderMode(SOLID);
+				g_Renderer.SetWaterRenderMode(SOLID);
 				g_Renderer.SetModelRenderMode(SOLID);
 			}
 			return IN_HANDLED;

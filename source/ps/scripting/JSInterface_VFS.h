@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -15,60 +15,44 @@
  * along with 0 A.D.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// JSInterface_VFS.h
-//
-// The JavaScript wrapper around useful snippets of the VFS
-
 #ifndef INCLUDED_JSI_VFS
 #define INCLUDED_JSI_VFS
 
 #include "scriptinterface/ScriptInterface.h"
 
-// these are registered in ScriptFunctions.cpp, hence the need for a header.
-
 namespace JSI_VFS
 {
 	// Return an array of pathname strings, one for each matching entry in the
 	// specified directory.
-	//
-	// pathnames = buildDirEntList(start_path [, filter_string [, recursive ] ]);
-	//   directory: VFS path
-	//   filter_string: see match_wildcard; "" matches everything.
-	//   recurse: should subdirectories be included in the search? default false.
-	//
-	// note: full pathnames of each file/subdirectory are returned,
-	// ready for use as a "filename" for the other functions.
-	JS::Value BuildDirEntList(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& path, const std::wstring& filterStr, bool recurse);
+	JS::Value BuildDirEntList(ScriptInterface::CxPrivate* pCxPrivate, const std::vector<CStrW>& validPaths, const std::wstring& path, const std::wstring& filterStr, bool recurse);
 
 	// Return true iff the file exists
-	//
-	// if (fileExists(filename) { ... }
-	//   filename: VFS filename (may include path)
-	bool FileExists(ScriptInterface::CxPrivate* pCxPrivate, const CStrW& filename);
+	bool FileExists(ScriptInterface::CxPrivate* pCxPrivate, const std::vector<CStrW>& validPaths, const CStrW& filename);
 
 	// Return time [seconds since 1970] of the last modification to the specified file.
-	//
-	// mtime = getFileMTime(filename);
-	//   filename: VFS filename (may include path)
 	double GetFileMTime(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filename);
 
 	// Return current size of file.
-	//
-	// size = getFileSize(filename);
-	//   filename: VFS filename (may include path)
 	unsigned int GetFileSize(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filename);
 
 	// Return file contents in a string.
-	//
-	// contents = readFile(filename);
-	//   filename: VFS filename (may include path)
 	JS::Value ReadFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filename);
 
 	// Return file contents as an array of lines.
-	//
-	// lines = readFileLines(filename);
-	//   filename: VFS filename (may include path)
 	JS::Value ReadFileLines(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filename);
+
+	// Return file contents parsed as a JS Object
+	JS::Value ReadJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::vector<CStrW>& validPaths, const CStrW& filePath);
+
+	// Save given JS Object to a JSON file
+	void WriteJSONFile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& filePath, JS::HandleValue val1);
+
+	// Tests whether the current script context is allowed to read from the given directory
+	bool PathRestrictionMet(ScriptInterface::CxPrivate* pCxPrivate, const std::vector<CStrW>& validPaths, const CStrW& filePath);
+
+	void RegisterScriptFunctions_GUI(const ScriptInterface& scriptInterface);
+	void RegisterScriptFunctions_Simulation(const ScriptInterface& scriptInterface);
+	void RegisterScriptFunctions_Maps(const ScriptInterface& scriptInterface);
 }
 
-#endif
+#endif // INCLUDED_JSI_VFS

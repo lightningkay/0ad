@@ -18,12 +18,9 @@
 				<Type>lake</Type>
 				<Color r="0.737255" g="0.592157" b="0.27451"/>
 				<Height>20.5639</Height>
-				<Shininess>150</Shininess>
 				<Waviness>1.0</Waviness>
 				<Murkiness>0.835938</Murkiness>
 				<Tint r="0.737255" g="0.592157" b="0.27451"/>
-				<ReflectionTint r="0.54902" g="0.537255" b="0.439216"/>
-				<ReflectionTintStrength>0.199219</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -43,7 +40,6 @@
 {
   "CircularMap": true,
   "Description": "Situated Southside of the Atlas mountain range in North Africa.\u000a\u000aA somewhat open map with an abundance of animals and mineral resources, while wood is scarce.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Sahel (4)",
@@ -62,7 +58,10 @@
     }
   ],
   "Preview": "sahel_scenario.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -21811,28 +21810,28 @@
 			<Actor seed="50494"/>
 		</Entity>
 		<Entity uid="3598">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="383.49823" z="630.81775"/>
 			<Orientation y="-2.23484"/>
 			<Actor seed="32498"/>
 		</Entity>
 		<Entity uid="3599">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="845.47913" z="685.04432"/>
 			<Orientation y="1.16604"/>
 			<Actor seed="6722"/>
 		</Entity>
 		<Entity uid="3600">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="627.32978" z="1009.46436"/>
 			<Orientation y="-3.01612"/>
 			<Actor seed="36450"/>
 		</Entity>
 		<Entity uid="3601">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="651.92469" z="284.28101"/>
 			<Orientation y="0.48496"/>

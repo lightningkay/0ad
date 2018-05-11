@@ -3,12 +3,11 @@
   <Identity>
     <Civ>gaia</Civ>
     <GenericName>Samnite Swordsman</GenericName>
-    <SpecificName>(Samnite Swordsman)</SpecificName>
-    <History>The Samnites were an aboriginal people of Southern and Central Italy. They were fierce warriors and frequently rebelled against Roman rule.</History>
+    <SpecificName>Samnite Swordsman</SpecificName>
     <VisibleClasses datatype="tokens">Mercenary</VisibleClasses>
     <Icon>units/samnite_swordsman.png</Icon>
   </Identity>
   <VisualActor>
-    <Actor>units/carthaginians/samnite_swordsman.xml</Actor>
+    <Actor>units/carthaginians/infantry_swordsman_2_b.xml</Actor>
   </VisualActor>
 </Entity>

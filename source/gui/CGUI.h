@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -16,18 +16,9 @@
  */
 
 /*
-CGUI
-
---Overview--
-
-	This is the top class of the whole GUI, all objects
-	and settings are stored within this class.
-
---More info--
-
-	Check GUI.h
-
-*/
+ * This is the top class of the whole GUI, all objects
+ * and settings are stored within this class.
+ */
 
 #ifndef INCLUDED_CGUI
 #define INCLUDED_CGUI
@@ -225,7 +216,7 @@ public:
 	 * @param Width Width, 0 if no word-wrapping.
 	 * @param BufferZone space between text and edge, and space between text and images.
 	 * @param pObject Optional parameter for error output. Used *only* if error parsing fails,
-	 *		  and we need to be able to output which object the error occured in to aid the user.
+	 *		  and we need to be able to output which object the error occurred in to aid the user.
 	 */
 	SGUIText GenerateText(const CGUIString& Text, const CStrW& Font, const float& Width, const float& BufferZone, const IGUIObject* pObject = NULL);
 
@@ -247,7 +238,7 @@ public:
 	bool GetPreDefinedColor(const CStr& name, CColor& Output) const;
 
 	shared_ptr<ScriptInterface> GetScriptInterface() { return m_ScriptInterface; };
-	jsval GetGlobalObject() { return m_ScriptInterface->GetGlobalObject(); };
+	JS::Value GetGlobalObject() { return m_ScriptInterface->GetGlobalObject(); };
 
 private:
 

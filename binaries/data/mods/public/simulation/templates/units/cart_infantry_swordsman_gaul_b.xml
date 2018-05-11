@@ -6,24 +6,23 @@
       structures/cart_embassy_celtic
       structures/cart_embassy_iberian
       structures/cart_embassy_italiote
-      structures/{civ}_wonder
     </Entities>
   </Builder>
   <Cost>
     <Resources>
-      <food>25</food>
-      <metal>50</metal>
+      <food op="add">-25</food>
+      <metal op="add">25</metal>
     </Resources>
   </Cost>
   <Identity>
     <Civ>cart</Civ>
-    <SelectionGroupName>units/cart_infantry_swordsman_gaul_b</SelectionGroupName>
-    <GenericName>Gallic Mercenary Swordsman</GenericName>
-    <SpecificName>Seḫīr Ḥerev</SpecificName>
     <Classes datatype="tokens">Celt</Classes>
-    <VisibleClasses datatype="tokens">Mercenary</VisibleClasses>
-    <History>Hannibal hired Celtic mercenaries when he invaded Italy in 218 BC, recruited from the Gallic tribesmen in the northern third of the country. Fierce and physically imposing thanks to their height the Celtic soldiers attacked their opponents with swords and spears in a solid wave. They were capable of changing formations and despite their usual lack of body armor they were quite capable of hacking down their opponents.</History>
+    <GenericName>Gallic Mercenary Swordsman</GenericName>
     <Icon>units/cart_infantry_swordsman.png</Icon>
+    <RequiredTechnology>phase_town</RequiredTechnology>
+    <SelectionGroupName>units/cart_infantry_swordsman_gaul_b</SelectionGroupName>
+    <SpecificName>Seḫīr Ḥerev</SpecificName>
+    <VisibleClasses datatype="tokens">Mercenary</VisibleClasses>
   </Identity>
   <Promotion>
     <Entity>units/cart_infantry_swordsman_gaul_a</Entity>

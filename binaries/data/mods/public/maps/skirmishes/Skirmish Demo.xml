@@ -18,12 +18,9 @@
 				<Type>lake</Type>
 				<Color r="0.294118" g="0.34902" b="0.694118"/>
 				<Height>19.9</Height>
-				<Shininess>1.70898</Shininess>
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.746094</Murkiness>
 				<Tint r="0.337255" g="0.411765" b="0.501961"/>
-				<ReflectionTint r="0.831373" g="0.592157" b="0.321569"/>
-				<ReflectionTintStrength>0.398438</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -47,7 +44,6 @@
   ],
   "CircularMap": true,
   "Description": "A demo Skirmish map.",
-  "GameType": "endless",
   "Keywords": [
     "demo"
   ],
@@ -61,7 +57,8 @@
   ],
   "Preview": "",
   "RevealMap": false,
-  "Size": 192
+  "Size": 192,
+  "VictoryConditions": []
 }
 ]]></ScriptSettings>
 	<Entities>

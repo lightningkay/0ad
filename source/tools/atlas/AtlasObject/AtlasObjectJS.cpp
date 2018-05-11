@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ AtObj AtlasObject::LoadFromJSON(const std::string& json)
 {
 	json_spirit::Value rootnode;
 	json_spirit::read_string(json, rootnode);
-	
+
 	AtObj obj;
 	obj.p = ConvertNode(rootnode);
 	return obj;
@@ -44,7 +44,7 @@ AtObj AtlasObject::LoadFromJSON(const std::string& json)
 static AtSmartPtr<AtNode> ConvertNode(json_spirit::Value node)
 {
 	AtSmartPtr<AtNode> obj (new AtNode());
-	
+
 	if (node.type() == json_spirit::str_type)
 	{
 		obj->value = std::wstring(node.get_str().begin(),node.get_str().end());
@@ -56,7 +56,7 @@ static AtSmartPtr<AtNode> ConvertNode(json_spirit::Value node)
 			stream << node.get_int();
 		if (node.type() == json_spirit::real_type)
 			stream << node.get_real();
-		
+
 		obj->value = stream.str().c_str();
 		obj->children.insert(AtNode::child_pairtype(
 			"@number", AtSmartPtr<AtNode>(new AtNode())
@@ -68,7 +68,7 @@ static AtSmartPtr<AtNode> ConvertNode(json_spirit::Value node)
 			obj->value = L"true";
 		else
 			obj->value = L"false";
-		
+
 		obj->children.insert(AtNode::child_pairtype(
 			"@boolean", AtSmartPtr<AtNode>(new AtNode())
 		));
@@ -81,8 +81,8 @@ static AtSmartPtr<AtNode> ConvertNode(json_spirit::Value node)
 
 		json_spirit::Array nodeChildren = node.get_array();
 		json_spirit::Array::iterator itr = nodeChildren.begin();
-		
-		for (; itr != nodeChildren.end(); itr++)
+
+		for (; itr != nodeChildren.end(); ++itr)
 		{
 			obj->children.insert(AtNode::child_pairtype(
 				"item", ConvertNode(*itr)
@@ -93,7 +93,7 @@ static AtSmartPtr<AtNode> ConvertNode(json_spirit::Value node)
 	{
 		json_spirit::Object objectProperties = node.get_obj();
 		json_spirit::Object::iterator itr = objectProperties.begin();
-		for (; itr != objectProperties.end(); itr++)
+		for (; itr != objectProperties.end(); ++itr)
 		{
 			obj->children.insert(AtNode::child_pairtype(
 				itr->name_, ConvertNode(itr->value_)
@@ -108,7 +108,7 @@ static AtSmartPtr<AtNode> ConvertNode(json_spirit::Value node)
 	{
 		assert(! "Unimplemented type found when parsing JSON!");
 	}
-	
+
 	return obj;
 }
 
@@ -138,7 +138,7 @@ json_spirit::Value BuildJSONNode(AtNode::Ptr p)
 		bool val = false;
 		if (p->value == L"true")
 			val = true;
-		
+
 		json_spirit::Value rval(val);
 		return rval;
 	}
@@ -172,7 +172,7 @@ json_spirit::Value BuildJSONNode(AtNode::Ptr p)
 	else
 	{
 		json_spirit::Object rval;
-		
+
 		for (AtNode::child_maptype::const_iterator it = p->children.begin(); it != p->children.end(); ++it)
 		{
 			json_spirit::Value child = BuildJSONNode(it->second);

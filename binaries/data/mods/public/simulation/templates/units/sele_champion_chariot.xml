@@ -10,17 +10,10 @@
     <VisibleClasses datatype="tokens">Chariot</VisibleClasses>
     <GenericName>Scythed Chariot</GenericName>
     <SpecificName>Drepanèphoros</SpecificName>
-    <History>Expensive "suicide" unit. Mostly used to rush into infantry and cavalry formations to slaughter a bunch of enemies with scythes ("Trample Damage" aura) before getting destroyed themselves.</History>
-    <Icon>units/pers_cavalry_archer.png</Icon>
+    <Icon>units/sele_champion_chariot.png</Icon>
     <RequiredTechnology>successors/unlock_traditional_army</RequiredTechnology>
   </Identity>
-  <ResourceGatherer>
-    <MaxDistance>5.0</MaxDistance>
-    <Capacities>
-      <food>50</food>
-    </Capacities>
-  </ResourceGatherer>
   <VisualActor>
-    <Actor>units/persians/cavalry_archer_e.xml</Actor>
+    <Actor>units/seleucids/chariot_archer_c_m.xml</Actor>
   </VisualActor>
 </Entity>

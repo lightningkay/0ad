@@ -8,13 +8,13 @@
     <Ranged>
       <Hack>0</Hack>
       <Pierce>9.5</Pierce>
-      <Crush>2.0</Crush>
+      <Crush>1.0</Crush>
       <MaxRange>48.0</MaxRange>
       <MinRange>0.0</MinRange>
-      <ProjectileSpeed>60.0</ProjectileSpeed>
-      <PrepareTime>1000</PrepareTime>
+      <ProjectileSpeed>62.5</ProjectileSpeed>
+      <PrepareTime>500</PrepareTime>
       <RepeatTime>1000</RepeatTime>
-      <Spread>1.4</Spread>
+      <Spread>3.0</Spread>
     </Ranged>
   </Attack>
   <Cost>
@@ -28,13 +28,12 @@
     <GenericName>Slinger</GenericName>
   </Identity>
   <Loot>
-    <xp>75</xp>
     <stone>5</stone>
   </Loot>
   <UnitMotion>
-    <WalkSpeed>11.0</WalkSpeed>
+    <WalkSpeed op="mul">1.2</WalkSpeed>
     <Run>
-      <Speed>24.0</Speed>
+      <Speed op="mul">1.2</Speed>
     </Run>
   </UnitMotion>
 </Entity>

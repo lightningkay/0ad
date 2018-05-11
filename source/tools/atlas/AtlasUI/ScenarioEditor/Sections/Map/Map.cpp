@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -27,6 +27,10 @@
 #include "wx/busyinfo.h"
 #include "wx/filename.h"
 
+#define CREATE_CHECKBOX(window, parentSizer, name, description, ID) \
+	parentSizer->Add(new wxStaticText(window, wxID_ANY, _(name)), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT)); \
+	parentSizer->Add(Tooltipped(new wxCheckBox(window, ID, wxEmptyString), _(description)));
+
 enum
 {
 	ID_MapName,
@@ -37,8 +41,15 @@ enum
 	ID_MapTeams,
 	ID_MapKW_Demo,
 	ID_MapKW_Naval,
+	ID_VC_Conquest,
+	ID_VC_ConquestUnits,
+	ID_VC_ConquestStructures,
+	ID_VC_CaptureTheRelic,
+	ID_VC_Wonder,
+	ID_VC_Regicide,
 	ID_RandomScript,
 	ID_RandomSize,
+	ID_RandomNomad,
 	ID_RandomSeed,
 	ID_RandomReseed,
 	ID_RandomGenerate,
@@ -92,13 +103,17 @@ public:
 	AtObj UpdateSettingsObject();
 private:
 	void SendToEngine();
+	void OnConquestChanged();
 
-	void OnEdit(wxCommandEvent& WXUNUSED(evt))
+	void OnEdit(wxCommandEvent& evt)
 	{
 		SendToEngine();
+		if (evt.GetId() == ID_VC_Conquest)
+			OnConquestChanged();
 	}
 
 	std::set<std::wstring> m_MapSettingsKeywords;
+	std::set<std::wstring> m_MapSettingsVictoryConditions;
 	std::vector<wxChoice*> m_PlayerCivChoices;
 	Observable<AtObj>& m_MapSettings;
 
@@ -141,42 +156,38 @@ void MapSettingsControl::CreateWidgets()
 
 	sizer->AddSpacer(5);
 
-	// TODO: replace by filenames in binaries/data/mods/public/simulation/data/settings/victory_conditions/
-	wxArrayString gameTypes;
-	gameTypes.Add(_T("conquest"));
-	gameTypes.Add(_T("conquest_structures"));
-	gameTypes.Add(_T("conquest_units"));
-	gameTypes.Add(_T("wonder"));
-	gameTypes.Add(_T("endless"));
-	gameTypes.Add(_T("regicide"));
-
 	wxFlexGridSizer* gridSizer = new wxFlexGridSizer(2, 5, 5);
 	gridSizer->AddGrowableCol(1);
+
 	// TODO: have preview selector tool?
 	gridSizer->Add(new wxStaticText(this, wxID_ANY, _("Preview")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
 	gridSizer->Add(Tooltipped(new wxTextCtrl(this, ID_MapPreview, wxEmptyString),
 		_("Texture used for map preview")), wxSizerFlags().Expand());
-	gridSizer->Add(new wxStaticText(this, wxID_ANY, _("Reveal map")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
-	gridSizer->Add(Tooltipped(new wxCheckBox(this, ID_MapReveal, wxEmptyString),
-		_("If checked, players won't need to explore")));
-	gridSizer->Add(new wxStaticText(this, wxID_ANY, _("Game type")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
-	gridSizer->Add(Tooltipped(new wxChoice(this, ID_MapType, wxDefaultPosition, wxDefaultSize, gameTypes),
-		_("Select the game type (or victory condition)")), wxSizerFlags().Expand());
-	gridSizer->Add(new wxStaticText(this, wxID_ANY, _("Lock teams")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
-	gridSizer->Add(Tooltipped(new wxCheckBox(this, ID_MapTeams, wxEmptyString),
-		_("If checked, teams will be locked")));
+	CREATE_CHECKBOX(this, gridSizer, "Reveal map", "If checked, players won't need to explore", ID_MapReveal);
+	CREATE_CHECKBOX(this, gridSizer, "Lock teams", "If checked, teams will be locked", ID_MapTeams);
 	sizer->Add(gridSizer, wxSizerFlags().Expand());
+
+	sizer->AddSpacer(5);
+
+	// TODO: replace by names in binaries/data/mods/public/simulation/data/settings/victory_conditions/
+	wxStaticBoxSizer* victoryConditionSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Victory Conditions"));
+	wxFlexGridSizer* vcGridSizer = new wxFlexGridSizer(2, 0, 5);
+	vcGridSizer->AddGrowableCol(1);
+	CREATE_CHECKBOX(this, vcGridSizer, "Conquest", "Select Conquest victory condition", ID_VC_Conquest);
+	CREATE_CHECKBOX(this, vcGridSizer, "Conquest Units", "Select Conquest Units victory condition", ID_VC_ConquestUnits);
+	CREATE_CHECKBOX(this, vcGridSizer, "Conquest Structures", "Select Conquest Structures victory condition", ID_VC_ConquestStructures);
+	CREATE_CHECKBOX(this, vcGridSizer, "Capture the Relic", "Select Capture the Relic victory condition", ID_VC_CaptureTheRelic);
+	CREATE_CHECKBOX(this, vcGridSizer, "Wonder", "Select Wonder victory condition", ID_VC_Wonder);
+	CREATE_CHECKBOX(this, vcGridSizer, "Regicide", "Select Regicide victory condition", ID_VC_Regicide);
+	victoryConditionSizer->Add(vcGridSizer);
+	sizer->Add(victoryConditionSizer, wxSizerFlags().Expand());
 
 	sizer->AddSpacer(5);
 
 	wxStaticBoxSizer* keywordsSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Keywords"));
 	wxFlexGridSizer* kwGridSizer = new wxFlexGridSizer(4, 5, 5);
-	kwGridSizer->Add(new wxStaticText(this, wxID_ANY, _("Demo")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
-	kwGridSizer->Add(Tooltipped(new wxCheckBox(this, ID_MapKW_Demo, wxEmptyString),
-		_("If checked, map will only be visible using filters in game setup")));
-	kwGridSizer->Add(new wxStaticText(this, wxID_ANY, _("Naval")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
-	kwGridSizer->Add(Tooltipped(new wxCheckBox(this, ID_MapKW_Naval, wxEmptyString),
-		_("If checked, map will only be visible using filters in game setup")));
+	CREATE_CHECKBOX(this, kwGridSizer, "Demo", "If checked, map will only be visible using filters in game setup", ID_MapKW_Demo);
+	CREATE_CHECKBOX(this, kwGridSizer, "Naval", "If checked, map will only be visible using filters in game setup", ID_MapKW_Naval);
 	keywordsSizer->Add(kwGridSizer);
 	sizer->Add(keywordsSizer, wxSizerFlags().Expand());
 }
@@ -203,11 +214,24 @@ void MapSettingsControl::ReadFromEngine()
 	// reveal map
 	wxDynamicCast(FindWindow(ID_MapReveal), wxCheckBox)->SetValue(wxString(m_MapSettings["RevealMap"]) == L"true");
 
-	// game type / victory conditions
-	if (m_MapSettings["GameType"].defined())
-		wxDynamicCast(FindWindow(ID_MapType), wxChoice)->SetStringSelection(wxString(m_MapSettings["GameType"]));
-	else
-		wxDynamicCast(FindWindow(ID_MapType), wxChoice)->SetSelection(0);
+	// victory conditions
+	m_MapSettingsVictoryConditions.clear();
+	for (AtIter victoryCondition = m_MapSettings["VictoryConditions"]["item"]; victoryCondition.defined(); ++victoryCondition)
+		m_MapSettingsVictoryConditions.insert(std::wstring(victoryCondition));
+
+	wxWindow* window;
+#define INIT_CHECKBOX(ID, mapSettings, value) \
+	window = FindWindow(ID); \
+	if (window != nullptr) \
+		wxDynamicCast(window, wxCheckBox)->SetValue(mapSettings.count(value) != 0);
+
+	INIT_CHECKBOX(ID_VC_Conquest, m_MapSettingsVictoryConditions, L"conquest");
+	INIT_CHECKBOX(ID_VC_ConquestUnits, m_MapSettingsVictoryConditions, L"conquest_units");
+	INIT_CHECKBOX(ID_VC_ConquestStructures, m_MapSettingsVictoryConditions, L"conquest_structures");
+	INIT_CHECKBOX(ID_VC_CaptureTheRelic, m_MapSettingsVictoryConditions, L"capture_the_relic");
+	INIT_CHECKBOX(ID_VC_Wonder, m_MapSettingsVictoryConditions, L"wonder");
+	INIT_CHECKBOX(ID_VC_Regicide, m_MapSettingsVictoryConditions, L"regicide");
+	OnConquestChanged();
 
 	// lock teams
 	wxDynamicCast(FindWindow(ID_MapTeams), wxCheckBox)->SetValue(wxString(m_MapSettings["LockTeams"]) == L"true");
@@ -218,9 +242,11 @@ void MapSettingsControl::ReadFromEngine()
 		for (AtIter keyword = m_MapSettings["Keywords"]["item"]; keyword.defined(); ++keyword)
 			m_MapSettingsKeywords.insert(std::wstring(keyword));
 
-		wxDynamicCast(FindWindow(ID_MapKW_Demo), wxCheckBox)->SetValue(m_MapSettingsKeywords.count(L"demo") != 0);
-		wxDynamicCast(FindWindow(ID_MapKW_Naval), wxCheckBox)->SetValue(m_MapSettingsKeywords.count(L"naval") != 0);
+		INIT_CHECKBOX(ID_MapKW_Demo, m_MapSettingsKeywords, L"demo");
+		INIT_CHECKBOX(ID_MapKW_Naval, m_MapSettingsKeywords, L"naval");
 	}
+
+#undef INIT_CHECKBOX
 }
 
 void MapSettingsControl::SetMapSettings(const AtObj& obj)
@@ -229,6 +255,22 @@ void MapSettingsControl::SetMapSettings(const AtObj& obj)
 	m_MapSettings.NotifyObservers();
 
 	SendToEngine();
+}
+
+// TODO Use the json data for this
+void MapSettingsControl::OnConquestChanged()
+{
+	bool conqestEnabled = wxDynamicCast(FindWindow(ID_VC_Conquest), wxCheckBox)->GetValue();
+
+	wxCheckBox* conquestUnitsCheckbox = wxDynamicCast(FindWindow(ID_VC_ConquestUnits), wxCheckBox);
+	conquestUnitsCheckbox->Enable(!conqestEnabled);
+	wxCheckBox* conquestStructuresCheckbox = wxDynamicCast(FindWindow(ID_VC_ConquestStructures), wxCheckBox);
+	conquestStructuresCheckbox->Enable(!conqestEnabled);
+	if (conqestEnabled)
+	{
+		conquestUnitsCheckbox->SetValue(false);
+		conquestStructuresCheckbox->SetValue(false);
+	}
 }
 
 AtObj MapSettingsControl::UpdateSettingsObject()
@@ -245,8 +287,27 @@ AtObj MapSettingsControl::UpdateSettingsObject()
 	// reveal map
 	m_MapSettings.setBool("RevealMap", wxDynamicCast(FindWindow(ID_MapReveal), wxCheckBox)->GetValue());
 
-	// game type / victory conditions
-	m_MapSettings.set("GameType", wxDynamicCast(FindWindow(ID_MapType), wxChoice)->GetStringSelection());
+	// victory conditions
+#define INSERT_VICTORY_CONDITION_CHECKBOX(name, ID) \
+	if (wxDynamicCast(FindWindow(ID), wxCheckBox)->GetValue()) \
+		m_MapSettingsVictoryConditions.insert(name); \
+	else \
+		m_MapSettingsVictoryConditions.erase(name);
+
+	INSERT_VICTORY_CONDITION_CHECKBOX(L"conquest", ID_VC_Conquest);
+	INSERT_VICTORY_CONDITION_CHECKBOX(L"conquest_units", ID_VC_ConquestUnits);
+	INSERT_VICTORY_CONDITION_CHECKBOX(L"conquest_structures", ID_VC_ConquestStructures);
+	INSERT_VICTORY_CONDITION_CHECKBOX(L"capture_the_relic", ID_VC_CaptureTheRelic);
+	INSERT_VICTORY_CONDITION_CHECKBOX(L"wonder", ID_VC_Wonder);
+	INSERT_VICTORY_CONDITION_CHECKBOX(L"regicide", ID_VC_Regicide);
+
+#undef INSERT_VICTORY_CONDITION_CHECKBOX
+
+	AtObj victoryConditions;
+	victoryConditions.set("@array", L"");
+	for (std::set<std::wstring>::iterator it = m_MapSettingsVictoryConditions.begin(); it != m_MapSettingsVictoryConditions.end(); ++it)
+		victoryConditions.add("item", it->c_str());
+	m_MapSettings.set("VictoryConditions", victoryConditions);
 
 	// keywords
 	{
@@ -270,6 +331,9 @@ AtObj MapSettingsControl::UpdateSettingsObject()
 	// teams locked
 	m_MapSettings.setBool("LockTeams", wxDynamicCast(FindWindow(ID_MapTeams), wxCheckBox)->GetValue());
 
+	// default AI RNG seed
+	m_MapSettings.setInt("AISeed", 0);
+
 	return m_MapSettings;
 }
 
@@ -288,34 +352,43 @@ void MapSettingsControl::SendToEngine()
 MapSidebar::MapSidebar(ScenarioEditor& scenarioEditor, wxWindow* sidebarContainer, wxWindow* bottomBarContainer)
 	: Sidebar(scenarioEditor, sidebarContainer, bottomBarContainer), m_SimState(SimInactive)
 {
-	m_MapSettingsCtrl = new MapSettingsControl(this, m_ScenarioEditor);
-	m_MainSizer->Add(m_MapSettingsCtrl, wxSizerFlags().Expand());
+	wxSizer* scrollSizer = new wxBoxSizer(wxVERTICAL);
+	wxScrolledWindow* scrolledWindow = new wxScrolledWindow(this);
+	scrolledWindow->SetScrollRate(10, 10);
+	scrolledWindow->SetSizer(scrollSizer);
+	m_MainSizer->Add(scrolledWindow, wxSizerFlags().Expand().Proportion(1));
+
+	m_MapSettingsCtrl = new MapSettingsControl(scrolledWindow, m_ScenarioEditor);
+	scrollSizer->Add(m_MapSettingsCtrl, wxSizerFlags().Expand());
 
 	{
 		/////////////////////////////////////////////////////////////////////////
 		// Random map settings
-		wxStaticBoxSizer* sizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Random map"));
+		wxStaticBoxSizer* sizer = new wxStaticBoxSizer(wxVERTICAL, scrolledWindow, _("Random map"));
+		scrollSizer->Add(sizer, wxSizerFlags().Expand());
 
-		sizer->Add(new wxChoice(this, ID_RandomScript), wxSizerFlags().Expand());
+		sizer->Add(new wxChoice(scrolledWindow, ID_RandomScript), wxSizerFlags().Expand());
 
 		sizer->AddSpacer(5);
 
-		sizer->Add(new wxButton(this, ID_OpenPlayerPanel, _T("Change players")), wxSizerFlags().Expand());
+		sizer->Add(new wxButton(scrolledWindow, ID_OpenPlayerPanel, _T("Change players")), wxSizerFlags().Expand());
 
 		sizer->AddSpacer(5);
 
 		wxFlexGridSizer* gridSizer = new wxFlexGridSizer(2, 5, 5);
 		gridSizer->AddGrowableCol(1);
 
-		wxChoice* sizeChoice = new wxChoice(this, ID_RandomSize);
-		gridSizer->Add(new wxStaticText(this, wxID_ANY, _("Map size")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
+		wxChoice* sizeChoice = new wxChoice(scrolledWindow, ID_RandomSize);
+		gridSizer->Add(new wxStaticText(scrolledWindow, wxID_ANY, _("Map size")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
 		gridSizer->Add(sizeChoice, wxSizerFlags().Expand());
 
-		gridSizer->Add(new wxStaticText(this, wxID_ANY, _("Random seed")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
+		CREATE_CHECKBOX(scrolledWindow, gridSizer, "Nomad", "Place only some units instead of starting bases.", ID_RandomNomad);
+
+		gridSizer->Add(new wxStaticText(scrolledWindow, wxID_ANY, _("Random seed")), wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT));
 		wxBoxSizer* seedSizer = new wxBoxSizer(wxHORIZONTAL);
-		seedSizer->Add(Tooltipped(new wxTextCtrl(this, ID_RandomSeed, _T("0"), wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_NUMERIC)),
+		seedSizer->Add(Tooltipped(new wxTextCtrl(scrolledWindow, ID_RandomSeed, _T("0"), wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_NUMERIC)),
 			_("Seed value for random map")), wxSizerFlags(1).Expand());
-		seedSizer->Add(Tooltipped(new wxButton(this, ID_RandomReseed, _("R"), wxDefaultPosition, wxSize(24, -1)),
+		seedSizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_RandomReseed, _("R"), wxDefaultPosition, wxSize(40, -1)),
 			_("New random seed")));
 		gridSizer->Add(seedSizer, wxSizerFlags().Expand());
 
@@ -323,30 +396,29 @@ MapSidebar::MapSidebar(ScenarioEditor& scenarioEditor, wxWindow* sidebarContaine
 
 		sizer->AddSpacer(5);
 
-		sizer->Add(Tooltipped(new wxButton(this, ID_RandomGenerate, _("Generate map")),
+		sizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_RandomGenerate, _("Generate map")),
 			_("Run selected random map script")), wxSizerFlags().Expand());
-
-		m_MainSizer->Add(sizer, wxSizerFlags().Expand().Border(wxTOP, 10));
 	}
 
 	{
 		/////////////////////////////////////////////////////////////////////////
 		// Simulation buttons
-		wxStaticBoxSizer* sizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Simulation test"));
+		wxStaticBoxSizer* sizer = new wxStaticBoxSizer(wxVERTICAL, scrolledWindow, _("Simulation test"));
+		scrollSizer->Add(sizer, wxSizerFlags().Expand().Border(wxTOP, 8));
+
 		wxGridSizer* gridSizer = new wxGridSizer(5);
-		gridSizer->Add(Tooltipped(new wxButton(this, ID_SimPlay, _("Play")),
+		gridSizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_SimPlay, _("Play"), wxDefaultPosition, wxSize(48, -1)),
 			_("Run the simulation at normal speed")), wxSizerFlags().Expand());
-		gridSizer->Add(Tooltipped(new wxButton(this, ID_SimFast, _("Fast")),
+		gridSizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_SimFast, _("Fast"), wxDefaultPosition, wxSize(48, -1)),
 			_("Run the simulation at 8x speed")), wxSizerFlags().Expand());
-		gridSizer->Add(Tooltipped(new wxButton(this, ID_SimSlow, _("Slow")),
+		gridSizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_SimSlow, _("Slow"), wxDefaultPosition, wxSize(48, -1)),
 			_("Run the simulation at 1/8x speed")), wxSizerFlags().Expand());
-		gridSizer->Add(Tooltipped(new wxButton(this, ID_SimPause, _("Pause")),
+		gridSizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_SimPause, _("Pause"), wxDefaultPosition, wxSize(48, -1)),
 			_("Pause the simulation")), wxSizerFlags().Expand());
-		gridSizer->Add(Tooltipped(new wxButton(this, ID_SimReset, _("Reset")),
+		gridSizer->Add(Tooltipped(new wxButton(scrolledWindow, ID_SimReset, _("Reset"), wxDefaultPosition, wxSize(48, -1)),
 			_("Reset the editor to initial state")), wxSizerFlags().Expand());
 		sizer->Add(gridSizer, wxSizerFlags().Expand());
 		UpdateSimButtons();
-		m_MainSizer->Add(sizer, wxSizerFlags().Expand().Border(wxTOP, 10));
 	}
 }
 
@@ -392,7 +464,8 @@ void MapSidebar::OnFirstDisplay()
 	{
 		AtObj data = AtlasObject::LoadFromJSON(scripts[i]);
 		wxString name(data["settings"]["Name"]);
-		scriptChoice->Append(name, new AtObjClientData(*data["settings"]));
+		if (!name.IsEmpty())
+			scriptChoice->Append(name, new AtObjClientData(*data["settings"]));
 	}
 	scriptChoice->SetSelection(0);
 
@@ -533,6 +606,8 @@ void MapSidebar::OnRandomGenerate(wxCommandEvent& WXUNUSED(evt))
 	wxString size;
 	size << (intptr_t)sizeChoice->GetClientData(sizeChoice->GetSelection());
 	settings.setInt("Size", wxAtoi(size));
+
+	settings.setBool("Nomad", wxDynamicCast(FindWindow(ID_RandomNomad), wxCheckBox)->GetValue());
 
 	settings.setInt("Seed", wxAtoi(wxDynamicCast(FindWindow(ID_RandomSeed), wxTextCtrl)->GetValue()));
 

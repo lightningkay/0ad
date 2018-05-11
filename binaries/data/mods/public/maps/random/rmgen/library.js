@@ -1,445 +1,249 @@
-const PI = Math.PI;
-const TWO_PI = 2 * Math.PI;
+/**
+ * A Centered Placer generates a shape (array of Vector2D points) around a variable center location satisfying a Constraint.
+ * The center can be modified externally using setCenterPosition, typically called by createAreas.
+ */
+Engine.LoadLibrary("rmgen/placer/centered");
+
+/**
+ * A Non-Centered Placer generates a shape (array of Vector2D points) at a fixed location meeting a Constraint and
+ * is typically called by createArea.
+ * Since this type of Placer has no x and z property, its location cannot be randomized using createAreas.
+ */
+Engine.LoadLibrary("rmgen/placer/noncentered");
+
+/**
+ * A Painter modifies an arbitrary feature in a given Area, for instance terrain textures, elevation or calling other painters on that Area.
+ * Typically the area is determined by a Placer called from createArea or createAreas.
+ */
+Engine.LoadLibrary("rmgen/painter");
+
 const TERRAIN_SEPARATOR = "|";
 const SEA_LEVEL = 20.0;
-const CELL_SIZE = 4;
 const HEIGHT_UNITS_PER_METRE = 92;
-const MIN_MAP_SIZE = 128;
-const MAX_MAP_SIZE = 512;
+
+/**
+ * Number of impassable, unexplorable tiles at the map border.
+ */
 const MAP_BORDER_WIDTH = 3;
-const FALLBACK_CIV = "athen";
+
+const g_DamageTypes = new DamageTypes();
+
 /**
  * Constants needed for heightmap_manipulation.js
  */
 const MAX_HEIGHT_RANGE = 0xFFFF / HEIGHT_UNITS_PER_METRE; // Engine limit, Roughly 700 meters
 const MIN_HEIGHT = - SEA_LEVEL;
+
+/**
+ * Length of one tile of the terrain grid in metres.
+ * Useful to transform footprint sizes of templates to the coordinate system used by getMapSize.
+ */
+const TERRAIN_TILE_SIZE = Engine.GetTerrainTileSize();
+
 const MAX_HEIGHT = MAX_HEIGHT_RANGE - SEA_LEVEL;
-// Default angle for buildings
-const BUILDING_ORIENTATION = - PI / 4;
+
+/**
+ * Default angle for buildings.
+ */
+const BUILDING_ORIENTATION = -1/4 * Math.PI;
+
+const g_CivData = deepfreeze(loadCivFiles(false));
+
+const g_ActorPrefix = "actor|";
+
+/**
+ * Sets whether setHeight operates on the center of a tile or on the vertices.
+ */
+var TILE_CENTERED_HEIGHT_MAP = false;
+
+function actorTemplate(templateName)
+{
+	return g_ActorPrefix + templateName + ".xml";
+}
+
+function getObstructionSize(templateName, margin = 0)
+{
+	let obstruction = Engine.GetTemplate(templateName).Obstruction;
+
+	let obstructionSize =
+		obstruction.Static ?
+			new Vector2D(obstruction.Static["@depth"], obstruction.Static["@width"]) :
+		// Used for gates, should consider the position too
+		obstruction.Obstructions ?
+			new Vector2D(
+				Object.keys(obstruction.Obstructions).reduce((depth, key) => Math.max(depth, +obstruction.Obstructions[key]["@depth"]), 0),
+				Object.keys(obstruction.Obstructions).reduce((width, key) => width + +obstruction.Obstructions[key]["@width"], 0)) :
+			new Vector2D(0, 0);
+
+	return obstructionSize.div(TERRAIN_TILE_SIZE).add(new Vector2D(2, 2).mult(margin));
+}
 
 function fractionToTiles(f)
 {
-	return g_Map.size * f;
+	return g_MapSettings.Size * f;
 }
 
 function tilesToFraction(t)
 {
-	return t / g_Map.size;
+	return t / g_MapSettings.Size;
 }
 
-function fractionToSize(f)
+function scaleByMapSize(min, max, minMapSize = 128, maxMapSize = 512)
 {
-	return getMapArea() * f;
+	return min + (max - min) * (g_MapSettings.Size - minMapSize) / (maxMapSize - minMapSize);
 }
 
-function sizeToFraction(s)
+function randomPositionOnTile(tilePosition)
 {
-	return s / getMapArea();
-}
-
-function scaleByMapSize(min, max)
-{
-	return min + (max - min) * (g_Map.size - MIN_MAP_SIZE) / (MAX_MAP_SIZE - MIN_MAP_SIZE);
-}
-
-function cos(x)
-{
-	return Math.cos(x);
-}
-
-function sin(x)
-{
-	return Math.sin(x);
-}
-
-function abs(x) {
-	return Math.abs(x);
-}
-
-function round(x)
-{
-	return Math.round(x);
-}
-
-function lerp(a, b, t)
-{
-	return a + (b-a) * t;
-}
-
-function sqrt(x)
-{
-	return Math.sqrt(x);
-}
-
-function ceil(x)
-{
-	return Math.ceil(x);
-}
-
-function floor(x)
-{
-	return Math.floor(x);
-}
-
-function max(a, b)
-{
-	return a > b ? a : b;
-}
-
-function min(a, b)
-{
-	return a < b ? a : b;
+	return Vector2D.add(tilePosition, new Vector2D(randFloat(0, 1), randFloat(0, 1)));
 }
 
 /**
  * Retries the given function with those arguments as often as specified.
  */
-function retryPlacing(placeFunc, placeArgs, retryFactor, amount, getResult)
+function retryPlacing(placeFunc, retryFactor, amount, behaveDeprecated = false)
 {
 	let maxFail = amount * retryFactor;
 
 	let results = [];
-	let good = 0;
 	let bad = 0;
 
-	while (good < amount && bad <= maxFail)
+	while (results.length < amount && bad <= maxFail)
 	{
-		let result = placeFunc(placeArgs);
+		let result = placeFunc();
 
-		if (result !== undefined)
-		{
-			++good;
-			if (getResult)
-				results.push(result);
-		}
+		if (result !== undefined || behaveDeprecated)
+			results.push(result);
 		else
 			++bad;
 	}
-	return getResult ? results : good;
+
+	return results;
 }
 
-/**
- * Helper function for randomly placing areas and groups on the map.
- */
-function randomizePlacerCoordinates(placer, halfMapSize)
+// TODO this is a hack to simulate the old behaviour of those functions
+// until all old maps are changed to use the correct version of these functions
+function createObjectGroupsDeprecated(group, player, constraints, amount, retryFactor = 10)
 {
-	if (!!g_MapSettings.CircularMap)
-	{
-		// Polar coordinates
-		let r = halfMapSize * Math.sqrt(randFloat()); // uniform distribution
-		let theta = randFloat(0, 2 * PI);
-		placer.x = Math.floor(r * Math.cos(theta)) + halfMapSize;
-		placer.z = Math.floor(r * Math.sin(theta)) + halfMapSize;
-	}
-	else
-	{
-		// Rectangular coordinates
-		placer.x = randInt(g_Map.size);
-		placer.z = randInt(g_Map.size);
-	}
+	return createObjectGroups(group, player, constraints, amount, retryFactor, true);
 }
 
-/**
- * Helper function for randomly placing areas and groups in the given areas.
- */
-function randomizePlacerCoordinatesFromAreas(placer, areas)
+function createObjectGroupsByAreasDeprecated(group, player, constraints, amount, retryFactor, areas)
 {
-	let i = randInt(areas.length);
-	let pt = areas[i].points[randInt(areas[i].points.length)];
-
-	placer.x = pt.x;
-	placer.z = pt.z;
+	return createObjectGroupsByAreas(group, player, constraints, amount, retryFactor, areas, true);
 }
 
 /**
  * Attempts to place the given number of areas in random places of the map.
  * Returns actually placed areas.
  */
-function createAreas(centeredPlacer, painter, constraint, amount, retryFactor = 10)
+function createAreas(centeredPlacer, painter, constraints, amount, retryFactor = 10)
 {
-	let placeFunc = function (args) {
-		randomizePlacerCoordinates(args.placer, args.halfMapSize);
-		return g_Map.createArea(args.placer, args.painter, args.constraint);
+	let placeFunc = function() {
+		centeredPlacer.setCenterPosition(g_Map.randomCoordinate(false));
+		return createArea(centeredPlacer, painter, constraints);
 	};
 
-	let args = {
-		"placer": centeredPlacer,
-		"painter": painter,
-		"constraint": constraint,
-		"halfMapSize": g_Map.size / 2
-	};
-
-	return retryPlacing(placeFunc, args, retryFactor, amount, true);
+	return retryPlacing(placeFunc, retryFactor, amount, false);
 }
 
 /**
  * Attempts to place the given number of areas in random places of the given areas.
  * Returns actually placed areas.
  */
-function createAreasInAreas(centeredPlacer, painter, constraint, amount, retryFactor, areas)
+function createAreasInAreas(centeredPlacer, painter, constraints, amount, retryFactor, areas)
 {
-	if (!areas.length)
-		return [];
-
-	let placeFunc = function (args) {
-		randomizePlacerCoordinatesFromAreas(args.placer, args.areas);
-		return g_Map.createArea(args.placer, args.painter, args.constraint);
+	let placeFunc = function() {
+		centeredPlacer.setCenterPosition(pickRandom(pickRandom(areas).getPoints()));
+		return createArea(centeredPlacer, painter, constraints);
 	};
 
-	let args = {
-		"placer": centeredPlacer,
-		"painter": painter,
-		"constraint": constraint,
-		"areas": areas,
-		"halfMapSize": g_Map.size / 2
-	};
-
-	return retryPlacing(placeFunc, args, retryFactor, amount, true);
+	return retryPlacing(placeFunc, retryFactor, amount, false);
 }
 
 /**
  * Attempts to place the given number of groups in random places of the map.
  * Returns the number of actually placed groups.
  */
-function createObjectGroups(placer, player, constraint, amount, retryFactor = 10)
+function createObjectGroups(group, player, constraints, amount, retryFactor = 10, behaveDeprecated = false)
 {
-	let placeFunc = function (args) {
-		randomizePlacerCoordinates(args.placer, args.halfMapSize);
-		return createObjectGroup(args.placer, args.player, args.constraint);
+	let placeFunc = function() {
+		group.setCenterPosition(g_Map.randomCoordinate(true));
+		return createObjectGroup(group, player, constraints);
 	};
 
-	let args = {
-		"placer": placer,
-		"player": player,
-		"constraint": constraint,
-		"halfMapSize": g_Map.size / 2 - 3
-	};
-
-	return retryPlacing(placeFunc, args, retryFactor, amount, false);
+	return retryPlacing(placeFunc, retryFactor, amount, behaveDeprecated);
 }
 
 /**
  * Attempts to place the given number of groups in random places of the given areas.
  * Returns the number of actually placed groups.
  */
-function createObjectGroupsByAreas(placer, player, constraint, amount, retryFactor, areas)
+function createObjectGroupsByAreas(group, player, constraints, amount, retryFactor, areas, behaveDeprecated = false)
 {
-	if (!areas.length)
-		return 0;
-
-	let placeFunc = function (args) {
-		randomizePlacerCoordinatesFromAreas(args.placer, args.areas);
-		return createObjectGroup(args.placer, args.player, args.constraint);
+	let placeFunc = function() {
+		group.setCenterPosition(pickRandom(pickRandom(areas).getPoints()));
+		return createObjectGroup(group, player, constraints);
 	};
 
-	let args = {
-		"placer": placer,
-		"player": player,
-		"constraint": constraint,
-		"areas": areas
-	};
-
-	return retryPlacing(placeFunc, args, retryFactor, amount, false);
+	return retryPlacing(placeFunc, retryFactor, amount, behaveDeprecated);
 }
 
 function createTerrain(terrain)
 {
-	if (!(terrain instanceof Array))
-		return createSimpleTerrain(terrain);
-
-	return new RandomTerrain(terrain.map(t => createTerrain(t)));
+	return typeof terrain == "string" ?
+		new SimpleTerrain(...terrain.split(TERRAIN_SEPARATOR)) :
+		new RandomTerrain(terrain.map(t => createTerrain(t)));
 }
 
-function createSimpleTerrain(terrain)
+/**
+ * Constructs a new Area shaped by the Placer meeting the Constraints and calls the Painters there.
+ * Supports both Centered and Non-Centered Placers.
+ */
+function createArea(placer, painters, constraints)
 {
-	if (typeof(terrain) != "string")
-		throw("createSimpleTerrain expects string as input, received "+terrain);
-
-	// Split string by pipe | character, this allows specifying terrain + tree type in single string
-	let params = terrain.split(TERRAIN_SEPARATOR, 2);
-
-	if (params.length != 2)
-		return new SimpleTerrain(terrain);
-
-	return new SimpleTerrain(params[0], params[1]);
-}
-
-function placeObject(x, z, type, player, angle)
-{
-	if (g_Map.validT(x, z, MAP_BORDER_WIDTH))
-		g_Map.addObject(new Entity(type, player, x, z, angle));
-}
-
-function placeTerrain(x, z, terrain)
-{
-	// convert terrain param into terrain object
-	g_Map.placeTerrain(x, z, createTerrain(terrain));
-}
-
-function isCircularMap()
-{
-	return !!g_MapSettings.CircularMap;
-}
-
-function getMapBaseHeight()
-{
-	return g_MapSettings.BaseHeight || 0;
-}
-
-function createTileClass()
-{
-	return g_Map.createTileClass();
-}
-
-function getTileClass(id)
-{
-	if (!g_Map.validClass(id))
+	let points = placer.place(new AndConstraint(constraints));
+	if (!points)
 		return undefined;
 
-	return g_Map.tileClasses[id];
-}
+	let area = new Area(points);
 
-function createArea(placer, painter, constraint)
-{
-	return g_Map.createArea(placer, painter, constraint);
-}
+	new MultiPainter(painters).paint(area);
 
-function createObjectGroup(placer, player, constraint)
-{
-	return g_Map.createObjectGroup(placer, player, constraint);
-}
-
-function getMapSize()
-{
-	return g_Map.size;
-}
-
-function getMapArea()
-{
-	return g_Map.size * g_Map.size;
-}
-
-function getNumPlayers()
-{
-	return g_MapSettings.PlayerData.length - 1;
-}
-
-function getCivCode(player)
-{
-	if (g_MapSettings.PlayerData[player+1].Civ)
-		return g_MapSettings.PlayerData[player+1].Civ;
-
-	warn("undefined civ specified for player " + (player + 1) + ", falling back to '" + FALLBACK_CIV + "'");
-	return FALLBACK_CIV;
-}
-
-function areAllies(player1, player2)
-{
-	if (g_MapSettings.PlayerData[player1+1].Team === undefined ||
-		g_MapSettings.PlayerData[player2+1].Team === undefined ||
-		g_MapSettings.PlayerData[player2+1].Team == -1 ||
-		g_MapSettings.PlayerData[player1+1].Team == -1)
-		return false;
-
-	return g_MapSettings.PlayerData[player1+1].Team === g_MapSettings.PlayerData[player2+1].Team;
-}
-
-function getPlayerTeam(player)
-{
-	if (g_MapSettings.PlayerData[player+1].Team === undefined)
-		return -1;
-
-	return g_MapSettings.PlayerData[player+1].Team;
+	return area;
 }
 
 /**
- * Sorts an array of player IDs by team index. Players without teams come first.
- * Randomize order for players of the same team.
+ * @param mode is one of the HeightPlacer constants determining whether to exclude the min/max elevation.
  */
-function sortPlayers(playerIndices)
+function paintTerrainBasedOnHeight(minHeight, maxHeight, mode, terrain)
 {
-	return shuffleArray(playerIndices).sort((p1, p2) => getPlayerTeam(p1 - 1) - getPlayerTeam(p2 - 1));
+	return createArea(
+		new HeightPlacer(mode, minHeight, maxHeight),
+		new TerrainPainter(terrain));
 }
 
-function primeSortPlayers(playerIndices)
+function paintTileClassBasedOnHeight(minHeight, maxHeight, mode, tileClass)
 {
-	if (!playerIndices.length)
-		return [];
-
-	let prime = [];
-	for (let i = 0; i < Math.ceil(playerIndices.length / 2); ++i)
-	{
-		prime.push(playerIndices[i]);
-		prime.push(playerIndices[playerIndices.length - 1 - i]);
-	}
-
-	return prime;
+	return createArea(
+		new HeightPlacer(mode, minHeight, maxHeight),
+		new TileClassPainter(tileClass));
 }
 
-function getStartingEntities(player)
+function unPaintTileClassBasedOnHeight(minHeight, maxHeight, mode, tileClass)
 {
-	let civ = getCivCode(player);
-
-	if (!g_CivData[civ] || !g_CivData[civ].StartEntities || !g_CivData[civ].StartEntities.length)
-	{
-		warn("Invalid or unimplemented civ '"+civ+"' specified, falling back to '" + FALLBACK_CIV + "'");
-		civ = FALLBACK_CIV;
-	}
-
-	return g_CivData[civ].StartEntities;
-}
-
-function getHeight(x, z)
-{
-	return g_Map.getHeight(x, z);
-}
-
-function setHeight(x, z, height)
-{
-	g_Map.setHeight(x, z, height);
-}
-
-
-/**
- *	Utility functions for classes
- */
-
-/**
- * Add point to given class by id
- */
-function addToClass(x, z, id)
-{
-	let tileClass = getTileClass(id);
-
-	if (tileClass !== null)
-		tileClass.add(x, z);
+	return createArea(
+		new HeightPlacer(mode, minHeight, maxHeight),
+		new TileClassUnPainter(tileClass));
 }
 
 /**
- * Remove point from the given class by id
+ * Places the Entities of the given Group if they meet the Constraints
+ * and sets the given player as the owner.
  */
-function removeFromClass(x, z, id)
+function createObjectGroup(group, player, constraints)
 {
-	let tileClass = getTileClass(id);
-
-	if (tileClass !== null)
-		tileClass.remove(x, z);
-}
-
-/**
- * Create a painter for the given class
- */
-function paintClass(id)
-{
-	return new TileClassPainter(getTileClass(id));
-}
-
-/**
- * Create a painter for the given class
- */
-function unPaintClass(id)
-{
-	return new TileClassUnPainter(getTileClass(id));
+	return group.place(player, new AndConstraint(constraints));
 }
 
 /**
@@ -491,50 +295,43 @@ function borderClasses(/*class1, idist1, odist1, class2, idist2, odist2, etc*/)
 }
 
 /**
- * Checks if the given tile is in class "id"
+ * Returns a subset of the given heightmap.
  */
-function checkIfInClass(x, z, id)
+function extractHeightmap(heightmap, topLeft, size)
 {
-	let tileClass = getTileClass(id);
-	if (tileClass === null)
-		return 0;
+	let result = [];
+	for (let x = 0; x < size; ++x)
+	{
+		result[x] = new Float32Array(size);
+		for (let y = 0; y < size; ++y)
+			result[x][y] = heightmap[x + topLeft.x][y + topLeft.y];
+	}
+	return result;
+}
 
-	let members = tileClass.countMembersInRadius(x, z, 1);
-	if (members === null)
-		return 0;
+function convertHeightmap1Dto2D(heightmap)
+{
+	let result = [];
+	let hmSize = Math.sqrt(heightmap.length);
+	for (let x = 0; x < hmSize; ++x)
+	{
+		result[x] = new Float32Array(hmSize);
+		for (let y = 0; y < hmSize; ++y)
+			result[x][y] = heightmap[y * hmSize + x];
+	}
+	return result;
+}
 
-	return members;
+function getDifficulties()
+{
+	return Engine.ReadJSONFile("simulation/data/settings/trigger_difficulties.json").Data;
 }
 
 /**
- * Returns the distance between 2 points
+ * Returns the numeric difficulty level the player chose.
  */
-function getDistance(x1, z1, x2, z2)
+function getDifficulty()
 {
-	return Math.pow(Math.pow(x1 - x2, 2) + Math.pow(z1 - z2, 2), 1/2);
-}
-
-/**
- * Returns the angle of the vector between point 1 and point 2.
- * The angle is counterclockwise from the positive x axis.
- */
-function getAngle(x1, z1, x2, z2)
-{
-	return Math.atan2(z2 - z1, x2 - x1);
-}
-
-/**
- * Returns the gradient of the line between point 1 and 2 in the form dz/dx
- */
-function getGradient(x1, z1, x2, z2)
-{
-	if (x1 == x2 && z1 == z2)
-		return 0;
-
-	return (z1-z2)/(x1-x2);
-}
-
-function getTerrainTexture(x, y)
-{
-	return g_Map.getTexture(x, y);
+	let level = g_MapSettings.TriggerDifficulty || 3;
+	return getDifficulties().find(difficulty => difficulty.Difficulty == level).Difficulty;
 }

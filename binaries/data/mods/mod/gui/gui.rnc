@@ -47,6 +47,7 @@ base_settings =
 # Defaults are not put in here, because it ruins the concept of styles.
 ex_settings =
   attribute anchor { valign }?&
+  attribute auto_scroll { bool }?&
   attribute buffer_zone { xsd:decimal }?&
   attribute buffer_width { xsd:decimal }?&
   attribute button_width { xsd:decimal }?&
@@ -54,8 +55,11 @@ ex_settings =
   attribute clip { bool }?&
   attribute dropdown_size { xsd:decimal }?&
   attribute dropdown_buffer { xsd:decimal }?&
+  attribute minimum_visible_items { xsd:nonNegativeInteger }?&
   attribute enabled { bool }?&
   attribute font { text }?&
+  attribute format_x { text }?&
+  attribute format_y { text }?&
   attribute fov_wedge_color { ccolor }?&
   attribute heading_height { text }?&
   attribute hotkey { text }?&
@@ -68,9 +72,11 @@ ex_settings =
   attribute maxwidth { xsd:decimal }? &
   attribute multiline { bool }?&
   attribute offset { pos }?&
+  attribute readonly { bool }?&
   attribute scrollbar { bool }?&
   attribute scrollbar_style { text }?&
   attribute scroll_bottom { bool }?&
+  attribute scroll_top { bool }?&
   attribute selected_column { text }?&
   attribute selected_column_order { text }?&
   attribute sortable { bool }?&
@@ -151,12 +157,13 @@ column =
     attribute id { text }&
     attribute color { ccolor }?&
     attribute heading { text }?&
-    attribute width { text }?
+    attribute width { text }?&
+    attribute hidden { bool }?
     )
   }
 \include =
   element include {
-	attribute file { text }|
+    attribute file { text }|
     attribute directory { text }
 }
 item =
@@ -231,6 +238,8 @@ tooltip =
     attribute name { text }&
     attribute sprite { text }?&
     attribute anchor { valign }?&
+    attribute axis_color { ccolor }?&
+    attribute axis_width { xsd:decimal { minInclusive = "0" } }?&
     attribute buffer_zone { xsd:decimal }?&
     attribute font { text }?&
     attribute maxwidth { xsd:decimal }?&
@@ -276,6 +285,5 @@ image =
 effect =
   element effect {
     attribute add_color { ccolor }?,
-    attribute multiply_color { ccolor }?,
     attribute grayscale { empty }?
   }

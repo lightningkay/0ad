@@ -2,7 +2,6 @@
 
 <Scenario version="6">
 	<Environment>
-		<LightingModel>standard</LightingModel>
 		<SkySet>cumulus</SkySet>
 		<SunColor r="0.921569" g="0.831373" b="0.737255"/>
 		<SunElevation angle="0.665748"/>
@@ -14,12 +13,9 @@
 				<Type>lake</Type>
 				<Color r="0.294118" g="0.34902" b="0.694118"/>
 				<Height>19.3049</Height>
-				<Shininess>150</Shininess>
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.491211</Murkiness>
 				<Tint r="0.564706" g="0.513726" b="0.419608"/>
-				<ReflectionTint r="0.247059" g="0.501961" b="0.501961"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -33,7 +29,6 @@
   "CircularMap": true,
   "Preview" : "battle_for_the_tiber.png",
   "Description": "Rome battles against the Etruscan city of Veii for control of the Tiber River basin.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Battle for the Tiber",
@@ -91,24 +86,27 @@
       "Team": 3
     }
   ],
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
 		<Entity uid="32">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="594.84107" z="835.71131"/>
 			<Orientation y="0.74331"/>
 		</Entity>
 		<Entity uid="33">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="880.1955" z="1438.29871"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="34">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="1274.92237" z="866.99476"/>
 			<Orientation y="-0.59447"/>
@@ -1296,7 +1294,7 @@
 			<Orientation y="1.98162"/>
 		</Entity>
 		<Entity uid="252">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="2019.2146" z="977.27625"/>
 			<Orientation y="-1.32882"/>

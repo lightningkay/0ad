@@ -49,7 +49,7 @@ function TestFormationExiting(mode)
 	});
 
 	AddMock(SYSTEM_ENTITY, IID_TemplateManager, {
-		GetCurrentTemplateName: function(ent) { return "formations/line_closed"},
+		GetCurrentTemplateName: function(ent) { return "special/formations/line_closed"; },
 	});
 
 	AddMock(SYSTEM_ENTITY, IID_PlayerManager, {
@@ -193,10 +193,10 @@ function TestMoveIntoFormationWhileAttacking()
 		ResetActiveQuery: function(id) { return [enemy]; },
 		DisableActiveQuery: function(id) { },
 		GetEntityFlagMask: function(identifier) { },
-	});;
+	});
 
 	AddMock(SYSTEM_ENTITY, IID_TemplateManager, {
-		GetCurrentTemplateName: function(ent) { return "formations/line_closed"},
+		GetCurrentTemplateName: function(ent) { return "special/formations/line_closed"; },
 	});
 
 	AddMock(SYSTEM_ENTITY, IID_PlayerManager, {
@@ -283,12 +283,13 @@ function TestMoveIntoFormationWhileAttacking()
 		SetSpeed: function(speed) { },
 		MoveToPointRange: function(x, z, minRange, maxRange) { },
 		IsInTargetRange: function(target, min, max) { return true; },
+		StopMoving: function() { },
 		GetPassabilityClassName: function() { return "default"; },
 	});
 
 	AddMock(controller, IID_Attack, {
 		GetRange: function() { return {"max":10, "min": 0}; },
-		CanAttackAsFormation: function() { return false },
+		CanAttackAsFormation: function() { return false; },
 	});
 
 	controllerAI.OnCreate();
@@ -297,20 +298,17 @@ function TestMoveIntoFormationWhileAttacking()
 
 	controllerAI.Attack(enemy, []);
 
-	for each (var ent in unitAIs) {
+	for (var ent of unitAIs)
 		TS_ASSERT_EQUALS(unitAI.fsmStateName, "INDIVIDUAL.COMBAT.ATTACKING");
-	}
 
 	controllerAI.MoveIntoFormation({"name": "Circle"});
 
 	// let all units be in position
-	for each (var ent in unitAIs) {
+	for (var ent of unitAIs)
 		controllerFormation.SetInPosition(ent);
-	}
 
-	for each (var ent in unitAIs) {
+	for (var ent of unitAIs)
 		TS_ASSERT_EQUALS(unitAI.fsmStateName, "INDIVIDUAL.COMBAT.ATTACKING");
-	}
 
 	controllerFormation.Disband();
 }

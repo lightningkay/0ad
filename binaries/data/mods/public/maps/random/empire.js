@@ -1,31 +1,36 @@
-RMS.LoadLibrary("rmgen");
-RMS.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmgen");
+Engine.LoadLibrary("rmgen-common");
+Engine.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmbiome");
 
-InitMap();
+setSelectedBiome();
 
-randomizeBiome();
-initMapSettings();
+var g_Map = new RandomMap(2, g_Terrains.mainTerrain);
+
 initTileClasses();
 
-resetTerrain(g_Terrains.mainTerrain, g_TileClasses.land, randInt(5));
-RMS.SetProgress(10);
+createArea(
+	new MapBoundsPlacer(),
+	new TileClassPainter(g_TileClasses.land));
 
-addBases("stronghold", 0.37, 0.04);
-RMS.SetProgress(20);
+Engine.SetProgress(10);
+
+const teamsArray = getTeamsArray();
+const startAngle = randomAngle();
+createBasesByPattern("stronghold", fractionToTiles(0.37), fractionToTiles(0.04), startAngle);
+Engine.SetProgress(20);
 
 // Change the starting angle and add the players again
-var rotation = PI;
+var rotation = Math.PI;
 
-if (g_MapInfo.teams.length == 2)
-	rotation = PI / 2;
+if (teamsArray.length == 2)
+	rotation = Math.PI / 2;
 
-if (g_MapInfo.teams.length == 4)
-	rotation = PI + PI / 4;
+if (teamsArray.length == 4)
+	rotation = 5/4 * Math.PI;
 
-g_MapInfo.startAngle = g_MapInfo.startAngle + rotation;
-
-addBases("stronghold", 0.15, 0.04);
-RMS.SetProgress(40);
+createBasesByPattern("stronghold", fractionToTiles(0.15), fractionToTiles(0.04), startAngle + rotation);
+Engine.SetProgress(40);
 
 addElements(shuffleArray([
 	{
@@ -72,7 +77,7 @@ addElements(shuffleArray([
 		"amounts": ["tons"]
 	}
 ]));
-RMS.SetProgress(50);
+Engine.SetProgress(50);
 
 addElements([
 	{
@@ -105,7 +110,7 @@ addElements([
 		"amounts": ["normal"]
 	}
 ]);
-RMS.SetProgress(60);
+Engine.SetProgress(60);
 
 addElements(shuffleArray([
 	{
@@ -159,7 +164,7 @@ addElements(shuffleArray([
 		"amounts": ["few", "normal", "many", "tons"]
 	}
 ]));
-RMS.SetProgress(80);
+Engine.SetProgress(80);
 
 addElements(shuffleArray([
 	{
@@ -214,6 +219,16 @@ addElements(shuffleArray([
 		"amounts": g_AllAmounts
 	}
 ]));
-RMS.SetProgress(90);
+Engine.SetProgress(90);
 
-ExportMap();
+placePlayersNomad(
+	g_TileClasses.player,
+	avoidClasses(
+		g_TileClasses.plateau, 4,
+		g_TileClasses.forest, 1,
+		g_TileClasses.metal, 4,
+		g_TileClasses.rock, 4,
+		g_TileClasses.mountain, 4,
+		g_TileClasses.animals, 2));
+
+g_Map.ExportMap();

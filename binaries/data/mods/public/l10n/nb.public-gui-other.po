@@ -3,17 +3,17 @@
 # This file is distributed under the same license as the 0 A.D. — Empires Ascendant project.
 # 
 # Translators:
-# Allan Nordhøy <epost@anotheragency.no>, 2016
+# Allan Nordhøy <epost@anotheragency.no>, 2016-2018
 # Henrik Hovrud <henrik.h@online.no>, 2015
-# Jarl.Arntzen <jarl.arntzen@gmail.com>, 2014-2015
+# Jarl Arntzen <jarl.arntzen@gmail.com>, 2014-2015
 # Kurt-Håkon Eilertsen <kurt@kheds.com>, 2014
 # Lene Raastad <lene.raastad.lr@gmail.com>, 2014
 # Ole Sannes Riiser <OLE-SR@online.no>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-08-12 09:01+0200\n"
-"PO-Revision-Date: 2016-08-12 08:26+0000\n"
+"POT-Creation-Date: 2018-04-23 09:03+0200\n"
+"PO-Revision-Date: 2018-04-23 14:39+0000\n"
 "Last-Translator: Adrián Chaves Fernández <adriyetichaves@gmail.com>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/wildfire-games/0ad/language/nb/)\n"
 "MIME-Version: 1.0\n"
@@ -22,426 +22,510 @@ msgstr ""
 "Language: nb\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: gui/civinfo/civinfo.js:96
+#: globalscripts/DamageTypes.js:6
+msgctxt "damage type"
+msgid "Hack"
+msgstr "Hugg"
+
+#: globalscripts/DamageTypes.js:7
+msgctxt "damage type"
+msgid "Pierce"
+msgstr "Stikk"
+
+#: globalscripts/DamageTypes.js:8
+msgctxt "damage type"
+msgid "Crush"
+msgstr "Knus"
+
+#: gui/civinfo/civinfo.js:28
+#, javascript-format
+msgid "%(hotkey)s: Switch to Structure Tree."
+msgstr ""
+
+#: gui/civinfo/civinfo.js:29
+#, javascript-format
+msgid "%(hotkey)s: Close History."
+msgstr ""
+
+#: gui/civinfo/civinfo.js:124
 #, javascript-format
 msgid "%(civilization)s Gameplay"
 msgstr "%(civilization)s spill"
 
-#: gui/civinfo/civinfo.js:99
+#: gui/civinfo/civinfo.js:127
 msgid "Civilization Bonus"
 msgid_plural "Civilization Bonuses"
 msgstr[0] "Siviliasjonsbonus"
 msgstr[1] "Sivilisasjonsbonuser"
 
-#: gui/civinfo/civinfo.js:104
+#: gui/civinfo/civinfo.js:132
 msgid "Team Bonus"
 msgid_plural "Team Bonuses"
 msgstr[0] "Lagbonus"
 msgstr[1] "Lagbonuser"
 
-#: gui/civinfo/civinfo.js:111
+#: gui/civinfo/civinfo.js:139
 msgid "Special Technologies"
 msgstr "Spesielle Teknologier"
 
-#: gui/civinfo/civinfo.js:117
+#: gui/civinfo/civinfo.js:145
 msgid "Special Building"
 msgid_plural "Special Buildings"
 msgstr[0] "Spesialbygning"
 msgstr[1] "Spesielle bygninger"
 
-#: gui/civinfo/civinfo.js:124 gui/summary/layout.js:64
+#: gui/civinfo/civinfo.js:152 gui/summary/layout.js:67
 msgid "Heroes"
 msgstr "Helter"
 
-#: gui/civinfo/civinfo.js:134
+#: gui/civinfo/civinfo.js:162
 #, javascript-format
 msgid "History of the %(civilization)s"
 msgstr "Historien om  %(civilization)s"
 
-#: gui/common/functions_global_object.js:57
+#: gui/common/color.js:164
+#, javascript-format
+msgid "Unassigned hotkey: %(hotkeyName)s"
+msgstr ""
+
+#: gui/common/color.js:179
+#, javascript-format
+msgid "Press %(hotkey)s to autocomplete playernames."
+msgstr "Trykk %(hotkey)s for å autofullføre spillernavn."
+
+#: gui/common/color.js:181
+msgctxt "hotkey"
+msgid "Tab"
+msgstr "Fane"
+
+#: gui/common/functions_global_object.js:8
 #, javascript-format
 msgid ""
 "Opening %(url)s\n"
-" in default web browser. Please wait...."
-msgstr "Åpner %(url)s\n i forvalgt nettleser. Vennligst vent..."
+" in default web browser. Please wait…"
+msgstr ""
 
-#: gui/common/functions_global_object.js:60
+#: gui/common/functions_global_object.js:11
 msgid "Opening page"
 msgstr "Åpner side"
 
-#: gui/common/functions_global_object.js:72
+#. dennis-ignore: *
+#: gui/common/functions_global_object.js:21
 #, javascript-format
 msgid "FPS: %(fps)4s"
 msgstr "Bilder per sekund: %(fps)4s"
 
-#. Translation: The "x" means "times", with the mathematical meaning of
-#. multiplication.
-#: gui/common/functions_global_object.js:89
-#, javascript-format
-msgid "%(time)s (%(speed)sx)"
-msgstr "%(time)s (%(speed)sx)"
+#: gui/common/functions_global_object.js:90
+msgid "Loading Aborted"
+msgstr "Lasting avbrutt"
 
-#: gui/common/functions_global_object.js:106
-#, javascript-format
-msgctxt "ceasefire"
-msgid "Time remaining until ceasefire is over: %(time)s."
-msgstr "Gjenstående tid til våpenstillstand er over: %(time)s."
+#: gui/common/functions_utility.js:29
+msgid "Gaia"
+msgstr "Gaia"
 
-#: gui/common/functions_utility.js:121
+#: gui/common/functions_utility.js:105
 msgctxt "map selection"
 msgid "Random"
-msgstr ""
+msgstr "Tilfeldig"
 
-#: gui/common/functions_utility.js:131
+#: gui/common/functions_utility_loadsave.js:14
+msgid "yyyy-MM-dd HH:mm:ss"
+msgstr "yyyy-MM-dd HH:mm:ss"
+
+#: gui/common/functions_utility_loadsave.js:22
+#, javascript-format
+msgid "%(dateString)s %(map)s - %(description)s"
+msgstr "%(dateString)s %(map)s - %(description)s"
+
+#: gui/common/functions_utility_loadsave.js:23
+#, javascript-format
+msgid "%(dateString)s %(map)s"
+msgstr "%(dateString)s %(map)s"
+
+#: gui/common/functions_utility_loadsave.js:53
+#, javascript-format
+msgid "\"%(label)s\""
+msgstr "\"%(label)s\""
+
+#: gui/common/functions_utility_loadsave.js:55
+msgid "Saved game will be permanently deleted, are you sure?"
+msgstr "Lagret spill vil bli permanent slettet, er du sikker?"
+
+#: gui/common/functions_utility_loadsave.js:56
+msgid "DELETE"
+msgstr "SLETT"
+
+#: gui/common/functions_utility_loadsave.js:57 gui/common/tooltips.js:325
+#: gui/options/options.js:301 gui/options/options.js:351
+#: gui/options/options.js:377 gui/pregame/mainmenu.js:261
+#: gui/pregame/mainmenu.js:275 gui/replaymenu/replay_actions.js:169
+msgid "No"
+msgstr "Nei"
+
+#: gui/common/functions_utility_loadsave.js:57 gui/common/tooltips.js:325
+#: gui/options/options.js:301 gui/options/options.js:351
+#: gui/options/options.js:377 gui/pregame/mainmenu.js:261
+#: gui/pregame/mainmenu.js:275 gui/replaymenu/replay_actions.js:169
+msgid "Yes"
+msgstr "Ja"
+
+#: gui/common/functions_utility_loadsave.js:74
+#, javascript-format
+msgid "Delete the selected entry using %(hotkey)s."
+msgstr "Slett valgt enhet ved bruk av %(hotkey)s."
+
+#: gui/common/functions_utility_loadsave.js:79
+#, javascript-format
+msgid "Hold %(hotkey)s to delete without confirmation."
+msgstr "Hold %(hotkey)s for å slette uten bekreftelse."
+
+#: gui/common/gamedescription.js:44
 msgid "A randomly selected map."
 msgstr "Et tilfeldig valgt kart"
 
-#: gui/common/functions_utility.js:138
+#: gui/common/gamedescription.js:53 gui/common/gamedescription.js:337
 msgid "Sorry, no description available."
-msgstr "Beklager, ingen beskrivelse tilgjengelig."
-
-#: gui/common/functions_utility.js:163
-msgid "mm:ss"
-msgstr "mm:ss"
-
-#: gui/common/functions_utility.js:165
-msgid "HH:mm:ss"
-msgstr "HH:mm:ss"
+msgstr "Ingen beskrivelse tilgjengelig."
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:311
+#: gui/common/gamedescription.js:104
 #, javascript-format
-msgid "%(playerName)s (%(civ)s, %(AIdifficulty)s %(AIname)s)"
+msgid "%(playerName)s (%(civ)s, %(AIdescription)s)"
 msgstr ""
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:314
+#: gui/common/gamedescription.js:107
 #, javascript-format
-msgid "%(playerName)s (%(civ)s, %(AIdifficulty)s %(AIname)s, %(state)s)"
+msgid "%(playerName)s (%(civ)s, %(AIdescription)s, %(state)s)"
 msgstr ""
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:320
+#: gui/common/gamedescription.js:113
 #, javascript-format
-msgid "%(playerName)s (%(AIdifficulty)s %(AIname)s)"
+msgid "%(playerName)s (%(AIdescription)s)"
 msgstr ""
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:323
+#: gui/common/gamedescription.js:116
 #, javascript-format
-msgid "%(playerName)s (%(AIdifficulty)s %(AIname)s, %(state)s)"
+msgid "%(playerName)s (%(AIdescription)s, %(state)s)"
 msgstr ""
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:333
+#: gui/common/gamedescription.js:126
 #, javascript-format
 msgid "%(playerName)s (OFFLINE)"
-msgstr ""
+msgstr "%(playerName)s (FRAKOBLET)"
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:336
+#: gui/common/gamedescription.js:129
 #, javascript-format
 msgid "%(playerName)s (OFFLINE, %(state)s)"
-msgstr ""
+msgstr "%(playerName)s (FRAKOBLET, %(state)s)"
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:343
+#: gui/common/gamedescription.js:136
 #, javascript-format
 msgid "%(playerName)s (%(civ)s)"
-msgstr ""
+msgstr "%(playerName)s (%(civ)s)"
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:346
+#: gui/common/gamedescription.js:139
 #, javascript-format
 msgid "%(playerName)s (%(civ)s, %(state)s)"
-msgstr ""
+msgstr "%(playerName)s (%(civ)s, %(state)s)"
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:350
+#: gui/common/gamedescription.js:143
 #, javascript-format
 msgid "%(playerName)s"
-msgstr ""
+msgstr "%(playerName)s"
 
 #. Translation: Describe a player in a selected game, f.e. in the replay- or
 #. savegame menu
-#: gui/common/functions_utility.js:353
+#: gui/common/gamedescription.js:146
 #, javascript-format
 msgid "%(playerName)s (%(state)s)"
-msgstr ""
+msgstr "%(playerName)s (%(state)s)"
 
-#: gui/common/functions_utility.js:371
+#: gui/common/gamedescription.js:166
 msgid "Unknown Civilization"
-msgstr "Ukjente sivilisasjoner"
+msgstr "Ukjent sivilisasjon"
 
-#: gui/common/functions_utility.js:378
+#: gui/common/gamedescription.js:173
 msgctxt "playerstate"
 msgid "defeated"
-msgstr ""
+msgstr "beseiret"
 
-#: gui/common/functions_utility.js:379
+#: gui/common/gamedescription.js:174
 msgctxt "playerstate"
 msgid "won"
-msgstr ""
+msgstr "vant"
 
-#: gui/common/functions_utility.js:401
+#: gui/common/gamedescription.js:195
 msgid "No Team"
 msgstr "Ingen lag"
 
-#: gui/common/functions_utility.js:402
+#: gui/common/gamedescription.js:196
 #, javascript-format
 msgid "Team %(team)s"
 msgstr "Lag %(team)s"
 
 #. Translation: Describe players of one team in a selected game, f.e. in the
 #. replay- or savegame menu or lobby
-#: gui/common/functions_utility.js:405 gui/common/functions_utility.js:412
+#: gui/common/gamedescription.js:199 gui/common/gamedescription.js:206
 #, javascript-format
 msgid ""
 "%(team)s:\n"
 "%(playerDescriptions)s"
-msgstr ""
+msgstr "%(team)s:\n%(playerDescriptions)s"
 
-#: gui/common/functions_utility.js:413
+#: gui/common/gamedescription.js:207
 msgid "Observer"
 msgid_plural "Observers"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Observatør"
+msgstr[1] "Observatører"
 
-#: gui/common/functions_utility_error.js:22
-msgid "Loading Aborted"
-msgstr "Lasting avbrutt"
+#: gui/common/gamedescription.js:224
+msgctxt "victory condition"
+msgid "Endless Game"
+msgstr "Endeløst spill"
 
-#: gui/common/functions_utility_loadsave.js:8
-msgid "yyyy-MM-dd HH:mm:ss"
-msgstr "yyyy-MM-dd HH:mm:ss"
+#: gui/common/gamedescription.js:225
+msgid "No winner will be determined, even if everyone is defeated."
+msgstr ""
 
-#: gui/common/functions_utility_loadsave.js:9
+#: gui/common/gamedescription.js:236
 #, javascript-format
-msgid "\\[%(date)s]"
-msgstr "\\[%(date)s]"
+msgctxt "victory condition"
+msgid "Wonder (%(min)s minute)"
+msgid_plural "Wonder (%(min)s minutes)"
+msgstr[0] "Underverk (%(min)s minute)"
+msgstr[1] "Underverk (%(min)s minute)"
 
-#: gui/common/functions_utility_loadsave.js:21
+#: gui/common/gamedescription.js:248
 #, javascript-format
-msgid "%(dateString)s %(map)s - %(description)s"
-msgstr "%(dateString)s %(map)s - %(description)s"
+msgctxt "victory condition"
+msgid "Capture the Relic (%(min)s minute)"
+msgid_plural "Capture the Relic (%(min)s minutes)"
+msgstr[0] "Erobre relikviet (%(min)s minutt)"
+msgstr[1] "Erobre relikviet (%(min)s minutter)"
 
-#: gui/common/functions_utility_loadsave.js:22
+#: gui/common/gamedescription.js:264
+msgid "Relic Count"
+msgstr "Relikvieantall"
+
+#: gui/common/gamedescription.js:271
+msgid "Hero Garrison"
+msgstr "Heltestasjonering"
+
+#: gui/common/gamedescription.js:272
+msgid "Heroes can be garrisoned."
+msgstr "Helter kan stasjoneres."
+
+#: gui/common/gamedescription.js:276
+msgid "Exposed Heroes"
+msgstr "Utsatte helter"
+
+#: gui/common/gamedescription.js:277
+msgid "Heroes cannot be garrisoned and they are vulnerable to raids."
+msgstr ""
+
+#: gui/common/gamedescription.js:284
+msgid "Rated game"
+msgstr "Poenggitt spill"
+
+#: gui/common/gamedescription.js:285
+msgid ""
+"When the winner of this match is determined, the lobby score will be "
+"adapted."
+msgstr "Endelig lobbypoengsum vil først bestemmes når en seierherre er kronet."
+
+#: gui/common/gamedescription.js:290
+msgid "Locked Teams"
+msgstr "Låste lag"
+
+#: gui/common/gamedescription.js:291
+msgid "Players can't change the initial teams."
+msgstr "Spillere kan ikke endre laget de har utgangspunkt i."
+
+#: gui/common/gamedescription.js:295
+msgid "Diplomacy"
+msgstr "Diplomati"
+
+#: gui/common/gamedescription.js:296
+msgid "Players can make alliances and declare war on allies."
+msgstr "Spillere kan inngå allianser med og annonsere krig mot allierte."
+
+#: gui/common/gamedescription.js:301
+msgid "Last Man Standing"
+msgstr "Til siste mann"
+
+#: gui/common/gamedescription.js:302
+msgid ""
+"Only one player can win the game. If the remaining players are allies, the "
+"game continues until only one remains."
+msgstr "Bare én spiller kan vinne spillet. Hvis de gjenværende spillerne er allierte, vil spillet fortsette til bare én er igjen."
+
+#: gui/common/gamedescription.js:306
+msgid "Allied Victory"
+msgstr "Alliert seier"
+
+#: gui/common/gamedescription.js:307
+msgid ""
+"If one player wins, his or her allies win too. If one group of allies "
+"remains, they win."
+msgstr "Hvis én spiller vinner, betyr dette seier for dens allierte også. Hvis én gruppe allierte er gjenværende, vinner de."
+
+#: gui/common/gamedescription.js:311
+msgid "Ceasefire"
+msgstr "Våpenhvile"
+
+#: gui/common/gamedescription.js:314 gui/pregame/mainmenu.js:95
+msgid "disabled"
+msgstr "avskrudd"
+
+#: gui/common/gamedescription.js:315
+msgid "For the first minute, other players will stay neutral."
+msgid_plural "For the first %(min)s minutes, other players will stay neutral."
+msgstr[0] "Det første minuttet vil andre spillere forholde seg nøytrale."
+msgstr[1] "De første %(min)s vil andre spillere forholde seg nøytrale."
+
+#: gui/common/gamedescription.js:324
+msgctxt "Map Selection"
+msgid "Random Map"
+msgstr ""
+
+#: gui/common/gamedescription.js:325
+msgid "Randomly select a map from the list."
+msgstr ""
+
+#: gui/common/gamedescription.js:330
+msgid "Map Name"
+msgstr "Kartnavn"
+
+#: gui/common/gamedescription.js:334
+msgid "Map Description"
+msgstr "Kartbeskrivelse"
+
+#: gui/common/gamedescription.js:342
+msgid "Map Type"
+msgstr "Karttype"
+
+#: gui/common/gamedescription.js:348
+msgid "Map Filter"
+msgstr "Kartfilter"
+
+#: gui/common/gamedescription.js:357
+msgid "Map Size"
+msgstr "Kartstørrelse"
+
+#: gui/common/gamedescription.js:366
+msgctxt "biome"
+msgid "Random Biome"
+msgstr ""
+
+#: gui/common/gamedescription.js:367
+msgid "Randomly select a biome from the list."
+msgstr ""
+
+#: gui/common/gamedescription.js:381
+msgid "Nomad Mode"
+msgstr "Nomademodus"
+
+#: gui/common/gamedescription.js:381
+msgid "Civic Centers"
+msgstr ""
+
+#: gui/common/gamedescription.js:384
+msgid ""
+"Players start with only few units and have to find a suitable place to build"
+" their city."
+msgstr ""
+
+#: gui/common/gamedescription.js:385
+msgid "Players start with a Civic Center."
+msgstr ""
+
+#: gui/common/gamedescription.js:389
+msgid "Starting Resources"
+msgstr "Startressurser"
+
+#: gui/common/gamedescription.js:390
 #, javascript-format
-msgid "%(dateString)s %(map)s"
-msgstr "%(dateString)s %(map)s"
+msgid "%(startingResourcesTitle)s (%(amount)s)"
+msgstr "%(startingResourcesTitle)s (%(amount)s)"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:4
-msgctxt "firstWord"
-msgid "Food"
-msgstr "Mat"
+#: gui/common/gamedescription.js:400
+msgid "Population Limit"
+msgstr "Befolkningstak"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:6
-msgctxt "firstWord"
-msgid "Meat"
-msgstr "Kjøtt"
+#: gui/common/gamedescription.js:408
+msgid "Treasures"
+msgstr "Skatter"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:8
-msgctxt "firstWord"
-msgid "Metal"
-msgstr "Metall"
+#: gui/common/gamedescription.js:410
+msgctxt "treasures"
+msgid "Disabled"
+msgstr "Avskrudd"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:10
-msgctxt "firstWord"
-msgid "Ore"
-msgstr "Malm"
+#: gui/common/gamedescription.js:411
+msgctxt "treasures"
+msgid "As defined by the map."
+msgstr "Som definert av kartet."
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:12
-msgctxt "firstWord"
-msgid "Rock"
-msgstr "Klippe"
+#: gui/common/gamedescription.js:415
+msgid "Revealed Map"
+msgstr "Avdekket kart"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:14
-msgctxt "firstWord"
-msgid "Ruins"
-msgstr "Ruiner"
+#: gui/common/gamedescription.js:420
+msgid "Explored Map"
+msgstr "Utforsket kart"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:16
-msgctxt "firstWord"
-msgid "Stone"
-msgstr "Stein"
+#: gui/common/gamedescription.js:425
+msgid "Cheats"
+msgstr "Juksekoder"
 
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:18
-msgctxt "firstWord"
-msgid "Treasure"
-msgstr "Skatt"
-
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:20
-msgctxt "firstWord"
-msgid "Tree"
-msgstr "Tre"
-
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:22
-msgctxt "firstWord"
-msgid "Wood"
-msgstr "Tømmer"
-
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:24
-msgctxt "firstWord"
-msgid "Fruit"
-msgstr "Frukt"
-
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:26
-msgctxt "firstWord"
-msgid "Grain"
-msgstr "Korn"
-
-#. Translation: Word as used at the beginning of a sentence or as a single-
-#. word sentence.
-#: gui/common/l10n.js:28
-msgctxt "firstWord"
-msgid "Fish"
-msgstr "Fisk"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:32
-msgctxt "withinSentence"
-msgid "Food"
-msgstr "Mat"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:34
-msgctxt "withinSentence"
-msgid "Meat"
-msgstr "Kjøtt"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:36
-msgctxt "withinSentence"
-msgid "Metal"
-msgstr "Metall"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:38
-msgctxt "withinSentence"
-msgid "Ore"
-msgstr "Malm"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:40
-msgctxt "withinSentence"
-msgid "Rock"
-msgstr "Klippe"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:42
-msgctxt "withinSentence"
-msgid "Ruins"
-msgstr "Ruiner"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:44
-msgctxt "withinSentence"
-msgid "Stone"
-msgstr "Stein"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:46
-msgctxt "withinSentence"
-msgid "Treasure"
-msgstr "Skatt"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:48
-msgctxt "withinSentence"
-msgid "Tree"
-msgstr "Tre"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:50
-msgctxt "withinSentence"
-msgid "Wood"
-msgstr "Tømmer"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:52
-msgctxt "withinSentence"
-msgid "Fruit"
-msgstr "Frukt"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:54
-msgctxt "withinSentence"
-msgid "Grain"
-msgstr "Korn"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: gui/common/l10n.js:56
-msgctxt "withinSentence"
-msgid "Fish"
-msgstr "Fisk"
-
-#: gui/common/l10n.js:82
+#: gui/common/gamedescription.js:429 gui/common/tooltips.js:164
+#: gui/common/tooltips.js:219 gui/common/tooltips.js:260
+#: gui/common/tooltips.js:395 gui/common/tooltips.js:417
+#: gui/common/tooltips.js:501 gui/common/tooltips.js:522
+#: gui/common/tooltips.js:820
 #, javascript-format
-msgid "%(amount)s %(resourceType)s"
-msgstr "%(amount)s %(resourceType)s"
+msgid "%(label)s %(details)s"
+msgstr "%(label)s %(details)s"
 
-#: gui/common/l10n.js:90
+#: gui/common/gamedescription.js:432
+msgctxt "gamesetup option"
+msgid "enabled"
+msgstr "påskrudd"
+
+#: gui/common/gamedescription.js:433
+msgctxt "gamesetup option"
+msgid "disabled"
+msgstr "avskrudd"
+
+#: gui/common/gamedescription.js:449
+msgid "Victorious"
+msgstr "Seirende"
+
+#: gui/common/gamedescription.js:454
+msgid "Defeated"
+msgstr "Nederlag"
+
+#: gui/common/gamedescription.js:463
 #, javascript-format
-msgid "%(previousAmounts)s and %(lastAmount)s"
-msgstr "%(previousAmounts)s og %(lastAmount)s"
-
-#. Translation: This comma is used for separating first to penultimate
-#. elements in an enumeration.
-#: gui/common/l10n.js:92 gui/common/network.js:140 gui/common/tooltips.js:118
-#: gui/common/tooltips.js:132 gui/common/tooltips.js:214
-#: gui/common/tooltips.js:243 gui/common/tooltips.js:276
-#: gui/common/tooltips.js:489 gui/common/tooltips.js:523
-#: gui/common/tooltips.js:576 gui/replaymenu/replay_actions.js:89
-#: gui/replaymenu/replay_actions.js:90 gui/savedgames/load.js:61
-#: gui/savedgames/load.js:117 gui/savedgames/load.js:120
-msgid ", "
-msgstr ","
+msgid "%(AIdifficulty)s %(AIbehavior)s %(AIname)s"
+msgstr ""
 
 #: gui/common/network.js:17
 #, javascript-format
@@ -463,131 +547,160 @@ msgstr "Dårlig tilkobling til tjeneren (%(milliseconds)sms)"
 msgid "Bad connection to %(player)s (%(milliseconds)sms)"
 msgstr "Dårlig tilkobling til %(player)s (%(milliseconds)sms)"
 
-#: gui/common/network.js:62
+#: gui/common/network.js:66
 msgctxt "network disconnect"
 msgid "Unknown reason"
-msgstr ""
+msgstr "Ukjent grunn"
 
-#: gui/common/network.js:63
+#: gui/common/network.js:67
 msgid ""
 "This is often caused by UDP port 20595 not being forwarded on the host side,"
-" by a firewall or anti-virus software"
-msgstr ""
+" by a firewall, or anti-virus software"
+msgstr "Dette har ofte sin årsak i at UDP-port nummer 20595 ikke er åpen på vertsskapets side, av brannmur, eller antivirusprogramvare."
 
-#: gui/common/network.js:64
+#: gui/common/network.js:68
 msgid "The host has ended the game"
 msgstr "Tjeneren har avsluttet spillet"
 
-#: gui/common/network.js:65
+#: gui/common/network.js:69
 msgid "Incorrect network protocol version"
 msgstr "Feil versjon av nettverksprotokoll"
 
-#: gui/common/network.js:66
-msgid "Game is loading, please try later"
-msgstr "Spillet laster, vennligst prøv senere"
+#: gui/common/network.js:70
+msgid "Game is loading, please try again later"
+msgstr "Spillet laster, prøv igjen senere"
 
-#: gui/common/network.js:67
+#: gui/common/network.js:71
 msgid "Game has already started, no observers allowed"
 msgstr "Spillet har allerede startet, ingen observatører tillatt"
 
-#: gui/common/network.js:68
+#: gui/common/network.js:72
 msgid "You have been kicked"
 msgstr "Du har blitt kastet ut"
 
-#: gui/common/network.js:69
+#: gui/common/network.js:73
 msgid "You have been banned"
 msgstr "Du har blitt utestengt"
 
-#: gui/common/network.js:70
+#: gui/common/network.js:74
 msgid "Playername in use. If you were disconnected, retry in few seconds"
-msgstr "Spillernavn allerede i bruk. Hvis du ble frakoblet, prøv igjen om noen sekund"
+msgstr "Spillernavn allerede i bruk. Hvis du ble frakoblet, prøv igjen om noen sekunder"
 
-#: gui/common/network.js:71
+#: gui/common/network.js:75
 msgid "Server full"
 msgstr "Tjeneren er full"
 
-#: gui/common/network.js:74
+#: gui/common/network.js:76
+msgid "Secure lobby authentication failed. Join via lobby"
+msgstr ""
+
+#: gui/common/network.js:79
 #, javascript-format
 msgid "\\[Invalid value %(id)s]"
 msgstr "\\[Ugyldig verdi %(id)s]"
 
 #. Translation: States the reason why the client disconnected from the server.
-#: gui/common/network.js:86
+#: gui/common/network.js:91
 #, javascript-format
 msgid "Reason: %(reason)s."
 msgstr "Grunn: %(reason)s."
 
-#: gui/common/network.js:91
+#: gui/common/network.js:96
 msgid "Lost connection to the server."
 msgstr "Mistet tilkobling til tjeneren."
 
-#: gui/common/network.js:92
+#: gui/common/network.js:97
 msgid "Failed to connect to the server."
-msgstr ""
+msgstr "Klarte ikke å koble til tjeneren."
 
-#: gui/common/network.js:94
+#: gui/common/network.js:99
 msgid "Disconnected"
 msgstr "Frakoblet"
 
-#: gui/common/network.js:105
-#, javascript-format
-msgid "Could not ban %(name)s."
-msgstr "Kunne ikke utestenge %(name)s."
+#: gui/common/network.js:107
+msgid "Only the host can kick clients!"
+msgstr "Bare verten kan kaste ut klienter!"
 
-#: gui/common/network.js:105
+#. Translation: Number of currently connected players/observers and their
+#. names
+#: gui/common/network.js:161
 #, javascript-format
-msgid "Could not kick %(name)s."
-msgstr "Kunne ikke kaste ut %(name)s. "
+msgid "Users (%(num)s): %(users)s"
+msgstr "Brukere (%(num)s): %(users)s"
 
-#: gui/common/network.js:139
-#, javascript-format
-msgid "Users: %(users)s"
-msgstr "Brukere: %(users)s"
+#: gui/common/network.js:162 gui/common/tooltips.js:83
+#: gui/common/tooltips.js:232 gui/common/tooltips.js:246
+#: gui/common/tooltips.js:324 gui/common/tooltips.js:357
+#: gui/common/tooltips.js:390 gui/common/tooltips.js:685
+#: gui/common/tooltips.js:719 gui/common/tooltips.js:785
+#: gui/reference/common/draw.js:51 gui/replaymenu/replay_menu.js:272
+msgid ", "
+msgstr ","
 
-#: gui/common/settings.js:108
+#: gui/common/settings.js:117
 msgctxt "aiDiff"
 msgid "Sandbox"
 msgstr "Sandkasse"
 
-#: gui/common/settings.js:112
+#: gui/common/settings.js:121
 msgctxt "aiDiff"
 msgid "Very Easy"
 msgstr "Veldig lett"
 
-#: gui/common/settings.js:116
+#: gui/common/settings.js:125
 msgctxt "aiDiff"
 msgid "Easy"
 msgstr "Lett"
 
-#: gui/common/settings.js:120
+#: gui/common/settings.js:129
 msgctxt "aiDiff"
 msgid "Medium"
 msgstr "Middels"
 
-#: gui/common/settings.js:125
+#: gui/common/settings.js:134
 msgctxt "aiDiff"
 msgid "Hard"
 msgstr "Vanskelig"
 
-#: gui/common/settings.js:129
+#: gui/common/settings.js:138
 msgctxt "aiDiff"
 msgid "Very Hard"
 msgstr "Veldig vanskelig"
 
-#: gui/common/settings.js:151
+#: gui/common/settings.js:148
+msgctxt "aiBehavior"
+msgid "Random"
+msgstr "Tilfeldig"
+
+#: gui/common/settings.js:153
+msgctxt "aiBehavior"
+msgid "Balanced"
+msgstr "Balansert"
+
+#: gui/common/settings.js:157
+msgctxt "aiBehavior"
+msgid "Defensive"
+msgstr "Defensiv"
+
+#: gui/common/settings.js:161
+msgctxt "aiBehavior"
+msgid "Aggressive"
+msgstr "Aggressiv"
+
+#: gui/common/settings.js:183
 #, javascript-format
-msgctxt "wonder victory"
+msgctxt "victory duration"
 msgid "%(min)s minute"
 msgid_plural "%(min)s minutes"
 msgstr[0] "%(min)s minutt"
 msgstr[1] "%(min)s minutter"
 
-#: gui/common/settings.js:173
+#: gui/common/settings.js:205
 msgctxt "ceasefire"
 msgid "No ceasefire"
 msgstr "Ingen våpenhvile"
 
-#: gui/common/settings.js:174
+#: gui/common/settings.js:206
 #, javascript-format
 msgctxt "ceasefire"
 msgid "%(minutes)s minute"
@@ -595,364 +708,423 @@ msgid_plural "%(minutes)s minutes"
 msgstr[0] "%(minutes)s minutt"
 msgstr[1] "%(minutes)s minutter"
 
-#: gui/common/settings.js:188
+#: gui/common/settings.js:220
 msgctxt "map"
 msgid "Skirmish"
 msgstr "Trefning"
 
-#: gui/common/settings.js:193
+#: gui/common/settings.js:221
+msgid ""
+"A map with a predefined landscape and number of players. Freely select the "
+"other gamesettings."
+msgstr "Et kart med forhåndsdefinert landskap og antall spillere. Velg andre spillinnstillinger fritt."
+
+#: gui/common/settings.js:226
 msgctxt "map"
 msgid "Random"
 msgstr "Tilfeldig"
 
-#: gui/common/settings.js:197
+#: gui/common/settings.js:227
+msgid ""
+"Create a unique map with a different resource distribution each time. Freely"
+" select the number of players and teams."
+msgstr "Opprett et unikt kart med forskjellig ressursfordeling hver gang. Velg antall spillere og lag fritt."
+
+#: gui/common/settings.js:231
 msgctxt "map"
 msgid "Scenario"
 msgstr "Scenario"
 
-#: gui/common/settings.js:228
-msgid "None"
-msgstr "Ingen"
+#: gui/common/settings.js:232
+msgid "A map with a predefined landscape and matchsettings."
+msgstr "Et kart med forhåndsdefinert landskap og spillinnstillinger."
 
-#: gui/common/settings.js:229
-msgid "Endless Game"
-msgstr "Endeløst spill"
-
-#: gui/common/settings.js:270
+#: gui/common/settings.js:306
 msgid "Unlimited"
 msgstr "Ubegrenset"
 
-#: gui/common/settings.js:318
+#: gui/common/settings.js:359
 msgctxt "AI name"
 msgid "Unknown"
-msgstr ""
+msgstr "Ukjent"
 
-#: gui/common/settings.js:329
+#: gui/common/settings.js:370
 msgctxt "AI difficulty"
 msgid "Unknown"
-msgstr ""
+msgstr "Ukjent"
 
-#: gui/common/settings.js:341
+#: gui/common/settings.js:381
+msgctxt "AI behavior"
+msgid "Default"
+msgstr "Forvalg"
+
+#: gui/common/settings.js:393
 msgctxt "map type"
 msgid "Unknown"
-msgstr ""
+msgstr "Ukjent"
 
-#: gui/common/settings.js:353
+#: gui/common/settings.js:405
 msgctxt "map size"
 msgid "Default"
 msgstr "Standard"
 
-#: gui/common/settings.js:365
+#: gui/common/settings.js:417
 msgctxt "population capacity"
 msgid "Unknown"
+msgstr "Ukjent"
+
+#: gui/common/settings.js:429
+msgid "Unknown Victory Condition"
 msgstr ""
 
-#: gui/common/settings.js:377
-msgctxt "victory condition"
-msgid "Unknown"
-msgstr ""
-
-#: gui/common/tooltips.js:9
+#: gui/common/tooltips.js:12
 msgid "Melee Attack:"
 msgstr "Nærkampangrep:"
 
-#: gui/common/tooltips.js:10
+#: gui/common/tooltips.js:13
 msgid "Ranged Attack:"
 msgstr "Avstandsangrep:"
 
-#: gui/common/tooltips.js:11
+#: gui/common/tooltips.js:14
 msgid "Capture Attack:"
 msgstr "Erobringsangrep:"
 
-#: gui/common/tooltips.js:15
-msgid "Hack"
-msgstr "Hugg"
+#: gui/common/tooltips.js:20
+msgid "Circular Splash Damage"
+msgstr "Sirkulær omkretsende skadevirkning"
 
-#: gui/common/tooltips.js:16
-msgid "Pierce"
-msgstr "Spidd"
+#: gui/common/tooltips.js:21
+msgid "Linear Splash Damage"
+msgstr "Lineær omkretsende skadevirkning"
 
-#: gui/common/tooltips.js:17
-msgid "Crush"
-msgstr "Knus"
-
-#: gui/common/tooltips.js:58 gui/common/tooltips.js:105
-#: gui/common/tooltips.js:147 gui/common/tooltips.js:347
+#. Translation: For example: Ranged Attack: 12.0 Pierce, Range: 2 to 10 (+2)
+#. meters, Interval: 3 arrows / 2 seconds
+#: gui/common/tooltips.js:27
 #, javascript-format
-msgid "%(label)s %(details)s"
-msgstr "%(label)s %(details)s"
+msgid ""
+"%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(minRange)s to %(maxRange)s"
+" (%(relativeRange)s) %(rangeUnit)s, %(rate)s"
+msgstr "%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(minRange)s til %(maxRange)s (%(relativeRange)s) %(rangeUnit)s, %(rate)s"
 
-#: gui/common/tooltips.js:59
-msgid "Health:"
-msgstr "Helse:"
+#. Translation: For example: Ranged Attack: 12.0 Pierce, Range: 10 (+2)
+#. meters, Interval: 3 arrows / 2 seconds
+#: gui/common/tooltips.js:29
+#, javascript-format
+msgid ""
+"%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(maxRange)s "
+"(%(relativeRange)s) %(rangeUnit)s, %(rate)s"
+msgstr "%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(maxRange)s (%(relativeRange)s) %(rangeUnit)s, %(rate)s"
 
-#: gui/common/tooltips.js:68
+#. Translation: For example: Ranged Attack: 12.0 Pierce, Range: 2 to 10
+#. meters, Interval: 3 arrows / 2 seconds
+#: gui/common/tooltips.js:33
+#, javascript-format
+msgid ""
+"%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(minRange)s to %(maxRange)s"
+" %(rangeUnit)s, %(rate)s"
+msgstr "%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(minRange)s til %(maxRange)s %(rangeUnit)s, %(rate)s"
+
+#. Translation: For example: Ranged Attack: 12.0 Pierce, Range: 10 meters,
+#. Interval: 3 arrows / 2 seconds
+#: gui/common/tooltips.js:35
+#, javascript-format
+msgid ""
+"%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(maxRange)s %(rangeUnit)s, "
+"%(rate)s"
+msgstr "%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(maxRange)s %(rangeUnit)s, %(rate)s"
+
+#: gui/common/tooltips.js:72
+#, javascript-format
+msgid "%(amount)s %(resourceType)s"
+msgstr "%(amount)s %(resourceType)s"
+
+#: gui/common/tooltips.js:81
+#, javascript-format
+msgid "%(previousAmounts)s and %(lastAmount)s"
+msgstr "%(previousAmounts)s og %(lastAmount)s"
+
+#: gui/common/tooltips.js:110
 #, javascript-format
 msgid "%(time)s %(second)s"
 msgid_plural "%(time)s %(second)s"
 msgstr[0] "%(time)s %(second)s"
 msgstr[1] "%(time)s %(second)s"
 
-#: gui/common/tooltips.js:70 gui/common/tooltips.js:239
-#: gui/common/tooltips.js:288 gui/common/tooltips.js:302
-#: gui/common/tooltips.js:521
+#: gui/common/tooltips.js:112 gui/common/tooltips.js:353
+#: gui/common/tooltips.js:717
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "sekund"
 msgstr[1] "sekunder"
 
-#: gui/common/tooltips.js:79
+#: gui/common/tooltips.js:165 gui/common/tooltips.js:176
+msgid "Health:"
+msgstr "Helse:"
+
+#: gui/common/tooltips.js:175
+#, javascript-format
+msgid "%(healthLabel)s %(current)s / %(max)s"
+msgstr "%(healthLabel)s %(current)s / %(max)s"
+
+#: gui/common/tooltips.js:193
 #, javascript-format
 msgid "%(arrowcount)s %(arrows)s"
 msgid_plural "%(arrowcount)s %(arrows)s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(arrowcount)s %(arrows)s"
+msgstr[1] "%(arrowcount)s %(arrows)s"
 
-#: gui/common/tooltips.js:81
+#: gui/common/tooltips.js:195
 msgid "arrow"
 msgid_plural "arrows"
 msgstr[0] "pil"
 msgstr[1] "piler"
 
-#: gui/common/tooltips.js:84
+#: gui/common/tooltips.js:198
 #, javascript-format
 msgid "%(arrowString)s / %(timeString)s"
 msgstr "%(arrowString)s / %(timeString)s"
 
-#: gui/common/tooltips.js:95
+#: gui/common/tooltips.js:209
 #, javascript-format
 msgid "%(percentage)s%%"
-msgstr ""
+msgstr "%(percentage)s%%"
 
-#: gui/common/tooltips.js:106
+#: gui/common/tooltips.js:220
 msgid "Armor:"
 msgstr "Rustning:"
 
-#: gui/common/tooltips.js:109
+#: gui/common/tooltips.js:223
 #, javascript-format
 msgid "%(damage)s %(damageType)s %(armorPercentage)s"
 msgstr "%(damage)s %(damageType)s %(armorPercentage)s"
 
-#: gui/common/tooltips.js:114
+#: gui/common/tooltips.js:228
 #, javascript-format
 msgid "(%(armorPercentage)s)"
 msgstr "(%(armorPercentage)s)"
 
-#: gui/common/tooltips.js:125
+#: gui/common/tooltips.js:239
 msgid "(None)"
 msgstr "(Ingen)"
 
-#: gui/common/tooltips.js:129
+#: gui/common/tooltips.js:243
 #, javascript-format
 msgid "%(damage)s %(damageType)s"
 msgstr "%(damage)s %(damageType)s"
 
-#: gui/common/tooltips.js:151
+#: gui/common/tooltips.js:264
 msgid "Interval:"
 msgstr "Intervall:"
 
-#: gui/common/tooltips.js:152 gui/common/tooltips.js:519
+#: gui/common/tooltips.js:265 gui/common/tooltips.js:715
 msgid "Rate:"
 msgstr "Vurdering:"
 
-#: gui/common/tooltips.js:159
+#: gui/common/tooltips.js:272
 #, javascript-format
 msgid "%(attackLabel)s %(details)s, %(rate)s"
 msgstr "%(attackLabel)s %(details)s, %(rate)s"
 
-#: gui/common/tooltips.js:175
-#, javascript-format
-msgid ""
-"%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(rangeString)s "
-"(%(relative)s), %(rate)s"
-msgstr ""
-
-#: gui/common/tooltips.js:176
-#, javascript-format
-msgid ""
-"%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(rangeString)s, %(rate)s"
-msgstr "%(attackLabel)s %(damageTypes)s, %(rangeLabel)s %(rangeString)s, %(rate)s"
-
-#: gui/common/tooltips.js:181 gui/common/tooltips.js:514
+#: gui/common/tooltips.js:291 gui/common/tooltips.js:710
 msgid "Range:"
 msgstr "Avstand:"
 
-#: gui/common/tooltips.js:183
+#: gui/common/tooltips.js:294
 #, javascript-format
-msgid "%(range)s %(meters)s"
-msgid_plural "%(range)s %(meters)s"
-msgstr[0] "%(range)s %(meters)s"
-msgstr[1] "%(range)s %(meters)s"
+msgid "+%(number)s"
+msgstr "+%(number)s"
 
-#: gui/common/tooltips.js:185 gui/common/tooltips.js:516
+#. Translation: For example "0.5 to 1 meters", "1 (+1) meters" or "1 to 2 (+3)
+#. meters"
+#: gui/common/tooltips.js:298
+msgid "meters"
+msgstr "meter"
+
+#: gui/common/tooltips.js:299 gui/common/tooltips.js:712
+#: gui/common/tooltips.js:742
 msgid "meter"
 msgid_plural "meters"
 msgstr[0] "meter"
 msgstr[1] "meter"
 
-#: gui/common/tooltips.js:207
+#: gui/common/tooltips.js:318 gui/common/tooltips.js:376
+#: gui/common/tooltips.js:381 gui/common/tooltips.js:386
 #, javascript-format
-msgid "%(attackLabel)s %(damageTypes)s"
-msgstr ""
+msgid "%(label)s: %(value)s"
+msgstr "%(label)s: %(value)s"
 
-#: gui/common/tooltips.js:208
-msgid "Splash Damage:"
-msgstr ""
-
-#: gui/common/tooltips.js:211
+#: gui/common/tooltips.js:324
 #, javascript-format
 msgid "Friendly Fire: %(enabled)s"
-msgstr ""
+msgstr "Fiendtlig ild: %(enabled)s"
 
-#: gui/common/tooltips.js:212 gui/options/options.js:275
-#: gui/options/options.js:342 gui/pregame/mainmenu.js:290
-#: gui/replaymenu/replay_actions.js:159 gui/savedgames/load.js:130
-#: gui/savedgames/load.js:179 gui/savedgames/save.js:61
-#: gui/savedgames/save.js:92 gui/summary/summary.js:147
-msgid "Yes"
-msgstr "Ja"
-
-#: gui/common/tooltips.js:212 gui/options/options.js:275
-#: gui/options/options.js:342 gui/pregame/mainmenu.js:290
-#: gui/replaymenu/replay_actions.js:159 gui/savedgames/load.js:130
-#: gui/savedgames/load.js:179 gui/savedgames/save.js:61
-#: gui/savedgames/save.js:92 gui/summary/summary.js:147
-msgid "No"
-msgstr "Nei"
-
-#: gui/common/tooltips.js:227
+#: gui/common/tooltips.js:341
 #, javascript-format
 msgid "%(label)s: %(garrisonLimit)s"
-msgstr ""
+msgstr "%(label)s: %(garrisonLimit)s"
 
-#: gui/common/tooltips.js:228
+#: gui/common/tooltips.js:342
 msgid "Garrison Limit"
-msgstr ""
+msgstr "Forskansningsgrense"
 
-#: gui/common/tooltips.js:235
+#: gui/common/tooltips.js:349
 #, javascript-format
 msgid "%(healRateLabel)s %(value)s %(health)s / %(second)s"
-msgstr ""
+msgstr "%(healRateLabel)s %(value)s %(health)s / %(second)s"
 
-#: gui/common/tooltips.js:236 gui/common/tooltips.js:508
+#: gui/common/tooltips.js:350 gui/common/tooltips.js:704
 msgid "Heal:"
 msgstr "Leg:"
 
-#: gui/common/tooltips.js:238 gui/common/tooltips.js:287
-#: gui/common/tooltips.js:301
-msgid "health"
-msgstr "helse"
+#: gui/common/tooltips.js:352
+msgid "Health"
+msgstr "Helse"
 
-#: gui/common/tooltips.js:262 gui/common/tooltips.js:267
-#: gui/common/tooltips.js:272
-#, javascript-format
-msgid "%(label)s: %(value)s"
-msgstr ""
-
-#: gui/common/tooltips.js:263
+#: gui/common/tooltips.js:377
 msgid "Projectile Limit"
-msgstr ""
+msgstr "Prosjektilgrense"
 
-#: gui/common/tooltips.js:268
+#: gui/common/tooltips.js:382
 msgctxt "projectiles"
 msgid "Default"
-msgstr ""
+msgstr "Forvalg"
 
-#: gui/common/tooltips.js:273
+#: gui/common/tooltips.js:387
 msgctxt "projectiles"
 msgid "Per Unit"
+msgstr "Per enhet"
+
+#: gui/common/tooltips.js:396
+msgid "Number of repairers:"
 msgstr ""
 
-#: gui/common/tooltips.js:284
+#: gui/common/tooltips.js:402
 #, javascript-format
-msgid "%(repairRateLabel)s %(value)s %(health)s / %(second)s / %(worker)s"
-msgstr "%(repairRateLabel)s %(value)s %(health)s / %(second)s / %(worker)s"
+msgid "Add another worker to speed up the repairs by %(second)s second."
+msgid_plural ""
+"Add another worker to speed up the repairs by %(second)s seconds."
+msgstr[0] ""
+msgstr[1] ""
 
-#: gui/common/tooltips.js:285
-msgid "Repair Rate:"
-msgstr "Reparasjonshastighet:"
-
-#: gui/common/tooltips.js:289 gui/common/tooltips.js:303
-msgid "worker"
-msgstr "arbeider"
-
-#: gui/common/tooltips.js:298
+#: gui/common/tooltips.js:409
 #, javascript-format
-msgid "%(buildRateLabel)s %(value)s %(health)s / %(second)s / %(worker)s"
-msgstr "%(buildRateLabel)s %(value)s %(health)s / %(second)s / %(worker)s"
+msgid "Add a worker to finish the repairs in %(second)s second."
+msgid_plural "Add a worker to finish the repairs in %(second)s seconds."
+msgstr[0] ""
+msgstr[1] ""
 
-#: gui/common/tooltips.js:299
-msgid "Build Rate:"
-msgstr "Byggehastighet:"
+#: gui/common/tooltips.js:418
+msgid "Number of builders:"
+msgstr ""
 
-#: gui/common/tooltips.js:335 gui/common/tooltips.js:463
+#: gui/common/tooltips.js:424
+#, javascript-format
+msgid "Add another worker to speed up the construction by %(second)s second."
+msgid_plural ""
+"Add another worker to speed up the construction by %(second)s seconds."
+msgstr[0] ""
+msgstr[1] ""
+
+#: gui/common/tooltips.js:431
+#, javascript-format
+msgid "Add a worker to finish the construction in %(second)s second."
+msgid_plural "Add a worker to finish the construction in %(second)s seconds."
+msgstr[0] ""
+msgstr[1] ""
+
+#: gui/common/tooltips.js:466 gui/common/tooltips.js:657
 #, javascript-format
 msgid "%(component)s %(cost)s"
 msgstr "%(component)s %(cost)s"
 
-#: gui/common/tooltips.js:348
+#: gui/common/tooltips.js:502
 msgid "Gather Rates:"
 msgstr "Sankingshastigheter:"
 
-#: gui/common/tooltips.js:351
+#: gui/common/tooltips.js:505 gui/common/tooltips.js:527
 #, javascript-format
 msgid "%(resourceIcon)s %(rate)s"
 msgstr "%(resourceIcon)s %(rate)s"
 
+#: gui/common/tooltips.js:523
+msgid "Resource Trickle:"
+msgstr "Ressurs-drypp:"
+
+#: gui/common/tooltips.js:524
+#, javascript-format
+msgid "%(resources)s / %(time)s"
+msgstr "%(resources)s / %(time)s"
+
 #. Translation: This string is part of the resources cost string on
 #. the tooltip for wall structures.
-#: gui/common/tooltips.js:400
+#: gui/common/tooltips.js:576
 #, javascript-format
 msgid "%(resourceIcon)s %(minimum)s to %(resourceIcon)s %(maximum)s"
 msgstr "%(resourceIcon)s %(minimum)s til %(resourceIcon)s %(maximum)s"
 
-#: gui/common/tooltips.js:429
+#: gui/common/tooltips.js:605
 #, javascript-format
 msgid "Walls:  %(costs)s"
 msgstr "Vegger:  %(costs)s"
 
-#: gui/common/tooltips.js:430
+#: gui/common/tooltips.js:606
 #, javascript-format
 msgid "Towers:  %(costs)s"
 msgstr "Tårn:  %(costs)s"
 
-#: gui/common/tooltips.js:446
+#. Translation: Label in tooltip showing cost of a unit, structure or
+#. technology.
+#: gui/common/tooltips.js:614
+#, javascript-format
+msgid "%(label)s %(costs)s"
+msgstr ""
+
+#: gui/common/tooltips.js:615
+msgid "Cost:"
+msgstr ""
+
+#: gui/common/tooltips.js:628
+#, javascript-format
+msgid "Requires %(technology)s"
+msgstr "Krever %(technology)s"
+
+#: gui/common/tooltips.js:640
 #, javascript-format
 msgid "%(label)s %(populationBonus)s"
 msgstr "%(label)s %(populationBonus)s"
 
-#: gui/common/tooltips.js:447
+#: gui/common/tooltips.js:641
 msgid "Population Bonus:"
 msgstr "Befolkningsbonus:"
 
-#: gui/common/tooltips.js:468
+#: gui/common/tooltips.js:662
 msgid "Insufficient resources:"
-msgstr "Utilstrekkelige resurser:"
+msgstr "Utilstrekkelige ressurser:"
 
-#: gui/common/tooltips.js:482
+#: gui/common/tooltips.js:678
 #, javascript-format
 msgid "%(label)s %(speeds)s"
 msgstr "%(label)s %(speeds)s"
 
-#: gui/common/tooltips.js:483
+#: gui/common/tooltips.js:679
 msgid "Speed:"
 msgstr "Hastighet:"
 
-#: gui/common/tooltips.js:485 gui/common/tooltips.js:490
+#: gui/common/tooltips.js:681 gui/common/tooltips.js:686
 #, javascript-format
 msgid "%(speed)s %(movementType)s"
 msgstr "%(speed)s %(movementType)s"
 
-#: gui/common/tooltips.js:487
+#: gui/common/tooltips.js:683
 msgid "Walk"
 msgstr "Gange"
 
-#: gui/common/tooltips.js:492
+#: gui/common/tooltips.js:688
 msgid "Run"
 msgstr "Løp"
 
-#: gui/common/tooltips.js:507 gui/common/tooltips.js:513
-#: gui/common/tooltips.js:518
+#: gui/common/tooltips.js:703 gui/common/tooltips.js:709
+#: gui/common/tooltips.js:714 gui/common/tooltips.js:739
 #, javascript-format
 msgid "%(label)s %(val)s %(unit)s"
 msgid_plural "%(label)s %(val)s %(unit)s"
@@ -961,203 +1133,359 @@ msgstr[1] "%(label)s %(val)s %(unit)s"
 
 #. Translation: Short for hit points (or health points) that are healed in one
 #. healing action
-#: gui/common/tooltips.js:511
+#: gui/common/tooltips.js:707
 msgid "HP"
 msgid_plural "HP"
 msgstr[0] "HP"
 msgstr[1] "HP"
 
-#: gui/common/tooltips.js:532
+#: gui/common/tooltips.js:731
 #, javascript-format
 msgid "%(auralabel)s %(aurainfo)s"
 msgstr "%(auralabel)s %(aurainfo)s"
 
-#: gui/common/tooltips.js:533
+#: gui/common/tooltips.js:732
 #, javascript-format
 msgid "%(auraname)s:"
 msgstr "%(auraname)s:"
 
-#: gui/common/tooltips.js:549
+#: gui/common/tooltips.js:740
+msgctxt "aura"
+msgid "Range:"
+msgstr "Rekkevidde:"
+
+#: gui/common/tooltips.js:757
 #, javascript-format
 msgid "%(specificName)s (%(genericName)s)"
 msgstr "%(specificName)s (%(genericName)s)"
 
-#: gui/common/tooltips.js:560
+#. Translation: Example: "Epibátēs Athēnaîos [font="sans-bold-16"](Athenian
+#. Marine)[/font]"
+#: gui/common/tooltips.js:769
 #, javascript-format
 msgid "%(specificName)s %(fontStart)s(%(genericName)s)%(fontEnd)s"
-msgstr ""
+msgstr "%(specificName)s %(fontStart)s(%(genericName)s)%(fontEnd)s"
 
-#: gui/common/tooltips.js:575
+#: gui/common/tooltips.js:784
 msgid "Classes:"
 msgstr "Klasser:"
+
+#. Translation: %(component) will be the icon for the loot type and %(loot)
+#. will be the value.
+#: gui/common/tooltips.js:811
+#, javascript-format
+msgid "%(component)s %(loot)s"
+msgstr "%(component)s %(loot)s"
+
+#: gui/common/tooltips.js:821
+msgid "Loot:"
+msgstr "Bytte"
+
+#. Translation: Appears in a tooltip to indicate that right-clicking the
+#. corresponding GUI element will open the Template Details GUI page.
+#: gui/common/tooltips.js:829
+msgid "Right-click to view more information."
+msgstr ""
+
+#. Translation: Appears in a tooltip to indicate that clicking the
+#. corresponding GUI element will open the Template Details GUI page.
+#: gui/common/tooltips.js:835
+msgid "Click to view more information."
+msgstr ""
 
 #: gui/credits/credits.js:69
 #, javascript-format
 msgid "%(nick)s - %(name)s"
 msgstr "%(nick)s - %(name)s"
 
-#: gui/locale/locale_advanced.js:22 gui/locale/locale_advanced.js:76
-msgctxt "localeCountry"
-msgid "None"
-msgstr "Ingen"
+#: gui/options/options.js:100
+#, javascript-format
+msgid "Default: %(value)s"
+msgstr ""
 
-#: gui/locale/locale_advanced.js:91
-msgid "<invalid>"
-msgstr "<invalid>"
+#: gui/options/options.js:126
+#, javascript-format
+msgctxt "option number"
+msgid "Min: %(min)s, Max: %(max)s"
+msgstr "Min.: %(min)s, Maks.: %(max)s"
 
-#: gui/msgbox/msgbox.js:25 gui/pregame/mainmenu.js:163
-#: gui/splashscreen/splashscreen.xml:(caption):28
-msgid "OK"
-msgstr "OK"
+#: gui/options/options.js:128
+#, javascript-format
+msgctxt "option number"
+msgid "Min: %(min)s"
+msgstr "Min.: %(min)s"
 
-#: gui/options/options.js:273
+#: gui/options/options.js:130
+#, javascript-format
+msgctxt "option number"
+msgid "Max: %(max)s"
+msgstr "Maks.: %(max)s"
+
+#: gui/options/options.js:163
+#, javascript-format
+msgctxt "slider number"
+msgid "Value: %(val)s (min: %(min)s, max: %(max)s)"
+msgstr "Verdi: %(val)s (min: %(min)s, maks: %(max)s)"
+
+#: gui/options/options.js:299
 msgid ""
 "Resetting the options will erase your saved settings. Do you want to "
 "continue?"
 msgstr "Tilbakestilling av valg vil slette dine lagrede innstillinger. Ønsker du å fortsette?"
 
-#: gui/options/options.js:274 gui/options/options.js:341
-#: gui/savedgames/load.js:129
+#: gui/options/options.js:300 gui/options/options.js:350
+#: gui/options/options.js:376
 msgid "Warning"
 msgstr "Advarsel"
 
-#: gui/options/options.js:340
+#: gui/options/options.js:349
+msgid "Some setting values are invalid! Are you sure to save them?"
+msgstr "Noen innstillingsverdier er ugyldige! Er du sikker på at du vil lagre dem?"
+
+#: gui/options/options.js:375
 msgid "You have unsaved changes, do you want to close this window?"
 msgstr "Du har endringer som ikke er lagret, ønsker du å lukke dette vinduet?"
 
-#: gui/pregame/mainmenu.js:85
-msgid "disabled"
-msgstr "Deaktivert"
+#: gui/pregame/mainmenu.js:42
+#, javascript-format
+msgid ""
+"%(hotkey)s: View the structure tree of civilizations featured in 0 A.D."
+msgstr ""
 
-#: gui/pregame/mainmenu.js:88
+#: gui/pregame/mainmenu.js:45
+#, javascript-format
+msgid "%(hotkey)s: Learn about the many civilizations featured in 0 A.D."
+msgstr ""
+
+#: gui/pregame/mainmenu.js:48
+#, javascript-format
+msgid ""
+"%(hotkey)s: Launch the multiplayer lobby to join and host publicly visible "
+"games and chat with other players."
+msgstr ""
+
+#: gui/pregame/mainmenu.js:98
 msgid "connecting to server"
-msgstr "Kobler til server"
+msgstr "Kobler til tjener"
 
-#: gui/pregame/mainmenu.js:93
+#: gui/pregame/mainmenu.js:101
 #, javascript-format
 msgid "uploading (%f%%)"
 msgstr "Laster opp (%f%%)"
 
-#: gui/pregame/mainmenu.js:100
+#: gui/pregame/mainmenu.js:107
 msgid "upload succeeded"
 msgstr "Opplastningen ble fullført"
 
-#: gui/pregame/mainmenu.js:102
+#: gui/pregame/mainmenu.js:108
 #, javascript-format
 msgid "upload failed (%(errorCode)s)"
 msgstr "opplasting sviktet (%(errorCode)s)"
 
-#: gui/pregame/mainmenu.js:109
+#: gui/pregame/mainmenu.js:112
 #, javascript-format
 msgid "upload failed (%(errorMessage)s)"
 msgstr "opplasting sviktet (%(errorMessage)s)"
 
-#: gui/pregame/mainmenu.js:112
+#: gui/pregame/mainmenu.js:114
 msgid "unknown"
 msgstr "ukjent"
+
+#: gui/pregame/mainmenu.js:129
+msgid "Thank you for helping improve 0 A.D.!"
+msgstr "Takk for at du hjelper til med å forbedre 0 A.D.!"
+
+#: gui/pregame/mainmenu.js:130
+msgid "Anonymous feedback is currently enabled."
+msgstr "Anonyme tilbakemeldinger er påslått."
+
+#: gui/pregame/mainmenu.js:131
+#, javascript-format
+msgid "Status: %(status)s."
+msgstr "Status: %(status)s."
 
 #: gui/pregame/mainmenu.js:155
 #, javascript-format
 msgid ""
-"%(startWarning)sWarning:%(endWarning)s You appear to be using non-shader "
-"(fixed function) graphics. This option will be removed in a future 0 A.D. "
-"release, to allow for more advanced graphics features. We advise upgrading "
-"your graphics card to a more recent, shader-compatible model."
-msgstr "%(startWarning)sWarning:%(endWarning)s Det ser ut til at du bruker non-shader-grafikk (fastsatt funksjon). Dette alternativet vil bli fjernet i en fremtidig 0 A.D.-utgivelse for å tillate mer avansert grafikk. Vi anbefaler deg å oppgradere grafikkortet til en nyere modell som støtter shader-grafikk."
+"%(warning)s You appear to be using non-shader (fixed function) graphics. "
+"This option will be removed in a future 0 A.D. release, to allow for more "
+"advanced graphics features. We advise upgrading your graphics card to a more"
+" recent, shader-compatible model."
+msgstr ""
 
 #. Translation: This is the second paragraph of a warning. The
 #. warning explains that the user is using “non-shader“ graphics,
 #. and that in the future this will not be supported by the game, so
 #. the user will need a better graphics card.
-#: gui/pregame/mainmenu.js:161
+#: gui/pregame/mainmenu.js:163
 msgid "Please press \"Read More\" for more information or \"OK\" to continue."
-msgstr "Vennligst trykk \"Les Mer\" for mer informasjon eller \"OK\" for å fortsette."
+msgstr "Trykk \"Les mer\" for mer informasjon eller \"OK\" for å fortsette."
 
-#: gui/pregame/mainmenu.js:162
+#: gui/pregame/mainmenu.js:164
 msgid "WARNING!"
 msgstr "ADVARSEL!"
 
-#: gui/pregame/mainmenu.js:163
+#: gui/pregame/mainmenu.js:165 gui/splashscreen/splashscreen.xml:(caption):29
+msgid "OK"
+msgstr "OK"
+
+#: gui/pregame/mainmenu.js:165
 msgid "Read More"
 msgstr "Les mer"
 
-#: gui/pregame/mainmenu.js:256
+#: gui/pregame/mainmenu.js:247
 #, javascript-format
 msgid "Build: %(buildDate)s (%(revision)s)"
 msgstr "Bygg: %(buildDate)s (%(revision)s)"
 
-#: gui/pregame/mainmenu.js:288
+#: gui/pregame/mainmenu.js:259
 msgid "Are you sure you want to quit 0 A.D.?"
 msgstr "Er du sikker på at du vil avslutte 0 A.D.?"
 
-#: gui/pregame/mainmenu.js:289 gui/summary/summary.js:146
+#: gui/pregame/mainmenu.js:260 gui/pregame/mainmenu.js:274
 msgid "Confirmation"
 msgstr "Bekreftelse"
 
-#: gui/pregame/mainmenu.js:304
+#: gui/pregame/mainmenu.js:273
+msgid "Are you sure you want to quit 0 A.D. and open the Scenario Editor?"
+msgstr ""
+
+#: gui/pregame/mainmenu.js:281
 msgid ""
 "The scenario editor is not available or failed to load. See the game logs "
 "for additional information."
 msgstr "Kartverktøyet er ikke tilgjengelig eller kunne ikke lastes inn. Se loggene for spillet for ytterligere informasjon."
 
-#: gui/pregame/mainmenu.js:305 gui/replaymenu/replay_actions.js:116
+#: gui/pregame/mainmenu.js:282 gui/replaymenu/replay_actions.js:117
 msgid "Error"
 msgstr "Feil"
 
-#: gui/pregame/mainmenu.js:311
-msgid "Launch the multiplayer lobby. \\[DISABLED BY BUILD]"
-msgstr "Start flerspillerlobbyen. \\[DEAKTIVERT AV BYGG]"
+#: gui/pregame/mainmenu.js:288
+msgid ""
+"Launch the multiplayer lobby to join and host publicly visible games and "
+"chat with other players. \\[DISABLED BY BUILD]"
+msgstr ""
 
-#: gui/pregame/mainmenu.js:316 gui/pregame/mainmenu.xml:(caption):72
-#: gui/pregame/mainmenu.xml:(caption):103
+#: gui/pregame/mainmenu.js:293 gui/pregame/mainmenu.xml:(caption):68
+#: gui/pregame/mainmenu.xml:(caption):95
 msgid "Technical Details"
 msgstr "Tekniske detaljer"
 
-#: gui/pregame/mainmenu.js:321 gui/pregame/mainmenu.xml:(caption):149
+#: gui/pregame/mainmenu.js:298 gui/pregame/mainmenu.xml:(caption):146
 msgid "Manual"
 msgstr "Manual"
 
-#: gui/replaymenu/replay_actions.js:88
-msgid "You don't have the same mods active as the replay does."
-msgstr "Du har ikke skrudd på de samme modifikasjonene som denne reprisen.. "
-
-#: gui/replaymenu/replay_actions.js:89 gui/savedgames/load.js:116
+#. Translation: Label followed by a list of values.
+#: gui/reference/common/draw.js:48
 #, javascript-format
-msgid "Required: %(mods)s"
-msgstr "Krever: %(mods)s"
+msgid "%(listHeader)s %(listOfValues)s"
+msgstr ""
 
-#: gui/replaymenu/replay_actions.js:90 gui/savedgames/load.js:119
+#. Translation: Label in tooltip showing the resource type and quantity of a
+#. given resource supply.
+#: gui/reference/common/draw.js:67
 #, javascript-format
-msgid "Active: %(mods)s"
-msgstr "Aktive: %(mods)s"
+msgid "%(label)s %(component)s %(amount)s"
+msgstr ""
 
-#: gui/replaymenu/replay_actions.js:94
+#: gui/reference/common/draw.js:68
+msgid "Resource Supply:"
+msgstr ""
+
+#. Translation: Marks that a resource supply entity has an unending, infinite,
+#. supply of its resource.
+#: gui/reference/common/draw.js:71 gui/summary/summary.js:111
+msgid "∞"
+msgstr "∞"
+
+#: gui/reference/common/load.js:193
+#, javascript-format
+msgid "%(health_min)s to %(health_max)s"
+msgstr "%(health_min)s til %(health_max)s"
+
+#: gui/reference/structree/structree.js:49
+#, javascript-format
+msgid "%(hotkey)s: Switch to History."
+msgstr ""
+
+#: gui/reference/structree/structree.js:50
+#, javascript-format
+msgid "%(hotkey)s: Close Structure Tree."
+msgstr ""
+
+#. Translation: Label before a list of the names of units that build the
+#. structure selected.
+#: gui/reference/viewer/viewer.js:139
+msgid "Built by:"
+msgstr ""
+
+#. Translation: Label before a list of the names of structures or units that
+#. train the unit selected.
+#: gui/reference/viewer/viewer.js:152
+msgid "Trained by:"
+msgstr ""
+
+#. Translation: Label before a list of names of structures or units that
+#. research the technology selected.
+#: gui/reference/viewer/viewer.js:165
+msgid "Researched at:"
+msgstr ""
+
+#. Translation: Label before a list of the names of structures the selected
+#. unit can construct or build.
+#: gui/reference/viewer/viewer.js:177
+msgid "Builds:"
+msgstr ""
+
+#. Translation: Label before a list of the names of technologies the selected
+#. unit or structure can research.
+#: gui/reference/viewer/viewer.js:198
+msgid "Researches:"
+msgstr ""
+
+#. Translation: Label before a list of the names of units the selected unit or
+#. structure can train.
+#: gui/reference/viewer/viewer.js:210
+msgid "Trains:"
+msgstr ""
+
+#. Translation: Label before a list of the names of units or structures the
+#. selected unit or structure can be upgradable to.
+#: gui/reference/viewer/viewer.js:223
+msgid "Upgradable to:"
+msgstr ""
+
+#: gui/replaymenu/replay_actions.js:90
+msgid "This replay needs a different sequence of mods:"
+msgstr ""
+
+#: gui/replaymenu/replay_actions.js:95
 msgid "This replay is not compatible with your version of the game!"
 msgstr "Denne reprisen er ikke kompatibelt med din versjon av spillet!"
 
-#: gui/replaymenu/replay_actions.js:95
-#, javascript-format
-msgid "Your version: %(version)s"
-msgstr ""
-
 #: gui/replaymenu/replay_actions.js:96
 #, javascript-format
-msgid "Required version: %(version)s"
-msgstr ""
+msgid "Your version: %(version)s"
+msgstr "Din versjon: %(version)s"
 
-#: gui/replaymenu/replay_actions.js:99
+#: gui/replaymenu/replay_actions.js:97
+#, javascript-format
+msgid "Required version: %(version)s"
+msgstr "Påkrevd versjon: %(version)s"
+
+#: gui/replaymenu/replay_actions.js:100
 msgid "Incompatible replay"
 msgstr "Inkompatibel reprise"
 
-#: gui/replaymenu/replay_actions.js:116
+#: gui/replaymenu/replay_actions.js:117
 msgid "No summary data available."
 msgstr "Ingen sammendragsdata tilgjengelig."
 
-#: gui/replaymenu/replay_actions.js:157
+#: gui/replaymenu/replay_actions.js:166
 msgid "Are you sure you want to delete this replay permanently?"
 msgstr "Er du sikker på at du vil slette denne reprisen for godt?"
 
-#: gui/replaymenu/replay_actions.js:158
+#: gui/replaymenu/replay_actions.js:168
 msgid "Delete replay"
 msgstr "Slett reprise"
 
@@ -1213,403 +1541,390 @@ msgstr "%(min)s - %(max)s min"
 
 #: gui/replaymenu/replay_filters.js:142
 msgid "Single- and multiplayer"
-msgstr ""
+msgstr "Enkelt- og fler-spiller"
 
-#: gui/replaymenu/replay_filters.js:142 gui/pregame/mainmenu.xml:(caption):467
+#: gui/replaymenu/replay_filters.js:142 gui/pregame/mainmenu.xml:(caption):481
 msgid "Single Player"
-msgstr "Enespiller"
+msgstr "Énspiller"
 
-#: gui/replaymenu/replay_filters.js:142 gui/pregame/mainmenu.xml:(caption):482
+#: gui/replaymenu/replay_filters.js:142 gui/pregame/mainmenu.xml:(caption):496
 msgid "Multiplayer"
 msgstr "Flerspiller"
 
 #: gui/replaymenu/replay_filters.js:155
-msgctxt "victory condition"
-msgid "Any gametype"
+msgid "Any Victory Condition"
 msgstr ""
 
 #: gui/replaymenu/replay_filters.js:168
 msgid "Rated and unrated games"
-msgstr ""
+msgstr "Poenggitte og poengløse spill"
 
 #: gui/replaymenu/replay_filters.js:168
 msgid "Rated games"
-msgstr ""
+msgstr "Poenggitte spill"
 
 #: gui/replaymenu/replay_filters.js:168
 msgid "Unrated games"
-msgstr ""
+msgstr "Poengløse spill"
 
-#: gui/replaymenu/replay_menu.js:283
+#: gui/replaymenu/replay_menu.js:193
+msgid "Filter replays by typing one or more, partial or complete playernames."
+msgstr "Filtrer repriser ved å skrive ett eller flere, delvise eller hele spillernavn."
+
+#: gui/replaymenu/replay_menu.js:273
+#, javascript-format
+msgid "Players: %(numberOfPlayers)s"
+msgstr "Spillere: %(numberOfPlayers)s"
+
+#: gui/replaymenu/replay_menu.js:300
 msgid "yyyy-MM-dd HH:mm"
 msgstr "åååå-MM-dd TT:mm"
 
-#: gui/replaymenu/replay_menu.js:313
+#: gui/replaymenu/replay_menu.js:330
 msgid "yyyy-MM"
 msgstr "åååå-MM"
 
-#: gui/savedgames/load.js:15 gui/savedgames/save.js:28
-msgid "No saved games found"
-msgstr "Ingen lagrede spill funnet"
+#: gui/summary/layout.js:3 gui/summary/summary.xml:(caption):74
+msgid "Score"
+msgstr "Poeng"
 
-#: gui/savedgames/load.js:61
-#, javascript-format
-msgid "Mods: %(mods)s"
-msgstr ""
-
-#: gui/savedgames/load.js:91
-msgid "This saved game may not be compatible:"
-msgstr "Det lagrede spillet er muligens ikke kompatibelt."
-
-#: gui/savedgames/load.js:96
-#, javascript-format
-msgid ""
-"It needs 0 A.D. version %(requiredVersion)s, while you are running version "
-"%(currentVersion)s."
-msgstr "Den trenger 0 A.D. versjon %(requiredVersion)s. Din versjon er %(currentVersion)s."
-
-#: gui/savedgames/load.js:101
-msgid "It needs an older version of 0 A.D."
-msgstr "Trenger en eldre versjon av 0 A.D."
-
-#: gui/savedgames/load.js:105
-#, javascript-format
-msgid ""
-"It needs 0 A.D. savegame version %(requiredVersion)s, while you have "
-"savegame version %(currentVersion)s."
-msgstr "Trenger 0 A.D. savegame-versjon %(requiredVersion)s, du har savegame-versjon %(currentVersion)s."
-
-#: gui/savedgames/load.js:115
-msgid "The savegame needs a different set of mods:"
-msgstr ""
-
-#: gui/savedgames/load.js:124
-msgid "Do you still want to proceed?"
-msgstr "Vil du fremdeles fortsette?"
-
-#: gui/savedgames/load.js:175 gui/savedgames/save.js:58
-#: gui/savedgames/save.js:89
-#, javascript-format
-msgid "\"%(label)s\""
-msgstr "\"%(label)s\""
-
-#: gui/savedgames/load.js:177 gui/savedgames/save.js:90
-msgid "Saved game will be permanently deleted, are you sure?"
-msgstr "Lagret spill vil bli permanent slettet, er du sikker?"
-
-#: gui/savedgames/load.js:178 gui/savedgames/save.js:91
-msgid "DELETE"
-msgstr "SLETT"
-
-#: gui/savedgames/save.js:59
-msgid "Saved game will be permanently overwritten, are you sure?"
-msgstr "Lagret spill vil bli overskrevet, er du sikker?"
-
-#: gui/savedgames/save.js:60
-msgid "OVERWRITE SAVE"
-msgstr "OVERSKRIV LAGRET"
-
-#: gui/structree/load.js:171
-#, javascript-format
-msgid "%(val1)s to %(val2)s"
-msgstr "%(val1)s til %(val2)s"
-
-#: gui/summary/layout.js:4 gui/summary/layout.js:21 gui/summary/layout.js:58
-#: gui/summary/layout.js:94 gui/summary/layout.js:137
-#: gui/summary/layout.js:158 gui/summary/summary.xml:(caption):104
+#: gui/summary/layout.js:5 gui/summary/layout.js:23 gui/summary/layout.js:61
+#: gui/summary/layout.js:101 gui/summary/layout.js:152
+#: gui/summary/layout.js:184 gui/summary/summary.xml:(caption):123
 msgid "Player name"
 msgstr "Spillernavn"
 
-#: gui/summary/layout.js:5
-msgid "Economy score"
-msgstr "Økonomipoeng"
-
 #: gui/summary/layout.js:6
-msgid "Military score"
-msgstr "Militærpoeng"
-
-#: gui/summary/layout.js:7
-msgid "Exploration score"
-msgstr "Utforskningspoeng"
-
-#: gui/summary/layout.js:8
 msgid "Total score"
 msgstr "Total poengsum"
 
-#: gui/summary/layout.js:22 gui/summary/layout.js:59 gui/summary/layout.js:99
+#: gui/summary/layout.js:7
+msgid "Economy score"
+msgstr "Økonomipoeng"
+
+#: gui/summary/layout.js:8
+msgid "Military score"
+msgstr "Militærpoeng"
+
+#: gui/summary/layout.js:9
+msgid "Exploration score"
+msgstr "Utforskningspoeng"
+
+#: gui/summary/layout.js:21 gui/summary/summary.xml:(caption):81
+msgid "Buildings"
+msgstr "Bygninger"
+
+#: gui/summary/layout.js:24 gui/summary/layout.js:62 gui/summary/layout.js:102
 msgid "Total"
 msgstr "Totalt"
 
-#: gui/summary/layout.js:23
+#: gui/summary/layout.js:25
 msgid "Houses"
 msgstr "Hus"
 
-#: gui/summary/layout.js:24
+#: gui/summary/layout.js:26
 msgid "Economic"
 msgstr "Økonomisk"
 
-#: gui/summary/layout.js:25
+#: gui/summary/layout.js:27
 msgid "Outposts"
 msgstr "Utposter"
 
-#: gui/summary/layout.js:26
+#: gui/summary/layout.js:28
 msgid "Military"
 msgstr "Militære"
 
-#: gui/summary/layout.js:27
+#: gui/summary/layout.js:29
 msgid "Fortresses"
 msgstr "Festninger"
 
-#: gui/summary/layout.js:28
+#: gui/summary/layout.js:30
 msgid "Civ centers"
 msgstr "Samfunnssentre"
 
-#: gui/summary/layout.js:29
+#: gui/summary/layout.js:31
 msgid "Wonders"
 msgstr "Underverk"
 
-#: gui/summary/layout.js:33
+#: gui/summary/layout.js:35
 #, javascript-format
 msgid ""
 "Buildings Statistics (%(constructed)s / %(destroyed)s / %(captured)s / "
 "%(lost)s)"
-msgstr ""
+msgstr "Bygningsstatistikk (%(constructed)s / %(destroyed)s / %(captured)s / %(lost)s)"
 
-#: gui/summary/layout.js:35
-msgid "Constructed"
-msgstr ""
+#: gui/summary/layout.js:59 gui/summary/summary.xml:(caption):88
+msgid "Units"
+msgstr "Enheter"
 
-#: gui/summary/layout.js:36
-msgid "Destroyed"
-msgstr ""
-
-#: gui/summary/layout.js:37
-msgid "Captured"
-msgstr ""
-
-#: gui/summary/layout.js:38 gui/summary/layout.js:73
-msgid "Lost"
-msgstr ""
-
-#: gui/summary/layout.js:60
+#: gui/summary/layout.js:63
 msgid "Infantry"
 msgstr "Infanteri"
 
-#: gui/summary/layout.js:61
+#: gui/summary/layout.js:64
 msgid "Worker"
 msgstr "Arbeider"
 
-#: gui/summary/layout.js:62
+#: gui/summary/layout.js:65
 msgid "Cavalry"
 msgstr "Kavaleri"
 
-#: gui/summary/layout.js:63
+#: gui/summary/layout.js:66
 msgid "Champion"
 msgstr "Stormester"
 
-#: gui/summary/layout.js:65
+#: gui/summary/layout.js:68
+msgid "Siege"
+msgstr "Beleir"
+
+#: gui/summary/layout.js:69
 msgid "Navy"
 msgstr "Marine"
 
-#: gui/summary/layout.js:66
+#: gui/summary/layout.js:70
 msgid "Traders"
 msgstr "Handelsmenn"
 
-#: gui/summary/layout.js:70
-#, javascript-format
-msgid "Units Statistics (%(trained)s / %(lost)s / %(killed)s)"
-msgstr ""
-
-#: gui/summary/layout.js:72
-msgid "Trained"
-msgstr ""
-
 #: gui/summary/layout.js:74
-msgid "Killed"
+#, javascript-format
+msgid "Units Statistics (%(trained)s / %(killed)s / %(captured)s / %(lost)s)"
+msgstr "Enhetsstatistikk (%(trained)s / %(killed)s / %(captured)s / %(lost)s)"
+
+#: gui/summary/layout.js:99 gui/summary/summary.xml:(caption):95
+msgid "Resources"
+msgstr "Ressurser"
+
+#: gui/summary/layout.js:111
+msgid "Tributes"
 msgstr ""
 
-#: gui/summary/layout.js:95
-msgid "Food"
-msgstr "Mat"
-
-#: gui/summary/layout.js:96
-msgid "Wood"
-msgstr "Tømmer"
-
-#: gui/summary/layout.js:97
-msgid "Stone"
-msgstr "Stein"
-
-#: gui/summary/layout.js:98
-msgid "Metal"
-msgstr "Metall"
-
-#: gui/summary/layout.js:101
+#: gui/summary/layout.js:112
 #, javascript-format
 msgid ""
 "Tributes \n"
 "(%(sent)s / %(received)s)"
-msgstr ""
+msgstr "Hyllester\n(%(sent)s / %(received)s)"
 
-#: gui/summary/layout.js:103
-msgid "Sent"
-msgstr ""
-
-#: gui/summary/layout.js:104
-msgid "Received"
-msgstr ""
-
-#: gui/summary/layout.js:109
+#: gui/summary/layout.js:120
 msgid "Treasures collected"
 msgstr "Skatter samlet"
 
-#: gui/summary/layout.js:110
+#: gui/summary/layout.js:121
 msgid "Loot"
 msgstr "Bytte"
 
-#: gui/summary/layout.js:114
+#: gui/summary/layout.js:122
+msgid "Livestock bred"
+msgstr ""
+
+#: gui/summary/layout.js:126
 #, javascript-format
 msgid "Resource Statistics (%(gathered)s / %(used)s)"
-msgstr ""
+msgstr "Ressursstatistikk (%(gathered)s / %(used)s)"
 
-#: gui/summary/layout.js:116
-msgid "Gathered"
-msgstr ""
+#: gui/summary/layout.js:150 gui/summary/summary.xml:(caption):102
+msgid "Market"
+msgstr "Marked"
 
-#: gui/summary/layout.js:117
-msgid "Used"
-msgstr ""
-
-#: gui/summary/layout.js:138
-msgid "Food exchanged"
-msgstr "Mat utvekslet"
-
-#: gui/summary/layout.js:139
-msgid "Wood exchanged"
-msgstr "Tømmer utvekslet"
-
-#: gui/summary/layout.js:140
-msgid "Stone exchanged"
-msgstr "Stein utvekslet"
-
-#: gui/summary/layout.js:141
-msgid "Metal exchanged"
-msgstr "Metall utvekslet"
-
-#: gui/summary/layout.js:142
-msgid "Barter efficiency"
-msgstr "Byttehandel effektivitet"
-
-#: gui/summary/layout.js:143
+#: gui/summary/layout.js:153
 msgid "Trade income"
 msgstr "Handelsinntekt"
 
-#: gui/summary/layout.js:159
-msgid ""
-"Vegetarian\n"
-"ratio"
-msgstr "Vegetarianer\nforhold"
+#: gui/summary/layout.js:154
+msgid "Barter efficiency"
+msgstr "Byttehandel effektivitet"
 
+#. Translation: use %(resourceWithinSentence)s if needed
 #: gui/summary/layout.js:160
+#, javascript-format
+msgid "%(resourceFirstWord)s exchanged"
+msgstr "%(resourceFirstWord)s utvekslet"
+
+#: gui/summary/layout.js:182 gui/summary/summary.xml:(caption):109
+#: gui/credits/texts/misc.jsonTitle
+msgid "Miscellaneous"
+msgstr "Diverse"
+
+#: gui/summary/layout.js:185
+msgid "Kill / Death ratio"
+msgstr "Drap / død-forhold"
+
+#: gui/summary/layout.js:186
+msgid "Map control (peak)"
+msgstr "Kartkontroll (topp)"
+
+#: gui/summary/layout.js:187
+msgid "Map control (finish)"
+msgstr "Kartkontroll (slutt)"
+
+#: gui/summary/layout.js:188
+msgid "Map exploration"
+msgstr "Kartutforskning"
+
+#: gui/summary/layout.js:189
+msgid "Vegetarian ratio"
+msgstr "Vegetarianerandel"
+
+#: gui/summary/layout.js:190
 msgid "Feminization"
 msgstr "Feminisering"
 
-#: gui/summary/layout.js:161
+#: gui/summary/layout.js:193
+msgid "Bribes"
+msgstr ""
+
+#: gui/summary/layout.js:194
+#, javascript-format
 msgid ""
-"Kill / Death\n"
-"ratio"
-msgstr "Drap / død\nforhold"
+"Bribes\n"
+"(%(succeeded)s / %(failed)s)"
+msgstr "Bestikkelser\n(%(succeeded)s / %(failed)s)"
 
-#: gui/summary/layout.js:162
-msgid ""
-"Map\n"
-"exploration"
-msgstr "Kart\nUtforsking"
-
-#: gui/summary/layout.js:163
-msgid "At peak"
-msgstr "Ved høydepunkt"
-
-#: gui/summary/layout.js:164
-msgid "At finish"
-msgstr "Ved slutt"
-
-#: gui/summary/layout.js:167
-msgid "Map control"
-msgstr "Kartkontroll"
-
-#: gui/summary/layout.js:312
+#: gui/summary/layout.js:357
 msgid "Team total"
 msgstr "Totalt for lag"
 
-#: gui/summary/summary.js:145
-msgid "Are you sure you want to quit the lobby?"
+#: gui/summary/summary.js:30
+msgid "Trained"
+msgstr "Trente"
+
+#: gui/summary/summary.js:35
+msgid "Constructed"
+msgstr "Bygde"
+
+#: gui/summary/summary.js:40
+msgid "Gathered"
+msgstr "Sanket"
+
+#: gui/summary/summary.js:45
+msgid "Sent"
+msgstr "Sendt"
+
+#: gui/summary/summary.js:50
+msgid "Bought"
+msgstr "Kjøpt"
+
+#: gui/summary/summary.js:55
+msgid "Income"
+msgstr "Inntekt"
+
+#: gui/summary/summary.js:60
+msgid "Captured"
+msgstr "Erobret"
+
+#: gui/summary/summary.js:65
+msgid "Succeeded"
+msgstr "Vellykket"
+
+#: gui/summary/summary.js:70
+msgid "Destroyed"
+msgstr "Ødela"
+
+#: gui/summary/summary.js:75
+msgid "Killed"
+msgstr "Drepte"
+
+#: gui/summary/summary.js:80
+msgid "Lost"
+msgstr "Tapte"
+
+#: gui/summary/summary.js:85
+msgid "Used"
+msgstr "Brukt"
+
+#: gui/summary/summary.js:90
+msgid "Received"
+msgstr "Mottatt"
+
+#: gui/summary/summary.js:95
+msgid "Sold"
+msgstr "Solgt"
+
+#: gui/summary/summary.js:100
+msgid "Outcome"
+msgstr "Resultat"
+
+#: gui/summary/summary.js:105
+msgid "Failed"
+msgstr "Mislykket"
+
+#: gui/summary/summary.js:335
+msgid "Time elapsed"
 msgstr ""
 
-#: gui/summary/summary.js:196
+#: gui/summary/summary.js:491
 msgid "Current Scores"
-msgstr ""
+msgstr "Gjeldende poengsummer"
 
-#: gui/summary/summary.js:198
+#: gui/summary/summary.js:493
 msgid "Scores at the end of the game."
 msgstr "Poengsum ved spillets slutt."
 
-#: gui/summary/summary.js:200
+#: gui/summary/summary.js:495
 msgid "You have been disconnected."
-msgstr ""
+msgstr "Du har blitt frakoblet."
 
-#: gui/summary/summary.js:202
+#: gui/summary/summary.js:497
 msgid "You have left the game."
-msgstr ""
+msgstr "Du har forlatt spillet."
 
-#: gui/summary/summary.js:204
+#: gui/summary/summary.js:499
 msgid "You have won the battle!"
+msgstr "Du har vunnet slaget!"
+
+#: gui/summary/summary.js:501
+msgid "You have been defeated…"
 msgstr ""
 
-#: gui/summary/summary.js:206
-msgid "You have been defeated..."
-msgstr ""
-
-#: gui/summary/summary.js:207
+#: gui/summary/summary.js:502
 msgid "You have abandoned the game."
-msgstr ""
+msgstr "Du har forlatt spillet."
 
-#: gui/summary/summary.js:212
+#: gui/summary/summary.js:505
 #, javascript-format
 msgid "Game time elapsed: %(time)s"
 msgstr "Spilltid forløpt: %(time)s"
 
-#: gui/summary/summary.js:220
+#: gui/summary/summary.js:513
 #, javascript-format
 msgid "%(mapName)s - %(mapType)s"
 msgstr "%(mapName)s - %(mapType)s"
 
-#: gui/civinfo/civinfo.xml:(caption):16
+#: gui/summary/summary.js:525
+#, javascript-format
+msgid "%(hotkey)s: Toggle the multiplayer lobby in a dialog window."
+msgstr ""
+
+#: gui/civinfo/civinfo.xml:(caption):20
 msgid "Civilizations"
 msgstr "Sivilisasjoner"
 
-#: gui/civinfo/civinfo.xml:(caption):28
+#: gui/civinfo/civinfo.xml:(caption):32
 msgid "Civilization Selection"
 msgstr "Siviliasjons Valg"
 
-#: gui/civinfo/civinfo.xml:(caption):119 gui/credits/credits.xml:(caption):36
-#: gui/options/options.xml:(caption):88
-#: gui/structree/structree.xml:(caption):119
+#: gui/civinfo/civinfo.xml:(caption):125
+#: gui/pregame/mainmenu.xml:(caption):181
+#: gui/reference/structree/structree.xml:(caption):19
+msgid "Structure Tree"
+msgstr "Bygningstre"
+
+#: gui/civinfo/civinfo.xml:(caption):137 gui/credits/credits.xml:(caption):32
+#: gui/options/options.xml:(caption):60
+#: gui/reference/structree/structree.xml:(caption):137
+#: gui/reference/viewer/viewer.xml:(caption):37
 msgid "Close"
 msgstr "Lukk"
 
-#: gui/credits/credits.xml:(caption):18
+#: gui/credits/credits.xml:(caption):19
 msgid "0 A.D. Credits"
-msgstr "0 A.D bidragsytere"
+msgstr "0 A.D-bidragsytere"
 
-#: gui/locale/locale.xml:(caption):14
-#: gui/locale/locale_advanced.xml:(caption):14
-#: gui/pregame/mainmenu.xml:(caption):339
+#: gui/locale/locale.xml:(caption):14 gui/pregame/mainmenu.xml:(caption):382
 msgid "Language"
 msgstr "Språk"
 
 #: gui/locale/locale.xml:(caption):17
-#: gui/locale/locale_advanced.xml:(caption):17
 msgid "Language:"
 msgstr "Språk:"
 
@@ -1619,11 +1934,9 @@ msgstr "Språk:"
 #. settings, such as ‘en_US’.
 #: gui/locale/locale.xml:(caption):31
 msgid "Locale:"
-msgstr "Lokalisering"
+msgstr "Lokaltilpassing:"
 
 #: gui/locale/locale.xml:(caption):36
-#: gui/locale/locale_advanced.xml:(caption):65
-#: gui/savedgames/load.xml:(caption):28 gui/savedgames/save.xml:(caption):37
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -1632,482 +1945,413 @@ msgid "Advanced"
 msgstr "Avansert"
 
 #: gui/locale/locale.xml:(caption):46
-#: gui/locale/locale_advanced.xml:(caption):75
 msgid "Accept"
 msgstr "Godta"
 
-#: gui/locale/locale_advanced.xml:(caption):25
-msgid "Country:"
-msgstr "Land"
-
-#: gui/locale/locale_advanced.xml:(caption):34
-msgid "Script:"
-msgstr "Skript:"
-
-#: gui/locale/locale_advanced.xml:(caption):41
-msgid "Variant (unused):"
-msgstr "Variant (ubrukt):"
-
-#: gui/locale/locale_advanced.xml:(caption):48
-msgid "Keywords (unused):"
-msgstr "Nøkkelord (ubrukt):"
-
-#: gui/locale/locale_advanced.xml:(caption):55
-msgid "Resulting locale:"
-msgstr "Resulterende plass:"
-
-#: gui/locale/locale_advanced.xml:(caption):60
-msgid "Dictionary files used:"
-msgstr "Ordbok-filer som brukes:"
-
-#: gui/locale/locale_advanced.xml:(caption):70
-msgid "Auto detect"
-msgstr "Gjenkjenn automatisk"
-
-#: gui/locale/locale_advanced.xml:(tooltip):37
-msgid ""
-"Optional four-letter script code part following the language code (as listed"
-" in ISO 15924)"
-msgstr "Valgfritt firebokstavers skriptkodedel som etterfølger språkkoden (som listeført i ISO 15924)"
-
-#: gui/locale/locale_advanced.xml:(tooltip):44
-#: gui/locale/locale_advanced.xml:(tooltip):51
-msgid "Not implemented yet."
-msgstr "Ikke implementert enda."
-
-#: gui/options/options.xml:(caption):18
+#: gui/options/options.xml:(caption):15
 msgid "Game Options"
 msgstr "Spillinnstillinger"
 
-#: gui/options/options.xml:(caption):22
-msgid "General"
-msgstr "Generelt"
-
-#: gui/options/options.xml:(caption):35
-msgid "Graphics Settings"
-msgstr "Grafiske innstillinger"
-
-#: gui/options/options.xml:(caption):48
-msgid "Sound Settings"
-msgstr "Lydinnstillinger"
-
-#: gui/options/options.xml:(caption):61
-msgid "Lobby Settings"
-msgstr "Lobby-innstillinger"
-
-#: gui/options/options.xml:(caption):73
+#: gui/options/options.xml:(caption):42
 msgid "Reset"
 msgstr "Tilbakestill"
 
-#: gui/options/options.xml:(caption):78
+#: gui/options/options.xml:(caption):48
 msgid "Revert"
 msgstr "Gå tilbake"
 
-#: gui/options/options.xml:(caption):83 gui/savedgames/save.xml:(caption):47
+#: gui/options/options.xml:(caption):54
 msgid "Save"
 msgstr "Lagre"
 
-#: gui/options/options.xml:(tooltip):74
+#: gui/options/options.xml:(tooltip):43
 msgid "Resets user settings to their game default"
 msgstr "Tilbakestill brukerinnstillinger til deres spillforvalg"
 
-#: gui/options/options.xml:(tooltip):79
+#: gui/options/options.xml:(tooltip):49
 msgid "Reverts to previous saved settings"
 msgstr "Går tilbake til tidligere lagrede innstillinger"
 
-#: gui/options/options.xml:(tooltip):84
+#: gui/options/options.xml:(tooltip):55
 msgid "Saves changes"
 msgstr "Lagre endringer"
 
-#: gui/options/options.xml:(tooltip):89
+#: gui/options/options.xml:(tooltip):61
 msgid "Unsaved changes affect this session only"
 msgstr "Endringer som ikke er lagret vil kun påvirke denne økten"
 
-#: gui/pregame/mainmenu.xml:62
+#: gui/pregame/mainmenu.xml:58
 msgid "Help improve 0 A.D.!"
-msgstr "Hjelp med å forbedre 0 A.D.!"
+msgstr "Hjelp til med å forbedre 0 A.D.!"
 
-#: gui/pregame/mainmenu.xml:64
+#: gui/pregame/mainmenu.xml:60
 msgid ""
 "You can automatically send us anonymous feedback that will help us fix bugs,"
 " and improve performance and compatibility."
 msgstr "Du kan automatisk sende oss anonyme tilbakemeldinger som vil hjelpe oss med å fikse feil og forbedre ytelse og kompatibilitet."
 
-#: gui/pregame/mainmenu.xml:90
-msgid "Thank you for helping improve 0 A.D.!"
-msgstr "Takk for at du hjelper med å forbedre 0 A.D.!"
+#: gui/pregame/mainmenu.xml:562
+msgid "Alpha XXIII: Ken Wood"
+msgstr "Alpha XVIII: Ken Wood"
 
-#: gui/pregame/mainmenu.xml:92
-msgid "Anonymous feedback is currently enabled."
-msgstr "Anonyme tilbakemeldinger er aktivert."
-
-#: gui/pregame/mainmenu.xml:94
-msgid "Status: $status."
-msgstr "Status: $status."
-
-#: gui/pregame/mainmenu.xml:535
-msgid "Alpha XX: Timosthenes"
-msgstr "ALPHA XX : Timosthenes"
-
-#: gui/pregame/mainmenu.xml:537
+#: gui/pregame/mainmenu.xml:564
 msgid ""
 "WARNING: This is an early development version of the game. Many features "
 "have not been added yet."
 msgstr "ADVARSEL: Dette er en tidlig utvikler-versjon av spillet. Mange funksjoner har ikke blitt lagt til enda."
 
-#: gui/pregame/mainmenu.xml:(caption):68
+#: gui/pregame/mainmenu.xml:(caption):64
 msgid "Enable Feedback"
 msgstr "Skru på tilbakemeldinger"
 
-#: gui/pregame/mainmenu.xml:(caption):99
+#: gui/pregame/mainmenu.xml:(caption):91
 msgid "Disable Feedback"
 msgstr "Skru av tilbakemeldinger"
 
-#: gui/pregame/mainmenu.xml:(caption):166
-#: gui/structree/structree.xml:(caption):17
-msgid "Structure Tree"
-msgstr "Bygningstre"
+#: gui/pregame/mainmenu.xml:(caption):165
+msgid "Tutorial"
+msgstr "Opplæring"
 
-#: gui/pregame/mainmenu.xml:(caption):183
+#: gui/pregame/mainmenu.xml:(caption):197
+#: gui/reference/structree/structree.xml:(caption):126
 msgid "History"
 msgstr "Historie"
 
-#: gui/pregame/mainmenu.xml:(caption):208
+#: gui/pregame/mainmenu.xml:(caption):219
 msgid "Matches"
 msgstr "Kamper"
 
-#: gui/pregame/mainmenu.xml:(caption):222
+#: gui/pregame/mainmenu.xml:(caption):233
 msgid "Campaigns"
 msgstr "Kampanjer"
 
-#: gui/pregame/mainmenu.xml:(caption):239 gui/savedgames/load.xml:(caption):19
+#: gui/pregame/mainmenu.xml:(caption):246
 msgid "Load Game"
 msgstr "Last inn spill"
 
-#. Join a game by specifying the host's IP address.
-#: gui/pregame/mainmenu.xml:(caption):262
-msgid "Join Game"
-msgstr "Delta i spillet"
-
-#: gui/pregame/mainmenu.xml:(caption):277
-msgid "Host Game"
-msgstr "Arrangér spill"
-
-#: gui/pregame/mainmenu.xml:(caption):292
-msgid "Game Lobby"
-msgstr "Spill-lobby"
-
-#: gui/pregame/mainmenu.xml:(caption):322
-msgid "Options"
-msgstr "Valg"
-
-#: gui/pregame/mainmenu.xml:(caption):355
+#: gui/pregame/mainmenu.xml:(caption):260
+#: gui/pregame/mainmenu.xml:(caption):340
 msgid "Replays"
 msgstr "Repriser"
 
-#: gui/pregame/mainmenu.xml:(caption):369
-msgid "Scenario Editor"
-msgstr "Kartverktøy"
+#. Join a game by specifying the host's IP address.
+#: gui/pregame/mainmenu.xml:(caption):288
+msgid "Join Game"
+msgstr "Delta i spillet"
 
-#: gui/pregame/mainmenu.xml:(caption):382
-msgid "Welcome Screen"
-msgstr "Velkomstskjerm"
+#: gui/pregame/mainmenu.xml:(caption):302
+msgid "Host Game"
+msgstr "Arranger spill"
 
-#: gui/pregame/mainmenu.xml:(caption):397
+#: gui/pregame/mainmenu.xml:(caption):318
+msgid "Game Lobby"
+msgstr "Spill-lobby"
+
+#: gui/pregame/mainmenu.xml:(caption):368
+msgid "Options"
+msgstr "Valg"
+
+#: gui/pregame/mainmenu.xml:(caption):396
 msgid "Mod Selection"
 msgstr "Modvalg"
 
-#: gui/pregame/mainmenu.xml:(caption):452
-msgid "Learn To Play"
+#: gui/pregame/mainmenu.xml:(caption):408
+msgid "Welcome Screen"
+msgstr "Velkomstskjerm"
+
+#: gui/pregame/mainmenu.xml:(caption):466
+msgid "Learn to Play"
 msgstr "Lær å spille"
 
-#: gui/pregame/mainmenu.xml:(caption):497
-msgid "Tools & Options"
-msgstr "Verktøy & innstillinger"
+#: gui/pregame/mainmenu.xml:(caption):511
+msgid "Settings"
+msgstr "Innstillinger"
 
-#: gui/pregame/mainmenu.xml:(caption):512
+#: gui/pregame/mainmenu.xml:(caption):526
+msgid "Scenario Editor"
+msgstr "Kartverktøy"
+
+#: gui/pregame/mainmenu.xml:(caption):540
 msgid "Exit"
 msgstr "Avslutt"
 
-#: gui/pregame/mainmenu.xml:(caption):547
+#: gui/pregame/mainmenu.xml:(caption):574
 msgid "Website"
 msgstr "Nettsted"
 
-#: gui/pregame/mainmenu.xml:(caption):559
+#: gui/pregame/mainmenu.xml:(caption):586
 msgid "Chat"
 msgstr "Nettprat"
 
-#: gui/pregame/mainmenu.xml:(caption):571
+#: gui/pregame/mainmenu.xml:(caption):598
 msgid "Report a Bug"
-msgstr "Rapporter en feil"
+msgstr "Rapporter feil"
 
-#: gui/pregame/mainmenu.xml:(caption):583
-msgid "Translate the game"
+#: gui/pregame/mainmenu.xml:(caption):610
+msgid "Translate the Game"
 msgstr "Oversett spillet"
 
-#: gui/pregame/mainmenu.xml:(caption):595
+#: gui/pregame/mainmenu.xml:(caption):622
+msgid "Donate"
+msgstr ""
+
+#: gui/pregame/mainmenu.xml:(caption):634
 msgid "Credits"
 msgstr "Æreshenvisninger"
 
-#: gui/pregame/mainmenu.xml:(caption):624
+#: gui/pregame/mainmenu.xml:(caption):663
 msgid "WILDFIRE GAMES"
 msgstr "WILDFIRE GAMES"
 
-#: gui/pregame/mainmenu.xml:(tooltip):150
+#: gui/pregame/mainmenu.xml:(tooltip):147
 msgid "Open the 0 A.D. Game Manual."
 msgstr "Åpner spillmanualen for 0 A.D."
 
-#: gui/pregame/mainmenu.xml:(tooltip):167
-msgid "View the structure tree of civilizations featured in 0 A.D."
-msgstr "Se bygningstreet til sivilisasjonene i 0 A.D."
+#: gui/pregame/mainmenu.xml:(tooltip):166
+msgid "Start the economic tutorial."
+msgstr "Start den økonomiske opplæringen."
 
-#: gui/pregame/mainmenu.xml:(tooltip):184
-msgid "Learn about the many civilizations featured in 0 A.D."
-msgstr "Lær om de mange sivilisasjonene i 0 A.D."
-
-#: gui/pregame/mainmenu.xml:(tooltip):209
+#: gui/pregame/mainmenu.xml:(tooltip):220
 msgid "Click here to start a new single player game."
-msgstr "Klikk her for å starte et nytt enspiller spill."
+msgstr "Klikk her for å starte et nytt énspiller-spill."
 
-#: gui/pregame/mainmenu.xml:(tooltip):223
+#: gui/pregame/mainmenu.xml:(tooltip):234
 msgid ""
 "Relive history through historical military campaigns. \\[NOT YET "
 "IMPLEMENTED]"
 msgstr "Opplev historien gjennom historiske militære tokt.  \\[NOT YET IMPLEMENTED]"
 
-#: gui/pregame/mainmenu.xml:(tooltip):240
+#: gui/pregame/mainmenu.xml:(tooltip):247
 msgid "Click here to load a saved game."
 msgstr "Klikk her for å laste inn et lagret spill."
 
-#: gui/pregame/mainmenu.xml:(tooltip):263
-msgid "Joining an existing multiplayer game."
-msgstr "Deltar i et eksisterende flerspiller-spill."
-
-#: gui/pregame/mainmenu.xml:(tooltip):278
-msgid "Host a multiplayer game.\\n\\nRequires UDP port 20595 to be open."
-msgstr "Arrangér et flerspiller-spill.\\n\\nKrever at UDP port 20595 er åpen."
-
-#: gui/pregame/mainmenu.xml:(tooltip):293
-msgid "Launch the multiplayer lobby."
-msgstr "Start flerspiller-lobbyen"
-
-#: gui/pregame/mainmenu.xml:(tooltip):323
-msgid "Adjust game settings."
-msgstr "Juster spillinstillinger."
-
-#: gui/pregame/mainmenu.xml:(tooltip):340
-msgid "Choose the language of the game."
-msgstr "Velg språket i spillet."
-
-#: gui/pregame/mainmenu.xml:(tooltip):356
+#: gui/pregame/mainmenu.xml:(tooltip):261
+#: gui/pregame/mainmenu.xml:(tooltip):341
 msgid "Playback previous games."
 msgstr "Se avspillinger av tidligere spill."
 
-#: gui/pregame/mainmenu.xml:(tooltip):370
-msgid ""
-"Open the Atlas Scenario Editor in a new window. You can run this more "
-"reliably by starting the game with the command-line argument \"-editor\"."
-msgstr "Åpne Atlas kartverktøyet i et nytt vindu. Start spillet ved hjelp av kommando-linjen \"-editor\" for å kjøre kartverktøyet på en mer stabil måte."
+#: gui/pregame/mainmenu.xml:(tooltip):289
+msgid "Joining an existing multiplayer game."
+msgstr "Deltar i et eksisterende flerspiller-spill."
+
+#: gui/pregame/mainmenu.xml:(tooltip):303
+msgid "Host a multiplayer game.\\n\\nRequires UDP port 20595 to be open."
+msgstr "Arrangér et flerspiller-spill.\\n\\nKrever at UDP port 20595 er åpen."
+
+#: gui/pregame/mainmenu.xml:(tooltip):369
+msgid "Adjust game settings."
+msgstr "Juster spillinstillinger."
 
 #: gui/pregame/mainmenu.xml:(tooltip):383
+msgid "Choose the language of the game."
+msgstr "Velg språket i spillet."
+
+#: gui/pregame/mainmenu.xml:(tooltip):397
+msgid "Select and download mods for the game."
+msgstr ""
+
+#: gui/pregame/mainmenu.xml:(tooltip):409
 msgid "Show the Welcome Screen. Useful if you hid it by mistake."
 msgstr "Vis velkomstskjermen. Nyttig dersom du valgte å skjule den ved en feil."
 
-#: gui/pregame/mainmenu.xml:(tooltip):398
-msgid "Select mods to use."
-msgstr "Velg mod-ene som skal brukes"
-
-#: gui/pregame/mainmenu.xml:(tooltip):453
+#: gui/pregame/mainmenu.xml:(tooltip):467
 msgid ""
-"Learn how to play, discover the technology trees, and the history behind the"
-" civilizations"
-msgstr "Lær hvordan du spiller, oppdag teknologitrær og lær om historien bak de ulike sivilisasjonene"
+"Learn how to play, start the tutorial, discover the technology trees, and "
+"the history behind the civilizations"
+msgstr "Lær hvordan du spiller, start opplæringen, oppdag teknologitrær og lær om historien bak de ulike sivilisasjonene"
 
-#: gui/pregame/mainmenu.xml:(tooltip):468
+#: gui/pregame/mainmenu.xml:(tooltip):482
 msgid "Challenge the computer player to a single player match."
-msgstr "Utfordre datamaskinen til en enkeltspillerkamp."
+msgstr "Utfordre datamaskinen til en énspillerkamp."
 
-#: gui/pregame/mainmenu.xml:(tooltip):483
+#: gui/pregame/mainmenu.xml:(tooltip):497
 msgid "Fight against one or more human players in a multiplayer game."
 msgstr "Kjemp mot én eller flere menneskelige spillere i en flerspillerkamp."
 
-#: gui/pregame/mainmenu.xml:(tooltip):498
-msgid "Game options and scenario design tools."
-msgstr "Spillinnstillinger og kartverktøy."
+#: gui/pregame/mainmenu.xml:(tooltip):512
+msgid "Game options and mod selection."
+msgstr ""
 
-#: gui/pregame/mainmenu.xml:(tooltip):513
+#: gui/pregame/mainmenu.xml:(tooltip):527
+msgid ""
+"Open the Atlas Scenario Editor in a new window. You can run this more "
+"reliably by starting the game with the command-line argument \"-editor\"."
+msgstr "Åpne Atlas-kartverktøyet i et nytt vindu. Start spillet ved hjelp av kommando-linjen \"-editor\" for å kjøre kartverktøyet på en mer stabil måte."
+
+#: gui/pregame/mainmenu.xml:(tooltip):541
 msgid "Exits the game."
 msgstr "Går ut av spillet."
 
-#: gui/pregame/mainmenu.xml:(tooltip):548
+#: gui/pregame/mainmenu.xml:(tooltip):575
 msgid "Click to open play0ad.com in your web browser."
 msgstr "Klikk for å åpne play0ad.com i nettleseren din"
 
-#: gui/pregame/mainmenu.xml:(tooltip):560
+#: gui/pregame/mainmenu.xml:(tooltip):587
 msgid ""
 "Click to open the 0 A.D. IRC chat in your browser. (#0ad on "
 "webchat.quakenet.org)"
-msgstr "Klikk for å åpne 0 A.D. IRC chat i din nettleser. (#0ad på webchat.quakenet.org)"
+msgstr "Klikk for å åpne 0 A.D. IRC-sludder i din nettleser. (#0ad på webchat.quakenet.org)"
 
-#: gui/pregame/mainmenu.xml:(tooltip):572
+#: gui/pregame/mainmenu.xml:(tooltip):599
 msgid "Click to visit 0 A.D. Trac to report a bug, crash, or error."
-msgstr "Klikk for å besøke 0 A.D. Trac for å rapportere en programfeil, krasj eller annet."
+msgstr "Klikk for å besøke 0 A.D.-Trac for å rapportere en programfeil, krasj eller annet."
 
-#: gui/pregame/mainmenu.xml:(tooltip):584
+#: gui/pregame/mainmenu.xml:(tooltip):611
 msgid "Click to open the 0 A.D. translate page in your browser."
-msgstr "Klikk for å åpne 0 A.D oversettelsesiden i din nettleser."
+msgstr "Klikk for å åpne 0 A.D-oversettelsesiden i din nettleser."
 
-#: gui/pregame/mainmenu.xml:(tooltip):596
+#: gui/pregame/mainmenu.xml:(tooltip):623
+msgid "Help with the project expenses by donating."
+msgstr ""
+
+#: gui/pregame/mainmenu.xml:(tooltip):635
 msgid "Click to see the 0 A.D. credits."
 msgstr "Klikk for å se 0 A.D æreshenvisninger"
 
-#: gui/replaymenu/replay_menu.xml:(caption):27
-msgid "Replay Games"
-msgstr "Spill spill på nytt"
+#: gui/reference/structree/structree.xml:(caption):31
+msgid "Civilization:"
+msgstr "Sivilisasjon:"
 
-#: gui/replaymenu/replay_menu.xml:(caption):112
+#: gui/reference/structree/structree.xml:(caption):98
+msgid "Trainer Units"
+msgstr "Treningsenheter"
+
+#: gui/reference/viewer/viewer.xml:(caption):13
+msgid "Information"
+msgstr "Informasjon"
+
+#: gui/replaymenu/replay_menu.xml:(caption):13
+msgid "Replay Games"
+msgstr "Reprise av spill"
+
+#: gui/replaymenu/replay_menu.xml:(caption):109
 msgid "Filter compatible replays"
 msgstr "Filtrer kompatible repriser"
 
-#: gui/replaymenu/replay_menu.xml:(caption):153
-#: gui/savedgames/load.xml:(caption):57
+#: gui/replaymenu/replay_menu.xml:(caption):150
 msgid "Map Type:"
 msgstr "Karttype:"
 
-#: gui/replaymenu/replay_menu.xml:(caption):168
-#: gui/savedgames/load.xml:(caption):61
+#: gui/replaymenu/replay_menu.xml:(caption):165
 msgid "Map Size:"
 msgstr "Kartstørrelse:"
 
-#: gui/replaymenu/replay_menu.xml:(caption):183
-#: gui/savedgames/load.xml:(caption):65
+#: gui/replaymenu/replay_menu.xml:(caption):180
 msgid "Victory:"
 msgstr "Seier:"
 
-#: gui/replaymenu/replay_menu.xml:(caption):204
-#: gui/savedgames/load.xml:(caption):49
-msgid "Players:"
-msgstr "Spillere:"
-
-#: gui/replaymenu/replay_menu.xml:(caption):221
+#: gui/replaymenu/replay_menu.xml:(caption):213
 msgid "Spoiler"
 msgstr "Spoiler"
 
-#: gui/replaymenu/replay_menu.xml:(caption):233
+#: gui/replaymenu/replay_menu.xml:(caption):225
 msgid "Main Menu"
 msgstr "Hovedmeny"
 
-#: gui/replaymenu/replay_menu.xml:(caption):239
-#: gui/savedgames/load.xml:(caption):33 gui/savedgames/save.xml:(caption):42
+#: gui/replaymenu/replay_menu.xml:(caption):231
 msgid "Delete"
 msgstr "Slett"
 
-#: gui/replaymenu/replay_menu.xml:(caption):245
-#: gui/summary/summary.xml:(caption):22
+#: gui/replaymenu/replay_menu.xml:(caption):237
+msgid "Reload Cache"
+msgstr "Last inn hurtiglager på nytt"
+
+#: gui/replaymenu/replay_menu.xml:(caption):244
+#: gui/summary/summary.xml:(caption):34
 msgid "Summary"
 msgstr "Oppsummering"
 
-#: gui/replaymenu/replay_menu.xml:(caption):251
+#: gui/replaymenu/replay_menu.xml:(caption):250
 msgid "Start Replay"
 msgstr "Start reprise"
 
-#: gui/replaymenu/replay_menu.xml:(heading):75
+#: gui/replaymenu/replay_menu.xml:(heading):69
 msgctxt "replay"
 msgid "Date / Time"
 msgstr "Dato / tid"
 
-#: gui/replaymenu/replay_menu.xml:(heading):79
+#: gui/replaymenu/replay_menu.xml:(heading):73
 msgctxt "replay"
 msgid "Players"
 msgstr "Spillere"
 
-#: gui/replaymenu/replay_menu.xml:(heading):83
+#: gui/replaymenu/replay_menu.xml:(heading):77
 msgctxt "replay"
 msgid "Map Name"
 msgstr "Kartnavn"
 
-#: gui/replaymenu/replay_menu.xml:(heading):87
+#: gui/replaymenu/replay_menu.xml:(heading):81
 msgctxt "replay"
 msgid "Size"
 msgstr "Størrelse"
 
-#: gui/replaymenu/replay_menu.xml:(heading):91
+#: gui/replaymenu/replay_menu.xml:(heading):85
 msgctxt "replay"
 msgid "Population"
 msgstr "Befolkning"
 
-#: gui/replaymenu/replay_menu.xml:(heading):95
+#: gui/replaymenu/replay_menu.xml:(heading):89
 msgctxt "replay"
 msgid "Duration"
 msgstr "Varighet"
 
-#: gui/savedgames/load.xml:(caption):38
-msgid "Load"
-msgstr "Last"
+#: gui/replaymenu/replay_menu.xml:(tooltip):238
+msgid "Rebuild the replay cache from scratch. Potentially slow!"
+msgstr "Bygg opp igjen reprise-mellomlager helt på ny. Potensielt tregt!"
 
-#: gui/savedgames/load.xml:(caption):53
-msgid "Played time:"
-msgstr ""
-
-#: gui/savedgames/save.xml:(caption):15
-msgid "Save Game"
-msgstr "Lagre spill"
-
-#: gui/savedgames/save.xml:(caption):29
-msgid "Description:"
-msgstr "Beskrivelse:"
-
-#: gui/splashscreen/splashscreen.xml:(caption):12
+#: gui/splashscreen/splashscreen.xml:(caption):13
 msgid "Welcome!"
 msgstr "Velkommen!"
 
-#: gui/splashscreen/splashscreen.xml:(caption):17
+#: gui/splashscreen/splashscreen.xml:(caption):18
 msgid "Show this message in the future"
 msgstr "Vis denne meldingen igjen"
 
-#: gui/splashscreen/splashscreen.xml:(caption):22
+#: gui/splashscreen/splashscreen.xml:(caption):23
 msgid "Known Issues (web)"
-msgstr "Kjente problemer (internett)"
+msgstr "Kjente problemer (nett)"
 
-#: gui/structree/structree.xml:(caption):29
-msgid "Civilization:"
-msgstr "Sivilisasjon:"
+#: gui/summary/summary.xml:(caption):116
+msgid "Charts"
+msgstr "Diagrammer"
 
-#: gui/structree/structree.xml:(caption):92
-msgid "Trainer Units"
-msgstr "Treningsenheter"
+#: gui/summary/summary.xml:(caption):173
+msgctxt "summary chart"
+msgid "Category:"
+msgstr "Kategori:"
 
-#: gui/summary/summary.xml:(caption):62
-msgid "Score"
-msgstr "Poeng"
+#: gui/summary/summary.xml:(caption):183
+msgctxt "summary chart"
+msgid "Value:"
+msgstr "Verdi:"
 
-#: gui/summary/summary.xml:(caption):69
-msgid "Buildings"
-msgstr "Bygninger"
+#: gui/summary/summary.xml:(caption):193
+msgctxt "summary chart"
+msgid "Type:"
+msgstr "Type:"
 
-#: gui/summary/summary.xml:(caption):76
-msgid "Units"
-msgstr "Enheter"
-
-#: gui/summary/summary.xml:(caption):83
-msgid "Resources"
-msgstr "Ressurser"
-
-#: gui/summary/summary.xml:(caption):90
-msgid "Market"
-msgstr "Marked"
-
-#: gui/summary/summary.xml:(caption):97 gui/credits/texts/misc.jsonTitle
-msgid "Miscellaneous"
-msgstr "Diverse"
-
-#: gui/summary/summary.xml:(caption):160
+#: gui/summary/summary.xml:(caption):227
 msgid "Replay"
 msgstr "Spill av igjen"
 
-#: gui/summary/summary.xml:(caption):165
+#: gui/summary/summary.xml:(caption):232
 msgid "Continue"
 msgstr "Fortsett"
+
+#: gui/summary/summary.xml:(tooltip):179
+msgctxt "summary chart"
+msgid "Category"
+msgstr "Kategori"
+
+#: gui/summary/summary.xml:(tooltip):189
+msgctxt "summary chart"
+msgid "Value"
+msgstr "Verdi"
+
+#: gui/summary/summary.xml:(tooltip):200
+msgctxt "summary chart"
+msgid "Type"
+msgstr "Type"
 
 #: gui/credits/texts/art.jsonContent[0].Content[0].Subtitle
 msgid "Art lead"
@@ -2143,7 +2387,7 @@ msgstr "3D-kunst"
 
 #: gui/credits/texts/art.jsonContent[5].Content[1].Subtitle
 msgid "Additional music, percussion, djembe, sampling"
-msgstr ""
+msgstr "Ytterligere musikk, slaginstrumenter, djembe, sampling"
 
 #: gui/credits/texts/art.jsonContent[5].Content[2].Subtitle
 msgid "Additional music"
@@ -2159,7 +2403,7 @@ msgstr "Djembe"
 
 #: gui/credits/texts/art.jsonContent[5].Content[5].Subtitle
 msgid "Frame drum, darbuka, riq, toms"
-msgstr ""
+msgstr "Runebomme, afrikansk tromme, rik, Tom-tom-tromme"
 
 #: gui/credits/texts/art.jsonContent[5].Content[6].Subtitle
 msgid "Didgeridoo"
@@ -2175,7 +2419,7 @@ msgstr "Keltisk harpe"
 
 #: gui/credits/texts/art.jsonContent[5].Content[9].Subtitle
 msgid "Tin whistles"
-msgstr ""
+msgstr "Tinnfløyter"
 
 #: gui/credits/texts/art.jsonContent[5].Content[10].Subtitle
 msgid "Viola, violin"
@@ -2186,6 +2430,7 @@ msgid "Music"
 msgstr "Musikk"
 
 #: gui/credits/texts/art.jsonContent[6].Title
+#: gui/options/options.json[2].label
 msgid "Sound"
 msgstr "Lyd"
 
@@ -2283,345 +2528,876 @@ msgstr "Spesielle æreshenvisninger"
 msgid "Translators"
 msgstr "Oversettere"
 
-#: gui/options/options.jsonlobbySetting[0].tooltip
-msgid "Number of backlogged messages to load when joining the lobby"
-msgstr "Antall meldinger som skal lastes inn i loggen når man kobler til lobbyen"
-
-#: gui/options/options.jsonlobbySetting[0].label
-msgid "Chat Backlog"
-msgstr "Meldingslogg"
-
-#: gui/options/options.jsonlobbySetting[1].tooltip
-msgid "Show time that messages are posted in the lobby chat"
-msgstr "Vis tidsstempel ved meldingene i lobby-prat"
-
-#: gui/options/options.jsonlobbySetting[1].label
-msgid "Chat Timestamp"
-msgstr "Tidsstempel for melding"
-
-#: gui/options/options.jsongeneralSetting[0].tooltip
+#: gui/options/options.json[0].options[0].tooltip
 msgid "How you want to be addressed in Single Player matches."
-msgstr ""
+msgstr "Hvordan du vil adresseres i énspillerkamper."
 
-#: gui/options/options.jsongeneralSetting[0].label
+#: gui/options/options.json[0].options[0].label
 msgid "Playername (Single Player)"
-msgstr ""
+msgstr "Spillernavn (énspiller)"
 
-#: gui/options/options.jsongeneralSetting[1].tooltip
+#: gui/options/options.json[0].options[1].tooltip
 msgid "How you want to be addressed in Multiplayer matches (except lobby)."
-msgstr ""
+msgstr "Hvordan du vil adresseres i flerspillerkamper (bortsett fra i lobbyen)."
 
-#: gui/options/options.jsongeneralSetting[1].label
+#: gui/options/options.json[0].options[1].label
 msgid "Playername (Multiplayer)"
+msgstr "Spillernavn (flerspiller)"
+
+#: gui/options/options.json[0].options[2].tooltip
+msgid "Pause single player games when window loses focus."
 msgstr ""
 
-#: gui/options/options.jsongeneralSetting[2].tooltip
-msgid "Start 0 A.D. in a window"
-msgstr "Start 0 A.D. i et vindu"
-
-#: gui/options/options.jsongeneralSetting[2].label
-msgid "Windowed Mode"
-msgstr "Vis i vindu"
-
-#: gui/options/options.jsongeneralSetting[3].tooltip
-msgid "Pause single player games when window loses focus"
-msgstr "Pause alene-spill når vinduet er i bakgrunnen."
-
-#: gui/options/options.jsongeneralSetting[3].label
+#: gui/options/options.json[0].options[2].label
 msgid "Background Pause"
 msgstr "Pause i bakgrunnen"
 
-#: gui/options/options.jsongeneralSetting[4].tooltip
+#: gui/options/options.json[0].options[3].tooltip
 msgid ""
-"If you disable this screen completely, you may miss important announcements.\n"
-"You can still launch it using the main menu."
-msgstr "Hvis du skrur av denne skjermen kan du gå glipp av viktige meldinger.\nDu kan uansett åpne den igjen fra hovedmenyen."
+"If you disable it, the welcome screen will still appear once, each time a "
+"new version is available. You can always launch it from the main menu."
+msgstr "Hvis du skrur det av, vil velkomstskjermen bare bli vist én gang, hver gang en ny versjon er tilgjengelig. Du kan alltid starte den fra hovedmenyen."
 
-#: gui/options/options.jsongeneralSetting[4].label
-msgid "Disable Welcome Screen"
-msgstr "Skru av velkomstskjerm"
+#: gui/options/options.json[0].options[3].label
+msgid "Enable Welcome Screen"
+msgstr "Skru på velkomstskjerm"
 
-#: gui/options/options.jsongeneralSetting[5].tooltip
-msgid ""
-"Show detailed tooltips for trainable units in unit-producing buildings."
-msgstr "Vis detaljerte pekertips for enheter som kan trenes i trenings-bygninger."
-
-#: gui/options/options.jsongeneralSetting[5].label
-msgid "Detailed Tooltips"
-msgstr "Detaljerte pekertips"
-
-#: gui/options/options.jsongeneralSetting[6].tooltip
+#: gui/options/options.json[0].options[4].tooltip
 msgid "Show which player has a bad connection in multiplayer games."
 msgstr "Vis hvilken spiller som har dårlig tilkobling i flerspillermodus."
 
-#: gui/options/options.jsongeneralSetting[6].label
+#: gui/options/options.json[0].options[4].label
 msgid "Network Warnings"
 msgstr "Nettverksadvarsler"
 
-#: gui/options/options.jsongeneralSetting[7].tooltip
+#: gui/options/options.json[0].options[5].tooltip
 msgid "Show frames per second in top right corner."
-msgstr "Vis bilder pr sek i øvre høyre hjørne."
+msgstr "Vis bilder per sekund øverst i høyre hjørne."
 
-#: gui/options/options.jsongeneralSetting[7].label
+#: gui/options/options.json[0].options[5].label
 msgid "FPS Overlay"
 msgstr "Vis bilder per sekund"
 
-#: gui/options/options.jsongeneralSetting[8].tooltip
+#: gui/options/options.json[0].options[6].tooltip
 msgid "Show current system time in top right corner."
 msgstr "Vis nåværende systemtid i øvre høyre hjørne."
 
-#: gui/options/options.jsongeneralSetting[8].label
+#: gui/options/options.json[0].options[6].label
 msgid "Realtime Overlay"
 msgstr "Vis systemtid"
 
-#: gui/options/options.jsongeneralSetting[9].tooltip
+#: gui/options/options.json[0].options[7].tooltip
 msgid "Show current simulation time in top right corner."
 msgstr "Vis nåværende simulasjonstid i øvre høyre hjørne."
 
-#: gui/options/options.jsongeneralSetting[9].label
+#: gui/options/options.json[0].options[7].label
 msgid "Gametime Overlay"
 msgstr "Vis spilltid"
 
-#: gui/options/options.jsongeneralSetting[10].tooltip
+#: gui/options/options.json[0].options[8].tooltip
 msgid "Always show the remaining ceasefire time."
 msgstr "Alltid vis gjenstående våpenstillstandtid."
 
-#: gui/options/options.jsongeneralSetting[10].label
+#: gui/options/options.json[0].options[8].label
 msgid "Ceasefire Time Overlay"
-msgstr "Vis våpenstillstandtid"
+msgstr "Vis våpenhviletid"
 
-#: gui/options/options.jsongeneralSetting[11].tooltip
+#: gui/options/options.json[0].options[9].list[0].label
+#: gui/options/options.json[3].options[5].list[0].label
+msgid "Everyone"
+msgstr "Alle"
+
+#: gui/options/options.json[0].options[9].list[1].label
+#: gui/options/options.json[3].options[5].list[1].label
+msgid "Buddies"
+msgstr "Venner"
+
+#: gui/options/options.json[0].options[9].list[2].label
+#: gui/options/options.json[3].options[5].list[2].label
+msgid "Disabled"
+msgstr "Avskrudd"
+
+#: gui/options/options.json[0].options[9].tooltip
 msgid ""
-"Save and restore match settings for quick reuse when hosting another game"
-msgstr "Lagre og gjenopprett kamp-innstillinger for hurtig å kunne bruke de samme innstillingene igjen senere"
+"Allow everybody or buddies only to join the game as observer after it "
+"started."
+msgstr ""
 
-#: gui/options/options.jsongeneralSetting[11].label
-msgid "Persist Match Settings"
-msgstr "Hold fast ved kampinnstillinger"
-
-#: gui/options/options.jsongeneralSetting[12].tooltip
-msgid "Allow observers to join the game after it started"
-msgstr "Tillat observatører å ta del i spilløkter etter at de har startet"
-
-#: gui/options/options.jsongeneralSetting[12].label
+#: gui/options/options.json[0].options[9].label
 msgid "Late Observer Joins"
 msgstr "Sen observatør finner seg til rette"
 
-#: gui/options/options.jsongeneralSetting[13].tooltip
-msgid "Prevent further observer from joining if the limit is reached"
-msgstr "Forhindre ytterligere observatører fra å ta del i spillet når grensen er nådd"
+#: gui/options/options.json[0].options[10].tooltip
+msgid "Prevent further observers from joining if the limit is reached."
+msgstr ""
 
-#: gui/options/options.jsongeneralSetting[13].label
+#: gui/options/options.json[0].options[10].label
 msgid "Observer Limit"
 msgstr "Observatørgrense"
 
-#: gui/options/options.jsongeneralSetting[14].tooltip
-msgid "Number of units trained per batch"
+#: gui/options/options.json[0].options[11].tooltip
+msgid ""
+"Show time that messages are posted in the lobby, gamesetup and ingame chat."
+msgstr "Tidsstemple lobby og spilloppsettsmeldinger, samt dem i spillet."
+
+#: gui/options/options.json[0].options[11].label
+msgid "Chat Timestamp"
+msgstr "Tidsstempel for melding"
+
+#: gui/options/options.json[0].label
+msgid "General"
+msgstr "Generelt"
+
+#: gui/options/options.json[1].options[0].tooltip
+msgid "Start 0 A.D. in a window."
 msgstr ""
 
-#: gui/options/options.jsongeneralSetting[14].label
-msgid "Batch Training Size"
+#: gui/options/options.json[1].options[0].label
+msgid "Windowed Mode"
+msgstr "Vis i vindu"
+
+#: gui/options/options.json[1].options[1].tooltip
+msgid "Use OpenGL 2.0 shaders (recommended)."
 msgstr ""
 
-#: gui/options/options.jsonsoundSetting[0].tooltip
-msgid "Master audio gain"
-msgstr "Hovedvolum innstilling"
-
-#: gui/options/options.jsonsoundSetting[0].label
-msgid "Master Gain"
-msgstr "Hovedvolum"
-
-#: gui/options/options.jsonsoundSetting[1].tooltip
-msgid "In game music gain"
-msgstr "Spillmusikk lydstyrke"
-
-#: gui/options/options.jsonsoundSetting[1].label
-msgid "Music Gain"
-msgstr "Musikkvolum"
-
-#: gui/options/options.jsonsoundSetting[2].tooltip
-msgid "In game ambient sound gain"
-msgstr "Lydstyrke for miljølyd"
-
-#: gui/options/options.jsonsoundSetting[2].label
-msgid "Ambient Gain"
-msgstr "Miljølyd"
-
-#: gui/options/options.jsonsoundSetting[3].tooltip
-msgid "In game unit action sound gain"
-msgstr "Lydstyrke for enhetenes handlinger"
-
-#: gui/options/options.jsonsoundSetting[3].label
-msgid "Action Gain"
-msgstr "Handlingslyd"
-
-#: gui/options/options.jsonsoundSetting[4].tooltip
-msgid "UI sound gain"
-msgstr "Lydstyrke for knapper og kontroller i brukerflaten"
-
-#: gui/options/options.jsonsoundSetting[4].label
-msgid "UI Gain"
-msgstr "Kontroll-lyd"
-
-#: gui/options/options.jsonsoundSetting[5].tooltip
-msgid "Receive audio notification when someone types your nick"
-msgstr ""
-
-#: gui/options/options.jsonsoundSetting[5].label
-msgid "Nick Notification"
-msgstr ""
-
-#: gui/options/options.jsongraphicsSetting[0].tooltip
-msgid "Use OpenGL 2.0 shaders (recommended)"
-msgstr "Bruk OpenGL 2.0 shaders (anbefalt)"
-
-#: gui/options/options.jsongraphicsSetting[0].label
+#: gui/options/options.json[1].options[1].label
 msgid "Prefer GLSL"
 msgstr "Foretrekk  GLSL"
 
-#: gui/options/options.jsongraphicsSetting[1].tooltip
-msgid "Use screen-space postprocessing filters (HDR, Bloom, DOF, etc)"
-msgstr "Bruk skjermplasspostprosesseringsfiltre (HDR, Bloom, DOF, osv)"
+#: gui/options/options.json[1].options[2].tooltip
+msgid "Enable Fog."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[1].label
+#: gui/options/options.json[1].options[2].label
+msgid "Fog"
+msgstr ""
+
+#: gui/options/options.json[1].options[3].tooltip
+msgid "Use screen-space postprocessing filters (HDR, Bloom, DOF, etc)."
+msgstr ""
+
+#: gui/options/options.json[1].options[3].label
 msgid "Post Processing"
 msgstr "Etterbehandling"
 
-#: gui/options/options.jsongraphicsSetting[2].parameters.list[0]
-msgid "Low"
-msgstr "Lavt"
+#: gui/options/options.json[1].options[4].tooltip
+msgid "Number of shader effects. REQUIRES GAME RESTART"
+msgstr "Antall skyggeleggingseffekter. KREVER OMSTART AV SPILLET"
 
-#: gui/options/options.jsongraphicsSetting[2].parameters.list[1]
-msgid "Medium"
-msgstr "Mellomnivå"
+#: gui/options/options.json[1].options[4].label
+msgid "Shader Effects"
+msgstr "Skyggeleggingseffekter"
 
-#: gui/options/options.jsongraphicsSetting[2].parameters.list[2]
-msgid "High"
-msgstr "Høyt"
+#: gui/options/options.json[1].options[5].tooltip
+msgid "Enable shadows."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[2].tooltip
-msgid "Graphics quality. REQUIRES GAME RESTART"
-msgstr "Grafikkvalitet. KREVER SPILLOMSTART"
-
-#: gui/options/options.jsongraphicsSetting[2].label
-msgid "Graphics quality"
-msgstr "Grafikkvalitet"
-
-#: gui/options/options.jsongraphicsSetting[3].tooltip
-msgid "Enable shadows"
-msgstr "Slå på skygger"
-
-#: gui/options/options.jsongraphicsSetting[3].label
+#: gui/options/options.json[1].options[5].label
 msgid "Shadows"
 msgstr "Skygger"
 
-#: gui/options/options.jsongraphicsSetting[4].tooltip
-msgid "Smooth shadows"
-msgstr "Utjevnede skygger"
+#: gui/options/options.json[1].options[6].list[0].label
+msgid "Very Low"
+msgstr "Veldig lav"
 
-#: gui/options/options.jsongraphicsSetting[4].label
+#: gui/options/options.json[1].options[6].list[1].label
+msgid "Low"
+msgstr "Lav"
+
+#: gui/options/options.json[1].options[6].list[2].label
+#: gui/options/options.json[3].options[3].list[3].label
+msgid "Medium"
+msgstr "Middels"
+
+#: gui/options/options.json[1].options[6].list[3].label
+msgid "High"
+msgstr "Høy"
+
+#: gui/options/options.json[1].options[6].list[4].label
+msgid "Very High"
+msgstr "Veldig høy"
+
+#: gui/options/options.json[1].options[6].tooltip
+msgid ""
+"Shadow map resolution. High values can crash the game when using a graphics "
+"card with low memory!"
+msgstr "Skyggekastingsoppløsning. Høye verdier kan kræsje spillet når du bruker et grafikkort med lite minne!"
+
+#: gui/options/options.json[1].options[6].label
+msgid "Shadow Quality"
+msgstr "Vannkvalitet"
+
+#: gui/options/options.json[1].options[7].tooltip
+msgid "Smooth shadows."
+msgstr ""
+
+#: gui/options/options.json[1].options[7].label
 msgid "Shadow Filtering"
 msgstr "Skykkefiltrering"
 
-#: gui/options/options.jsongraphicsSetting[5].tooltip
-msgid "Show outlines of units behind buildings"
-msgstr "Vis omrisset av enheter bak bygninger"
+#: gui/options/options.json[1].options[8].tooltip
+msgid "Show outlines of units behind buildings."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[5].label
+#: gui/options/options.json[1].options[8].label
 msgid "Unit Silhouettes"
 msgstr "Omriss for enheter"
 
-#: gui/options/options.jsongraphicsSetting[6].tooltip
-msgid "Enable particles"
-msgstr "Slå på partikler"
+#: gui/options/options.json[1].options[9].tooltip
+msgid "Enable particles."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[6].label
+#: gui/options/options.json[1].options[9].label
 msgid "Particles"
 msgstr "Partikler"
 
-#: gui/options/options.jsongraphicsSetting[7].tooltip
+#: gui/options/options.json[1].options[10].tooltip
 msgid ""
 "When OFF, use the lowest settings possible to render water. This makes other"
 " settings irrelevant."
 msgstr "Når AV, bruk lavest mulige innstilling for å tegne vann. Dette tilsidesetter andre innstillinger."
 
-#: gui/options/options.jsongraphicsSetting[7].label
-msgid "Activate water effects"
-msgstr "Skru på vanneffekter"
+#: gui/options/options.json[1].options[10].label
+msgid "Water Effects"
+msgstr "Vanneffekter"
 
-#: gui/options/options.jsongraphicsSetting[8].tooltip
+#: gui/options/options.json[1].options[11].tooltip
 msgid ""
 "Use higher-quality effects for water, rendering coastal waves, shore foam, "
 "and ships trails."
 msgstr "Bruk høyere kvalitet på effekter for vann, bølger langs kysten, skum i vannlinjen og kjølvann."
 
-#: gui/options/options.jsongraphicsSetting[8].label
+#: gui/options/options.json[1].options[11].label
 msgid "HQ Water Effects"
 msgstr "Høykvalitets vanneffekter"
 
-#: gui/options/options.jsongraphicsSetting[9].tooltip
-msgid "Use actual water depth in rendering calculations"
-msgstr "Bruk faktisk vanndybde i kalkulasjonen av gjengivelsen"
+#: gui/options/options.json[1].options[12].tooltip
+msgid "Use actual water depth in rendering calculations."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[9].label
+#: gui/options/options.json[1].options[12].label
 msgid "Real Water Depth"
 msgstr "Ekte vanndybde"
 
-#: gui/options/options.jsongraphicsSetting[10].tooltip
-msgid "Allow water to reflect a mirror image"
-msgstr "Tillat vann å reflektere et speilbilde"
+#: gui/options/options.json[1].options[13].tooltip
+msgid "Allow water to reflect a mirror image."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[10].label
+#: gui/options/options.json[1].options[13].label
 msgid "Water Reflections"
 msgstr "Vannrefleksjoner"
 
-#: gui/options/options.jsongraphicsSetting[11].tooltip
-msgid "Use a real water refraction map and not transparency"
-msgstr "Bruk ekte lysbrytning i vann og ikke kun gjennomsiktighet"
+#: gui/options/options.json[1].options[14].tooltip
+msgid "Use a real water refraction map and not transparency."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[11].label
+#: gui/options/options.json[1].options[14].label
 msgid "Water Refraction"
 msgstr "Lysbrytning i vann"
 
-#: gui/options/options.jsongraphicsSetting[12].tooltip
-msgid "Cast shadows on water"
-msgstr "Kast skygge på vann."
+#: gui/options/options.json[1].options[15].tooltip
+msgid "Cast shadows on water."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[12].label
+#: gui/options/options.json[1].options[15].label
 msgid "Shadows on Water"
 msgstr "Skygger i vannet"
 
-#: gui/options/options.jsongraphicsSetting[13].tooltip
-msgid "Lift darkness and fog-of-war smoothly"
-msgstr "Fjern mørke og krigståke jevnt"
+#: gui/options/options.json[1].options[16].tooltip
+msgid "Lift darkness and fog-of-war smoothly."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[13].label
+#: gui/options/options.json[1].options[16].label
 msgid "Smooth LOS"
 msgstr "Myk LOS"
 
-#: gui/options/options.jsongraphicsSetting[14].tooltip
-msgid "Render Sky"
-msgstr "Vis himmelen"
+#: gui/options/options.json[1].options[17].tooltip
+msgid "Render Sky."
+msgstr ""
 
-#: gui/options/options.jsongraphicsSetting[14].label
+#: gui/options/options.json[1].options[17].label
 msgid "Show Sky"
 msgstr "Vis himmel"
 
-#: gui/options/options.jsongraphicsSetting[15].tooltip
+#: gui/options/options.json[1].options[18].tooltip
 msgid "Run vertical sync to fix screen tearing. REQUIRES GAME RESTART"
 msgstr "Synkroniser vertikal bildeoppdatering med skjerm for å unngå revner i bildet. SPILLET MÅ STARTES PÅ NYTT."
 
-#: gui/options/options.jsongraphicsSetting[15].label
+#: gui/options/options.json[1].options[18].label
 msgid "VSync"
 msgstr "VSync"
 
-#: gui/options/options.jsongraphicsSetting[16].tooltip
-msgid "Limit FPS to 50 in all menus, to save power."
-msgstr "Begrens FPS til 50 i alle menyer for å spare strøm."
+#: gui/options/options.json[1].options[19].tooltip
+msgid ""
+"To save CPU workload, throttle render frequency in all menus. Set to maximum"
+" to disable throttling."
+msgstr "For å spare prosessorarbeidsmengde, begrens tegnefrekvensen i menyer. Sett til maksimum for å skru av begrensning."
 
-#: gui/options/options.jsongraphicsSetting[16].label
-msgid "Limit FPS in Menus"
-msgstr "Begrens FPS i menyer"
+#: gui/options/options.json[1].options[19].label
+msgid "FPS Throttling in Menus"
+msgstr "Skjermtaktsbegrensning i menyer"
+
+#: gui/options/options.json[1].options[20].tooltip
+msgid ""
+"To save CPU workload, throttle render frequency in running games. Set to "
+"maximum to disable throttling."
+msgstr "For å spare prosessorarbeidsmengde, begrens tegnefrekvensen i kjørende spill. Sett til maksimum for å skru av begrensning."
+
+#: gui/options/options.json[1].options[20].label
+msgid "FPS Throttling in Games"
+msgstr "Skjermtaktsbegrensning i spill"
+
+#: gui/options/options.json[1].tooltip
+msgid "Set the balance between performance and visual appearance."
+msgstr "Sett balansen mellom ytelse og visuell framtoning."
+
+#: gui/options/options.json[1].label
+msgid "Graphics"
+msgstr "Grafikk"
+
+#: gui/options/options.json[2].options[0].tooltip
+msgid "Master audio gain."
+msgstr ""
+
+#: gui/options/options.json[2].options[0].label
+msgid "Master Volume"
+msgstr "Hovedlydstyrke"
+
+#: gui/options/options.json[2].options[1].tooltip
+msgid "In game music gain."
+msgstr ""
+
+#: gui/options/options.json[2].options[1].label
+msgid "Music Volume"
+msgstr "Musikklydstyrke"
+
+#: gui/options/options.json[2].options[2].tooltip
+msgid "In game ambient sound gain."
+msgstr ""
+
+#: gui/options/options.json[2].options[2].label
+msgid "Ambient Volume"
+msgstr "Miljølydstyrke"
+
+#: gui/options/options.json[2].options[3].tooltip
+msgid "In game unit action sound gain."
+msgstr ""
+
+#: gui/options/options.json[2].options[3].label
+msgid "Action Volume"
+msgstr "Handlingslydstyrke"
+
+#: gui/options/options.json[2].options[4].tooltip
+msgid "UI sound gain."
+msgstr ""
+
+#: gui/options/options.json[2].options[4].label
+msgid "UI Volume"
+msgstr "Grensesnittslydstyrke"
+
+#: gui/options/options.json[2].options[5].tooltip
+msgid "Receive audio notification when someone types your nick."
+msgstr ""
+
+#: gui/options/options.json[2].options[5].label
+msgid "Nick Notification"
+msgstr "Kallenavnsmerknad"
+
+#: gui/options/options.json[3].options[0].tooltip
+msgid "Show tips when setting up a game."
+msgstr "Vis tips når du setter opp et spill."
+
+#: gui/options/options.json[3].options[0].label
+msgid "Enable Game Setting Tips"
+msgstr "Skru på spillinnstillings-tips"
+
+#: gui/options/options.json[3].options[1].tooltip
+msgid "Slide the settings panel when opening, closing or resizing."
+msgstr ""
+
+#: gui/options/options.json[3].options[1].label
+msgid "Enable Settings Panel Slide"
+msgstr ""
+
+#: gui/options/options.json[3].options[2].tooltip
+msgid ""
+"Save and restore match settings for quick reuse when hosting another game."
+msgstr ""
+
+#: gui/options/options.json[3].options[2].label
+msgid "Persist Match Settings"
+msgstr "Hold fast ved kampinnstillinger"
+
+#: gui/options/options.json[3].options[3].list[0].label
+msgid "Sandbox"
+msgstr "Sandkasse"
+
+#: gui/options/options.json[3].options[3].list[1].label
+msgid "Very Easy"
+msgstr "Veldig lett"
+
+#: gui/options/options.json[3].options[3].list[2].label
+msgid "Easy"
+msgstr "Lett"
+
+#: gui/options/options.json[3].options[3].list[4].label
+msgid "Hard"
+msgstr "Vanskelig"
+
+#: gui/options/options.json[3].options[3].list[5].label
+msgid "Very Hard"
+msgstr "Veldig vanskelig"
+
+#: gui/options/options.json[3].options[3].tooltip
+msgid "Default difficulty of the AI."
+msgstr ""
+
+#: gui/options/options.json[3].options[3].label
+msgid "Default AI Difficulty"
+msgstr ""
+
+#: gui/options/options.json[3].options[4].list[0].label
+msgid "Random"
+msgstr "Tilfeldig"
+
+#: gui/options/options.json[3].options[4].list[1].label
+msgid "Balanced"
+msgstr "Balansert"
+
+#: gui/options/options.json[3].options[4].list[2].label
+msgid "Aggressive"
+msgstr "Aggressiv"
+
+#: gui/options/options.json[3].options[4].list[3].label
+msgid "Defensive"
+msgstr "Defensiv"
+
+#: gui/options/options.json[3].options[4].tooltip
+msgid "Default behavior of the AI."
+msgstr ""
+
+#: gui/options/options.json[3].options[4].label
+msgid "Default AI Behavior"
+msgstr ""
+
+#: gui/options/options.json[3].options[5].tooltip
+msgid ""
+"Automatically assign joining clients to free player slots during the match "
+"setup."
+msgstr "Tildel tilkoblende klienter spillerposisjoner automatisk i løpet av spilloppsettet."
+
+#: gui/options/options.json[3].options[5].label
+msgid "Assign Players"
+msgstr "Tildel spillere"
+
+#: gui/options/options.json[3].label
+msgid "Game Setup"
+msgstr "Spilloppsett"
+
+#: gui/options/options.json[4].options[0].tooltip
+msgid "Number of backlogged messages to load when joining the lobby."
+msgstr ""
+
+#: gui/options/options.json[4].options[0].label
+msgid "Chat Backlog"
+msgstr "Meldingslogg"
+
+#: gui/options/options.json[4].options[1].tooltip
+msgid ""
+"Show the average rating of the participating players in a column of the "
+"gamelist."
+msgstr "Vis gjennomsnittlig rating for deltagende spillere i en søyle på spillisten."
+
+#: gui/options/options.json[4].options[1].label
+msgid "Game Rating Column"
+msgstr "Spillistesøyle"
+
+#: gui/options/options.json[4].tooltip
+msgid "These settings only affect the multiplayer."
+msgstr "Disse innstillingene vil hare ha innvirkning på flerspillermodus."
+
+#: gui/options/options.json[4].label
+msgid "Lobby"
+msgstr "Lobby"
+
+#: gui/options/options.json[5].options[0].tooltip
+msgid ""
+"The wounded unit hotkey considers the selected units as wounded if their "
+"health percentage falls below this number."
+msgstr ""
+
+#: gui/options/options.json[5].options[0].label
+msgid "Wounded Unit Health"
+msgstr ""
+
+#: gui/options/options.json[5].options[1].tooltip
+msgid "Number of units trained per batch by default."
+msgstr ""
+
+#: gui/options/options.json[5].options[1].label
+msgid "Batch Training Size"
+msgstr "Treningsmonn per gruppe"
+
+#: gui/options/options.json[5].options[2].tooltip
+msgid ""
+"Number of times you have to scroll to increase/decrease the batchsize by 1."
+msgstr ""
+
+#: gui/options/options.json[5].options[2].label
+msgid "Scroll Batch Increment Ratio"
+msgstr ""
+
+#: gui/options/options.json[5].options[3].tooltip
+msgid "Show a chat notification if you are attacked by another player."
+msgstr ""
+
+#: gui/options/options.json[5].options[3].label
+msgid "Chat Notification Attack"
+msgstr ""
+
+#: gui/options/options.json[5].options[4].tooltip
+msgid ""
+"Show a chat notification if an ally tributes resources to another team "
+"member if teams are locked, and all tributes in observer mode."
+msgstr ""
+
+#: gui/options/options.json[5].options[4].label
+msgid "Chat Notification Tribute"
+msgstr ""
+
+#: gui/options/options.json[5].options[5].tooltip
+msgid ""
+"Show a chat notification to observers when a player bartered resources."
+msgstr ""
+
+#: gui/options/options.json[5].options[5].label
+msgid "Chat Notification Barter"
+msgstr ""
+
+#: gui/options/options.json[5].options[6].list[0].label
+msgid "Disable"
+msgstr "Skru av"
+
+#: gui/options/options.json[5].options[6].list[1].label
+msgid "Completed"
+msgstr "Fullført"
+
+#: gui/options/options.json[5].options[6].list[2].label
+msgid "All displayed"
+msgstr "Alle viste"
+
+#: gui/options/options.json[5].options[6].tooltip
+msgid ""
+"Show a chat notification if you or an ally have started, aborted or "
+"completed a new phase, and phases of all players in observer mode."
+msgstr ""
+
+#: gui/options/options.json[5].options[6].label
+msgid "Chat Notification Phase"
+msgstr ""
+
+#: gui/options/options.json[5].options[7].tooltip
+msgid ""
+"Display the attack range of selected defensive structures (can also be "
+"toggled in-game with the hotkey)."
+msgstr ""
+
+#: gui/options/options.json[5].options[7].label
+msgid "Attack Range Visualization"
+msgstr ""
+
+#: gui/options/options.json[5].options[8].tooltip
+msgid ""
+"Display the range of auras of selected units and structures (can also be "
+"toggled in-game with the hotkey)."
+msgstr "Vis aurarekkevidden til valgte enheter og bygninger (kan også veksles inne i spillet med hurtigtasten)."
+
+#: gui/options/options.json[5].options[8].label
+msgid "Aura Range Visualization"
+msgstr "Aurarekkeviddevisning"
+
+#: gui/options/options.json[5].options[9].tooltip
+msgid ""
+"Display the healing range of selected units (can also be toggled in-game "
+"with the hotkey)."
+msgstr "Vil helbredelsesrekkevidden til valgte enheter (kan også veksles inne i spillet med hurtigtasten)."
+
+#: gui/options/options.json[5].options[9].label
+msgid "Heal Range Visualization"
+msgstr "Helbredelsesrekkeviddevisning"
+
+#: gui/options/options.json[5].options[10].tooltip
+msgid "Show rank icons above status bars."
+msgstr ""
+
+#: gui/options/options.json[5].options[10].label
+msgid "Rank icon above status bar"
+msgstr ""
+
+#: gui/options/options.json[5].options[11].tooltip
+msgid ""
+"Show detailed tooltips for trainable units in unit-producing buildings."
+msgstr "Vis detaljerte pekertips for enheter som kan trenes i trenings-bygninger."
+
+#: gui/options/options.json[5].options[11].label
+msgid "Detailed Tooltips"
+msgstr "Detaljerte pekertips"
+
+#: gui/options/options.json[5].options[12].list[0].label
+msgid "Unordered"
+msgstr ""
+
+#: gui/options/options.json[5].options[12].list[1].label
+msgid "Ascending"
+msgstr ""
+
+#: gui/options/options.json[5].options[12].list[2].label
+msgid "Descending"
+msgstr ""
+
+#: gui/options/options.json[5].options[12].tooltip
+msgid ""
+"Dynamically sort players in the resources and population tooltip by value."
+msgstr ""
+
+#: gui/options/options.json[5].options[12].label
+msgid "Sort resources and population tooltip"
+msgstr ""
+
+#: gui/options/options.json[5].options[13].tooltip
+msgid "Color of your units when diplomacy colors are enabled."
+msgstr ""
+
+#: gui/options/options.json[5].options[13].label
+msgid "Diplomacy Colors: Self"
+msgstr ""
+
+#: gui/options/options.json[5].options[14].tooltip
+msgid "Color of allies when diplomacy colors are enabled."
+msgstr ""
+
+#: gui/options/options.json[5].options[14].label
+msgid "Diplomacy Colors: Ally"
+msgstr ""
+
+#: gui/options/options.json[5].options[15].tooltip
+msgid "Color of neutral players when diplomacy colors are enabled."
+msgstr ""
+
+#: gui/options/options.json[5].options[15].label
+msgid "Diplomacy Colors: Neutral"
+msgstr ""
+
+#: gui/options/options.json[5].options[16].tooltip
+msgid "Color of enemies when diplomacy colors are enabled."
+msgstr ""
+
+#: gui/options/options.json[5].options[16].label
+msgid "Diplomacy Colors: Enemy"
+msgstr ""
+
+#: gui/options/options.json[5].tooltip
+msgid "Change options regarding the in-game settings."
+msgstr ""
+
+#: gui/options/options.json[5].label
+msgid "In-Game"
+msgstr ""
+
+#: simulation/data/resources/food.jsondescription
+msgid "Harvest from animals, berry bushes, fish, or fields."
+msgstr "Sank fra dyr, bærbusker, fisk eller jorder."
+
+#: simulation/data/resources/metal.jsondescription
+msgid "Mine from metal mines or quarries."
+msgstr "Utvinn fra metall-gruver eller -brudd."
+
+#: simulation/data/resources/stone.jsondescription
+msgid "Mine from rocks, stone quarries or ruins."
+msgstr "Utvinn fra steiner, steinbrudd eller ruiner."
+
+#: simulation/data/resources/wood.jsondescription
+msgid "Cut down from trees or groves."
+msgstr "Kutt ned fra trær eller treklynger."
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/food.jsonname
+msgctxt "firstWord"
+msgid "Food"
+msgstr "Mat"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/food.jsonname
+msgctxt "withinSentence"
+msgid "Food"
+msgstr "Mat"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/food.jsonsubtypes.fish
+msgctxt "firstWord"
+msgid "Fish"
+msgstr "Fisk"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/food.jsonsubtypes.fish
+msgctxt "withinSentence"
+msgid "Fish"
+msgstr "Fisk"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/food.jsonsubtypes.fruit
+msgctxt "firstWord"
+msgid "Fruit"
+msgstr "Frukt"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/food.jsonsubtypes.fruit
+msgctxt "withinSentence"
+msgid "Fruit"
+msgstr "Frukt"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/food.jsonsubtypes.grain
+msgctxt "firstWord"
+msgid "Grain"
+msgstr "Korn"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/food.jsonsubtypes.grain
+msgctxt "withinSentence"
+msgid "Grain"
+msgstr "Korn"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/food.jsonsubtypes.meat
+msgctxt "firstWord"
+msgid "Meat"
+msgstr "Kjøtt"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/food.jsonsubtypes.meat
+msgctxt "withinSentence"
+msgid "Meat"
+msgstr "Kjøtt"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/metal.jsonname
+msgctxt "firstWord"
+msgid "Metal"
+msgstr "Metall"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/metal.jsonname
+msgctxt "withinSentence"
+msgid "Metal"
+msgstr "Metall"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/metal.jsonsubtypes.ore
+msgctxt "firstWord"
+msgid "Ore"
+msgstr "Malm"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/metal.jsonsubtypes.ore
+msgctxt "withinSentence"
+msgid "Ore"
+msgstr "Malm"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/stone.jsonname
+msgctxt "firstWord"
+msgid "Stone"
+msgstr "Stein"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/stone.jsonname
+msgctxt "withinSentence"
+msgid "Stone"
+msgstr "Stein"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/stone.jsonsubtypes.ruins
+#: simulation/data/resources/wood.jsonsubtypes.ruins
+msgctxt "firstWord"
+msgid "Ruins"
+msgstr "Ruiner"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/stone.jsonsubtypes.ruins
+#: simulation/data/resources/wood.jsonsubtypes.ruins
+msgctxt "withinSentence"
+msgid "Ruins"
+msgstr "Ruiner"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/stone.jsonsubtypes.rock
+msgctxt "firstWord"
+msgid "Rock"
+msgstr "Klippe"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/stone.jsonsubtypes.rock
+msgctxt "withinSentence"
+msgid "Rock"
+msgstr "Klippe"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/wood.jsonname
+msgctxt "firstWord"
+msgid "Wood"
+msgstr "Tømmer"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/wood.jsonname
+msgctxt "withinSentence"
+msgid "Wood"
+msgstr "Tømmer"
+
+#. Translation: Word as used at the beginning of a sentence or as a single-
+#. word sentence.
+#: simulation/data/resources/wood.jsonsubtypes.tree
+msgctxt "firstWord"
+msgid "Tree"
+msgstr "Tre"
+
+#. Translation: Word as used in the middle of a sentence (which may require
+#. using lowercase for your language).
+#: simulation/data/resources/wood.jsonsubtypes.tree
+msgctxt "withinSentence"
+msgid "Tree"
+msgstr "Tre"
+
+#: gui/gamesetup/ai.txt:1
+msgid ""
+"Although reasonably easy for an experienced player, the default AI level is "
+"quite challenging for new players yet to master the basic mechanisms of the "
+"game. Beginners are advised to start by playing against a lower level AI "
+"(Sandbox or Very Easy). Change the AI level by clicking the gear icon next "
+"to the player you want to modify in the selection panel above."
+msgstr "Selv om det er tilnærmelsesvis enkelt for en erfaren spiler, er forvalgt AI-nivå ganske utfordrende for nye spillere som ikke har mestret grunnsteinene i spillets mekanikk enda. Det anbefales å starte mot en av lavere nivå (\"Sandkasse\" eller \"Veldig lett\"). Endring av AI-nivå gjøres ved å klikke på gir-ikonet ved siden av hver spiller du ønsker å endre i valgpanelet ovenfor."
 
 #: gui/splashscreen/splashscreen.txt:2
 msgid ""
@@ -2646,15 +3422,9 @@ msgstr "[imgleft=\"iconLag\"]Spillet kan ha ytelsesproblemer, spesielt i tilfell
 
 #: gui/splashscreen/splashscreen.txt:8
 msgid ""
-"[imgleft=\"iconMap\"]This version features a new pathfinder, with increased "
-"performance, but it can be subject to new bugs."
-msgstr "[imgleft=\"iconMap\"]Denne versjonen inneholder en ny stifinner med forbedret ytelse, men den kan være utsatt for nye feil."
-
-#: gui/splashscreen/splashscreen.txt:10
-msgid ""
 "[imgleft=\"iconFormation\"]Formations are a work in progress, but you can "
 "toggle forming and disbanding formations as desired."
-msgstr "[imgleft=\"iconFormation\"]Formasjoner er en funskjon som fortsatt er under utvikling, men du kan aktivere og deaktivere formasjon og oppløsning av formasjoner etter eget ønske. "
+msgstr "[imgleft=\"iconFormation\"]Formasjoner er en funksjon som fortsatt er under utvikling, men du kan skru på og av formasjon og oppløsning av formasjoner etter eget ønske. "
 
 #: gui/text/tips/army_camp.txt:1
 msgid "ROMAN ARMY CAMP"
@@ -2725,7 +3495,7 @@ msgstr "- Stasjoner en borgersoldat her for raskere forskning (IKKE IMPLEMENTERT
 
 #: gui/text/tips/carth_sacred_band.txt:1
 msgid "CARTHAGINIAN SACRED BAND"
-msgstr "KARTHAGENSK HELLIG BÅND"
+msgstr "KARTAGISK HELLIG BÅND"
 
 #: gui/text/tips/carth_sacred_band.txt:2
 msgid "- Champion Spearmen and Champion Cavalry Spearmen for Carthage."
@@ -2777,7 +3547,7 @@ msgstr "- Et middels stort \"trireme\"-klasse krigsskip."
 
 #: gui/text/tips/celtic_war_barge.txt:4
 msgid "- Available to the Celtic Factions (Britons, Gauls)."
-msgstr ""
+msgstr "- Tilgjengelig for keltiske fraksjoner (Britoner, Gallere)."
 
 #: gui/text/tips/celtic_war_barge.txt:6
 msgid "- Can transport up to 40 units across the waters."
@@ -2788,16 +3558,16 @@ msgid "- Increases firepower with garrisoned infantry."
 msgstr "- Øker ildkraften til stasjonert infanteri."
 
 #: gui/text/tips/celtic_war_barge.txt:10
-msgid "- Cannot ram, like other triremes, but has greater health and armour."
-msgstr "- Kan ikke bruke rambukk som andre triremes men har bedre helse og panser."
+msgid "- Cannot ram, like other triremes, but has greater health and armor."
+msgstr "- Kan ikke bruke rambukk som andre triremer men har bedre helse og rustning."
 
 #: gui/text/tips/civic_centres.txt:1
 msgid "CIVIC CENTERS"
 msgstr "SAMFUNNSSENTRE"
 
 #: gui/text/tips/civic_centres.txt:2
-msgid "- The \"foundation\" of your new colony."
-msgstr "- \"Fundamentet\" for din nye koloni."
+msgid "- The foundation of your new colony."
+msgstr ""
 
 #: gui/text/tips/civic_centres.txt:4
 msgid "- Claim large tracts of territory."
@@ -2808,8 +3578,10 @@ msgid "- Can be built in friendly and neutral territory."
 msgstr "- Kan bygges i vennlig og nøytralt territorium."
 
 #: gui/text/tips/civic_centres.txt:8
-msgid "- Train Female Citizens and basic Citizen-Soldiers."
-msgstr "- Tren Kvinnelige Innbyggere og Innbygger-Soldater."
+msgid ""
+"- Train citizens: female citizens, infantry citizen soldiers and cavalry "
+"citizen soldiers."
+msgstr ""
 
 #: gui/text/tips/embassies.txt:1
 msgid "EMBASSIES"
@@ -2846,12 +3618,6 @@ msgid "- Fishing is faster than gathering food on fields."
 msgstr "-Fiske er mer formålstjenlig enn sanking av mat på markene."
 
 #: gui/text/tips/fishing.txt:8
-msgid ""
-"- Garrison a support unit aboard to double the fishing boat's gathering "
-"rate."
-msgstr "- Stasjoner en hjelpe-enhet ombord for å doble fiskebåtens fangst-hastighet."
-
-#: gui/text/tips/fishing.txt:10
 msgid "- Careful! Fish are not an infinite resource!"
 msgstr "- Forsiktig! Det finnes ikke uendelig med fisk!"
 
@@ -2873,33 +3639,53 @@ msgstr "- Gir en befolkningsøkning."
 
 #: gui/text/tips/fortress.txt:8
 msgid "- Garrison soldiers inside to add more firepower to its defense."
-msgstr "Stasjoner soldater på innsiden for å legge til mer krutt til forsvaret. "
+msgstr "- Stasjoner soldater på innsiden for å legge til mer krutt dets forsvar. "
+
+#: gui/text/tips/freehand_position.txt:1
+msgid "FREEHAND POSITION"
+msgstr ""
+
+#: gui/text/tips/freehand_position.txt:2
+msgid ""
+"- Gain an advantage on the battleground by tactically positioning your "
+"units!"
+msgstr ""
+
+#: gui/text/tips/freehand_position.txt:4
+msgid ""
+"- Therefore select some units, press and hold the right mouse button, draw "
+"any line, then release the button."
+msgstr ""
+
+#: gui/text/tips/freehand_position.txt:6
+msgid "- Your units will now spread out on this line."
+msgstr ""
 
 #: gui/text/tips/gathering.txt:1
 msgid "RESOURCE GATHERING"
 msgstr "RESSURS-SANKING"
 
 #: gui/text/tips/gathering.txt:2
-msgid "- Use Citizen-Soldiers and Female Citizens to gather resources."
-msgstr "- Bruk borger-soldater og kvinnelige Innbyggere til å samle ressurser."
+msgid "- Use citizen soldiers and female citizens to gather resources."
+msgstr ""
 
 #: gui/text/tips/gathering.txt:4
-msgid "- Female Citizens are bonused with Farming and Foraging."
-msgstr "- Kvinnelige borgere har bonus for gårdsdrift og sanking."
+msgid "- Female citizens are faster gathering vegetable resources."
+msgstr ""
 
 #: gui/text/tips/gathering.txt:6
-msgid "- Citizen-Soldiers are bonused with Mining."
-msgstr "- Borger-soldater har bonus for gruvedrift. "
+msgid "- Infantry citizen soldiers are faster gathering minerals."
+msgstr ""
 
 #: gui/text/tips/gathering.txt:8
-msgid "- Cavalry Citizen-Soldiers are bonused with Hunting."
-msgstr "- Kavaleriborgersoldater gis bonus for jakt. "
+msgid "- Cavalry citizen soldiers are faster gathering meat."
+msgstr ""
 
 #: gui/text/tips/gathering.txt:10
 msgid ""
-"- The higher the level of Citizen-Soldier (Advanced, Elite), the better he "
-"fights, but the less efficient he is at gathering."
-msgstr "- Jo høyere nivå en borger-soldat har (Avansert, Elite), jo bedre kjemper han. Samtidig blir han dårligere på sanking."
+"- The higher the level of a citizen soldier (advanced, elite), the better he"
+" fights, but the less efficient he is at gathering resources."
+msgstr ""
 
 #: gui/text/tips/iphicrates.txt:1
 msgid "IPHICRATES"
@@ -2913,11 +3699,11 @@ msgstr "- Den athenske generalen som reformerte athenerhæren for å gjøre dem 
 
 #: gui/text/tips/iphicrates.txt:4
 msgid "- Units in his formation are faster and stronger."
-msgstr "Enheter i hans formasjon er både raskere og sterkere."
+msgstr "- Enheter i hans formasjon er både raskere og sterkere."
 
 #: gui/text/tips/iphicrates.txt:6
 msgid "- Skirmishers move faster while he lives."
-msgstr "- Fortropper forflytter seg raskere så lenge han lever."
+msgstr "- Fortropper forflytter seg raskere i hans levetid."
 
 #: gui/text/tips/outposts.txt:1
 msgid "OUTPOSTS"
@@ -2946,11 +3732,11 @@ msgstr "PALISADE-VEGGER"
 
 #: gui/text/tips/palisades.txt:2
 msgid "- A quick, cheap wooden wall available to all factions."
-msgstr "- En lettbygd, billig trevegg tilgjengelig for alle fraksjoner"
+msgstr "- En lettbygd, billig trevegg tilgjengelig for alle fraksjoner."
 
 #: gui/text/tips/palisades.txt:4
 msgid "- Most factions have access to them in Village Phase."
-msgstr "- De fleste fraksjoner har tilgang til dem i landsby-fasen."
+msgstr "- De fleste fraksjoner har tilgang til dem i landsbyfasen."
 
 #: gui/text/tips/palisades.txt:6
 msgid ""
@@ -2968,11 +3754,11 @@ msgstr "- Den fremste Athenske politikeren i det 5. århundre f.Kr. "
 
 #: gui/text/tips/pericles.txt:4
 msgid "- Buildings construct faster within his range."
-msgstr "Bygninger konstrueres raskere i nærheten av han. "
+msgstr "- Bygninger konstrueres raskere i nærheten av han. "
 
 #: gui/text/tips/pericles.txt:6
 msgid "- Temples are cheaper while he lives."
-msgstr "- Templer er billigere så lenge han er i live"
+msgstr "- Templer er billigere i hans levetid."
 
 #: gui/text/tips/persian_architecture.txt:1
 msgid "PERSIAN ARCHITECTURE"
@@ -2980,7 +3766,7 @@ msgstr "PERSISK ARKITEKTUR"
 
 #: gui/text/tips/persian_architecture.txt:2
 msgid "- Special Technology for the Persians."
-msgstr "- Spesial-teknologi for Perserene"
+msgstr "- Spesial-teknologi for Perserene."
 
 #: gui/text/tips/persian_architecture.txt:4
 msgid "- All Persian buildings +25% stronger."
@@ -2998,7 +3784,7 @@ msgstr "- Persere har også tilgang til et stort antall teknologier for bygninge
 
 #: gui/text/tips/pikemen.txt:1
 msgid "PIKEMEN"
-msgstr "LANSEMENN"
+msgstr "PIKENÉRER"
 
 #: gui/text/tips/pikemen.txt:2
 msgid "- Heavily armored and slow. Low attack."
@@ -3021,7 +3807,7 @@ msgstr "TUNGT KRIGSSKIP"
 msgid ""
 "- The heaviest standard warship. Available to: Rome, Carthage, Ptolemies, "
 "and Seleucids."
-msgstr "- Det tyngste standardkrigsskipet. Tilgjengelig for: Roma, Karthago, Ptolemi og Selekuidene."
+msgstr "- Det tyngste standardkrigsskipet. Tilgjengelig for: Rom, Karthago, Ptolemi og Selekuidene."
 
 #: gui/text/tips/quinquereme.txt:4
 msgid "- Transports up to 50 units."
@@ -3033,11 +3819,11 @@ msgstr "- Øker ildkraft med stasjonerte katapulter."
 
 #: gui/text/tips/quinquereme.txt:8
 msgid "- Has a ramming attack that sinks enemy ships (NOT IMPLEMENTED YET)."
-msgstr "- Har et ramangrep som senker fientlige skip (IKKE IMPLEMENTERT ENNÅ)."
+msgstr "- Har et ram-angrep som senker fiendtlige skip (IKKE IMPLEMENTERT ENNÅ)."
 
 #: gui/text/tips/savanna_biome.txt:1
 msgid "SAVANNA BIOME"
-msgstr "SAVANNE"
+msgstr "SAVANNE-BIOM"
 
 #: gui/text/tips/savanna_biome.txt:2
 msgid "- Generally flat, with a few watering holes and rocky outcrops."
@@ -3093,7 +3879,7 @@ msgstr "- Bruk for å slakte fientlig kavaleri eller som en sjokkstyrke for å s
 
 #: gui/text/tips/spartan_hoplites.txt:8
 msgid "- Use the 'Phalanx' formation for extra armor bonuses."
-msgstr "- Bruk 'Falanks'-formasjonen for ekstra panser-bonus."
+msgstr "- Bruk 'Falanks'-formasjonen for ekstra rustnings-bonus."
 
 #: gui/text/tips/spearmen.txt:1
 msgid "SPEARMEN"
@@ -3105,17 +3891,17 @@ msgstr "- Det grunnleggende nærkampinfanteriet for alle spillets fraksjoner. "
 
 #: gui/text/tips/spearmen.txt:4
 msgid "- Used against cavalry for an attack bonus."
-msgstr ""
+msgstr "- Brukes mot kavaleri for en angreps-bonus."
 
 #: gui/text/tips/spearmen.txt:6
 msgid "- Decent hack attack make them good front line troops."
-msgstr ""
+msgstr "- Greit huggeangrep gjør dem til gode frontlinjetropper."
 
 #: gui/text/tips/spearmen.txt:8
 msgid ""
 "- They are countered by ranged units and swordsmen, so support your spearmen"
 " with slingers or cavalry."
-msgstr "- De kontres av rekkeviddeenheter og sverdmenn, så støtt dine sverdmenn med slyngekastere eller kavaleri."
+msgstr "- De kontres av rekkeviddeenheter og sverdmenn, så støtt dine spydmenn med slyngekastere eller kavaleri."
 
 #: gui/text/tips/stoa.txt:1
 msgid "STOA"
@@ -3123,15 +3909,15 @@ msgstr "STOA"
 
 #: gui/text/tips/stoa.txt:2
 msgid "- A special structure for Greek factions."
-msgstr ""
+msgstr "- En spesiell bygning for greske fraksjoner."
 
 #: gui/text/tips/stoa.txt:4
 msgid "- Trains Heavy Skirmishers and Sword Infantry Champions."
-msgstr ""
+msgstr "- Trener tunge frontsoldater og sverdkjempemestre."
 
 #: gui/text/tips/stoa.txt:6
 msgid "- Grants +10 Population."
-msgstr "- Gir +10 i befolkining."
+msgstr "- Gir +10 økning av befolkningstak."
 
 #: gui/text/tips/storehouses.txt:1
 msgid "STOREHOUSES"
@@ -3139,7 +3925,7 @@ msgstr "LAGERHUS"
 
 #: gui/text/tips/storehouses.txt:2
 msgid "- A cheap dropsite for non-food resources (wood, stone, metal)."
-msgstr "- En billig lagerhus for resurser som ikke er mat. (tømmer, stein, metall)"
+msgstr "- Et billig avlastningssted for ressurser som ikke er mat. (tømmer, stein, metall)."
 
 #: gui/text/tips/storehouses.txt:4
 msgid ""
@@ -3153,7 +3939,7 @@ msgstr "SYNTAGMA-FORMASJONEN"
 
 #: gui/text/tips/syntagma.txt:2
 msgid "- A formation for 'pikeman' style infantry."
-msgstr "- En formasjon for 'pikener'-oppstilt infanteri."
+msgstr "- En formasjon for 'pikenér'-oppstilt infanteri."
 
 #: gui/text/tips/syntagma.txt:4
 msgid "- Formation is slow and cumbersome."
@@ -3173,7 +3959,7 @@ msgstr "TEMPLER"
 
 #: gui/text/tips/temples.txt:2
 msgid "- Town Phase structure."
-msgstr "- Byfasestruktur."
+msgstr "- Tettstedstruktur."
 
 #: gui/text/tips/temples.txt:4
 msgid "- Recruit Healers to heal your troops on the battlefield."
@@ -3224,11 +4010,11 @@ msgstr "- Athensk helt som ledet grekerne ved de store sjøslagene ved Artemisiu
 
 #: gui/text/tips/themistocles.txt:4
 msgid "- All ships are built faster while he lives."
-msgstr "- Skip konstrueres raskere så lenge han er i live"
+msgstr "- Skip konstrueres raskere i hans levetid."
 
 #: gui/text/tips/themistocles.txt:6
-msgid "- The ship he is garrisoned inside moves much faster."
-msgstr "Skip der han er stasjonert beveger seg mye raskere-"
+msgid "- The ship he is garrisoned inside sails much faster."
+msgstr "- Skip der han er stasjonert i seiler mye raskere."
 
 #: gui/text/tips/triremes.txt:1
 msgid "TRIREME"
@@ -3279,13 +4065,13 @@ msgstr "- Minst 7 felttog mot romerne under Lusitanerkrigene fra 147 til 139 f.K
 
 #: gui/text/tips/viriato.txt:6
 msgid "- Fast moving and can switch between sword and flaming javelin."
-msgstr "- Forflytter seg raskt og kan bytte mellom sverd og brennende kastespyd.."
+msgstr "- Forflytter seg raskt og kan bytte mellom sverd og brennende kastespyd."
 
 #: gui/text/tips/viriato.txt:8
 msgid ""
 "- His \"aura\" is the \"Tactica Guerilla\" that allows nearby Iberian units "
 "to ambush their opponents."
-msgstr "- Hans \"aura\" er \"Taktisk Gerilja\" som tillater nærværende Iberiske enheter å overfalle deres motstandere."
+msgstr "- Hans \"aura\" er \"Taktisk gerilja\" som tillater nærværende iberiske enheter å overfalle deres motstandere."
 
 #: gui/text/tips/war_elephants.txt:1
 msgid "WAR ELEPHANTS"
@@ -3293,13 +4079,13 @@ msgstr "KRIGSELEFANTER"
 
 #: gui/text/tips/war_elephants.txt:2
 msgid "- Huge beasts from Africa and India, trained for war."
-msgstr "Store udyr fra Afrika og India, trent til krig. "
+msgstr "- Store udyr fra Afrika og India, trent for krig. "
 
 #: gui/text/tips/war_elephants.txt:4
 msgid ""
 "- High Food and Metal cost, but very powerful. Strongest against Structures "
 "and Cavalry."
-msgstr "Høy mat- og metall -kost, men veldig kraftig. Sterkest mot strukturer og kavaleri."
+msgstr "- Høy mat- og metall-kost, men veldig kraftig. Sterkest mot strukturer og kavaleri."
 
 #: gui/text/tips/war_elephants.txt:6
 msgid "- Vulnerable to infantry skirmishers."

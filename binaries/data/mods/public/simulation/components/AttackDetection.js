@@ -58,13 +58,13 @@ AttackDetection.prototype.OnGlobalAttacked = function(msg)
 AttackDetection.prototype.AttackAlert = function(target, attacker, attackerOwner)
 {
 	let playerID = Engine.QueryInterface(this.entity, IID_Player).GetPlayerID();
-	
+
 	// Don't register attacks dealt against other players
 	if (Engine.QueryInterface(target, IID_Ownership).GetOwner() != playerID)
 		return;
 
 	let cmpAttackerOwnership = Engine.QueryInterface(attacker, IID_Ownership);
-	let atkOwner = cmpAttackerOwnership && cmpAttackerOwnership.GetOwner() != -1 ? cmpAttackerOwnership.GetOwner() : attackerOwner;
+	let atkOwner = cmpAttackerOwnership && cmpAttackerOwnership.GetOwner() != INVALID_PLAYER ? cmpAttackerOwnership.GetOwner() : attackerOwner;
 	// Don't register attacks dealt by myself
 	if (atkOwner == playerID)
 		return;
@@ -73,7 +73,7 @@ AttackDetection.prototype.AttackAlert = function(target, attacker, attackerOwner
 	// and generally are not so valuable as other units/buildings,
 	// we have a lower priority notification for it, which can be
 	// overriden by a regular one.
-	var cmpTargetIdentity = Engine.QueryInterface(target, IID_Identity); 
+	var cmpTargetIdentity = Engine.QueryInterface(target, IID_Identity);
 	var targetIsDomesticAnimal = cmpTargetIdentity && cmpTargetIdentity.HasClass("Animal") && cmpTargetIdentity.HasClass("Domestic");
 
 	var cmpPosition = Engine.QueryInterface(target, IID_Position);
@@ -96,7 +96,7 @@ AttackDetection.prototype.AttackAlert = function(target, attacker, attackerOwner
 
 		// If the new attack is within suppression distance of this element,
 		// then check if the element should be updated and return
-		var dist = SquaredDistance(element.position, event.position);
+		var dist = event.position.horizDistanceToSquared(element.position);
 		if (dist >= this.suppressionRangeSquared)
 			continue;
 
@@ -155,14 +155,6 @@ AttackDetection.prototype.HandleTimeout = function()
 AttackDetection.prototype.GetIncomingAttacks = function()
 {
 	return this.suppressedList;
-};
-
-// Utility function for calculating the squared-distance between two attack events
-function SquaredDistance(pos1, pos2)
-{
-	var xs = pos2.x - pos1.x;
-	var zs = pos2.z - pos1.z;
-	return xs*xs + zs*zs;
 };
 
 Engine.RegisterComponentType(IID_AttackDetection, "AttackDetection", AttackDetection);

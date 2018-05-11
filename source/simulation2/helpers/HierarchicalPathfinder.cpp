@@ -215,16 +215,20 @@ bool HierarchicalPathfinder::Chunk::RegionNearestNavcellInGoal(u16 r, u16 i0, u1
 	iOut = 0;
 	jOut = 0;
 	dist2Best = std::numeric_limits<u32>::max();
-	
+
 	// Calculate the navcell that contains the center of the goal.
 	int gi = (goal.x >> Pathfinding::NAVCELL_SIZE_LOG2).ToInt_RoundToNegInfinity();
 	int gj = (goal.z >> Pathfinding::NAVCELL_SIZE_LOG2).ToInt_RoundToNegInfinity();
-	
+
 	switch(goal.type)
 	{
 	case PathGoal::POINT:
 	{
-		if (m_Regions[gj-m_ChunkJ * CHUNK_SIZE][gi-m_ChunkI * CHUNK_SIZE] == r)
+		// i and j can be equal to CHUNK_SIZE on the top and right borders of the map,
+		// specially when mapSize is a multiple of CHUNK_SIZE
+		int i = std::min((int)CHUNK_SIZE - 1, gi - m_ChunkI * CHUNK_SIZE);
+		int j = std::min((int)CHUNK_SIZE - 1, gj - m_ChunkJ * CHUNK_SIZE);
+		if (m_Regions[j][i] == r)
 		{
 			iOut = gi;
 			jOut = gj;
@@ -407,10 +411,16 @@ void HierarchicalPathfinder::Update(Grid<NavcellData>* grid, const Grid<u8>& dir
 
 	for (int cj = 0; cj <  m_ChunksH; ++cj)
 	{
+		int j0 = cj * CHUNK_SIZE;
+		int j1 = std::min(j0 + CHUNK_SIZE, (int)dirtinessGrid.m_H);
 		for (int ci = 0; ci < m_ChunksW; ++ci)
 		{
-			if (!IsChunkDirty(ci, cj, dirtinessGrid))
+			// Skip chunks where no navcells are dirty.
+			int i0 = ci * CHUNK_SIZE;
+			int i1 = std::min(i0 + CHUNK_SIZE, (int)dirtinessGrid.m_W);
+			if (!dirtinessGrid.any_set_in_square(i0, j0, i1, j1))
 				continue;
+
 			for (const std::pair<std::string, pass_class_t>& passClassMask : m_PassClassMasks)
 			{
 				pass_class_t passClass = passClassMask.second;
@@ -442,23 +452,6 @@ void HierarchicalPathfinder::Update(Grid<NavcellData>* grid, const Grid<u8>& dir
 		m_DebugOverlayLines.clear();
 		AddDebugEdges(GetPassabilityClass("default"));
 	}
-}
-
-bool HierarchicalPathfinder::IsChunkDirty(int ci, int cj, const Grid<u8>& dirtinessGrid) const
-{
-	int i0 = ci * CHUNK_SIZE;
-	int j0 = cj * CHUNK_SIZE;
-	int i1 = std::min(i0 + CHUNK_SIZE, (int)dirtinessGrid.m_W);
-	int j1 = std::min(j0 + CHUNK_SIZE, (int)dirtinessGrid.m_H);
-	for (int j = j0; j < j1; ++j)
-	{
-		for (int i = i0; i < i1; ++i)
-		{
-			if (dirtinessGrid.get(i, j))
-				return true;
-		}
-	}
-	return false;
 }
 
 /**
@@ -582,11 +575,11 @@ void HierarchicalPathfinder::MakeGoalReachable(u16 i0, u16 j0, PathGoal& goal, p
 
 	// Check whether any reachable region contains the goal
 	// And get the navcell that's the closest to the point
-	
+
 	u16 bestI = 0;
 	u16 bestJ = 0;
 	u32 dist2Best = std::numeric_limits<u32>::max();
-	
+
 	for (const RegionID& region : reachableRegions)
 	{
 		// Skip region if its chunk doesn't contain the goal area
@@ -599,7 +592,7 @@ void HierarchicalPathfinder::MakeGoalReachable(u16 i0, u16 j0, PathGoal& goal, p
 
 		u16 i,j;
 		u32 dist2;
-		
+
 		// If the region contains the goal area, the goal is reachable
 		// Remember the best point for optimization.
 		if (GetChunk(region.ci, region.cj, passClass).RegionNearestNavcellInGoal(region.r, i0, j0, goal, i, j, dist2))

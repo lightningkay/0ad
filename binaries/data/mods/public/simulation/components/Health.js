@@ -17,16 +17,16 @@ Health.prototype.Schema =
 		"</element>" +
 	"</optional>" +
 	"<optional>" +
-		"<element name='DamageVariants'>" + 
-			"<oneOrMore>" + 
-				"<element a:help='Name of the variant to select when health drops under the defined ratio'>" + 
-					"<anyName/>" + 
-					"<data type='decimal'>" + 
-						"<param name='minInclusive'>0</param>" + 
-						"<param name='maxInclusive'>1</param>" + 
-					"</data>" + 
-				"</element>" + 
-			"</oneOrMore>" + 
+		"<element name='DamageVariants'>" +
+			"<oneOrMore>" +
+				"<element a:help='Name of the variant to select when health drops under the defined ratio'>" +
+					"<anyName/>" +
+					"<data type='decimal'>" +
+						"<param name='minInclusive'>0</param>" +
+						"<param name='maxInclusive'>1</param>" +
+					"</data>" +
+				"</element>" +
+			"</oneOrMore>" +
 		"</element>" +
 	"</optional>" +
 	"<element name='RegenRate' a:help='Hitpoint regeneration rate per second.'>" +
@@ -47,9 +47,6 @@ Health.prototype.Schema =
 			"<text/>" +
 		"</element>" +
 	"</optional>" +
-	"<element name='Undeletable' a:help='Prevent players from deleting this entity.'>" +
-		"<data type='boolean'/>" +
-	"</element>" +
 	"<element name='Unhealable' a:help='Indicates that the entity can not be healed by healer units'>" +
 		"<data type='boolean'/>" +
 	"</element>";
@@ -63,7 +60,6 @@ Health.prototype.Init = function()
 	this.hitpoints = +(this.template.Initial || this.GetMaxHitpoints());
 	this.regenRate = ApplyValueModificationsToEntity("Health/RegenRate", +this.template.RegenRate, this.entity);
 	this.idleRegenRate = ApplyValueModificationsToEntity("Health/IdleRegenRate", +this.template.IdleRegenRate, this.entity);
-	this.undeletable = this.template.Undeletable == "true";
 	this.CheckRegenTimer();
 	this.UpdateActor();
 };
@@ -97,7 +93,7 @@ Health.prototype.SetHitpoints = function(value)
 
 	var old = this.hitpoints;
 	this.hitpoints = Math.max(1, Math.min(this.GetMaxHitpoints(), value));
-	
+
 	var cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
 	if (cmpRangeManager)
 	{
@@ -122,16 +118,6 @@ Health.prototype.IsUnhealable = function()
 		|| this.GetHitpoints() >= this.GetMaxHitpoints());
 };
 
-Health.prototype.IsUndeletable = function()
-{
-	return this.undeletable;
-};
-
-Health.prototype.SetUndeletable = function(undeletable)
-{
-	this.undeletable = undeletable;
-};
-
 Health.prototype.GetIdleRegenRate = function()
 {
 	return this.idleRegenRate;
@@ -154,7 +140,7 @@ Health.prototype.ExecuteRegeneration = function()
 
 	if (regen > 0)
 		this.Increase(regen);
-	else 
+	else
 		this.Reduce(-regen);
 };
 
@@ -217,33 +203,41 @@ Health.prototype.Reduce = function(amount)
 		// might get called multiple times)
 		if (this.hitpoints)
 		{
+			this.hitpoints = 0;
+			this.RegisterHealthChanged(oldHitpoints);
 			state.killed = true;
+
+			let cmpDeathDamage = Engine.QueryInterface(this.entity, IID_DeathDamage);
+			if (cmpDeathDamage)
+				cmpDeathDamage.CauseDeathDamage();
 
 			PlaySound("death", this.entity);
 
-			// If SpawnEntityOnDeath is set, spawn the entity
-			if(this.template.SpawnEntityOnDeath)
+			if (this.template.SpawnEntityOnDeath)
 				this.CreateDeathSpawnedEntity();
 
-			if (this.template.DeathType == "corpse")
+			switch (this.template.DeathType)
 			{
+			case "corpse":
 				this.CreateCorpse();
-				Engine.DestroyEntity(this.entity);
-			}
-			else if (this.template.DeathType == "vanish")
+				break;
+
+			case "remain":
 			{
-				Engine.DestroyEntity(this.entity);
-			}
-			else if (this.template.DeathType == "remain")
-			{
-				var resource = this.CreateCorpse(true);
+				let resource = this.CreateCorpse(true);
 				if (resource != INVALID_ENTITY)
-					Engine.BroadcastMessage(MT_EntityRenamed, { entity: this.entity, newentity: resource });
-				Engine.DestroyEntity(this.entity);
+					Engine.PostMessage(this.entity, MT_EntityRenamed, { "entity": this.entity, "newentity": resource });
 			}
 
-			this.hitpoints = 0;
-			this.RegisterHealthChanged(oldHitpoints);
+			case "vanish":
+				break;
+
+			default:
+				error("Invalid template.DeathType: " + this.template.DeathType);
+				break;
+			}
+
+			Engine.DestroyEntity(this.entity);
 		}
 
 	}
@@ -272,7 +266,7 @@ Health.prototype.Increase = function(amount)
 
 	var old = this.hitpoints;
 	this.hitpoints = Math.min(this.hitpoints + amount, this.GetMaxHitpoints());
-	
+
 	if (this.hitpoints == this.GetMaxHitpoints())
 	{
 		var cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
@@ -323,7 +317,7 @@ Health.prototype.CreateCorpse = function(leaveResources)
 	cmpCorpseVisual.SetActorSeed(cmpVisual.GetActorSeed());
 
 	// Make it fall over
-	cmpCorpseVisual.SelectAnimation("death", true, 1.0, "");
+	cmpCorpseVisual.SelectAnimation("death", true, 1.0);
 
 	return corpse;
 };
@@ -361,19 +355,19 @@ Health.prototype.UpdateActor = function()
 		return;
 	let ratio = this.GetHitpoints() / this.GetMaxHitpoints();
 	let newDamageVariant = "alive";
-	if (ratio > 0) 
-	{ 
+	if (ratio > 0)
+	{
 		let minTreshold = 1;
-		for (let key in this.template.DamageVariants) 
-		{ 
+		for (let key in this.template.DamageVariants)
+		{
 			let treshold = +this.template.DamageVariants[key];
-			if (treshold < ratio || treshold > minTreshold) 
+			if (treshold < ratio || treshold > minTreshold)
 				continue;
 			newDamageVariant = key;
 			minTreshold = treshold;
-		} 
-	} 
-	else 
+		}
+	}
+	else
 		newDamageVariant = "death";
 
 	if (this.damageVariant && this.damageVariant == newDamageVariant)
@@ -402,10 +396,10 @@ Health.prototype.OnValueModification = function(msg)
 
 	let oldRegenRate = this.regenRate;
 	this.regenRate = ApplyValueModificationsToEntity("Health/RegenRate", +this.template.RegenRate, this.entity);
-	
+
 	let oldIdleRegenRate = this.idleRegenRate;
 	this.idleRegenRate = ApplyValueModificationsToEntity("Health/IdleRegenRate", +this.template.IdleRegenRate, this.entity);
-	
+
 	if (this.regenRate != oldRegenRate || this.idleRegenRate != oldIdleRegenRate)
 		this.CheckRegenTimer();
 };
@@ -413,7 +407,7 @@ Health.prototype.OnValueModification = function(msg)
 Health.prototype.RegisterHealthChanged = function(from)
 {
 	this.CheckRegenTimer();
-	this.UpdateActor()
+	this.UpdateActor();
 	Engine.PostMessage(this.entity, MT_HealthChanged, { "from": from, "to": this.hitpoints });
 };
 

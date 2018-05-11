@@ -1,28 +1,47 @@
 /**
  * All known cheat commands.
- * @type {Object}
  */
 const g_Cheats = getCheatsData();
 
 /**
  * Number of seconds after which chatmessages will disappear.
  */
-const g_ChatTimeout = 30;
+var g_ChatTimeout = 30;
 
 /**
  * Maximum number of lines to display simultaneously.
  */
-const g_ChatLines = 20;
+var g_ChatLines = 20;
 
 /**
- * The strings to be displayed including sender and formating.
+ * The currently displayed strings, limited by the given timeframe and limit above.
  */
 var g_ChatMessages = [];
+
+/**
+ * All unparsed chat messages received since connect, including timestamp.
+ */
+var g_ChatHistory = [];
 
 /**
  * Holds the timer-IDs used for hiding the chat after g_ChatTimeout seconds.
  */
 var g_ChatTimers = [];
+
+/**
+ * Command to send to the previously selected private chat partner.
+ */
+var g_LastChatAddressee = "";
+
+/**
+ * All tutorial messages received so far.
+ */
+var g_TutorialMessages = [];
+
+/**
+ * GUI tags applied to the most recent tutorial message.
+ */
+var g_TutorialNewMessageTags = { "color": "yellow" };
 
 /**
  * Handle all netmessage types that can occur.
@@ -34,11 +53,17 @@ var g_NetMessageTypes = {
 	"netwarn": msg => {
 		addNetworkWarning(msg);
 	},
+	"out-of-sync": msg => {
+		onNetworkOutOfSync(msg);
+	},
 	"players": msg => {
 		handlePlayerAssignmentsMessage(msg);
 	},
 	"paused": msg => {
 		setClientPauseState(msg.guid, msg.pause);
+	},
+	"clients-loading": msg => {
+		handleClientsLoadingMessage(msg.guids);
 	},
 	"rejoined": msg => {
 		addChatMessage({
@@ -75,17 +100,27 @@ var g_NetMessageTypes = {
 var g_FormatChatMessage = {
 	"system": msg => msg.text,
 	"connect": msg =>
-		sprintf(translate("%(player)s is starting to rejoin the game."), {
-			"player": colorizePlayernameByGUID(msg.guid)
-		}),
+		sprintf(
+			g_PlayerAssignments[msg.guid].player != -1 ?
+				// Translation: A player that left the game joins again
+				translate("%(player)s is starting to rejoin the game.") :
+				// Translation: A player joins the game for the first time
+				translate("%(player)s is starting to join the game."),
+			{ "player": colorizePlayernameByGUID(msg.guid) }
+		),
 	"disconnect": msg =>
 		sprintf(translate("%(player)s has left the game."), {
 			"player": colorizePlayernameByGUID(msg.guid)
 		}),
 	"rejoined": msg =>
-		sprintf(translate("%(player)s has rejoined the game."), {
-			"player": colorizePlayernameByGUID(msg.guid)
-		}),
+		sprintf(
+			g_PlayerAssignments[msg.guid].player != -1 ?
+				// Translation: A player that left the game joins again
+				translate("%(player)s has rejoined the game.") :
+				// Translation: A player joins the game for the first time
+				translate("%(player)s has joined the game."),
+			{ "player": colorizePlayernameByGUID(msg.guid) }
+		),
 	"kicked": msg =>
 		sprintf(
 			msg.banned ?
@@ -100,11 +135,12 @@ var g_FormatChatMessage = {
 		),
 	"clientlist": msg => getUsernameList(),
 	"message": msg => formatChatCommand(msg),
-	"defeat": msg => formatDefeatMessage(msg),
-	"won": msg => formatWinMessage(msg),
+	"defeat-victory": msg => formatDefeatVictoryMessage(msg.message, msg.players),
 	"diplomacy": msg => formatDiplomacyMessage(msg),
 	"tribute": msg => formatTributeMessage(msg),
-	"attack": msg => formatAttackMessage(msg)
+	"barter": msg => formatBarterMessage(msg),
+	"attack": msg => formatAttackMessage(msg),
+	"phase": msg => formatPhaseMessage(msg)
 };
 
 /**
@@ -118,8 +154,8 @@ var g_StatusMessageTypes = {
 		sprintf(translate("Reason: %(reason)s."), {
 			"reason": getDisconnectReason(msg.reason, true)
 		}),
-	"waiting_for_players": msg => translate("Waiting for other players to connect..."),
-	"join_syncing": msg => translate("Synchronising gameplay with other players..."),
+	"waiting_for_players": msg => translate("Waiting for players to connect:"),
+	"join_syncing": msg => translate("Synchronising gameplay with other players…"),
 	"active": msg => ""
 };
 
@@ -172,6 +208,55 @@ var g_IsChatAddressee = {
 		addresseeGUID == Engine.GetPlayerGUID()
 };
 
+/**
+ * Notice only messages will be filtered that are visible to the player in the first place.
+ */
+var g_ChatHistoryFilters = [
+	{
+		"key": "all",
+		"text": translateWithContext("chat history filter", "Chat and notifications"),
+		"filter": (msg, senderID) => true
+	},
+	{
+		"key": "chat",
+		"text": translateWithContext("chat history filter", "Chat messages"),
+		"filter": (msg, senderID) => msg.type == "message"
+	},
+	{
+		"key": "player",
+		"text": translateWithContext("chat history filter", "Players chat"),
+		"filter": (msg, senderID) =>
+			msg.type == "message" &&
+			senderID > 0 && !isPlayerObserver(senderID)
+	},
+	{
+		"key": "ally",
+		"text": translateWithContext("chat history filter", "Ally chat"),
+		"filter": (msg, senderID) =>
+			msg.type == "message" &&
+			msg.cmd && msg.cmd == "/allies"
+	},
+	{
+		"key": "enemy",
+		"text": translateWithContext("chat history filter", "Enemy chat"),
+		"filter": (msg, senderID) =>
+			msg.type == "message" &&
+			msg.cmd && msg.cmd == "/enemies"
+	},
+	{
+		"key": "observer",
+		"text": translateWithContext("chat history filter", "Observer chat"),
+		"filter": (msg, senderID) =>
+			msg.type == "message" &&
+			msg.cmd && msg.cmd == "/observers"
+	},
+	{
+		"key": "private",
+		"text": translateWithContext("chat history filter", "Private chat"),
+		"filter": (msg, senderID) => !!msg.isVisiblePM
+	}
+];
+
 var g_PlayerStateMessages = {
 	"won": translate("You have won!"),
 	"defeated": translate("You have been defeated!")
@@ -212,7 +297,6 @@ var g_NotificationsTypes =
 			"guid": findGuidForPlayerID(player) || -1,
 			"text": notification.message
 		};
-
 		if (message.guid == -1)
 			message.player = player;
 
@@ -221,66 +305,52 @@ var g_NotificationsTypes =
 	"aichat": function(notification, player)
 	{
 		let message = {
-			"guid": findGuidForPlayerID(player) || -1,
 			"type": "message",
 			"text": notification.message,
+			"guid": findGuidForPlayerID(player) || -1,
+			"player": player,
 			"translate": true
 		};
-
-		if (message.guid == -1)
-			message.player = player;
 
 		if (notification.translateParameters)
 		{
 			message.translateParameters = notification.translateParameters;
 			message.parameters = notification.parameters;
-			// special case for formatting of player names which are transmitted as _player_num
-			for (let param in message.parameters)
-			{
-				if (!param.startsWith("_player_"))
-					continue;
-
-				message.parameters[param] = colorizePlayernameByID(message.parameters[param]);
-			}
+			colorizePlayernameParameters(notification.parameters);
 		}
 
 		addChatMessage(message);
 	},
 	"defeat": function(notification, player)
 	{
-		addChatMessage({
-			"type": "defeat",
-			"guid": findGuidForPlayerID(player),
-			"player": player,
-			"resign": !!notification.resign
-		});
-		playerFinished(player, false);
-		sendLobbyPlayerlistUpdate();
+		playersFinished(notification.allies, notification.message, false);
 	},
 	"won": function(notification, player)
 	{
-		addChatMessage({
-			"type": "won",
-			"guid": findGuidForPlayerID(player),
-			"player": player
-		});
-		playerFinished(player, true);
-		sendLobbyPlayerlistUpdate();
+		playersFinished(notification.allies, notification.message, true);
 	},
 	"diplomacy": function(notification, player)
 	{
+		updatePlayerData();
+		if (g_DiplomacyColorsToggle)
+			updateDisplayedPlayerColors();
+
 		addChatMessage({
 			"type": "diplomacy",
 			"sourcePlayer": player,
 			"targetPlayer": notification.targetPlayer,
 			"status": notification.status
 		});
-
-		updateDiplomacy();
 	},
-	"quit": function(notification, player)
+	"ceasefire-ended": function(notification, player)
 	{
-		Engine.Exit();
+		updatePlayerData();
+		if (g_DiplomacyColorsToggle)
+			updateDisplayedPlayerColors();
+	},
+	"tutorial": function(notification, player)
+	{
+		updateTutorial(notification);
 	},
 	"tribute": function(notification, player)
 	{
@@ -290,6 +360,28 @@ var g_NotificationsTypes =
 			"targetPlayer": player,
 			"amounts": notification.amounts
 		});
+	},
+	"barter": function(notification, player)
+	{
+		addChatMessage({
+			"type": "barter",
+			"player": player,
+			"amountsSold": notification.amountsSold,
+			"amountsBought": notification.amountsBought,
+			"resourceSold": notification.resourceSold,
+			"resourceBought": notification.resourceBought
+		});
+	},
+	"spy-response": function(notification, player)
+	{
+		if (g_BribeButtonsWaiting[player])
+			g_BribeButtonsWaiting[player] = g_BribeButtonsWaiting[player].filter(p => p != notification.target);
+
+		if (notification.entity && g_ViewedPlayer == player)
+		{
+			closeDiplomacy();
+			setCameraFollow(notification.entity);
+		}
 	},
 	"attack": function(notification, player)
 	{
@@ -306,7 +398,7 @@ var g_NotificationsTypes =
 				g_Selection.addList([notification.target]);
 		}
 
-		if (Engine.ConfigDB_GetValue("user", "gui.session.attacknotificationmessage") !== "true")
+		if (Engine.ConfigDB_GetValue("user", "gui.session.notifications.attack") !== "true")
 			return;
 
 		addChatMessage({
@@ -314,6 +406,15 @@ var g_NotificationsTypes =
 			"player": player,
 			"attacker": notification.attacker,
 			"targetIsDomesticAnimal": notification.targetIsDomesticAnimal
+		});
+	},
+	"phase": function(notification, player)
+	{
+		addChatMessage({
+			"type": "phase",
+			"player": player,
+			"phaseName": notification.phaseName,
+			"phaseState": notification.phaseState
 		});
 	},
 	"dialog": function(notification, player)
@@ -335,10 +436,11 @@ var g_NotificationsTypes =
 
 		let cmd = notification.cmd;
 
-		// Ignore boring animals
+		// Ignore rallypoint commands of trained animals
 		let entState = cmd.entities && cmd.entities[0] && GetEntityState(cmd.entities[0]);
-		if (entState && entState.identity && entState.identity.classes &&
-				entState.identity.classes.indexOf("Animal") != -1)
+		if (g_ViewedPlayer != 0 &&
+		    entState && entState.identity && entState.identity.classes &&
+		    entState.identity.classes.indexOf("Animal") != -1)
 			return;
 
 		// Focus the building to construct
@@ -348,9 +450,14 @@ var g_NotificationsTypes =
 			if (targetState)
 				Engine.CameraMoveTo(targetState.position.x, targetState.position.z);
 		}
+		else if (cmd.type == "delete-entities" && notification.position)
+			Engine.CameraMoveTo(notification.position.x, notification.position.y);
 		// Focus commanded entities, but don't lose previous focus when training units
 		else if (cmd.type != "train" && cmd.type != "research" && entState)
 			setCameraFollow(cmd.entities[0]);
+
+		if (["walk", "attack-walk", "patrol"].indexOf(cmd.type) != -1)
+			DrawTargetMarker(cmd);
 
 		// Select units affected by that command
 		let selection = [];
@@ -362,28 +469,34 @@ var g_NotificationsTypes =
 		// Allow gaia in selection when gathering
 		g_Selection.reset();
 		g_Selection.addList(selection, false, cmd.type == "gather");
+	},
+	"play-tracks": function (notification, player)
+	{
+		if (notification.lock)
+		{
+			global.music.storeTracks(notification.tracks.map(track => ({ "Type": "custom", "File": track })));
+			global.music.setState(global.music.states.CUSTOM);
+		}
+
+		global.music.setLocked(notification.lock);
 	}
 };
 
 /**
  * Loads all known cheat commands.
- *
- * @returns {Object}
  */
 function getCheatsData()
 {
 	let cheats = {};
-	for (let fileName of getJSONFileList("simulation/data/cheats/"))
+	for (let fileName of Engine.ListDirectoryFiles("simulation/data/cheats/", "*.json", false))
 	{
-		let currentCheat = Engine.ReadJSONFile("simulation/data/cheats/"+fileName+".json");
-		if (!currentCheat)
-			continue;
-		if (Object.keys(cheats).indexOf(currentCheat.Name) !== -1)
+		let currentCheat = Engine.ReadJSONFile(fileName);
+		if (cheats[currentCheat.Name])
 			warn("Cheat name '" + currentCheat.Name + "' is already present");
 		else
 			cheats[currentCheat.Name] = currentCheat.Data;
 	}
-	return cheats;
+	return deepfreeze(cheats);
 }
 
 /**
@@ -398,17 +511,17 @@ function executeCheat(text)
 		return false;
 
 	// Find the cheat code that is a prefix of the user input
-	let cheatCode = Object.keys(g_Cheats).find(cheatCode => text.indexOf(cheatCode) == 0);
+	let cheatCode = Object.keys(g_Cheats).find(code => text.indexOf(code) == 0);
 	if (!cheatCode)
 		return false;
 
 	let cheat = g_Cheats[cheatCode];
 
-	let parameter = text.substr(cheatCode.length);
+	let parameter = text.substr(cheatCode.length + 1);
 	if (cheat.isNumeric)
 		parameter = +parameter;
 
-	if (cheat.DefaultParameter && (isNaN(parameter) || parameter <= 0))
+	if (cheat.DefaultParameter && !parameter)
 		parameter = cheat.DefaultParameter;
 
 	Engine.PostNetworkCommand({
@@ -448,14 +561,44 @@ function handleNotifications()
 }
 
 /**
- * Updates playerdata cache and refresh diplomacy panel.
+ * Updates the tutorial panel when a new goal.
  */
-function updateDiplomacy()
+function updateTutorial(notification)
 {
-	g_Players = getPlayerData(g_Players);
+	// Show the tutorial panel if not yet done
+	Engine.GetGUIObjectByName("tutorialPanel").hidden = false;
 
-	if (g_IsDiplomacyOpen)
-		openDiplomacy();
+	if (notification.warning)
+	{
+		Engine.GetGUIObjectByName("tutorialWarning").caption = coloredText(translate(notification.warning), "orange");
+		return;
+	}
+
+	let notificationText =
+		notification.instructions.reduce((instructions, item) =>
+			instructions + (typeof item == "string" ? translate(item) : colorizeHotkey(translate(item.text), item.hotkey)),
+			"");
+
+	Engine.GetGUIObjectByName("tutorialText").caption = g_TutorialMessages.concat(setStringTags(notificationText, g_TutorialNewMessageTags)).join("\n");
+	g_TutorialMessages.push(notificationText);
+
+	if (notification.readyButton)
+	{
+		Engine.GetGUIObjectByName("tutorialReady").hidden = false;
+		if (notification.leave)
+		{
+			Engine.GetGUIObjectByName("tutorialWarning").caption = translate("Click to quit this tutorial.");
+			Engine.GetGUIObjectByName("tutorialReady").caption = translate("Quit");
+			Engine.GetGUIObjectByName("tutorialReady").onPress = leaveGame;
+		}
+		else
+			Engine.GetGUIObjectByName("tutorialWarning").caption = translate("Click when ready.");
+	}
+	else
+	{
+		Engine.GetGUIObjectByName("tutorialWarning").caption = translate("Follow the instructions.");
+		Engine.GetGUIObjectByName("tutorialReady").hidden = true;
+	}
 }
 
 /**
@@ -463,7 +606,7 @@ function updateDiplomacy()
  */
 function updateTimeNotifications()
 {
-	let notifications =  Engine.GuiInterfaceCall("GetTimeNotifications", g_ViewedPlayer);
+	let notifications = Engine.GuiInterfaceCall("GetTimeNotifications", g_ViewedPlayer);
 	let notificationText = "";
 	for (let n of notifications)
 	{
@@ -475,7 +618,9 @@ function updateTimeNotifications()
 		if (n.translateParameters)
 			translateObjectKeys(parameters, n.translateParameters);
 
-		parameters.time = timeToString(n.endTime - g_SimState.timeElapsed);
+		parameters.time = timeToString(n.endTime - GetSimState().timeElapsed);
+
+		colorizePlayernameParameters(parameters);
 
 		notificationText += sprintf(message, parameters) + "\n";
 	}
@@ -517,10 +662,15 @@ function handleNetStatusMessage(message)
 		return;
 	}
 
-	let label = Engine.GetGUIObjectByName("netStatus");
+	g_IsNetworkedActive = message.status == "active";
+
+	let netStatus = Engine.GetGUIObjectByName("netStatus");
 	let statusMessage = g_StatusMessageTypes[message.status](message);
-	label.caption = statusMessage;
-	label.hidden = !statusMessage;
+	netStatus.caption = statusMessage;
+	netStatus.hidden = !statusMessage;
+
+	let loadingClientsText = Engine.GetGUIObjectByName("loadingClientsText");
+	loadingClientsText.hidden = message.status != "waiting_for_players";
 
 	if (message.status == "disconnected")
 	{
@@ -529,8 +679,65 @@ function handleNetStatusMessage(message)
 		Engine.SetPaused(true, false);
 
 		g_Disconnected = true;
+		updateCinemaPath();
 		closeOpenDialogs();
 	}
+}
+
+function handleClientsLoadingMessage(guids)
+{
+	let loadingClientsText = Engine.GetGUIObjectByName("loadingClientsText");
+	loadingClientsText.caption = guids.map(guid => colorizePlayernameByGUID(guid)).join(translateWithContext("Separator for a list of client loading messages", ", "));
+}
+
+function onNetworkOutOfSync(msg)
+{
+	let txt = [
+		sprintf(translate("Out-Of-Sync error on turn %(turn)s."), {
+			"turn": msg.turn
+		}),
+
+		sprintf(translateWithContext("Out-Of-Sync", "Players: %(players)s"), {
+			"players": msg.players.join(translateWithContext("Separator for a list of players", ", "))
+		}),
+
+		msg.hash == msg.expectedHash ?
+			translateWithContext("Out-Of-Sync", "Your game state is identical to the hosts game state.") :
+			translateWithContext("Out-Of-Sync", "Your game state differs from the hosts game state."),
+
+		""
+	];
+
+	if (msg.turn > 1 && g_GameAttributes.settings.PlayerData.some(pData => pData && pData.AI))
+		txt.push(translateWithContext("Out-Of-Sync", "Rejoining Multiplayer games with AIs is not supported yet!"));
+	else
+		txt.push(
+			translateWithContext("Out-Of-Sync", "Ensure all players use the same mods."),
+			translateWithContext("Out-Of-Sync", 'Click on "Report a Bug" in the main menu to help fix this.'),
+			sprintf(translateWithContext("Out-Of-Sync", "Replay saved to %(filepath)s"), {
+				"filepath": escapeText(msg.path_replay)
+			}),
+			sprintf(translateWithContext("Out-Of-Sync", "Dumping current state to %(filepath)s"), {
+				"filepath": escapeText(msg.path_oos_dump)
+			})
+		);
+
+	messageBox(
+		600, 280,
+		txt.join("\n"),
+		translate("Out of Sync")
+	);
+}
+
+function onReplayOutOfSync()
+{
+	messageBox(
+		500, 140,
+		translate("Out-Of-Sync error!") + "\n" +
+			// Translation: This is shown if replay is out of sync
+			translateWithContext("Out-Of-Sync", "The current game state is different from the original game state."),
+		translate("Out of Sync")
+	);
 }
 
 function handlePlayerAssignmentsMessage(message)
@@ -547,6 +754,7 @@ function handlePlayerAssignmentsMessage(message)
 		onClientJoin(guid);
 	});
 
+	updateGUIObjects();
 	updateChatAddressees();
 	sendLobbyPlayerlistUpdate();
 }
@@ -686,6 +894,10 @@ function submitChatInput()
 	if (chatAddressee.selected > 0 && (text.indexOf("/") != 0 || text.indexOf("/me ") == 0))
 		text = chatAddressee.list_data[chatAddressee.selected] + " " + text;
 
+	let selectedChat = chatAddressee.list_data[chatAddressee.selected];
+	if (selectedChat.startsWith("/msg"))
+		g_LastChatAddressee = selectedChat;
+
 	submitChatDirectly(text);
 }
 
@@ -703,6 +915,7 @@ function addChatMessage(msg)
 	if (!formatted)
 		return;
 
+	// Update chat overlay
 	g_ChatMessages.push(formatted);
 	g_ChatTimers.push(setTimeout(removeOldChatMessage, g_ChatTimeout * 1000));
 
@@ -710,6 +923,23 @@ function addChatMessage(msg)
 		removeOldChatMessage();
 	else
 		Engine.GetGUIObjectByName("chatText").caption = g_ChatMessages.join("\n");
+
+	// Save to chat history
+	let historical = {
+		"txt": formatted,
+		"timePrefix": sprintf(translate("\\[%(time)s]"), {
+			"time": Engine.FormatMillisecondsIntoDateStringLocal(Date.now(), translate("HH:mm"))
+		}),
+		"filter": {}
+	};
+
+	// Apply the filters now before diplomacies or playerstates change
+	let senderID = msg.guid && g_PlayerAssignments[msg.guid] ? g_PlayerAssignments[msg.guid].player : 0;
+	for (let filter of g_ChatHistoryFilters)
+		historical.filter[filter.key] = filter.filter(msg, senderID);
+
+	g_ChatHistory.push(historical);
+	updateChatHistory();
 }
 
 /**
@@ -741,24 +971,34 @@ function colorizePlayernameByGUID(guid)
 
 function colorizePlayernameHelper(username, playerID)
 {
-	let playerColor = playerID > -1 ? rgbToGuiColor(g_Players[playerID].color) : "white";
-	return '[color="' + playerColor + '"]' + (username || translate("Unknown Player")) + "[/color]";
+	let playerColor = playerID > -1 ? rgbToGuiColor(g_DisplayedPlayerColors[playerID]) : "white";
+	return coloredText(username || translate("Unknown Player"), playerColor);
 }
 
-function formatDefeatMessage(msg)
+/**
+ * Insert the colorized playername to chat messages sent by the AI and time notifications.
+ */
+function colorizePlayernameParameters(parameters)
 {
-	return sprintf(
-		msg.resign ?
-			translate("%(player)s has resigned.") :
-			translate("%(player)s has been defeated."),
-		{ "player": colorizePlayernameByID(msg.player) }
-	);
+	for (let param in parameters)
+		if (param.startsWith("_player_"))
+			parameters[param] = colorizePlayernameByID(parameters[param]);
 }
 
-function formatWinMessage(msg)
+function formatDefeatVictoryMessage(message, players)
 {
-	return sprintf(translate("%(player)s has won."), {
-		"player": colorizePlayernameByID(msg.player)
+	if (!message.pluralMessage)
+		return sprintf(translate(message), {
+			"player": colorizePlayernameByID(players[0])
+		});
+
+	let mPlayers = players.map(playerID => colorizePlayernameByID(playerID));
+	let lastPlayer = mPlayers.pop();
+
+	return sprintf(translatePlural(message.message, message.pluralMessage, message.pluralCount), {
+		// Translation: This comma is used for separating first to penultimate elements in an enumeration.
+		"players": mPlayers.join(translate(", ")),
+		"lastPlayer": lastPlayer
 	});
 }
 
@@ -781,19 +1021,45 @@ function formatDiplomacyMessage(msg)
 	});
 }
 
+/**
+ * Optionally show all tributes sent in observer mode and tributes sent between allied players.
+ * Otherwise, only show tributes sent directly to us, and tributes that we send.
+ */
 function formatTributeMessage(msg)
 {
-	// Check observer first, since we also want to see if the selected player in the developer-overlay has sent tributes
 	let message = "";
-	if (g_IsObserver)
-		message = translate("%(player)s has sent %(player2)s %(amounts)s.");
-	else if (msg.targetPlayer == Engine.GetPlayerID())
+	if (msg.targetPlayer == Engine.GetPlayerID())
 		message = translate("%(player)s has sent you %(amounts)s.");
+	else if (msg.sourcePlayer == Engine.GetPlayerID())
+		message = translate("You have sent %(player2)s %(amounts)s.");
+	else if (Engine.ConfigDB_GetValue("user", "gui.session.notifications.tribute") == "true" &&
+	        (g_IsObserver || g_GameAttributes.settings.LockTeams &&
+	           g_Players[msg.sourcePlayer].isMutualAlly[Engine.GetPlayerID()] &&
+	           g_Players[msg.targetPlayer].isMutualAlly[Engine.GetPlayerID()]))
+		message = translate("%(player)s has sent %(player2)s %(amounts)s.");
 
 	return sprintf(message, {
 		"player": colorizePlayernameByID(msg.sourcePlayer),
 		"player2": colorizePlayernameByID(msg.targetPlayer),
 		"amounts": getLocalizedResourceAmounts(msg.amounts)
+	});
+}
+
+function formatBarterMessage(msg)
+{
+	if (!g_IsObserver || Engine.ConfigDB_GetValue("user", "gui.session.notifications.barter") != "true")
+		return "";
+
+	let amountsSold = {};
+	amountsSold[msg.resourceSold] = msg.amountsSold;
+
+	let amountsBought = {};
+	amountsBought[msg.resourceBought] = msg.amountsBought;
+
+	return sprintf(translate("%(player)s bartered %(amountsBought)s for %(amountsSold)s."), {
+		"player": colorizePlayernameByID(msg.player),
+		"amountsBought": getLocalizedResourceAmounts(amountsBought),
+		"amountsSold": getLocalizedResourceAmounts(amountsSold)
 	});
 }
 
@@ -803,11 +1069,34 @@ function formatAttackMessage(msg)
 		return "";
 
 	let message = msg.targetIsDomesticAnimal ?
-			translate("Your livestock has been attacked by %(attacker)s!") :
-			translate("You have been attacked by %(attacker)s!");
+		translate("Your livestock has been attacked by %(attacker)s!") :
+		translate("You have been attacked by %(attacker)s!");
 
 	return sprintf(message, {
 		"attacker": colorizePlayernameByID(msg.attacker)
+	});
+}
+
+function formatPhaseMessage(msg)
+{
+	let notifyPhase = Engine.ConfigDB_GetValue("user", "gui.session.notifications.phase");
+	if (notifyPhase == "none" || msg.player != g_ViewedPlayer && !g_IsObserver && !g_Players[msg.player].isMutualAlly[g_ViewedPlayer])
+		return "";
+
+	let message = "";
+	if (notifyPhase == "all")
+	{
+		if (msg.phaseState == "started")
+			message = translate("%(player)s is advancing to the %(phaseName)s.");
+		else if (msg.phaseState == "aborted")
+			message = translate("The %(phaseName)s of %(player)s has been aborted.");
+	}
+	if (msg.phaseState == "completed")
+		message = translate("%(player)s has reached the %(phaseName)s.");
+
+	return sprintf(message, {
+		"player": colorizePlayernameByID(msg.player),
+		"phaseName": getEntityNames(GetTechnologyData(msg.phaseName, g_Players[msg.player].civ))
 	});
 }
 
@@ -842,10 +1131,10 @@ function formatChatCommand(msg)
 	{
 		msg.text = escapeText(msg.text);
 
-		let userName = g_PlayerAssignments[Engine.GetPlayerGUID() || "local"].name;
-
-		if (userName != g_PlayerAssignments[msg.guid].name)
-			notifyUser(userName, msg.text);
+		let userName = g_PlayerAssignments[Engine.GetPlayerGUID()].name;
+		if (userName != g_PlayerAssignments[msg.guid].name &&
+		    msg.text.toLowerCase().indexOf(splitRatingFromNick(userName).nick.toLowerCase()) != -1)
+			soundNotification("nick");
 	}
 
 	// GUID for players, playerID for AIs
@@ -861,7 +1150,7 @@ function formatChatCommand(msg)
 
 /**
  * Checks if the current user is an addressee of the chatmessage sent by another player.
- * Sets the context of that message.
+ * Sets the context and potentially addresseeGUID of that message.
  * Returns true if the message should be displayed.
  *
  * @param {Object} msg
@@ -872,24 +1161,19 @@ function parseChatAddressee(msg)
 		return true;
 
 	// Split addressee command and message-text
-	let cmd = msg.text.split(/\s/)[0];
-	msg.text = msg.text.substr(cmd.length + 1);
+	msg.cmd = msg.text.split(/\s/)[0];
+	msg.text = msg.text.substr(msg.cmd.length + 1);
 
-	if (cmd == "/ally")
-		cmd = "/allies";
+	// GUID is "local" in singleplayer, some string in multiplayer.
+	// Chat messages sent by the simulation (AI) come with the playerID.
+	let senderID = msg.player ? msg.player : (g_PlayerAssignments[msg.guid] || msg).player;
 
-	if (cmd == "/enemy")
-		cmd = "/enemies";
-
-	if (cmd == "/observer")
-		cmd = "/observers";
-
-	// GUID for players and observers, ID for bots
-	let senderID = (g_PlayerAssignments[msg.guid] || msg).player;
-	let isSender = msg.guid ? msg.guid == Engine.GetPlayerGUID() : senderID == Engine.GetPlayerID();
+	let isSender = msg.guid ?
+		msg.guid == Engine.GetPlayerGUID() :
+		senderID == Engine.GetPlayerID();
 
 	// Parse private message
-	let isPM = cmd == "/msg";
+	let isPM = msg.cmd == "/msg";
 	let addresseeGUID;
 	let addresseeIndex;
 	if (isPM)
@@ -912,20 +1196,22 @@ function parseChatAddressee(msg)
 	}
 
 	// Set context string
-	if (!g_ChatAddresseeContext[cmd])
+	if (!g_ChatAddresseeContext[msg.cmd])
 	{
 		if (isSender)
-			warn("Unknown chat command: " + cmd);
+			warn("Unknown chat command: " + msg.cmd);
 		return false;
 	}
-	msg.context = g_ChatAddresseeContext[cmd];
+	msg.context = g_ChatAddresseeContext[msg.cmd];
 
 	// For observers only permit public- and observer-chat and PM to observers
 	if (isPlayerObserver(senderID) &&
-	    (isPM && !isPlayerObserver(addresseeIndex) || !isPM && cmd != "/observers"))
+	    (isPM && !isPlayerObserver(addresseeIndex) || !isPM && msg.cmd != "/observers"))
 		return false;
+	let visible = isSender || g_IsChatAddressee[msg.cmd](senderID, addresseeGUID);
+	msg.isVisiblePM = isPM && visible;
 
-	return isSender || g_IsChatAddressee[cmd](senderID, addresseeGUID);
+	return visible;
 }
 
 /**
@@ -955,7 +1241,7 @@ function matchUsername(text)
  */
 function sendDialogAnswer(guiObject, dialogName)
 {
-	Engine.GetGUIObjectByName(dialogName+"-dialog").hidden = true;
+	Engine.GetGUIObjectByName(dialogName + "-dialog").hidden = true;
 
 	Engine.PostNetworkCommand({
 		"type": "dialog-answer",

@@ -18,12 +18,9 @@
 				<Type>lake</Type>
 				<Color r="0.741176" g="0.592157" b="0.27451"/>
 				<Height>20.5639</Height>
-				<Shininess>150</Shininess>
 				<Waviness>1.0</Waviness>
 				<Murkiness>0.835938</Murkiness>
 				<Tint r="0.741176" g="0.592157" b="0.27451"/>
-				<ReflectionTint r="0.54902" g="0.537255" b="0.439216"/>
-				<ReflectionTintStrength>0.298828</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -44,7 +41,6 @@
   "CircularMap": true,
   "Preview" : "sahel_scenario.png",
   "Description": "Situated Southside of the Atlas mountain range in North Africa.\u000a\u000aA somewhat open map with an abundance of food and mineral resources, while wood is somewhat scarce.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Sahel",
@@ -114,7 +110,10 @@
       "Team": 1
     }
   ],
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -5537,7 +5536,7 @@
 			<Actor seed="27296"/>
 		</Entity>
 		<Entity uid="878">
-			<Template>units/iber_cavalry_spearman_b</Template>
+			<Template>units/iber_cavalry_javelinist_b</Template>
 			<Player>4</Player>
 			<Position x="923.70911" z="382.36106"/>
 			<Orientation y="-1.04288"/>

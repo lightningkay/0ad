@@ -23,7 +23,7 @@
   </GarrisonHolder>
   <Health>
     <Max>2000</Max>
-    <SpawnEntityOnDeath>rubble/rubble_stone_4x4</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_4x4</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <GenericName>Barracks</GenericName>
@@ -33,11 +33,8 @@
     <RequiredTechnology>phase_village</RequiredTechnology>
   </Identity>
   <Loot>
-    <xp>100</xp>
-    <food>0</food>
     <wood>30</wood>
     <stone>10</stone>
-    <metal>0</metal>
   </Loot>
   <Obstruction>
     <Static width="17.0" depth="17.0"/>

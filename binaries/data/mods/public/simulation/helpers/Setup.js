@@ -43,12 +43,27 @@ function LoadMapSettings(settings)
 			cmpObstructionManager.SetPassabilityCircular(true);
 	}
 
+	if (settings.TriggerDifficulty != undefined)
+		Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger).SetDifficulty(settings.TriggerDifficulty);
+	else if (settings.SupportedTriggerDifficulties)	// used by Atlas and autostart games
+	{
+		let difficulties = Engine.ReadJSONFile("simulation/data/settings/trigger_difficulties.json").Data;
+		let defaultDiff = difficulties.find(d => d.Name == settings.SupportedTriggerDifficulties.Default).Difficulty;
+		Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger).SetDifficulty(defaultDiff);
+	}
+
 	let cmpEndGameManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_EndGameManager);
-	let gameTypeSettings = {};
-	if (settings.WonderDuration)
-		gameTypeSettings.wonderDuration = settings.WonderDuration * 60 * 1000;
-	if (settings.GameType)
-		cmpEndGameManager.SetGameType(settings.GameType, gameTypeSettings);
+	let gameSettings = { "victoryConditions": settings.VictoryConditions };
+	if (gameSettings.victoryConditions.indexOf("capture_the_relic") != -1)
+	{
+		gameSettings.relicCount = settings.RelicCount;
+		gameSettings.relicDuration = settings.RelicDuration * 60 * 1000;
+	}
+	if (gameSettings.victoryConditions.indexOf("wonder") != -1)
+		gameSettings.wonderDuration = settings.WonderDuration * 60 * 1000;
+	if (gameSettings.victoryConditions.indexOf("regicide") != -1)
+		gameSettings.regicideGarrison = settings.RegicideGarrison;
+	cmpEndGameManager.SetGameSettings(gameSettings);
 
 	cmpEndGameManager.SetAlliedVictory(settings.LockTeams || !settings.LastManStanding);
 	if (settings.LockTeams && settings.LastManStanding)
@@ -63,7 +78,7 @@ function LoadMapSettings(settings)
 			else
 				cmpGarrisonHolder.initGarrison = settings.Garrison[holder];
 		}
-	
+
 	let cmpCeasefireManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_CeasefireManager);
 	if (settings.Ceasefire)
 		cmpCeasefireManager.StartCeasefire(settings.Ceasefire * 60 * 1000);

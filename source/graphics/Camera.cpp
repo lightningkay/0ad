@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -54,27 +54,19 @@ void CCamera::SetProjection(float nearp, float farp, float fov)
 	m_FarPlane = farp;
 	m_FOV = fov;
 
-	float aspect = (float)m_ViewPort.m_Width/(float)m_ViewPort.m_Height;
-	float f = 1.0f/tanf(m_FOV/2);
-
-	m_ProjMat.SetZero ();
-	m_ProjMat._11 = f/aspect;
-	m_ProjMat._22 = f;
-	m_ProjMat._33 = -(m_FarPlane+m_NearPlane)/(m_NearPlane-m_FarPlane);
-	m_ProjMat._34 = 2*m_FarPlane*m_NearPlane/(m_NearPlane-m_FarPlane);
-	m_ProjMat._43 = 1.0f;
+	const float aspect = static_cast<float>(m_ViewPort.m_Width) / static_cast<float>(m_ViewPort.m_Height);
+	m_ProjMat.SetPerspective(m_FOV, aspect, m_NearPlane, m_FarPlane);
 }
 
 void CCamera::SetProjectionTile(int tiles, int tile_x, int tile_y)
 {
+	const float aspect = static_cast<float>(m_ViewPort.m_Width) / static_cast<float>(m_ViewPort.m_Height);
+	const float f = 1.f / tanf(m_FOV / 2.f);
 
-	float aspect = (float)m_ViewPort.m_Width/(float)m_ViewPort.m_Height;
-	float f = 1.0f/tanf(m_FOV/2);
-
-	m_ProjMat._11 = tiles*f/aspect;
-	m_ProjMat._22 = tiles*f;
-	m_ProjMat._13 = -(1-tiles + 2*tile_x);
-	m_ProjMat._23 = -(1-tiles + 2*tile_y);
+	m_ProjMat._11 = tiles * f / aspect;
+	m_ProjMat._22 = tiles * f;
+	m_ProjMat._13 = -(1 - tiles + 2 * tile_x);
+	m_ProjMat._23 = -(1 - tiles + 2 * tile_y);
 }
 
 //Updates the frustum planes. Should be called
@@ -357,7 +349,7 @@ void CCamera::LookAt(const CVector3D& camera, const CVector3D& target, const CVe
 	LookAlong(camera, delta, up);
 }
 
-void CCamera::LookAlong(CVector3D camera, CVector3D orientation, CVector3D up)
+void CCamera::LookAlong(const CVector3D& camera, CVector3D orientation, CVector3D up)
 {
 	orientation.Normalize();
 	up.Normalize();

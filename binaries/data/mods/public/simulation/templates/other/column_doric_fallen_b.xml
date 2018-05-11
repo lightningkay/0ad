@@ -19,15 +19,10 @@
     <Civ>gaia</Civ>
     <GenericName>Column</GenericName>
     <SpecificName>Fallen Doric Column</SpecificName>
-    <History>Column drums fallen off some Greek ruin.</History>
     <Icon>gaia/special_fence.png</Icon>
   </Identity>
   <Loot>
-    <xp>1</xp>
-    <food>0</food>
-    <wood>0</wood>
     <stone>10</stone>
-    <metal>0</metal>
   </Loot>
   <Obstruction>
     <Static width="2.0" depth="2.0"/>

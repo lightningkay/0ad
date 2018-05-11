@@ -8,11 +8,11 @@
 function fail(msg)
 {
 	// Get a list of callers
-	var trace = (new Error).stack.split("\n");
+	let trace = (new Error).stack.split("\n");
 	// Remove the Error ctor and this function from the stack
 	trace = trace.splice(2);
-	print("Stack trace:\n" + trace.join("\n"));
-	Engine.TS_FAIL(msg);
+	trace = "Stack trace:\n" + trace.join("\n");
+	Engine.TS_FAIL(trace + msg);
 }
 
 global.TS_FAIL = function TS_FAIL(msg)
@@ -32,8 +32,31 @@ global.TS_ASSERT_EQUALS = function TS_ASSERT_EQUALS(x, y)
 		fail("Expected equal, got "+uneval(x)+" !== "+uneval(y));
 }
 
+global.TS_ASSERT_EQUALS_APPROX = function TS_ASSERT_EQUALS_APPROX(x, y, maxDifference)
+{
+	TS_ASSERT_NUMBER(maxDifference);
+
+	if (Math.abs(x - y) > maxDifference)
+		fail("Expected almost equal, got " + uneval(x) + " !== " + uneval(y));
+}
+
 global.TS_ASSERT_UNEVAL_EQUALS = function TS_ASSERT_UNEVAL_EQUALS(x, y)
 {
 	if (!(uneval(x) === uneval(y)))
 		fail("Expected equal, got "+uneval(x)+" !== "+uneval(y));
+}
+
+global.TS_ASSERT_EXCEPTION = function(func)
+{
+	try {
+		func();
+		Engine.TS_FAIL("Missed exception at:\n" + new Error().stack);
+	} catch (e) {
+	}
+}
+
+global.TS_ASSERT_NUMBER = function(value)
+{
+	if (typeof value != "number" || !isFinite(value))
+		fail("The given value must be a real number!");
 }

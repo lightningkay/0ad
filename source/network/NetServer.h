@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -71,6 +71,9 @@ enum NetServerSessionState
 	// to agree on the protocol version
 	NSS_HANDSHAKE,
 
+	// The client has handshook and we're waiting for its lobby authentication message
+	NSS_LOBBY_AUTHENTICATE,
+
 	// The client has handshook and we're waiting for its authentication message,
 	// to find its name and check its password etc
 	NSS_AUTHENTICATE,
@@ -104,7 +107,7 @@ public:
 	 * @param autostartPlayers if positive then StartGame will be called automatically
 	 * once this many players are connected (intended for the command-line testing mode).
 	 */
-	CNetServer(int autostartPlayers = -1);
+	CNetServer(bool useLobbyAuth = false, int autostartPlayers = -1);
 
 	~CNetServer();
 
@@ -126,13 +129,17 @@ public:
 	 * The changes will be asynchronously propagated to all clients.
 	 * @param attrs game attributes, in the script context of scriptInterface
 	 */
-	void UpdateGameAttributes(JS::MutableHandleValue attrs, ScriptInterface& scriptInterface);
+	void UpdateGameAttributes(JS::MutableHandleValue attrs, const ScriptInterface& scriptInterface);
 
 	/**
 	 * Set the turn length to a fixed value.
 	 * TODO: we should replace this with some adapative lag-dependent computation.
 	 */
 	void SetTurnLength(u32 msecs);
+
+	void OnLobbyAuth(const CStr& name, const CStr& token);
+
+	void SendHolePunchingMessage(const CStr& ip, u16 port);
 
 private:
 	CNetServerWorker* m_Worker;
@@ -168,16 +175,15 @@ public:
 	void KickPlayer(const CStrW& playerName, const bool ban);
 
 	/**
-	 * Send a message to all clients who have completed the full connection process
-	 * (i.e. are in the pre-game or in-game states).
+	 * Send a message to all clients who match one of the given states.
 	 */
-	bool Broadcast(const CNetMessage* message);
+	bool Broadcast(const CNetMessage* message, const std::vector<NetServerSessionState>& targetStates);
 
 private:
 	friend class CNetServer;
 	friend class CNetFileReceiveTask_ServerRejoin;
 
-	CNetServerWorker(int autostartPlayers);
+	CNetServerWorker(bool useLobbyAuth, int autostartPlayers);
 	~CNetServerWorker();
 
 	/**
@@ -220,7 +226,7 @@ private:
 	/**
 	 * Get the script context used for game attributes.
 	 */
-	ScriptInterface& GetScriptInterface();
+	const ScriptInterface& GetScriptInterface();
 
 	/**
 	 * Set the turn length to a fixed value.
@@ -228,9 +234,10 @@ private:
 	 */
 	void SetTurnLength(u32 msecs);
 
+	void ProcessLobbyAuth(const CStr& name, const CStr& token);
+
 	void AddPlayer(const CStr& guid, const CStrW& name);
 	void RemovePlayer(const CStr& guid);
-	void SetPlayerReady(const CStr& guid, const int ready);
 	void SendPlayerAssignments();
 	void ClearAllPlayerReady();
 
@@ -256,7 +263,13 @@ private:
 	static bool OnDisconnect(void* context, CFsmEvent* event);
 	static bool OnClientPaused(void* context, CFsmEvent* event);
 
-	void CheckGameLoadStatus(CNetServerSession* changedSession);
+	/**
+	 * Checks if all clients have finished loading.
+	 * If so informs the clients about that and change the server state.
+	 *
+	 * Returns if all clients finished loading.
+	 */
+	bool CheckGameLoadStatus(CNetServerSession* changedSession);
 
 	void ConstructPlayerAssignmentMessage(CPlayerAssignmentMessage& message);
 
@@ -266,6 +279,8 @@ private:
 	 * Send a network warning if the connection to a client is being lost or has bad latency.
 	 */
 	void CheckClientConnections();
+
+	void SendHolePunchingMessage(const CStr& ip, u16 port);
 
 	/**
 	 * Internal script context for (de)serializing script messages,
@@ -283,6 +298,7 @@ private:
 	JS::PersistentRootedValue m_GameAttributes;
 
 	int m_AutostartPlayers;
+	bool m_LobbyAuth;
 
 	ENetHost* m_Host;
 	std::vector<CNetServerSession*> m_Sessions;
@@ -292,7 +308,6 @@ private:
 	NetServerState m_State;
 
 	CStrW m_ServerName;
-	CStrW m_WelcomeMessage;
 
 	std::vector<u32> m_BannedIPs;
 	std::vector<CStrW> m_BannedPlayers;
@@ -344,12 +359,14 @@ private:
 	pthread_t m_WorkerThread;
 	CMutex m_WorkerMutex;
 
-	bool m_Shutdown; // protected by m_WorkerMutex
+	// protected by m_WorkerMutex
+	bool m_Shutdown;
 
-	// Queues for messages sent by the game thread:
-	std::vector<bool> m_StartGameQueue; // protected by m_WorkerMutex
-	std::vector<std::string> m_GameAttributesQueue; // protected by m_WorkerMutex
-	std::vector<u32> m_TurnLengthQueue; // protected by m_WorkerMutex
+	// Queues for messages sent by the game thread (protected by m_WorkerMutex):
+	std::vector<bool> m_StartGameQueue;
+	std::vector<std::string> m_GameAttributesQueue;
+	std::vector<std::pair<CStr, CStr>> m_LobbyAuthQueue;
+	std::vector<u32> m_TurnLengthQueue;
 };
 
 /// Global network server for the standard game

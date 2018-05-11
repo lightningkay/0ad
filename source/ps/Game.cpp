@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@
 #include "lib/timer.h"
 #include "network/NetClient.h"
 #include "network/NetServer.h"
-#include "network/NetTurnManager.h"
 #include "ps/CConsole.h"
 #include "ps/CLogger.h"
 #include "ps/CStr.h"
@@ -47,6 +46,7 @@
 #include "simulation2/Simulation2.h"
 #include "simulation2/components/ICmpPlayer.h"
 #include "simulation2/components/ICmpPlayerManager.h"
+#include "simulation2/system/ReplayTurnManager.h"
 #include "soundmanager/ISoundManager.h"
 
 #include "tools/atlas/GameInterface/GameLoop.h"
@@ -87,7 +87,7 @@ CGame::CGame(bool disableGraphics, bool replayLog):
 	if (m_GameView)
 		m_World->GetUnitManager().SetObjectManager(m_GameView->GetObjectManager());
 
-	m_TurnManager = new CNetLocalTurnManager(*m_Simulation2, GetReplayLogger()); // this will get replaced if we're a net server/client
+	m_TurnManager = new CLocalTurnManager(*m_Simulation2, GetReplayLogger()); // this will get replaced if we're a net server/client
 
 	m_Simulation2->LoadDefaultScripts();
 }
@@ -110,7 +110,7 @@ CGame::~CGame()
 	delete m_ReplayStream;
 }
 
-void CGame::SetTurnManager(CNetTurnManager* turnManager)
+void CGame::SetTurnManager(CTurnManager* turnManager)
 {
 	if (m_TurnManager)
 		delete m_TurnManager;
@@ -127,7 +127,7 @@ int CGame::LoadVisualReplayData()
 	ENSURE(!m_ReplayPath.empty());
 	ENSURE(m_ReplayStream);
 
-	CNetReplayTurnManager* replayTurnMgr = static_cast<CNetReplayTurnManager*>(GetTurnManager());
+	CReplayTurnManager* replayTurnMgr = static_cast<CReplayTurnManager*>(GetTurnManager());
 
 	u32 currentTurn = 0;
 	std::string type;
@@ -168,24 +168,28 @@ int CGame::LoadVisualReplayData()
 	return 0;
 }
 
-bool CGame::StartVisualReplay(const std::string& replayPath)
+bool CGame::StartVisualReplay(const OsPath& replayPath)
 {
-	debug_printf("Starting to replay %s\n", replayPath.c_str());
+	debug_printf("Starting to replay %s\n", replayPath.string8().c_str());
 
 	m_IsVisualReplay = true;
-	ScriptInterface& scriptInterface = m_Simulation2->GetScriptInterface();
 
-	SetTurnManager(new CNetReplayTurnManager(*m_Simulation2, GetReplayLogger()));
+	SetTurnManager(new CReplayTurnManager(*m_Simulation2, GetReplayLogger()));
 
 	m_ReplayPath = replayPath;
-	m_ReplayStream = new std::ifstream(m_ReplayPath.c_str());
+	m_ReplayStream = new std::ifstream(OsString(replayPath).c_str());
 
 	std::string type;
 	ENSURE((*m_ReplayStream >> type).good() && type == "start");
 
 	std::string line;
 	std::getline(*m_ReplayStream, line);
-	JS::RootedValue attribs(scriptInterface.GetContext());
+
+	const ScriptInterface& scriptInterface = m_Simulation2->GetScriptInterface();
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	JS::RootedValue attribs(cx);
 	scriptInterface.ParseJSON(line, &attribs);
 	StartGame(&attribs, "");
 
@@ -199,10 +203,10 @@ bool CGame::StartVisualReplay(const std::string& replayPath)
  **/
 void CGame::RegisterInit(const JS::HandleValue attribs, const std::string& savedState)
 {
-	ScriptInterface& scriptInterface = m_Simulation2->GetScriptInterface();
+	const ScriptInterface& scriptInterface = m_Simulation2->GetScriptInterface();
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	m_InitialSavedState = savedState;
 	m_IsSavedGame = !savedState.empty();
 
@@ -288,19 +292,16 @@ PSRETURN CGame::ReallyStartGame()
 {
 	JSContext* cx = m_Simulation2->GetScriptInterface().GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	// Call the script function InitGame only for new games, not saved games
 	if (!m_IsSavedGame)
 	{
-		// Perform some simulation initializations (replace skirmish entities, explore territories, etc.) 
+		// Perform some simulation initializations (replace skirmish entities, explore territories, etc.)
 		// that needs to be done before setting up the AI and shouldn't be done in Atlas
 		if (!g_AtlasGameLoop->running)
 			m_Simulation2->PreInitGame();
 
-		JS::RootedValue settings(cx);
-		JS::RootedValue tmpInitAttributes(cx, m_Simulation2->GetInitAttributes());
-		m_Simulation2->GetScriptInterface().GetProperty(tmpInitAttributes, "settings", &settings);
-		m_Simulation2->InitGame(settings);
+		m_Simulation2->InitGame();
 	}
 
 	// We need to do an initial Interpolate call to set up all the models etc,
@@ -310,7 +311,7 @@ PSRETURN CGame::ReallyStartGame()
 	Interpolate(0, 0);
 
 	m_GameStarted=true;
-	
+
 	// Render a frame to begin loading assets
 	if (CRenderer::IsInitialised())
 		Render();
@@ -332,7 +333,6 @@ PSRETURN CGame::ReallyStartGame()
 	if (CProfileManager::IsInitialised())
 		g_Profiler.StructuralReset();
 
-	// Mark terrain as modified so the minimap can repaint (is there a cleaner way of handling this?)
 	g_GameRestarted = true;
 
 	return 0;
@@ -380,7 +380,7 @@ void CGame::Update(const double deltaRealTime, bool doInterpolate)
 		return;
 
 	const double deltaSimTime = deltaRealTime * m_SimRate;
-	
+
 	if (deltaSimTime)
 	{
 		// To avoid confusing the profiler, we need to trigger the new turn
@@ -445,7 +445,7 @@ void CGame::CachePlayerColors()
 		if (!cmpPlayer)
 			m_PlayerColors[i] = BrokenColor;
 		else
-			m_PlayerColors[i] = cmpPlayer->GetColor();
+			m_PlayerColors[i] = cmpPlayer->GetDisplayedColor();
 	}
 }
 
@@ -456,4 +456,16 @@ CColor CGame::GetPlayerColor(player_id_t player) const
 		return BrokenColor;
 
 	return m_PlayerColors[player];
+}
+
+bool CGame::IsGameFinished() const
+{
+	for (const std::pair<entity_id_t, IComponent*>& p : m_Simulation2->GetEntitiesWithInterface(IID_Player))
+	{
+		CmpPtr<ICmpPlayer> cmpPlayer(*m_Simulation2, p.first);
+		if (cmpPlayer && cmpPlayer->GetState() == "won")
+			return true;
+	}
+
+	return false;
 }

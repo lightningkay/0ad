@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ class CStdDeserializer : public IDeserializer
 {
 	NONCOPYABLE(CStdDeserializer);
 public:
-	CStdDeserializer(ScriptInterface& scriptInterface, std::istream& stream);
+	CStdDeserializer(const ScriptInterface& scriptInterface, std::istream& stream);
 	virtual ~CStdDeserializer();
 
 	virtual void ScriptVal(const char* name, JS::MutableHandleValue out);
@@ -48,19 +48,16 @@ protected:
 	virtual void Get(const char* name, u8* data, size_t len);
 
 private:
-	jsval ReadScriptVal(const char* name, JS::HandleObject appendParent);
+	JS::Value ReadScriptVal(const char* name, JS::HandleObject appendParent);
 	void ReadStringLatin1(const char* name, std::vector<JS::Latin1Char>& str);
 	void ReadStringUTF16(const char* name, utf16string& str);
 
 	virtual void AddScriptBackref(JS::HandleObject obj);
 	virtual void GetScriptBackref(u32 tag, JS::MutableHandleObject ret);
-	virtual u32 ReserveScriptBackref();
-	virtual void SetReservedScriptBackref(u32 tag, JS::HandleObject obj);
-	void FreeScriptBackrefs();
 	std::vector<JS::Heap<JSObject*> > m_ScriptBackrefs;
 	JS::PersistentRooted<JSObject*> m_dummyObject;
 
-	ScriptInterface& m_ScriptInterface;
+	const ScriptInterface& m_ScriptInterface;
 
 	std::istream& m_Stream;
 

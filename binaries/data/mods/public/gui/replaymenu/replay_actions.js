@@ -57,19 +57,21 @@ function startReplay()
  */
 function reallyStartVisualReplay(replayDirectory)
 {
-	// TODO: enhancement: restore filter settings and selected replay when returning from the summary screen.
-	Engine.StartVisualReplay(replayDirectory);
+	if (!Engine.StartVisualReplay(replayDirectory))
+	{
+		warn('Replay "' + escapeText(Engine.GetReplayDirectoryName(replayDirectory)) + '" not found! Please click on reload cache.');
+		return;
+	}
+
 	Engine.SwitchGuiPage("page_loading.xml", {
 		"attribs": Engine.GetReplayAttributes(replayDirectory),
-		"isNetworked": false,
 		"playerAssignments": {
-			"local":{
+			"local": {
 				"name": singleplayerName(),
 				"player": -1
 			}
 		},
 		"savedGUIData": "",
-		"isReplay": true,
 		"replaySelectionData": createReplaySelectionData(replayDirectory)
 	});
 }
@@ -85,9 +87,8 @@ function displayReplayCompatibilityError(replay)
 	if (replayHasSameEngineVersion(replay))
 	{
 		let gameMods = replay.attribs.mods || [];
-		errMsg = translate("You don't have the same mods active as the replay does.") + "\n";
-		errMsg += sprintf(translate("Required: %(mods)s"), { "mods": gameMods.join(translate(", ")) }) + "\n";
-		errMsg += sprintf(translate("Active: %(mods)s"), { "mods": g_EngineInfo.mods.join(translate(", ")) });
+		errMsg = translate("This replay needs a different sequence of mods:") + "\n" +
+			comparedModsString(gameMods, g_EngineInfo.mods);
 	}
 	else
 	{
@@ -120,11 +121,19 @@ function showReplaySummary()
 	Engine.SwitchGuiPage("page_summary.xml", {
 		"sim": simData,
 		"gui": {
+			"dialog": false,
 			"isReplay": true,
 			"replayDirectory": g_ReplaysFiltered[selected].directory,
 			"replaySelectionData": createReplaySelectionData(g_ReplaysFiltered[selected].directory)
-		}
+		},
+		"selectedData": g_SummarySelectedData
 	});
+}
+
+function reloadCache()
+{
+	let selected = Engine.GetGUIObjectByName("replaySelection").selected;
+	loadReplays(selected > -1 ? createReplaySelectionData(g_ReplaysFiltered[selected].directory) : "", true);
 }
 
 /**
@@ -154,7 +163,8 @@ function deleteReplay()
 
 	messageBox(
 		500, 200,
-		translate("Are you sure you want to delete this replay permanently?") + "\n" + escapeText(replay.file),
+		translate("Are you sure you want to delete this replay permanently?") + "\n" +
+			escapeText(Engine.GetReplayDirectoryName(replay.directory)),
 		translate("Delete replay"),
 		[translate("No"), translate("Yes")],
 		[null, function() { reallyDeleteReplay(replay.directory); }]
@@ -182,7 +192,7 @@ function reallyDeleteReplay(replayDirectory)
 	var selectedIndex = replaySelection.selected;
 
 	if (!Engine.DeleteReplay(replayDirectory))
-		error(sprintf("Could not delete replay '%(id)s'", { "id": replayDirectory }));
+		error("Could not delete replay!");
 
 	// Refresh replay list
 	init();

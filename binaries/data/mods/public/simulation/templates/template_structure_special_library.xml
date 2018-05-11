@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_structure_special">
-  <Auras datatype="tokens">library</Auras>
+  <Auras datatype="tokens">
+    structures/library
+  </Auras>
   <BuildRestrictions>
     <Category>Library</Category>
   </BuildRestrictions>
@@ -9,15 +11,19 @@
     <Height>9.0</Height>
   </Footprint>
   <Health>
-    <SpawnEntityOnDeath>rubble/rubble_stone_4x6</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_4x6</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <GenericName>Library</GenericName>
     <Classes datatype="tokens">-ConquestCritical</Classes>
     <Tooltip>Research special technologies.</Tooltip>
-    <History>Alexander the Great founded libraries all over his new empire. These became centers of learning for an entirely new synthesized culture: the Hellenistic culture.</History>
     <Icon>structures/library_scroll.png</Icon>
   </Identity>
+  <Loot>
+    <wood>0</wood>
+    <stone>50</stone>
+    <metal>50</metal>
+  </Loot>
   <Obstruction>
     <Static width="25.0" depth="30.0"/>
   </Obstruction>

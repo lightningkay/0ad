@@ -5,6 +5,9 @@ ResourceSupply.prototype.Schema =
 	"<a:example>" +
 		"<Amount>1000</Amount>" +
 		"<Type>food.meat</Type>" +
+		"<KillBeforeGather>false</KillBeforeGather>" +
+		"<MaxGatherers>25</MaxGatherers>" +
+		"<DiminishingReturns>0.8</DiminishingReturns>" +
 	"</a:example>" +
 	"<element name='KillBeforeGather' a:help='Whether this entity must be killed (health reduced to 0) before its resources can be gathered'>" +
 		"<data type='boolean'/>" +
@@ -12,29 +15,14 @@ ResourceSupply.prototype.Schema =
 	"<element name='Amount' a:help='Amount of resources available from this entity'>" +
 		"<choice><data type='nonNegativeInteger'/><value>Infinity</value></choice>" +
 	"</element>" +
-	"<element name='Type' a:help='Type of resources'>" +
-		"<choice>" +
-			"<value>wood.tree</value>" +
-			"<value>wood.ruins</value>" +
-			"<value>stone.rock</value>" +
-			"<value>stone.ruins</value>" +
-			"<value>metal.ore</value>" +
-			"<value>food.fish</value>" +
-			"<value>food.fruit</value>" +
-			"<value>food.grain</value>" +
-			"<value>food.meat</value>" +
-			"<value>food.milk</value>" +
-			"<value>treasure.wood</value>" +
-			"<value>treasure.stone</value>" +
-			"<value>treasure.metal</value>" +
-			"<value>treasure.food</value>" +
-		"</choice>" +
+	"<element name='Type' a:help='Type and Subtype of resource available from this entity'>" +
+		Resources.BuildChoicesSchema(true, true) +
 	"</element>" +
 	"<element name='MaxGatherers' a:help='Amount of gatherers who can gather resources from this entity at the same time'>" +
 		"<data type='nonNegativeInteger'/>" +
 	"</element>" +
 	"<optional>" +
-		"<element name='DiminishingReturns' a:help='The rate at which adding more gatherers decreases overall efficiency. Lower numbers = faster dropoff. Leave the element out for no diminishing returns.'>" +
+		"<element name='DiminishingReturns' a:help='The relative rate of any new gatherer compared to the previous one (geometric sequence). Leave the element out for no diminishing returns.'>" +
 			"<ref name='positiveDecimal'/>" +
 		"</element>" +
 	"</optional>";
@@ -44,17 +32,16 @@ ResourceSupply.prototype.Init = function()
 	// Current resource amount (non-negative)
 	this.amount = this.GetMaxAmount();
 
-	this.gatherers = [];	// list of IDs for each players
-	var cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);	// system component so that's safe.
-	var numPlayers = cmpPlayerManager.GetNumPlayers();
-	for (var i = 0; i <= numPlayers; ++i)	// use "<=" because we want Gaia too.
+	// List of IDs for each player
+	this.gatherers = [];
+	let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers()
+	for (let i = 0; i < numPlayers; ++i)
 		this.gatherers.push([]);
 
 	this.infinite = !isFinite(+this.template.Amount);
 
-	[this.type,this.subType] = this.template.Type.split('.');
-	this.cachedType = { "generic" : this.type, "specific" : this.subType };
-
+	let [type, subtype] = this.template.Type.split('.');
+	this.cachedType = { "generic": type, "specific": subtype };
 };
 
 ResourceSupply.prototype.IsInfinite = function()
@@ -84,13 +71,22 @@ ResourceSupply.prototype.GetMaxGatherers = function()
 
 ResourceSupply.prototype.GetNumGatherers = function()
 {
-	return this.gatherers.reduce((a, b) => a + b.length, 0); 
+	return this.gatherers.reduce((a, b) => a + b.length, 0);
 };
 
+/* The rate of each additionnal gatherer rate follow a geometric sequence, with diminishingReturns as common ratio. */
 ResourceSupply.prototype.GetDiminishingReturns = function()
 {
 	if ("DiminishingReturns" in this.template)
-		return ApplyValueModificationsToEntity("ResourceSupply/DiminishingReturns", +this.template.DiminishingReturns, this.entity);
+	{
+		let diminishingReturns = ApplyValueModificationsToEntity("ResourceSupply/DiminishingReturns", +this.template.DiminishingReturns, this.entity);
+		if (diminishingReturns)
+		{
+			let numGatherers = this.GetNumGatherers();
+			if (numGatherers > 1)
+				return diminishingReturns == 1 ? 1 : (1. - Math.pow(diminishingReturns, numGatherers)) / (1. - diminishingReturns) / numGatherers;
+		}
+	}
 	return null;
 };
 
@@ -127,23 +123,21 @@ ResourceSupply.prototype.GetType = function()
 
 ResourceSupply.prototype.IsAvailable = function(player, gathererID)
 {
-	if (this.GetNumGatherers() < this.GetMaxGatherers() || this.gatherers[player].indexOf(gathererID) !== -1)
-		return true;
-	return false;
+	return this.amount > 0 && (this.GetNumGatherers() < this.GetMaxGatherers() || this.gatherers[player].indexOf(gathererID) !== -1);
 };
 
 ResourceSupply.prototype.AddGatherer = function(player, gathererID)
 {
 	if (!this.IsAvailable(player, gathererID))
 		return false;
- 	
+
 	if (this.gatherers[player].indexOf(gathererID) === -1)
 	{
 		this.gatherers[player].push(gathererID);
 		// broadcast message, mainly useful for the AIs.
 		Engine.PostMessage(this.entity, MT_ResourceSupplyNumGatherersChanged, { "to": this.GetNumGatherers() });
 	}
-	
+
 	return true;
 };
 
@@ -151,7 +145,7 @@ ResourceSupply.prototype.AddGatherer = function(player, gathererID)
 ResourceSupply.prototype.RemoveGatherer = function(gathererID, player)
 {
 	// this can happen if the unit is dead
-	if (player === undefined || player === -1)
+	if (player == undefined || player == INVALID_PLAYER)
 	{
 		for (var i = 0; i < this.gatherers.length; ++i)
 			this.RemoveGatherer(gathererID, i);

@@ -3,12 +3,21 @@
   <Cost>
     <PopulationBonus>2</PopulationBonus>
   </Cost>
+  <Footprint>
+    <Square width="12.0" depth="12.0"/>
+  </Footprint>
+  <Health>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_3x3</SpawnEntityOnDeath>
+  </Health>
   <Identity>
     <Civ>brit</Civ>
     <SpecificName>Ffermdy</SpecificName>
-    <History>Farming typically revolved around small hamlets and farmsteads with enclosed rectilinear fields - each having areas of pasture, farmland and wood. Ploughing became more efficient with the arrival of the iron share (plough point ? courtesy of our Celts) and a two field rotation was introduced; crops one year followed by a fallow that was grazed by livestock. This lead to surprisingly high yields and fuelled population growth. The image of a farmstead would most likely be a house with some out-buildings. Storage of crops was either in pits or in raised stores and harvest was over several months - weeds, grain and then straw.</History>
   </Identity>
+  <Obstruction>
+    <Static width="10.0" depth="10.0"/>
+  </Obstruction>
   <VisualActor>
-    <Actor>structures/celts/farmstead.xml</Actor>
+    <Actor>structures/britons/farmstead.xml</Actor>
+    <FoundationActor>structures/fndn_3x3.xml</FoundationActor>
   </VisualActor>
 </Entity>

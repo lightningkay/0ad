@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,11 +33,7 @@
 #include "scriptinterface/ScriptInterface.h"
 #include "simulation2/Simulation2.h"
 
-static const int SAVED_GAME_VERSION_MAJOR = 1; // increment on incompatible changes to the format
-static const int SAVED_GAME_VERSION_MINOR = 0; // increment on compatible changes to the format
-
 // TODO: we ought to check version numbers when loading files
-
 
 Status SavedGames::SavePrefix(const CStrW& prefix, const CStrW& description, CSimulation2& simulation, const shared_ptr<ScriptInterface::StructuredClone>& guiMetadataClone)
 {
@@ -84,11 +80,10 @@ Status SavedGames::Save(const CStrW& name, const CStrW& description, CSimulation
 
 	JS::RootedValue metadata(cx);
 	JS::RootedValue initAttributes(cx, simulation.GetInitAttributes());
+	JS::RootedValue mods(cx, Mod::GetLoadedModsWithVersions(simulation.GetScriptInterface()));
 	simulation.GetScriptInterface().Eval("({})", &metadata);
-	simulation.GetScriptInterface().SetProperty(metadata, "version_major", SAVED_GAME_VERSION_MAJOR);
-	simulation.GetScriptInterface().SetProperty(metadata, "version_minor", SAVED_GAME_VERSION_MINOR);
 	simulation.GetScriptInterface().SetProperty(metadata, "engine_version", std::string(engine_version));
-	simulation.GetScriptInterface().SetProperty(metadata, "mods", g_modsLoaded);
+	simulation.GetScriptInterface().SetProperty(metadata, "mods", mods);
 	simulation.GetScriptInterface().SetProperty(metadata, "time", (double)now);
 	simulation.GetScriptInterface().SetProperty(metadata, "playerID", g_Game->GetPlayerID());
 	simulation.GetScriptInterface().SetProperty(metadata, "initAttributes", initAttributes);
@@ -154,7 +149,7 @@ public:
 	 * for the metadata because it would be error prone with rooting and the stack-based rooting
 	 * types and confusing (a chain of pointers pointing to other pointers).
 	 */
-	CGameLoader(ScriptInterface& scriptInterface, std::string* savedState) :
+	CGameLoader(const ScriptInterface& scriptInterface, std::string* savedState) :
 		m_ScriptInterface(scriptInterface),
 		m_Metadata(scriptInterface.GetJSRuntime()),
 		m_SavedState(savedState)
@@ -192,12 +187,12 @@ public:
 
 private:
 
-	ScriptInterface& m_ScriptInterface;
+	const ScriptInterface& m_ScriptInterface;
 	JS::PersistentRooted<JS::Value> m_Metadata;
 	std::string* m_SavedState;
 };
 
-Status SavedGames::Load(const std::wstring& name, ScriptInterface& scriptInterface, JS::MutableHandleValue metadata, std::string& savedState)
+Status SavedGames::Load(const std::wstring& name, const ScriptInterface& scriptInterface, JS::MutableHandleValue metadata, std::string& savedState)
 {
 	// Determine the filename to load
 	const VfsPath basename(L"saves/" + name);
@@ -221,7 +216,7 @@ Status SavedGames::Load(const std::wstring& name, ScriptInterface& scriptInterfa
 	return INFO::OK;
 }
 
-JS::Value SavedGames::GetSavedGames(ScriptInterface& scriptInterface)
+JS::Value SavedGames::GetSavedGames(const ScriptInterface& scriptInterface)
 {
 	TIMER(L"GetSavedGames");
 	JSContext* cx = scriptInterface.GetContext();
@@ -293,18 +288,3 @@ bool SavedGames::DeleteSavedGame(const std::wstring& name)
 	// Successfully deleted file
 	return true;
 }
-
-JS::Value SavedGames::GetEngineInfo(ScriptInterface& scriptInterface)
-{
-	JSContext* cx = scriptInterface.GetContext();
-	JSAutoRequest rq(cx);
-
-	JS::RootedValue metainfo(cx);
-	scriptInterface.Eval("({})", &metainfo);
-	scriptInterface.SetProperty(metainfo, "version_major", SAVED_GAME_VERSION_MAJOR);
-	scriptInterface.SetProperty(metainfo, "version_minor", SAVED_GAME_VERSION_MINOR);
-	scriptInterface.SetProperty(metainfo, "engine_version", std::string(engine_version));
-	scriptInterface.SetProperty(metainfo, "mods", g_modsLoaded);
-	return metainfo;
-}
-

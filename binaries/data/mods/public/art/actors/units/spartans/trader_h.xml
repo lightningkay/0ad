@@ -2,18 +2,10 @@
 <actor version="1">
   <castshadow/>
   <group>
-    <variant frequency="100" name="Base">
-      <animations>
-        <animation file="quadraped/horse_idle_a.psa" name="Idle" speed="50"/>
-        <animation file="quadraped/horse_idle_a.psa" name="Idle" speed="100"/>
-        <animation file="quadraped/horse_idle_a.psa" name="Idle" speed="200"/>
-        <animation file="quadraped/horse_walk.psa" name="Walk" speed="150"/>
-        <animation file="quadraped/horse_walk.psa" name="Run" speed="100"/>
-        <animation file="quadraped/horse_death.psa" name="death" speed="250"/>
-      </animations>
-      <mesh>skeletal/horse.pmd</mesh>
+    <variant frequency="1" file="quadraped/base_horse_trader.xml" name="Trader Horse">
+      <mesh>skeletal/horse.dae</mesh>
       <props>
-        <prop actor="props/units/horse_back_blanket.xml" attachpoint="rider"/>
+        <prop actor="props/horse/trader_blanket.xml" attachpoint="root"/>
         <prop actor="props/units/horse/horse_chest_colorband.xml" attachpoint="chest"/>
       </props>
     </variant>
@@ -53,10 +45,17 @@
     </variant>
   </group>
   <group>
-    <variant frequency="100" name="Idle"/>
-    <variant name="death">
+    <variant frequency="1" name="Idle"/>
+    <variant file="quadraped/base_horse_death.xml">
       <props>
-        <prop actor="props/units/blood_01.xml" attachpoint="root"/>
+        <prop actor="props/horse/trader_blanket.xml" attachpoint="root"/>
+        <prop actor="props/units/horse/horse_chest_colorband.xml" attachpoint="chest"/>
+      </props>
+    </variant>
+    <variant file="quadraped/base_horse_run.xml">
+      <props>
+        <prop actor="props/horse/trader_blanket.xml" attachpoint="root"/>
+        <prop actor="props/units/horse/horse_chest_colorband.xml" attachpoint="chest"/>
       </props>
     </variant>
   </group>

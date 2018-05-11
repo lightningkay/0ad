@@ -3,8 +3,8 @@
 # This file is distributed under the same license as the 0 A.D. — Empires Ascendant project.
 # 
 # Translators:
-# Allan Nordhøy <epost@anotheragency.no>, 2016
-# Jarl.Arntzen <jarl.arntzen@gmail.com>, 2015
+# Allan Nordhøy <epost@anotheragency.no>, 2016-2017
+# Jarl Arntzen <jarl.arntzen@gmail.com>, 2015
 # Kurt-Håkon Eilertsen <kurt@kheds.com>, 2014
 # Matias Lavik <matias.lavik@hotmail.com>, 2016
 # Ole Sannes Riiser <OLE-SR@online.no>, 2015-2016
@@ -12,9 +12,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-08-12 09:01+0200\n"
-"PO-Revision-Date: 2016-09-01 16:06+0000\n"
-"Last-Translator: Matias Lavik <matias.lavik@hotmail.com>\n"
+"POT-Creation-Date: 2018-04-04 14:47+0200\n"
+"PO-Revision-Date: 2018-04-04 16:02+0000\n"
+"Last-Translator: Adrián Chaves Fernández <adriyetichaves@gmail.com>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/wildfire-games/0ad/language/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,17 +22,25 @@ msgstr ""
 "Language: nb\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: simulation/data/technologies/advanced_unit_bonus.jsontooltip
+msgid ""
+"Units promoted to the advanced class gain a lot of quality: 20% extra "
+"health, 1 extra armor level of every type, 20% extra loot, 20% extra attack "
+"for melee units, 4m extra range and better precision for ranged units, "
+"faster movement speeds and extra heal speed and range for healers."
+msgstr ""
+
 #: simulation/data/technologies/armor_cav_01.jsondescription
 #: simulation/data/technologies/armor_cav_chamfron.jsondescription
 msgid "Metal armor for a horse's face."
-msgstr "Metallpanser for hestens ansikt."
+msgstr "Metallrustning for hestens ansikt."
 
 #: simulation/data/technologies/armor_cav_01.jsontooltip
 #: simulation/data/technologies/armor_cav_02.jsontooltip
 msgid ""
 "Equip your cavalry mounts with armor. All Cavalry +1 Hack and Pierce armor "
 "level."
-msgstr "Utstyr ditt kavaleri med panser. Alt kavaleri får +1 i pansernivå mot hugg og stikk."
+msgstr "Utstyr ditt kavaleri med rustning. Alt kavaleri får +1 rustningsgrad mot hugg og stikk."
 
 #: simulation/data/technologies/armor_cav_01.jsongenericName
 #: simulation/data/technologies/armor_cav_02.jsongenericName
@@ -53,10 +61,7 @@ msgstr "Bard"
 #: simulation/data/technologies/attack_cavalry_ranged_01.jsonrequirementsTooltip
 #: simulation/data/technologies/attack_infantry_melee_01.jsonrequirementsTooltip
 #: simulation/data/technologies/attack_infantry_ranged_01.jsonrequirementsTooltip
-#: simulation/data/technologies/attack_tower_crenellations.jsonrequirementsTooltip
-#: simulation/data/technologies/attack_tower_range.jsonrequirementsTooltip
 #: simulation/data/technologies/buildtime_walls_rubble.jsonrequirementsTooltip
-#: simulation/data/technologies/decay_outpost.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_capacity_wheelbarrow.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_farming_training.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_lumbering_strongeraxes.jsonrequirementsTooltip
@@ -68,9 +73,12 @@ msgstr "Bard"
 #: simulation/data/technologies/health_walls_geometric_masonry.jsonrequirementsTooltip
 #: simulation/data/technologies/melee_inf_sidearms.jsonrequirementsTooltip
 #: simulation/data/technologies/pop_civic_01.jsonrequirementsTooltip
-#: simulation/data/technologies/pop_house_02.jsonrequirementsTooltip
+#: simulation/data/technologies/pop_house_01.jsonrequirementsTooltip
 #: simulation/data/technologies/ranged_inf_irregulars.jsonrequirementsTooltip
 #: simulation/data/technologies/speed_cavalry_01.jsonrequirementsTooltip
+#: simulation/data/technologies/tower_crenellations.jsonrequirementsTooltip
+#: simulation/data/technologies/tower_decay.jsonrequirementsTooltip
+#: simulation/data/technologies/tower_range.jsonrequirementsTooltip
 #: simulation/data/technologies/trade_commercial_treaty.jsonrequirementsTooltip
 #: simulation/data/technologies/trade_convoys_speed.jsonrequirementsTooltip
 #: simulation/data/technologies/trade_gain_01.jsonrequirementsTooltip
@@ -78,6 +86,7 @@ msgstr "Bard"
 #: simulation/data/technologies/training_levy_infantry.jsonrequirementsTooltip
 #: simulation/data/technologies/upgrade_rank_advanced_cavalry.jsonrequirementsTooltip
 #: simulation/data/technologies/upgrade_rank_advanced_infantry.jsonrequirementsTooltip
+#: simulation/data/technologies/upgrade_rank_advanced_mercenary.jsonrequirementsTooltip
 #: simulation/data/technologies/carthaginians/cost_celt_mercs.jsonrequirementsTooltip
 #: simulation/data/technologies/carthaginians/cost_iberian_mercs.jsonrequirementsTooltip
 #: simulation/data/technologies/carthaginians/cost_italian_mercs.jsonrequirementsTooltip
@@ -92,7 +101,7 @@ msgstr "Bard"
 #: simulation/data/technologies/persians/training_levy_cavalry.jsonrequirementsTooltip
 #: simulation/data/technologies/persians/training_levy_infantry.jsonrequirementsTooltip
 msgid "Unlocked in Town Phase."
-msgstr "Låses opp i by-fasen."
+msgstr "Låses opp i tettstedfasen."
 
 #: simulation/data/technologies/armor_cav_01.jsonspecificName.sele
 #: simulation/data/technologies/armor_cav_01.jsonspecificName.mace
@@ -109,7 +118,7 @@ msgstr "Prometōpídion"
 
 #: simulation/data/technologies/armor_cav_02.jsondescription
 msgid "Metal armor for a horse's body."
-msgstr "Metallpanser for hestens kropp."
+msgstr "Metallrustning for hestens kropp."
 
 #: simulation/data/technologies/armor_cav_02.jsonrequirementsTooltip
 #: simulation/data/technologies/armor_hero_01.jsonrequirementsTooltip
@@ -126,8 +135,6 @@ msgstr "Metallpanser for hestens kropp."
 #: simulation/data/technologies/attack_infantry_ranged_02.jsonrequirementsTooltip
 #: simulation/data/technologies/attack_soldiers_will.jsonrequirementsTooltip
 #: simulation/data/technologies/attack_steel_working.jsonrequirementsTooltip
-#: simulation/data/technologies/attack_tower_defense.jsonrequirementsTooltip
-#: simulation/data/technologies/attack_tower_murderholes.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_capacity_carts.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_farming_fertilizer.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_lumbering_sharpaxes.jsonrequirementsTooltip
@@ -139,6 +146,7 @@ msgstr "Metallpanser for hestens kropp."
 #: simulation/data/technologies/health_regen_units.jsonrequirementsTooltip
 #: simulation/data/technologies/melee_inf_spearheads.jsonrequirementsTooltip
 #: simulation/data/technologies/pop_civic_02.jsonrequirementsTooltip
+#: simulation/data/technologies/pop_house_02.jsonrequirementsTooltip
 #: simulation/data/technologies/pop_wonder.jsonrequirementsTooltip
 #: simulation/data/technologies/ranged_inf_skirmishers.jsonrequirementsTooltip
 #: simulation/data/technologies/siege_armor.jsonrequirementsTooltip
@@ -148,6 +156,8 @@ msgstr "Metallpanser for hestens kropp."
 #: simulation/data/technologies/siege_cost_wood.jsonrequirementsTooltip
 #: simulation/data/technologies/siege_packing.jsonrequirementsTooltip
 #: simulation/data/technologies/speed_cavalry_02.jsonrequirementsTooltip
+#: simulation/data/technologies/tower_armour.jsonrequirementsTooltip
+#: simulation/data/technologies/tower_murderholes.jsonrequirementsTooltip
 #: simulation/data/technologies/trade_convoys_armor.jsonrequirementsTooltip
 #: simulation/data/technologies/trade_gain_02.jsonrequirementsTooltip
 #: simulation/data/technologies/training_conscription.jsonrequirementsTooltip
@@ -169,6 +179,8 @@ msgstr "Metallpanser for hestens kropp."
 #: simulation/data/technologies/hellenes/spartans_agoge.jsonrequirementsTooltip
 #: simulation/data/technologies/hellenes/special_iphicratean_reforms.jsonrequirementsTooltip
 #: simulation/data/technologies/hellenes/special_long_walls.jsonrequirementsTooltip
+#: simulation/data/technologies/kushites/monumental_architecture.jsonrequirementsTooltip
+#: simulation/data/technologies/kushites/upgrade_rank_elite_healer.jsonrequirementsTooltip
 #: simulation/data/technologies/persians/immortals.jsonrequirementsTooltip
 #: simulation/data/technologies/persians/special_equine_transports.jsonrequirementsTooltip
 #: simulation/data/technologies/persians/training_conscription_cavalry.jsonrequirementsTooltip
@@ -186,19 +198,19 @@ msgstr "Låses opp i storby-fasen"
 
 #: simulation/data/technologies/armor_cav_chamfron.jsontooltip
 msgid "Equip your cavalry mounts with armor. All Cavalry +1 Hack armor level."
-msgstr "Utstyr ditt kavaleri med panser. Alt kavaleri får +1 i pansernivå mot hugg."
+msgstr "Utstyr ditt kavaleri med rustning. Alt kavaleri får +1 rustningsgrad mot hugg."
 
 #: simulation/data/technologies/armor_hero_01.jsondescription
 msgid ""
 "Body armor fashioned completely of iron, the hardest workable metal known to"
 " the ancients."
-msgstr "Kroppsrustning tilvirket kun av jern, det hardeste formbare metallet de gamle kjente."
+msgstr "Kroppsrustning tilvirket kun av jern, det hardeste formbare metallet kjent fra oldtiden."
 
 #: simulation/data/technologies/armor_hero_01.jsontooltip
 msgid ""
 "All heroes +2 Hack Armor Levels and +2 Pierce Armor Levels, but also +50 "
 "Metal Cost."
-msgstr "Alle helter +2 i panser mot hugg og +2 i panser mot stikk men også +50 metall-kostnad."
+msgstr "Alle helter +2 i rustning mot hugg og +2 rustningsgrad mot stikk men også +50 metall-kostnad."
 
 #: simulation/data/technologies/armor_hero_01.jsongenericName
 msgid "Iron Hero Armor"
@@ -224,7 +236,7 @@ msgstr "Vattert lin- eller lærrustning for infanteri."
 #: simulation/data/technologies/armor_infantry_01.jsontooltip
 #: simulation/data/technologies/armor_infantry_02.jsontooltip
 msgid "All Infantry +1 Hack and Pierce Armor Level."
-msgstr "Alt infanteri +1 i panser mot hugg og stikk."
+msgstr "Alt infanteri +1 rustningsgrad mot hugg og stikk."
 
 #: simulation/data/technologies/armor_infantry_01.jsongenericName
 #: simulation/data/technologies/armor_infantry_hack_01.jsongenericName
@@ -289,15 +301,15 @@ msgstr "Linothorakes"
 #: simulation/data/technologies/armor_infantry_hack_02.jsontooltip
 #: simulation/data/technologies/armor_infantry_hack_03.jsontooltip
 msgid "All Infantry +1 Hack Armor Level."
-msgstr "Alt infanteri +1 panser mot hugg."
+msgstr "Alt infanteri +1 rustningsgrad mot hugg."
 
 #: simulation/data/technologies/armor_infantry_hack_03.jsondescription
 msgid "Body armor reinforced with bronze scales."
-msgstr "Kroppsrustning forsterket med bronseskjell"
+msgstr "Brynje forsterket med bronseskjell"
 
 #: simulation/data/technologies/armor_infantry_hack_03.jsongenericName
 msgid "Scale Body Armor"
-msgstr "Skjellrustning"
+msgstr "Skjellbrynje"
 
 #: simulation/data/technologies/armor_infantry_hack_03.jsonspecificName.rome
 msgid "Lorica Squamata"
@@ -308,15 +320,15 @@ msgid ""
 "Body armor fashioned completely of bronze. Only the best soldiers were "
 "equipped with such body armor, as it was very expensive and time-consuming "
 "to fabricate."
-msgstr "Kroppsrustning fullstendig tilvirket av bronse. Kun de beste soldatene var utstyrt med denne typen kroppsrustning siden den var veldig dyr og tidkrevende å produsere."
+msgstr "Brynje fullstendig tilvirket av bronse. Kun de beste soldatene var utstyrt med denne typen kroppsrustning siden den var veldig kostbar og tidkrevende å produsere."
 
 #: simulation/data/technologies/armor_infantry_hack_04.jsontooltip
 msgid "Champions +2 Hack Armor Levels, but also +10 Metal Cost."
-msgstr "Mestere +2 panser mot hugg men også +10 i metall-kostnad."
+msgstr "Mestere +2 rustningsgrad mot hugg men også +10 i metall-kostnad."
 
 #: simulation/data/technologies/armor_infantry_hack_04.jsongenericName
 msgid "Bronze Cuirass Body Armor"
-msgstr "Bronseharniskrustning"
+msgstr "Bronseharniskbrynje"
 
 #: simulation/data/technologies/armor_infantry_hack_04.jsonspecificName.rome
 msgid "Lorica Musculata"
@@ -328,7 +340,7 @@ msgstr "Konstruksjon i kryssfinér for store skjold."
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_01.jsontooltip
 msgid "Infantry Spearmen +2 Pierce Armor Levels."
-msgstr "Infanteri spydmenn +2 i panser mot stikk."
+msgstr "Infanterispydmenn +2 rustningsgrad mot stikk."
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_01.jsongenericName
 msgid "Plywood Shield Construction"
@@ -349,8 +361,9 @@ msgid ""
 msgstr "De beste skjoldene har forsterkninger, enter på hjørnene (Romersk scutum) eller rundt kanten (Gresk aspis)."
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_02.jsontooltip
-msgid "Infantry Spearmen +1 Pierce Armor Levels."
-msgstr "Infanteri spydmann +1 i panser mot stikk."
+#: simulation/data/technologies/armor_infantryspearmen_pierce_03.jsontooltip
+msgid "Infantry Spearmen +1 Pierce Armor Level."
+msgstr "Infanterispydmenn +1 rustningsgrad mot stikk."
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_02.jsongenericName
 msgid "Reinforced Shield"
@@ -367,10 +380,6 @@ msgstr "Aspís"
 #: simulation/data/technologies/armor_infantryspearmen_pierce_03.jsondescription
 msgid "A bronze skin hammered over the face of the shield."
 msgstr "Et bronseskinn hamret over forsiden av skjoldet."
-
-#: simulation/data/technologies/armor_infantryspearmen_pierce_03.jsontooltip
-msgid "Infantry Spearmen +1 Pierce Armor Level."
-msgstr "Infanterispydmenn +1 i panser mot stikk."
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_03.jsongenericName
 msgid "Bronze Shield Facing"
@@ -391,11 +400,11 @@ msgstr "Khrysaspís"
 msgid ""
 "Only the most celebrated soldiers had shields faced with silver, as did the "
 "famous 'Silver Shields' regiment in Alexander the Great's army."
-msgstr "Bare de mest beryktede soldatene hadde skjold med overflate i sølv, som det berømte \"Sølvskjold-regimentet\" i Alexander den Stores hær. "
+msgstr "Bare de mest beryktede soldatene hadde skjold med overflate i sølv, som det berømte \"Sølvskjold-regimentet\" i Alexander den stores hær. "
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_04.jsontooltip
 msgid "Champions +2 Pierce Armor Levels, but also +10 Metal Cost."
-msgstr "Mestere +2 beskyttelse mot stikk, men også +10 metallkostnad."
+msgstr "Mestere +2 rustningsgrad mot stikk, men også +10 metallkostnad."
 
 #: simulation/data/technologies/armor_infantryspearmen_pierce_04.jsongenericName
 msgid "Silver Shields"
@@ -415,7 +424,7 @@ msgstr "Blyplater beskytter skipsskrog."
 
 #: simulation/data/technologies/armor_ship_hullsheathing.jsontooltip
 msgid "Lead sheathing protects ship hulls. +2 levels to all ship armor types."
-msgstr "Blyplater beskytter skipsskrog. +2 for alle pansertyper til skip."
+msgstr "Blyplater beskytter skipsskrog. +2 rustningsgrad for skip."
 
 #: simulation/data/technologies/armor_ship_hullsheathing.jsongenericName
 msgid "Lead hull sheathing"
@@ -429,7 +438,7 @@ msgstr "Hypozomataen forsterker et skips struktur."
 msgid ""
 "The hypozomata braces the ship's structure. +2 levels to all ship armor "
 "types."
-msgstr "Hypozomataen forsterker skipets struktur. +2 for alle pansertyper til skip."
+msgstr "Hypozomataen forsterker skipets struktur. +2 rustningsgrad for skip."
 
 #: simulation/data/technologies/armor_ship_hypozomata.jsongenericName
 msgid "Hypozomata undergirding"
@@ -442,20 +451,19 @@ msgstr "Tømmerbjelker for å forsterke skipsskrog."
 #: simulation/data/technologies/armor_ship_reinforcedhull.jsontooltip
 msgid ""
 "Wooden reinforcement beams for hulls. +2 levels to all ship armor types."
-msgstr "Tømmerbjelker for å forsterke skrog. +2 for alle pansertyper til skip."
+msgstr "Tømmerbjelker for å forsterke skrog. +2 rustningsgrad for skip."
 
 #: simulation/data/technologies/armor_ship_reinforcedhull.jsongenericName
 msgid "Reinforced hull"
 msgstr "Forsterket skrog"
 
 #: simulation/data/technologies/armor_ship_reinforcedhull.jsonrequirementsTooltip
-#: simulation/data/technologies/attack_tower_watch.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_capacity_basket.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_farming_plows.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_fishing_net.jsonrequirementsTooltip
 #: simulation/data/technologies/gather_lumbering_ironaxes.jsonrequirementsTooltip
 #: simulation/data/technologies/health_females_01.jsonrequirementsTooltip
-#: simulation/data/technologies/pop_house_01.jsonrequirementsTooltip
+#: simulation/data/technologies/tower_watch.jsonrequirementsTooltip
 #: simulation/data/technologies/mauryans/special_archery_tradition.jsonrequirementsTooltip
 #: simulation/data/technologies/persians/special_archery_tradition.jsonrequirementsTooltip
 msgid "Unlocked in Village Phase."
@@ -539,7 +547,7 @@ msgstr "Utstyr ditt nærkampkavaleri med bedre våpen. +20% nærkampangrep for k
 #: simulation/data/technologies/attack_cavalry_ranged_02.jsongenericName
 #: simulation/data/technologies/attack_infantry_melee_02.jsongenericName
 msgid "Iron Weapons"
-msgstr "Jern våpen"
+msgstr "Jernvåpen"
 
 #: simulation/data/technologies/attack_cavalry_ranged_01.jsondescription
 msgid "Training increases ranged attack."
@@ -667,8 +675,9 @@ msgid "The will to fight is crucial to victory."
 msgstr "Kampviljen er kritisk for å seire."
 
 #: simulation/data/technologies/attack_soldiers_will.jsontooltip
-msgid "Inspire your troops with higher pay. All soldiers +25% attack."
-msgstr "Inspirer dine tropper med høyere lønn. Alle soldater +25% angrep."
+msgid ""
+"Inspire your troops with higher pay. All land and naval army +25% attack."
+msgstr "Inspirer dine tropper med høyere lønn. Alle land- og marine -baserte styrker +25% angrep."
 
 #: simulation/data/technologies/attack_soldiers_will.jsongenericName
 msgid "Will to fight"
@@ -689,8 +698,8 @@ msgid ""
 msgstr "Hemmelige stålbearbeidingsteknikker gir sverdklinger karakteristiske og vakre graveringer. Dessuten er stålets hardhet uten sidestykke."
 
 #: simulation/data/technologies/attack_steel_working.jsontooltip
-msgid "+2 attack for all sword units."
-msgstr "+2 angrep til alle sverd enheter."
+msgid "+20% Hack attack for all swordsmen and macemen."
+msgstr ""
 
 #: simulation/data/technologies/attack_steel_working.jsongenericName
 msgid "Steel Working"
@@ -704,105 +713,25 @@ msgstr "Wootz-stål"
 msgid "Toledo Steel"
 msgstr "Toledo-stål"
 
-#: simulation/data/technologies/attack_tower_crenellations.jsondescription
-msgid ""
-"Crenellations on the battlements allow soldiers wider range of fire in "
-"defending a keep."
-msgstr "Krenleringer på brystvernet gir soldater bredere skuddfelt når de forsvarer et fort."
-
-#: simulation/data/technologies/attack_tower_crenellations.jsontooltip
-msgid ""
-"Install crenellations and murder holes to have 40% more arrows fired per "
-"garrisoned soldier."
-msgstr "Installer kreneleringer og morderhull for å få 40% flere piler skutt per stasjonert soldat. "
-
-#: simulation/data/technologies/attack_tower_crenellations.jsongenericName
-msgid "Crenellations"
-msgstr "Kreneleringer"
-
-#: simulation/data/technologies/attack_tower_defense.jsondescription
-msgid "Reinforce the foundations in preparation of an attack."
-msgstr "Forsterk fundamentene for å forberede et angrep. "
-
-#: simulation/data/technologies/attack_tower_defense.jsontooltip
-msgid "Increases armour level of the defense tower by 2 levels."
-msgstr "Øker rustning nivået av forsvarstårnet med 2 nivåer."
-
-#: simulation/data/technologies/attack_tower_defense.jsongenericName
-msgid "Sturdy Foundations"
-msgstr "Robuste fundamenter"
-
-#: simulation/data/technologies/attack_tower_murderholes.jsondescription
-msgid "Murder holes allow hitting enemies at the foot of the tower."
-msgstr "Fallgraver tillater angrep av motstandere ved tårnets base."
-
-#: simulation/data/technologies/attack_tower_murderholes.jsontooltip
-msgid "Removes defense tower minimum range."
-msgstr "Fjern minimumsrekkevidde for forsvarstårn."
-
-#: simulation/data/technologies/attack_tower_murderholes.jsongenericName
-msgid "Murder Holes"
-msgstr "Fallgraver"
-
-#: simulation/data/technologies/attack_tower_range.jsondescription
-msgid "Arrow shooters increase the maximum range of the fire arrows."
-msgstr "Bueskyttere øker det maksimale rekkevidde av flammepiler."
-
-#: simulation/data/technologies/attack_tower_range.jsontooltip
-msgid "Increases defense tower maximum range by 8 meters."
-msgstr "Øker forsvarstårnet sitt maksimale rekkevidde med 8 meter."
-
-#: simulation/data/technologies/attack_tower_range.jsongenericName
-msgid "Arrow Shooters"
-msgstr "Bueskytter"
-
-#: simulation/data/technologies/attack_tower_watch.jsondescription
-msgid "A night's watch increases vigilance."
-msgstr "En natts vakt øker årvåkenhet."
-
-#: simulation/data/technologies/attack_tower_watch.jsontooltip
-msgid "Post sentries to add one arrow to towers."
-msgstr "Skiltvakter legger til en pil til tårn."
-
-#: simulation/data/technologies/attack_tower_watch.jsongenericName
-msgid "Sentries"
-msgstr "Vakt"
-
-#: simulation/data/technologies/attack_tower_watch.jsonspecificName.ptol
-#: simulation/data/technologies/attack_tower_watch.jsonspecificName.spart
-#: simulation/data/technologies/attack_tower_watch.jsonspecificName.sele
-#: simulation/data/technologies/attack_tower_watch.jsonspecificName.athen
-#: simulation/data/technologies/attack_tower_watch.jsonspecificName.mace
-msgid "Nyktophýlakes"
-msgstr "Nyktophýlakes"
-
-#: simulation/data/technologies/attack_tower_watch.jsonspecificName.rome
-msgid "Vigiles"
-msgstr "Vigiles"
-
 #: simulation/data/technologies/buildtime_walls_rubble.jsondescription
 msgid "Using rubble materials reduces the costs and build times of walls."
 msgstr "Bruk av skrapmateriale reduserer kostnaden og byggetiden av vegger."
 
 #: simulation/data/technologies/buildtime_walls_rubble.jsontooltip
 msgid "City walls -20% build time, but -1 crush armor level."
-msgstr "Byvegger -20% byggetid men -1 i panser mot knusing."
+msgstr "Byvegger -20% byggetid men -1 rustningsgrad mot knusing."
 
 #: simulation/data/technologies/buildtime_walls_rubble.jsongenericName
 msgid "Rubble Materials"
 msgstr "Skrapmateriale"
 
-#: simulation/data/technologies/decay_outpost.jsondescription
-msgid "Outposts survive twice as long in neutral territory."
-msgstr "Utposter overlever dobbelt så lenge i nøytralt territorium."
-
-#: simulation/data/technologies/decay_outpost.jsontooltip
-msgid "Territory decay rate -50% for outposts."
-msgstr "-50% territoriumsforfallstakt for utposter."
-
-#: simulation/data/technologies/decay_outpost.jsongenericName
-msgid "Stone Foundations"
-msgstr "Stein fundamenter"
+#: simulation/data/technologies/elite_unit_bonus.jsontooltip
+msgid ""
+"Units promoted to the elite class gain a lot of quality: 20% extra health, 1"
+" extra armor level of every type, 20% extra loot, 20% extra attack for melee"
+" units, 4m extra range and better precision for ranged units, faster "
+"movement speeds and extra heal speed and range for healers."
+msgstr ""
 
 #: simulation/data/technologies/gather_animals_stockbreeding.jsondescription
 msgid "Breeding livestock for food."
@@ -852,7 +781,7 @@ msgstr "Salter fisk"
 
 #: simulation/data/technologies/gather_capacity_fishing.jsonrequirementsTooltip
 msgid "Unlocked in Town Phase. Requires Fishing Net."
-msgstr "Låses opp i byfasen. Krever fiske-garn."
+msgstr "Låses opp i tettstedfasen. Krever fiskegarn."
 
 #: simulation/data/technologies/gather_capacity_wheelbarrow.jsontooltip
 msgid "Workers use wheelbarrows. +5 shuttle capacity for all resources."
@@ -884,7 +813,7 @@ msgstr "Utrust dine arbeidere med jernploger. +15% gårdsdriftshastighet."
 
 #: simulation/data/technologies/gather_farming_plows.jsongenericName
 msgid "Iron Plow"
-msgstr "Jern plog"
+msgstr "Jernplog"
 
 #: simulation/data/technologies/gather_farming_training.jsondescription
 msgid "Training for workers to increase farm gathering speed."
@@ -892,15 +821,15 @@ msgstr "Opptrening for arbeidere for å øke matinnsamlingshastigheten."
 
 #: simulation/data/technologies/gather_farming_training.jsontooltip
 msgid "Workers +15% farming rate."
-msgstr "Arbeidere +15% jordbruks-hastighet."
+msgstr "Arbeidere +15% jordbrukshastighet."
 
 #: simulation/data/technologies/gather_farming_training.jsongenericName
 msgid "Gather Training"
 msgstr "Innsamlingstrening"
 
 #: simulation/data/technologies/gather_fishing_net.jsondescription
-msgid "Using net improves the fishing productivity."
-msgstr "Bruk garn for å øke fiskefangsten."
+msgid "Nets improve the fishing productivity."
+msgstr "Garn øker fiskefangsten."
 
 #: simulation/data/technologies/gather_fishing_net.jsontooltip
 msgid ""
@@ -993,7 +922,7 @@ msgstr "Treff en åre med verdifullt sølv. +50% metallutvinningstakt."
 
 #: simulation/data/technologies/gather_mining_silvermining.jsongenericName
 msgid "Silver Mining"
-msgstr "Sølv gruve"
+msgstr "Sølvgruve"
 
 #: simulation/data/technologies/gather_mining_silvermining.jsonspecificName.mace
 msgid "Mines of Krenides"
@@ -1006,7 +935,7 @@ msgstr "Miner av Laurelon"
 #: simulation/data/technologies/gather_mining_slaves.jsontooltip
 msgid ""
 "Buy slaves to help your workers mine for stone. +50% stone gathering rate."
-msgstr "Kjøp slaver for å hjelpe dine arbeidere hakke stein.  +50% stone gathering rate."
+msgstr "Kjøp slaver for å hjelpe dine arbeidere hakke stein. +50% steinhentingsrate."
 
 #: simulation/data/technologies/gather_mining_slaves.jsongenericName
 msgid "Slaves"
@@ -1020,15 +949,15 @@ msgstr "Andrápoda"
 
 #: simulation/data/technologies/gather_mining_wedgemallet.jsontooltip
 msgid "Equip your workers with helpful tools. +15% metal gathering rate."
-msgstr ""
+msgstr "Utstyr dine arbeidere med hjelpsomme verktøy. +15% metallutvinningsrate."
 
 #: simulation/data/technologies/gather_mining_wedgemallet.jsongenericName
 msgid "Wedge and Mallet"
 msgstr "Kile og hammer"
 
 #: simulation/data/technologies/gather_wicker_baskets.jsondescription
-msgid "Baskets to carry foraged food stuffs."
-msgstr "Kurver til matauk."
+msgid "Baskets for foraging."
+msgstr "Kurver for matsanking."
 
 #: simulation/data/technologies/gather_wicker_baskets.jsontooltip
 msgid "Equip your foragers with wicker baskets. +50% fruit foraging rate."
@@ -1053,7 +982,7 @@ msgstr "Leveforhold"
 #: simulation/data/technologies/heal_range.jsondescription
 #: simulation/data/technologies/heal_range_2.jsondescription
 msgid "Increases the healing and vision range of all healers."
-msgstr "Øker rekkevidden for helbredelse og syn for alle helbredere."
+msgstr "Øker rekkevidden for helbredelse og synsrekkevidde for alle helbredere."
 
 #: simulation/data/technologies/heal_range.jsontooltip
 #: simulation/data/technologies/heal_range_2.jsontooltip
@@ -1133,15 +1062,14 @@ msgstr "De eleusinske mysterier"
 
 #: simulation/data/technologies/health_females_01.jsondescription
 msgid ""
-"The Loom allowed the creation of finer clothing to clothe citizens in the "
-"settlement. Women of the household were taught from a young age how to weave"
-" on the loom, and subsequently spent a large  share of their lives working "
-"with it."
+"The loom allowed the creation of finer clothing for settlers. Women of the "
+"household were taught from a young age how to weave on the loom, and "
+"subsequently spent a large share of their lives working with it."
 msgstr "Vevstolen tillot framstilling av finere bekledning til bosettingens borgere. Kvinner i husholdet ble opplært fra barnsben til veving på vevstolen, og tilbragte senere store deler av sine liv i dets virke."
 
 #: simulation/data/technologies/health_females_01.jsontooltip
-msgid "Female Citizens +50% Health."
-msgstr "Kvinnelige borgere +50% i helse."
+msgid "+50% health for female citizens."
+msgstr ""
 
 #: simulation/data/technologies/health_females_01.jsongenericName
 msgid "The Loom"
@@ -1165,7 +1093,7 @@ msgstr "Bruk av geometrisk muring gjør forsvarsvegger mer solide."
 
 #: simulation/data/technologies/health_walls_geometric_masonry.jsontooltip
 msgid "City walls +2 crush armor levels, but +10% build time."
-msgstr "Byvegger +2 panser mot knusing men +10% byggetid."
+msgstr "Byvegger +2 rustningsgrad mot knusing, men +10% byggetid."
 
 #: simulation/data/technologies/health_walls_geometric_masonry.jsongenericName
 msgid "Geometric Masonry"
@@ -1232,9 +1160,12 @@ msgid "Garrison Healing vs. Self-Healing"
 msgstr "Stasjonsheling vs. selvheling"
 
 #: simulation/data/technologies/pair_house_01.jsongenericName
-#: simulation/data/technologies/pair_house_02.jsongenericName
 msgid "Females vs. Population"
 msgstr "Kvinner vs. befolkning"
+
+#: simulation/data/technologies/pair_house_02.jsongenericName
+msgid "Female Citizens vs Population"
+msgstr ""
 
 #: simulation/data/technologies/pair_inf_01.jsongenericName
 msgid "Side Arms vs. Irregulars"
@@ -1249,7 +1180,7 @@ msgstr "Spydkamp mot fortroppskamp"
 #: simulation/data/technologies/pair_inf_armor_03.jsongenericName
 #: simulation/data/technologies/pair_inf_armor_04.jsongenericName
 msgid "Infantry Hack Armor vs. Spearmen Pierce Armor"
-msgstr "Infanteri panser mot hugg mot spydmann panser mot stikk."
+msgstr "Infanterirustning mot hugg mot spydmannsrustning mot stikk."
 
 #: simulation/data/technologies/pair_levy_01.jsongenericName
 msgid "Levy Infantry vs. Levy Cavalry"
@@ -1265,7 +1196,7 @@ msgstr "Angrep vs. pakking"
 
 #: simulation/data/technologies/pair_siege_cost_armor.jsongenericName
 msgid "Cost vs. Armor"
-msgstr "Kostnad mot panser"
+msgstr "Kostnad mot rustning"
 
 #: simulation/data/technologies/pair_tower_01.jsongenericName
 msgid "Night's Watch vs. Crenellations"
@@ -1275,85 +1206,75 @@ msgstr "Nattevakter vs. krenelering"
 msgid "Walls build time vs. Health"
 msgstr "Vegger byggetid mot Helse"
 
-#: simulation/data/technologies/phase_city.jsondescription
-msgid ""
-"Advances from a bustling town to a veritable metropolis, full of the wonders"
-" of modern technology."
-msgstr "Framskrider fra en myldrende by til et ekte metropol, full av den moderne teknologiens undere."
-
-#: simulation/data/technologies/phase_city.jsontooltip
-msgid ""
-"Advance to City Phase, which unlocks more structures and units. Territory "
-"radius for Civic Centers increased by another +50%. Citizen soldiers max "
-"health increased by +20%. All structures +9 garrisoned regeneration rate."
-msgstr ""
-
 #: simulation/data/technologies/phase_city.jsongenericName
 #: simulation/data/technologies/phase_city_athen.jsongenericName
+#: simulation/data/technologies/phase_city_generic.jsongenericName
 msgid "City Phase"
 msgstr "Storbyfasen"
 
-#: simulation/data/technologies/phase_city.jsonrequirementsTooltip
-#: simulation/data/technologies/phase_city_athen.jsonrequirementsTooltip
-msgid "Requires 4 new Town Phase structures (except Walls and Civic Centers)."
-msgstr "Krever 4 nye byfase-bygninger (unntatt vegger og samfunnssentre)"
-
-#: simulation/data/technologies/phase_city.jsonspecificName.mace
-#: simulation/data/technologies/phase_city.jsonspecificName.spart
-#: simulation/data/technologies/phase_city_athen.jsonspecificName.athen
-msgid "Megalópolis"
-msgstr "Megalópolis"
+#: simulation/data/technologies/phase_city.jsondescription
+msgid ""
+"Dummy technology for use in templates requirements, replaced by "
+"phase_city_generic or phase_city_{civ}."
+msgstr ""
 
 #: simulation/data/technologies/phase_city_athen.jsondescription
 msgid ""
 "Advances from a bustling town to a veritable metropolis, full of the wonders"
 " of modern technology. This is the Athenian city phase, where metal "
 "gathering rates are boosted because of the 'Silver Owls' bonus."
-msgstr "Framskrider fra en myldrende by til et ekte metropol, full av den moderne teknologiens undere. Dette er den athenske storby-fasen, der hastigheten for metallutvinning økes på grunn av sølvugle-bonusen."
+msgstr "Framskrider fra et myldrende tettsted til et ekte metropol, full av den moderne teknologiens undere. Dette er den athenske storby-fasen, der hastigheten for metallutvinning økes på grunn av sølvugle-bonusen."
 
 #: simulation/data/technologies/phase_city_athen.jsontooltip
 msgid ""
 "Advance to City Phase, which unlocks more structures and units. Territory "
 "radius for Civic Centers increased by another +50%. Silver Owls civ bonus "
 "grants an extra +10% metal gather rate to all workers. Citizen soldiers max "
-"health increased by +20%. All structures +9 garrisoned regeneration rate."
-msgstr ""
+"health increased by +10%. All structures +9 garrisoned regeneration rate."
+msgstr "Avanser til by-fasen, som låser opp flere bygninger og enheter. Radiusen for territoriet rundt samfunnssenteret øker med ytterligere +50%. 'Sølvugler'-sivilisasjonsbonus skjenker ytterligere +10% metall-sankebonus til alle arbeidere. Borgersoldaters høyeste helsenivå økes med +10%. Alle strukturer får +9 helbredingsrate med enheter forskanset i dem."
 
-#: simulation/data/technologies/phase_town.jsondescription
-msgid ""
-"Advances from a small village to a bustling town, ready to expand rapidly."
-msgstr "Avanserer fra en liten landsby til en yrende by, klar for videre rask utvidelse."
+#: simulation/data/technologies/phase_city_athen.jsonrequirementsTooltip
+#: simulation/data/technologies/phase_city_generic.jsonrequirementsTooltip
+msgid "Requires 4 new Town Phase structures (except Walls and Civic Centers)."
+msgstr "Krever 4 nye tettstedfasebygninger (unntatt vegger og samfunnssentre)"
 
-#: simulation/data/technologies/phase_town.jsontooltip
+#: simulation/data/technologies/phase_city_athen.jsonspecificName.athen
+#: simulation/data/technologies/phase_city_generic.jsonspecificName.mace
+#: simulation/data/technologies/phase_city_generic.jsonspecificName.spart
+msgid "Megalópolis"
+msgstr "Megalópolis"
+
+#: simulation/data/technologies/phase_city_generic.jsondescription
 msgid ""
-"Advance to Town Phase, which unlocks more structures and units. Territory "
-"radius for Civic Centers increased by +30%. Citizen soldiers max health "
-"increased by +20%. All structures +7 garrisoned regeneration rate."
-msgstr ""
+"Advances from a bustling town to a veritable metropolis, full of the wonders"
+" of modern technology."
+msgstr "Framskrider fra en myldrende by til et ekte metropol, full av den moderne teknologiens undere."
+
+#: simulation/data/technologies/phase_city_generic.jsontooltip
+msgid ""
+"Advance to City Phase, which unlocks more structures and units. Territory "
+"radius for Civic Centers increased by another +50%. Citizen soldiers max "
+"health increased by +10%. All structures +9 garrisoned regeneration rate."
+msgstr "Avanser til by-fasen, som låser opp flere bygninger og enheter. Radiusen for territoriet rundt samfunnssenteret øker med enda +50%. Borgersoldaters høyeste helsenivå økes med +10%. Alle strukturer får +9 helbredingsrate med enheter forskanset i dem."
 
 #: simulation/data/technologies/phase_town.jsongenericName
 #: simulation/data/technologies/phase_town_athen.jsongenericName
+#: simulation/data/technologies/phase_town_generic.jsongenericName
 msgid "Town Phase"
 msgstr "Byfase"
 
-#: simulation/data/technologies/phase_town.jsonrequirementsTooltip
-#: simulation/data/technologies/phase_town_athen.jsonrequirementsTooltip
+#: simulation/data/technologies/phase_town.jsondescription
 msgid ""
-"Requires 5 Village Phase structures (except Palisades and Farm Fields)."
-msgstr "Krever 5 landsbyfase-bygninger (bortsett fra palisader og åkre)"
-
-#: simulation/data/technologies/phase_town.jsonspecificName.mace
-#: simulation/data/technologies/phase_town.jsonspecificName.spart
-#: simulation/data/technologies/phase_town_athen.jsonspecificName.athen
-msgid "Kōmópolis"
-msgstr "Kōmópolis"
+"Dummy technology for use in templates requirements, replaced by "
+"phase_town_generic or phase_town_{civ}."
+msgstr ""
 
 #: simulation/data/technologies/phase_town_athen.jsondescription
 msgid ""
 "Advances from a small village to a bustling town, ready to expand rapidly. "
 "This is the Athenian town phase, where metal gathering rates are boosted "
 "because of the 'Silver Owls' bonus."
-msgstr "Framskrider fra liten landsby til myldrende by til et ekte metropol, klar til rask ekspansjon. Dette er den athenske by-fasen, der hastigheten for metallutvinning økes på grunn av sølvugle-bonusen."
+msgstr "Framskrider fra liten landsby til myldrende by til et ekte metropol, klar til rask ekspansjon. Dette er den athenske tettstedfasen, der hastigheten for metallutvinning økes på grunn av sølvugle-bonusen."
 
 #: simulation/data/technologies/phase_town_athen.jsontooltip
 msgid ""
@@ -1361,7 +1282,31 @@ msgid ""
 "radius for Civic Centers increased by +30%. 'Silver Owls' civ bonus grants "
 "an extra +10% metal gather rate to all workers. Citizen soldiers max health "
 "increased by +20%. All structures +7 garrisoned regeneration rate."
-msgstr ""
+msgstr "Avanser til tettstedfasen, som låser opp flere bygninger og enheter. Radiusen for territoriet rundt samfunnssenteret øker med +30%. 'Sølv-ugler' sivilisasjons-bonus skjenker ytterligere +10% metall-utvinningsbonus til alle arbeidere. Innbyggersoldaters høyeste helsenivå økes med +20%. Alle strukturer får +7 helbredingsrate med enheter forskanset i dem."
+
+#: simulation/data/technologies/phase_town_athen.jsonrequirementsTooltip
+#: simulation/data/technologies/phase_town_generic.jsonrequirementsTooltip
+msgid ""
+"Requires 5 Village Phase structures (except Palisades and Farm Fields)."
+msgstr "Krever 5 landsbyfase-bygninger (bortsett fra palisader og åkre)"
+
+#: simulation/data/technologies/phase_town_athen.jsonspecificName.athen
+#: simulation/data/technologies/phase_town_generic.jsonspecificName.mace
+#: simulation/data/technologies/phase_town_generic.jsonspecificName.spart
+msgid "Kōmópolis"
+msgstr "Kōmópolis"
+
+#: simulation/data/technologies/phase_town_generic.jsondescription
+msgid ""
+"Advances from a small village to a bustling town, ready to expand rapidly."
+msgstr "Avanserer fra en liten landsby til en yrende by, klar for videre rask utvidelse."
+
+#: simulation/data/technologies/phase_town_generic.jsontooltip
+msgid ""
+"Advance to Town Phase, which unlocks more structures and units. Territory "
+"radius for Civic Centers increased by +30%. Citizen soldiers max health "
+"increased by +20%. All structures +7 garrisoned regeneration rate."
+msgstr "Avanser til tettstedfasen, som tilgjengeliggjør flere strukturer og enheter. Radiusen for territoriet rundt samfunnssenteret øker med +30%.\nBorgersoldaters høyeste helsenivå økes med +20%. Alle strukturer får +7 helbredingsrate med enheter forskanset i dem."
 
 #: simulation/data/technologies/phase_village.jsongenericName
 msgid "Village Phase"
@@ -1464,7 +1409,7 @@ msgstr "Underet tiltrekker seg mange flere folk til din sivilisasjon."
 msgid ""
 "Enable Glorious Expansion. Further increase the population limit by 40 per "
 "Wonder owned."
-msgstr ""
+msgstr "Skru på praktfull utvidelse. Øker befolkningstaket med ytterligere 40 per eide under."
 
 #: simulation/data/technologies/pop_wonder.jsongenericName
 msgid "Glorious Expansion"
@@ -1499,11 +1444,11 @@ msgstr "Amentum"
 
 #: simulation/data/technologies/siege_armor.jsondescription
 msgid "Increased armor on siege weapons"
-msgstr "Forbedret panser på beleringsvåpen"
+msgstr "Forbedret rustning på beleringsvåpen"
 
 #: simulation/data/technologies/siege_armor.jsontooltip
 msgid "All Siege weapons +2 Hack armor levels."
-msgstr "Alle beleiringsmaskiner får +2 i pansernivå mot hugg."
+msgstr "Alle beleiringsmaskiner får +2 i rustningsgrad mot hugg."
 
 #: simulation/data/technologies/siege_armor.jsongenericName
 msgid "Armor plating"
@@ -1526,8 +1471,8 @@ msgid "Improvement to projectile accuracy"
 msgstr "Økt projektilspresisjon"
 
 #: simulation/data/technologies/siege_bolt_accuracy.jsontooltip
-msgid "Bolt shooter accuracy increased 25%."
-msgstr "Boltriflepresisjon forbedret 25%."
+msgid "Bolt shooter increased accuracy."
+msgstr ""
 
 #: simulation/data/technologies/siege_bolt_accuracy.jsongenericName
 msgid "Bolt Accuracy"
@@ -1590,6 +1535,118 @@ msgstr "Tren hestene dine til å ri raskere."
 msgid "Cavalry Speed Training"
 msgstr "Hastighetstrening for kavaleri"
 
+#: simulation/data/technologies/spy_counter.jsondescription
+msgid "Recruit a network of informants to watch over your people."
+msgstr "Rekruttér et nettverk av informanter for å overvåke folket ditt."
+
+#: simulation/data/technologies/spy_counter.jsontooltip
+msgid "Make your units 50% more expensive to bribe."
+msgstr "Gjør enhetene dine 50% dyrere å bestikke."
+
+#: simulation/data/technologies/spy_counter.jsongenericName
+msgid "Counterintelligence"
+msgstr "Kontraspionasje"
+
+#: simulation/data/technologies/tower_armour.jsondescription
+msgid "Reinforce the foundations in preparation of an attack."
+msgstr "Forsterk fundamentene for å forberede et angrep. "
+
+#: simulation/data/technologies/tower_armour.jsontooltip
+msgid "Increases armor of defensive towers by 2 levels."
+msgstr "Øker rustningsgraden til forsvarstårn med 2 nivåer."
+
+#: simulation/data/technologies/tower_armour.jsongenericName
+msgid "Sturdy Foundations"
+msgstr "Robuste fundamenter"
+
+#: simulation/data/technologies/tower_crenellations.jsondescription
+msgid ""
+"Crenellations on the battlements allow soldiers wider range of fire in "
+"defending a keep."
+msgstr "Krenleringer på brystvernet gir soldater bredere skuddfelt når de forsvarer et fort."
+
+#: simulation/data/technologies/tower_crenellations.jsontooltip
+msgid ""
+"Install crenellations and murder holes to have 40% more arrows fired per "
+"garrisoned soldier."
+msgstr "Installer kreneleringer og morderhull for å få 40% flere piler skutt per stasjonert soldat. "
+
+#: simulation/data/technologies/tower_crenellations.jsongenericName
+msgid "Crenellations"
+msgstr "Kreneleringer"
+
+#: simulation/data/technologies/tower_decay.jsondescription
+msgid "Outposts survive twice as long in neutral territory."
+msgstr "Utposter overlever dobbelt så lenge i nøytralt territorium."
+
+#: simulation/data/technologies/tower_decay.jsontooltip
+msgid "Outposts -50% territory decay rate."
+msgstr ""
+
+#: simulation/data/technologies/tower_decay.jsongenericName
+msgid "Stone Foundations"
+msgstr "Stein fundamenter"
+
+#: simulation/data/technologies/tower_murderholes.jsondescription
+msgid "Murder holes allow hitting enemies at the foot of the tower."
+msgstr "Fallgraver tillater angrep av motstandere ved tårnets base."
+
+#: simulation/data/technologies/tower_murderholes.jsontooltip
+msgid "Removes defensive towers' minimum range."
+msgstr "Fjerner forsvarstårns minimumsrekkevidde."
+
+#: simulation/data/technologies/tower_murderholes.jsongenericName
+msgid "Murder Holes"
+msgstr "Fallgraver"
+
+#: simulation/data/technologies/tower_range.jsondescription
+msgid "Arrow shooters increase the maximum range of the fire arrows."
+msgstr "Bueskyttere øker det maksimale rekkevidde av flammepiler."
+
+#: simulation/data/technologies/tower_range.jsontooltip
+msgid "Increases defensive towers' maximum range by 8 meters."
+msgstr "Øker forsvarstårns maksimale rekkevidde med 8 meter."
+
+#: simulation/data/technologies/tower_range.jsongenericName
+msgid "Arrow Shooters"
+msgstr "Bueskytter"
+
+#: simulation/data/technologies/tower_vision.jsondescription
+msgid "Outposts gain longer vision for scouting."
+msgstr "Utposter får lengre synsvidde."
+
+#: simulation/data/technologies/tower_vision.jsontooltip
+msgid "Outposts +50% vision range."
+msgstr "Utposter +50% lengre synsrekkevidde."
+
+#: simulation/data/technologies/tower_vision.jsongenericName
+msgid "Carrier Pigeons"
+msgstr "Brevduer"
+
+#: simulation/data/technologies/tower_watch.jsondescription
+msgid "A night's watch increases vigilance."
+msgstr "En natts vakt øker årvåkenhet."
+
+#: simulation/data/technologies/tower_watch.jsontooltip
+msgid "Post sentries to add one arrow to defensive towers."
+msgstr "Utstasjoner portvokter for å legge til ei pil for forsvarstårn."
+
+#: simulation/data/technologies/tower_watch.jsongenericName
+msgid "Sentries"
+msgstr "Vakt"
+
+#: simulation/data/technologies/tower_watch.jsonspecificName.ptol
+#: simulation/data/technologies/tower_watch.jsonspecificName.spart
+#: simulation/data/technologies/tower_watch.jsonspecificName.sele
+#: simulation/data/technologies/tower_watch.jsonspecificName.athen
+#: simulation/data/technologies/tower_watch.jsonspecificName.mace
+msgid "Nyktophýlakes"
+msgstr "Nyktophýlakes"
+
+#: simulation/data/technologies/tower_watch.jsonspecificName.rome
+msgid "Vigiles"
+msgstr "Vigiles"
+
 #: simulation/data/technologies/trade_commercial_treaty.jsondescription
 msgid "Improve the international trading profit."
 msgstr "Øk den internasjonale handelsfortjenesten."
@@ -1608,7 +1665,7 @@ msgstr "Økt forsvarsevne for handelsmenn."
 
 #: simulation/data/technologies/trade_convoys_armor.jsontooltip
 msgid "Traders +2 Hack and Pierce armor levels."
-msgstr "Kjøpmenn +2 i pansernivå mot hugg og stikk."
+msgstr "Kjøpmenn +2 rustningsgrad mot hugg og stikk."
 
 #: simulation/data/technologies/trade_convoys_armor.jsongenericName
 #: simulation/data/technologies/trade_convoys_speed.jsongenericName
@@ -1697,7 +1754,7 @@ msgstr "Utskrevet infanteri"
 
 #: simulation/data/technologies/training_naval_architects.jsondescription
 msgid "Significantly increase build speed of batches of ships at the Dock."
-msgstr "Betydelig økt byggningshastighet på skipsordrer av samme typer i dokken.."
+msgstr "Betydelig økt byggningshastighet på skipsordrer av samme typer i dokken."
 
 #: simulation/data/technologies/training_naval_architects.jsontooltip
 msgid "Docks increased batch construction speed bonus."
@@ -1758,11 +1815,11 @@ msgid ""
 "The extension of trade leads to the permanent establishment of storekeepers "
 "and their families in foreign countries, allowing them to exploit the wealth"
 " of these countries."
-msgstr ""
+msgstr "Utvidelse av handelsvirksomhet fører til at materialforvaltere og deres familier etablerer seg i fremmede land, der de vil utnytte disse landenes rikdom. "
 
 #: simulation/data/technologies/unlock_shared_dropsites.jsontooltip
 msgid "Allows using allied dropsites."
-msgstr "Tillater bruk av allierte sine avlastningssteder."
+msgstr "Tillater bruk av allierte avlastningssteder."
 
 #: simulation/data/technologies/unlock_shared_dropsites.jsongenericName
 msgid "Diaspora"
@@ -1780,12 +1837,29 @@ msgid ""
 msgstr "Ved handel og reiser utforsket folk forbi yttergrensene av deres eget land og tegnet kart for å dele og huske sine oppdagelser."
 
 #: simulation/data/technologies/unlock_shared_los.jsontooltip
-msgid "Player sees what his allies see."
-msgstr "Spillere deler oversikten deres allierte har."
+msgid ""
+"See what your allies see, browse their summary and check their resources and"
+" population count in the top panel."
+msgstr "Se hva dine allierte ser, se gjennom deres sammendrag og sjekk deres ressurser og befolkningsantall i toppanelet."
 
 #: simulation/data/technologies/unlock_shared_los.jsongenericName
 msgid "Cartography"
 msgstr "Kartografi"
+
+#: simulation/data/technologies/unlock_spies.jsondescription
+msgid ""
+"Merchants' first goal was trading, but they also gathered information about "
+"the countries they crossed."
+msgstr "Handelsmennenes første mål var handel, men de tilegnet seg også informasjon om landene de krysset."
+
+#: simulation/data/technologies/unlock_spies.jsontooltip
+msgid ""
+"Allows bribing the units of other players in order to share their vision."
+msgstr "Tillater bestikking av andre spilleres enheter slik at du kan dele deres åsyn."
+
+#: simulation/data/technologies/unlock_spies.jsongenericName
+msgid "Espionage"
+msgstr "Spionering"
 
 #: simulation/data/technologies/upgrade_rank_advanced_cavalry.jsondescription
 #: simulation/data/technologies/upgrade_rank_elite_cavalry.jsondescription
@@ -1805,7 +1879,7 @@ msgstr "Avansert borger-kavaleri"
 
 #: simulation/data/technologies/upgrade_rank_advanced_infantry.jsondescription
 msgid "Upgrade all of your citizen-soldier infantrymen to Advanced rank."
-msgstr "Opgrader alle dine borger-soldatinfanterister til avansert rang."
+msgstr "Oppgrader alle dine borger-soldatinfanterister til avansert rang."
 
 #: simulation/data/technologies/upgrade_rank_advanced_infantry.jsontooltip
 msgid ""
@@ -1823,6 +1897,19 @@ msgstr "Avansert borger-infanteri"
 #: simulation/data/technologies/upgrade_rank_advanced_infantry.jsonspecificName.athen
 msgid "Zeugítai"
 msgstr "Zeugítai"
+
+#: simulation/data/technologies/upgrade_rank_advanced_mercenary.jsondescription
+msgid "Hire professional mercenaries to fight in your army."
+msgstr "Hyr profesjonelle leiesoldater til å sloss i din arme."
+
+#: simulation/data/technologies/upgrade_rank_advanced_mercenary.jsontooltip
+msgid ""
+"Mercenaries are promoted to advanced rank but require +20% training time."
+msgstr "Leiesoldater blir forfremmet til avansert grad, men krever +20% opptreningstid."
+
+#: simulation/data/technologies/upgrade_rank_advanced_mercenary.jsongenericName
+msgid "Expertise In War"
+msgstr "Ekspertise i krig"
 
 #: simulation/data/technologies/upgrade_rank_elite_cavalry.jsontooltip
 msgid ""
@@ -1856,26 +1943,18 @@ msgstr "Eliteborgerinfanteri"
 msgid "Pentakosiomédimnoi"
 msgstr "Pentakosiomédimnoi"
 
-#: simulation/data/technologies/vision_outpost.jsondescription
-msgid "Outposts gain longer vision for scouting."
-msgstr "Utposter får lengre synsvidde."
-
-#: simulation/data/technologies/vision_outpost.jsontooltip
-msgid "Vision Range +50% for Outposts."
-msgstr "Synsvidde +50% for utposter."
-
-#: simulation/data/technologies/vision_outpost.jsongenericName
-msgid "Carrier Pigeons"
-msgstr "Brevduer"
-
 #: simulation/data/technologies/carthaginians/civbonus_triple_walls.jsondescription
 msgid ""
 "Carthaginians built their city walls in three concentric circuits. These "
 "walls were never breached. Even when the city was taken by the Romans, it "
-"was via the city's harbor, not by storming its walls. Consequently, "
+"was via the city's harbor, not by storming its walls."
+msgstr "Karthagerne bygde sine bymurer i tre konsentriske ringer. Disse murene ble aldri brutt. Da romerne tok byen måtte de bryte seg inn gjennom havnen, de stormet ikke bymurene."
+
+#: simulation/data/technologies/carthaginians/civbonus_triple_walls.jsontooltip
+msgid ""
 "Carthaginian walls, gates, and wall towers have 3x the health of a standard "
 "wall, but also cost twice as much and take twice as long to build."
-msgstr "Karthaginerne bygde sine bymurer i tre konsentriske ringer. Disse murene ble aldri brutt. Da romerne tok byen måtte de bryte seg inn gjennom havnen, de stormet ikke bymurene. Derfor har karthaginske murer, porter og murtårn 3x så mye helse som standardmurer, men koster også dobbelt så mye og tar dobbelt så lang tid å bygge."
+msgstr "Kartagiske murer, porter og veggtårn har 3x av helsen til en standardmur men, men koster også dobbelt så mye og tar dobbelt så lang tid å bygge."
 
 #: simulation/data/technologies/carthaginians/civbonus_triple_walls.jsongenericName
 msgid "Triple Walls"
@@ -1915,7 +1994,7 @@ msgstr "Iberiske leiesoldater har redusert metall-kost."
 msgid ""
 "Hire a Lusitanian mercenary captain to reduce cost -20 metal for Iberian "
 "mercenaries."
-msgstr "Lei en Lusitaniansk leiesoldat-kaptein for å redusere kost med -20 metall for Iberiske leiesoldater."
+msgstr "Lei en lusitaniansk leiesoldat-kaptein for å redusere kost med -20 metall for Iberiske leiesoldater."
 
 #: simulation/data/technologies/carthaginians/cost_iberian_mercs.jsongenericName
 msgid "Lusitanian Mercenary Captain"
@@ -1925,7 +2004,7 @@ msgstr "Lusitansk leiesoldatkaptein"
 msgid ""
 "Hire a Celtiberian mercenary general to reduce cost -20 metal for Iberian "
 "mercenaries."
-msgstr "Lei en Keltiberisk frilans-general for å redusere metallkost med -20 for Iberiske frilansere."
+msgstr "Lei en keltiberisk frilans-general for å redusere metallkost med -20 for iberiske frilansere."
 
 #: simulation/data/technologies/carthaginians/cost_iberian_mercs_2.jsongenericName
 msgid "Celtiberian Mercenary General"
@@ -1984,7 +2063,7 @@ msgstr "Italiensk leiesoldatkostnad vs. rekrutteringstid #2"
 msgid ""
 "Carthaginians established many trading centers as colonies and ultimately "
 "held dominion over 300 cities and towns in North Africa alone."
-msgstr "Kartagerne etablerte mange handelssentrum som kolonier og hersket til slutt over 300 byer og småbyer bare i nord-Afrika."
+msgstr "Kartagerne etablerte mange handelssentrum som kolonier og hersket til slutt over 300 byer og småbyer bare i Nord-Afrika."
 
 #: simulation/data/technologies/carthaginians/special_colonisation.jsontooltip
 msgid ""
@@ -2119,7 +2198,7 @@ msgid ""
 "Upgrade all of your Iberian mercenaries to Advanced rank. This increases "
 "their military prowess, but decreases their resource gathering rates -25%. "
 "Unlocks Elite Iberian Mercenaries technology."
-msgstr "Oppgrader alle dine iberiske leiesoldater til Avansert rang. Dette øker deres militære djervhet, men reduserer deres ressurs-sanking med -25%.\nLåser opp elite iberisk leisoldat-teknologi."
+msgstr "Oppgrader alle dine Iberiske leiesoldater til Avansert rang. Dette øker deres militære djervhet, men reduserer deres ressurs-sanking med -25%.\nLåser opp iberisk elite-leisoldat-teknologi."
 
 #: simulation/data/technologies/carthaginians/upgrade_rank_advanced_iberian.jsongenericName
 msgid "Advanced Iberian Mercenaries"
@@ -2134,7 +2213,7 @@ msgid ""
 "Upgrade all of your Italiote mercenaries to Advanced rank. This increases "
 "their military prowess, but decreases their resource gathering rates -25%. "
 "Unlocks Elite Italiote Mercenaries technology."
-msgstr "Oppgrader alle dine italiotiske leiesoldater til avansert rang. Dette øker deres militære djervhet, men reduserer hastigheten på ressurs-sanking med -25%.\nLåser opp italiotisk elite leisoldat-teknologi."
+msgstr "Oppgrader alle dine italiotiske leiesoldater til avansert rang. Dette øker deres militære djervhet, men reduserer hastigheten på ressurs-sanking med -25%.\nLåser opp italiotisk elite-leisoldat-teknologi."
 
 #: simulation/data/technologies/carthaginians/upgrade_rank_advanced_italiote.jsongenericName
 msgid "Advanced Italiote Mercenaries"
@@ -2162,7 +2241,7 @@ msgstr "Oppgrader alle dine iberiske leiesoldater til eliterang."
 msgid ""
 "Upgrade all of your Iberian mercenaries to Elite rank. This increases their "
 "military prowess, but decreases their resource gathering rates another -25%."
-msgstr "Oppgrader alle dine iberiske leiesoldater til eliterang. Dette øker deres militære djervhet, men reduserer deres resurs-sanking med ytterligere -25%."
+msgstr "Oppgrader alle dine iberiske leiesoldater til eliterang. Dette øker deres militære djervhet, men reduserer deres evne til å sanke ressurser med ytterligere -25%."
 
 #: simulation/data/technologies/carthaginians/upgrade_rank_elite_iberian.jsongenericName
 msgid "Elite Iberian Mercenaries"
@@ -2184,15 +2263,18 @@ msgid "Elite Italiote Mercenaries"
 msgstr "Italiotiske eliteleiesoldater"
 
 #: simulation/data/technologies/celts/civbonus_celts_wooden_struct.jsondescription
+msgid "Celtic structures were mostly made of wood with rubble foundations."
+msgstr "Keltiske byggverk ble for det meste laget av tre, på grusfundament."
+
+#: simulation/data/technologies/celts/civbonus_celts_wooden_struct.jsontooltip
 msgid ""
-"Celtic structures were mostly made of wood with rubble foundations. "
-"Consequently, their structures have less health than other cultures do, but "
-"they also construct faster."
-msgstr "Keltiske bygninger ble som oftest laget av tre med småsteinsfundament. Som følge av dette har deres bygninger mindre motstandsdyktighet enn andre kulturer, men de kan bygges raskere."
+"Celtic buildings have 20% less health, but are also 20% cheaper and faster "
+"to construct."
+msgstr "Keltiske bygninger har 20% mindre helse, men er også 20% billigere og raskere å konstruere."
 
 #: simulation/data/technologies/celts/civbonus_celts_wooden_struct.jsongenericName
 msgid "Wooden Construction"
-msgstr "Tre konstruksjon"
+msgstr "Trekonstruksjon"
 
 #: simulation/data/technologies/hellenes/attack_inf_spearfighting.jsondescription
 msgid "Spear fighting training increases damage of infantry spear units."
@@ -2216,13 +2298,15 @@ msgstr "Doratismós"
 msgid "The Greeks used stone construction from early Mycenaean times."
 msgstr "Grekerne brukte steinkonstruksjoner fra tidlig mykensk tid."
 
+#: simulation/data/technologies/hellenes/civbonus_hellenic_architecture.jsontooltip
+msgid ""
+"All structures have 10% more health and capture points, but also take 10% "
+"longer to build."
+msgstr "Alle konstruksjoner får +10% mer helse og overtakelsespoeng, men tar også +10% lenger å bygge."
+
 #: simulation/data/technologies/hellenes/civbonus_hellenic_architecture.jsongenericName
 msgid "Hellenic Architecture"
 msgstr "Hellenistisk arkitektur"
-
-#: simulation/data/technologies/hellenes/civpenalty_spart_popcap.jsongenericName
-msgid "Underdogs"
-msgstr "Antatt dårligere"
 
 #: simulation/data/technologies/hellenes/civpenalty_spart_popcap.jsondescription
 msgid ""
@@ -2231,6 +2315,14 @@ msgid ""
 "quantity, they made up with quality. It was said that Sparta did not need "
 "strong city walls, for its men were its walls."
 msgstr "Spartanerne hadde ikke den største hæren i verden, men de hadde den beste hæren i verden i deres tid. Det de ikke hadde i antall gjorde de opp for i kvalitet. Det ble sagt at Sparta ikke trenge bymurer fordi deres menn var byens murer."
+
+#: simulation/data/technologies/hellenes/civpenalty_spart_popcap.jsontooltip
+msgid "Spartans have 10% less maximum population."
+msgstr "Spartanerne har 10% lavere befolkningstak."
+
+#: simulation/data/technologies/hellenes/civpenalty_spart_popcap.jsongenericName
+msgid "Underdogs"
+msgstr "Antatt dårligere"
 
 #: simulation/data/technologies/hellenes/spartans_agoge.jsondescription
 msgid ""
@@ -2276,6 +2368,30 @@ msgstr "Bygg steinmurer i nøytralt territorium."
 msgid "Athenian Long Walls"
 msgstr "Athenske langvegger."
 
+#: simulation/data/technologies/kushites/monumental_architecture.jsontooltip
+msgid ""
+"+25% HP and -50% build time for Civic Centres, Temples, Pyramids and "
+"Wonders."
+msgstr ""
+
+#: simulation/data/technologies/kushites/monumental_architecture.jsongenericName
+msgid "Monumental Architecture"
+msgstr ""
+
+#: simulation/data/technologies/kushites/upgrade_rank_elite_healer.jsondescription
+msgid ""
+"Have your priests instructed by the High Priest himself - may Amun bless "
+"him."
+msgstr ""
+
+#: simulation/data/technologies/kushites/upgrade_rank_elite_healer.jsontooltip
+msgid "Train elite rank healers."
+msgstr ""
+
+#: simulation/data/technologies/kushites/upgrade_rank_elite_healer.jsongenericName
+msgid "Divine Instruction"
+msgstr ""
+
 #: simulation/data/technologies/mauryans/civbonus_maur_popcap.jsondescription
 msgid ""
 "The Mauryan Empire encompassed dozens of formerly independent kingdoms over "
@@ -2285,6 +2401,10 @@ msgid ""
 "chariots, and 30,000 cavalry, making it arguably the largest army of its "
 "time."
 msgstr "Det mauriske imperium innbefattet dusinvis av tidligere uavhengige kongedømmer over et areal på 5 millioner kvadratkilometer, med en befolkning på nær 60 millioner innbyggere. De mauriske regentene hadde tittelen Keiser over Keisere og hadde en stående hær på 600.000 infanterister, 9000 elefanter, 8000 hestestridsvogner og 30.000 kavalerister, den største hæren i sin tid."
+
+#: simulation/data/technologies/mauryans/civbonus_maur_popcap.jsontooltip
+msgid "Mauryans have a 10% higher maximum population limit."
+msgstr "Mauryanerne har et 10% høyere befolkningstak."
 
 #: simulation/data/technologies/mauryans/civbonus_maur_popcap.jsongenericName
 msgid "Emperor of Emperors"
@@ -2303,9 +2423,9 @@ msgstr "Inderne hadde en lang tradisjon med fremragende bueskytterkunst og en fo
 #: simulation/data/technologies/mauryans/special_archery_tradition.jsontooltip
 #: simulation/data/technologies/persians/special_archery_tradition.jsontooltip
 msgid ""
-"Range +10 meters for bow-wielding units. Archer units train time -20%, but "
-"also -20% health."
-msgstr "Rekkevidde +10 meter for bueskyttere. Opptreningstid for bueskyttere -20%, men også -20% helsepoeng."
+"Range +10 meters for bow-wielding units. Archer units better accuracy and "
+"-20% train time, but also -20% health."
+msgstr ""
 
 #: simulation/data/technologies/mauryans/special_archery_tradition.jsongenericName
 #: simulation/data/technologies/persians/special_archery_tradition.jsongenericName
@@ -2315,17 +2435,16 @@ msgstr "Bueskyttertradisjon"
 #: simulation/data/technologies/mauryans/wooden_walls.jsondescription
 msgid ""
 "The Mauryans built their city walls out of wood, an abundant natural "
-"resource in India. Consequently, Mauryan city walls have -20% health and "
-"-20% build time."
-msgstr "Mauryanerne bygget sine bymurer av tre, en naturressurs det fantes rikelige mengder av i India. Følgelig har mauryanske bymurer -20% helse og -20% byggetid. "
+"resource in India."
+msgstr "Mauryanerne bygget sine bymurer av tre, en naturressurs det fantes rikelige mengder av i India."
+
+#: simulation/data/technologies/mauryans/wooden_walls.jsontooltip
+msgid "Mauryan city walls have -20% less health and -20% less build time."
+msgstr "Mauryanske byvegger har -20% mindre helse og -20% mindre bygningstid."
 
 #: simulation/data/technologies/mauryans/wooden_walls.jsongenericName
 msgid "Wooden Walls"
 msgstr "Tømmervegger"
-
-#: simulation/data/technologies/persians/civbonus_pers_popcap.jsongenericName
-msgid "Great King's Levy"
-msgstr "Den store kongens tvangsutskriving"
 
 #: simulation/data/technologies/persians/civbonus_pers_popcap.jsondescription
 msgid ""
@@ -2337,6 +2456,14 @@ msgid ""
 "regiments, the Persian infantry was not a standing professional force."
 msgstr "Perserne kunne tvangsutskrive et stort antall infanterister under krigstid på grunn av Akamenide-dynastiets voldsomme størrelse og måten det var organisert på. Generelt var det persiske infanteriet godt trent, målbevisst og kjempet med fasthet. På den annen side var infanteristene svake i nærkamp uten våpen. Dessuten - med unntak av eliteregimentene - var ikke det persiske infanteriet en permanent profesjonell styrke."
 
+#: simulation/data/technologies/persians/civbonus_pers_popcap.jsontooltip
+msgid "Persians have a 10% higher maximum population limit."
+msgstr "Perserne har et 10% høyere befolkningstak."
+
+#: simulation/data/technologies/persians/civbonus_pers_popcap.jsongenericName
+msgid "Great King's Levy"
+msgstr "Den store kongens tvangsutskriving"
+
 #: simulation/data/technologies/persians/immortals.jsondescription
 msgid ""
 "The Anusiya champion infantry train twice as fast, but lose a little max "
@@ -2344,8 +2471,8 @@ msgid ""
 msgstr "Anusiyamesterinfanteriet trenes dobbelt så fort, men mister litt makshelse. "
 
 #: simulation/data/technologies/persians/immortals.jsontooltip
-msgid "Anusiya Champion Infantry -50% train time, but also -20 health."
-msgstr "Anusiyamesterinfantery -50% trenetid, men også -20% helse."
+msgid "Anusiya Champion Infantry -50% train time, but also -10% health."
+msgstr "Anusiyamesterinfantery -50% opptreningstid, men også -10% helse."
 
 #: simulation/data/technologies/persians/immortals.jsongenericName
 msgid "Immortals"
@@ -2357,7 +2484,7 @@ msgid ""
 " Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
 "Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
 "Elamite capital of Susa."
-msgstr "Perserne bygde den fantastiske 1677 mil - 2699 km - lange kongelige hovedvei fra Sardis til Susa; Darius den Store og Xerxes bygde også det storslåtte Persepolis; Cyrus den Store forbedret Ecbatana og gjenoppbygde praktisk talt den gamle elamittiske hovedstaden Susa."
+msgstr "Perserne bygde den fantastiske 1677 mil - 2699 km - lange kongelige hovedvei fra Sardis til Susa; Darius den store og Xerxes bygde også det storslåtte Persepolis; Cyrus den store forbedret Ecbatana og gjenoppbygde praktisk talt den gamle elamittiske hovedstaden Susa."
 
 #: simulation/data/technologies/persians/persian_architecture.jsontooltip
 msgid ""
@@ -2384,7 +2511,7 @@ msgid ""
 "example, a canal was built in Egypt and a Persian navy was sent exploring "
 "the Indus river. According to Herodotus, some 300 ships in the Persian navy "
 "were retrofitted to carry horses and their riders."
-msgstr "Tidlige herskere i Akamenide-dynastiet arbeidet for å gjøre Persia til det første store asiatiske imperiet som også hersket over havene. Den store kongen opptrådte fordelaktig overfor de ulike sjøfolkene for å sikre seg deres tjenester, men gjennomførte også flere marine initiativer. Under Darius den Stores herredømme, for eksempel, ble en kanal bygget i Egypt, og en persisk marineflåte ble sendt for å utforske Induselven. Ifølge Herodotus ble om lag 300 skip ombygd for å kunne transportere hester og deres ryttere."
+msgstr "Tidlige herskere i Akamenide-dynastiet arbeidet for å gjøre Persia til det første store asiatiske imperiet som også hersket over havene. Den store kongen opptrådte fordelaktig overfor de ulike sjøfolkene for å sikre seg deres tjenester, men gjennomførte også flere marine initiativer. Under Darius den stores herredømme, for eksempel, ble en kanal bygget i Egypt, og en persisk marineflåte ble sendt for å utforske Induselven. Ifølge Herodotus ble om lag 300 skip ombygd for å kunne transportere hester og deres ryttere."
 
 #: simulation/data/technologies/persians/special_equine_transports.jsontooltip
 msgid "Phoenician Triremes gain the ability to train cavalry units."
@@ -2414,15 +2541,15 @@ msgstr "Infanteri-verneplikt"
 
 #: simulation/data/technologies/persians/training_levy_cavalry.jsontooltip
 msgid ""
-"All cavalry -20% train time, but also -10 health. Unlocks Cavalry "
+"All cavalry -20% train time, but also -5% health. Unlocks Cavalry "
 "Conscription."
-msgstr "Alt kavaleri -20% opptreningstid men også -10 helse. Låser opp verneplikt for kavaleri."
+msgstr "Alt kavaleri -20% treningstid men også -5 helse. Låser opp verneplikt for kavaleri."
 
 #: simulation/data/technologies/persians/training_levy_infantry.jsontooltip
 msgid ""
-"All infantry -10% train time, but also -5 health. Unlocks Infantry "
+"All infantry -20% train time, but also -5% health. Unlocks Infantry "
 "Conscription."
-msgstr "Alt kavaleri -10% opptreningstid men også -5 helse. Låser opp kavaleri-verneplikt."
+msgstr "Alt kavaleri -20% opptreningstid men også -5% helse. Låser opp kavaleri-verneplikt."
 
 #: simulation/data/technologies/romans/decay_logistics.jsondescription
 msgid "The Romans were masters of the logistics of warfare."
@@ -2468,8 +2595,7 @@ msgid ""
 msgstr "De Hellenistiske monarkene, med Alexander som den første, grunnla mange byer overalt i sine imperier, der gresk kultur og kunst ble forent med lokale skikker for å skape den blandede hellenistiske sivilisasjonen. "
 
 #: simulation/data/technologies/successors/special_hellenistic_metropolis.jsontooltip
-msgid ""
-"Civic centers +100% health and capture points and double default arrows."
+msgid "Civic centers +100% health and capture points, double default arrows."
 msgstr "Samfunnssentere får +100% helse og erobringspoeng, samt doble standardpiler."
 
 #: simulation/data/technologies/successors/special_hellenistic_metropolis.jsongenericName
@@ -2480,7 +2606,7 @@ msgstr "Hellenistiske metropoler"
 msgid ""
 "Significantly increase training speed of champions and siege weapons at the "
 "fortress by training them in large batches or battalions."
-msgstr "Øk treningshastigheten til mestre og beleiringsvåpen ved festninger merkbart gjennom å trene dem i store bolker eller bataljoner. "
+msgstr "Øk treningshastigheten til mestre og beleiringsvåpen ved festninger merkbart gjennom å trene dem i store grupper eller bataljoner. "
 
 #: simulation/data/technologies/successors/special_parade_of_daphne.jsontooltip
 msgid "Faster batch training speed for the Fortress."
@@ -2495,7 +2621,7 @@ msgid ""
 "The now-extinct Nisian breed of horse was one of the largest and robust "
 "horses of ancient times. They were highly sought after by the Seleucids and "
 "Persians as both rider and mount gained heavier armor as time progressed."
-msgstr "Den nå utdødde nisearasen var en av de største og mest robuste hestene i oldtiden. Den var høyt ettertraktet av Selevkiderne og Perserne ettersom både rytter og hest fikk sterkere pansring etterhvert som tiden gikk."
+msgstr "Den nå utdødde nisearasen var en av de største og mest robuste hestene i oldtiden. Den var høyt ettertraktet av Selevkiderne og Perserne ettersom både rytter og hest fikk sterkere rustningsgrad etterhvert som tiden gikk."
 
 #: simulation/data/technologies/successors/special_war_horses.jsontooltip
 msgid "All cavalry +20% health."

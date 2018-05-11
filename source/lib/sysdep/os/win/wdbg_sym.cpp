@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Wildfire Games
+/* Copyright (C) 2018 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -210,8 +210,10 @@ static Status ResolveSymbol_lk(void* ptr_of_interest, wchar_t* sym_name, wchar_t
 	// get source file and/or line number (if requested)
 	if(file || line)
 	{
-		file[0] = '\0';
-		*line = 0;
+		if (file)
+			file[0] = '\0';
+		if (line)
+			*line = 0;
 
 		IMAGEHLP_LINEW64 line_info = { sizeof(IMAGEHLP_LINEW64) };
 		DWORD displacement; // unused but required by pSymGetLineFromAddr64!
@@ -313,7 +315,7 @@ Status wdbg_sym_WalkStack(StackFrameCallback cb, uintptr_t cbData, CONTEXT& cont
 	sym_init();
 
 	STACKFRAME64 sf = PopulateStackFrame(context);
-	
+
 	wchar_t func[DEBUG_SYMBOL_CHARS];
 
 	Status ret = ERR::SYM_NO_STACK_FRAMES_FOUND;
@@ -827,7 +829,7 @@ static Status DetermineSymbolAddress(DWORD id, const SYMBOL_INFOW* sym, const Du
 // called by dump_sym; lock is held.
 
 static Status dump_sym_array(DWORD type_id, const u8* p, DumpState& state)
-{ 
+{
 	ULONG64 size64 = 0;
 	if(!pSymGetTypeInfo(hProcess, state.moduleBase, type_id, TI_GET_LENGTH, &size64))
 		WARN_RETURN(ERR::SYM_TYPE_INFO_UNAVAILABLE);
@@ -846,7 +848,7 @@ static Status dump_sym_array(DWORD type_id, const u8* p, DumpState& state)
 	ENSURE(el_size != 0);
 	const size_t num_elements = size/el_size;
 	ENSURE(num_elements != 0);
- 
+
 	return dump_array(p, num_elements, el_type_id, el_size, state);
 }
 
@@ -883,7 +885,7 @@ static Status dump_sym_base_type(DWORD type_id, const u8* p, DumpState& state)
 	const wchar_t* fmt = L"";
 
 	u64 data = movzx_le64(p, size);
-	// if value is 0xCC..CC (uninitialized mem), we display as hex. 
+	// if value is 0xCC..CC (uninitialized mem), we display as hex.
 	// the output would otherwise be garbage; this makes it obvious.
 	// note: be very careful to correctly handle size=0 (e.g. void*).
 	for(size_t i = 0; i < size; i++)
@@ -1776,9 +1778,8 @@ void wdbg_sym_WriteMinidump(EXCEPTION_POINTERS* exception_pointers)
 	// (UserStreamParam), since we will need to generate a plain text file on
 	// non-Windows platforms. users will just have to send us both files.
 
-	HANDLE hProcess = GetCurrentProcess();
 	DWORD pid = GetCurrentProcessId();
-	if(!pMiniDumpWriteDump || !pMiniDumpWriteDump(hProcess, pid, hFile, MiniDumpNormal, &mei, 0, 0))
+	if(!pMiniDumpWriteDump || !pMiniDumpWriteDump(GetCurrentProcess(), pid, hFile, MiniDumpNormal, &mei, 0, 0))
 		DEBUG_DISPLAY_ERROR(L"wdbg_sym_WriteMinidump: unable to generate minidump.");
 
 	CloseHandle(hFile);

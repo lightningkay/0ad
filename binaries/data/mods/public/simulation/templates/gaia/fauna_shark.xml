@@ -18,10 +18,12 @@
   <Minimap disable=""/>
   <Obstruction>
     <BlockMovement>false</BlockMovement>
+    <BlockPathfinding>false</BlockPathfinding>
   </Obstruction>
   <Position>
     <Altitude>-1</Altitude>
     <Floating>true</Floating>
+    <FloatDepth>0.0</FloatDepth>
     <TurnRate>5.0</TurnRate>
   </Position>
   <Selectable>
@@ -43,17 +45,14 @@
   </UnitAI>
   <UnitMotion>
     <PassabilityClass>ship-small</PassabilityClass>
-    <WalkSpeed>4.0</WalkSpeed>
+    <WalkSpeed op="mul">0.6</WalkSpeed>
     <Run>
-      <Speed>35.0</Speed>
+      <Speed op="mul">0.6</Speed>
     </Run>
   </UnitMotion>
   <Visibility>
     <RetainInFog>false</RetainInFog>
   </Visibility>
-  <Vision>
-    <Range>100</Range>
-  </Vision>
   <VisualActor>
     <Actor>fauna/shark.xml</Actor>
   </VisualActor>

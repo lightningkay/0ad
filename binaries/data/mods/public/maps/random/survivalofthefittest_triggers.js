@@ -1,232 +1,308 @@
-var treasures =
-[
-	"gaia/special_treasure_food_barrel",
-	"gaia/special_treasure_food_bin",
-	"gaia/special_treasure_food_crate",
-	"gaia/special_treasure_food_jars",
-	"gaia/special_treasure_metal",
-	"gaia/special_treasure_stone",
-	"gaia/special_treasure_wood",
-	"gaia/special_treasure_wood",
-	"gaia/special_treasure_wood"
-];
-var attackerEntityTemplates =
-[
-	[
-		"units/athen_champion_infantry",
-		"units/athen_champion_marine",
-		"units/athen_champion_ranged",
-		"units/athen_siege_lithobolos_packed",
-		"units/athen_siege_oxybeles_packed",
-	],
-	[
-		"units/brit_champion_cavalry",
-		"units/brit_champion_infantry",
-		"units/brit_mechanical_siege_ram",
-	],
-	[
-		"units/cart_champion_cavalry",
-		"units/cart_champion_elephant",
-		"units/cart_champion_infantry",
-		"units/cart_champion_pikeman",
-	],
-	[
-		"units/gaul_champion_cavalry",
-		"units/gaul_champion_fanatic",
-		"units/gaul_champion_infantry",
-		"units/gaul_mechanical_siege_ram",
-	],
-	[
-		"units/iber_champion_cavalry",
-		"units/iber_champion_infantry",
-		"units/iber_mechanical_siege_ram",
-	],
-	[
-		"units/mace_champion_cavalry",
-		"units/mace_champion_infantry_a",
-		"units/mace_champion_infantry_e",
-		"units/mace_mechanical_siege_lithobolos_packed",
-		"units/mace_mechanical_siege_oxybeles_packed",
-	],
-	[
-		"units/maur_champion_chariot",
-		"units/maur_champion_elephant",
-		"units/maur_champion_infantry",
-		"units/maur_champion_maiden",
-		"units/maur_champion_maiden_archer",
-	],
-	[
-		"units/pers_champion_cavalry",
-		"units/pers_champion_infantry",
-		"units/pers_champion_elephant",
-	],
-	[
-		"units/ptol_champion_cavalry",
-		"units/ptol_champion_elephant",
-	],
-	[
-		"units/rome_champion_cavalry",
-		"units/rome_champion_infantry",
-		"units/rome_mechanical_siege_ballista_packed",
-		"units/rome_mechanical_siege_scorpio_packed",
-	],
-	[
-		"units/sele_champion_cavalry",
-		"units/sele_champion_chariot",
-		"units/sele_champion_elephant",
-		"units/sele_champion_infantry_pikeman",
-		"units/sele_champion_infantry_swordsman",
-	],
-	[
-		"units/spart_champion_infantry_pike",
-		"units/spart_champion_infantry_spear",
-		"units/spart_champion_infantry_sword",
-		"units/spart_mechanical_siege_ram",
-	],
+/**
+ * If set to true, it will print how many templates would be spawned if the players were not defeated.
+ */
+const dryRun = false;
+
+/**
+ * If enabled, prints the number of units to the command line output.
+ */
+const debugLog = false;
+
+/**
+ * Get the number of minutes to pass between spawning new treasures.
+ */
+var treasureTime = () => randFloat(3, 5);
+
+/**
+ * Get the time in minutes when the first wave of attackers will be spawned.
+ */
+var firstWaveTime = () => randFloat(4, 6);
+
+/**
+ * Maximum time in minutes between two consecutive waves.
+ */
+var maxWaveTime = 4;
+
+/**
+ * Get the next attacker wave delay.
+ */
+var waveTime = () => randFloat(0.5, 1) * maxWaveTime;
+
+/**
+ * Roughly the number of attackers on the first wave.
+ */
+var initialAttackers = 5;
+
+/**
+ * Increase the number of attackers exponentially, by this percent value per minute.
+ */
+var percentPerMinute = 1.05;
+
+/**
+ * Greatest amount of attackers that can be spawned.
+ */
+var totalAttackerLimit = 200;
+
+/**
+ * Least and greatest amount of siege engines per wave.
+ */
+var siegeFraction = () => randFloat(0.2, 0.5);
+
+/**
+ * Potentially / definitely spawn a gaia hero after this number of minutes.
+ */
+var heroTime = () => randFloat(20, 60);
+
+/**
+ * The following templates can't be built by any player.
+ */
+var disabledTemplates = (civ) => [
+	// Economic structures
+	"structures/" + civ + "_corral",
+	"structures/" + civ + "_farmstead",
+	"structures/" + civ + "_field",
+	"structures/" + civ + "_storehouse",
+	"structures/" + civ + "_rotarymill",
+	"units/maur_support_elephant",
+
+	// Expansions
+	"structures/" + civ + "_civil_centre",
+	"structures/" + civ + "_military_colony",
+
+	// Walls
+	"structures/" + civ + "_wallset_stone",
+	"structures/rome_wallset_siege",
+	"other/wallset_palisade",
+
+	// Shoreline
+	"structures/" + civ + "_dock",
+	"structures/brit_crannog",
+	"structures/cart_super_dock",
+	"structures/ptol_lighthouse"
 ];
 
-Trigger.prototype.StartAnEnemyWave = function()
+/**
+ * Spawn these treasures in regular intervals.
+ */
+var treasures = [
+	"gaia/treasure/food_barrel",
+	"gaia/treasure/food_bin",
+	"gaia/treasure/food_crate",
+	"gaia/treasure/food_jars",
+	"gaia/treasure/metal",
+	"gaia/treasure/stone",
+	"gaia/treasure/wood",
+	"gaia/treasure/wood",
+	"gaia/treasure/wood"
+];
+
+/**
+ * An object that maps from civ [f.e. "spart"] to an object
+ * that has the keys "champions", "siege" and "heroes",
+ * which is an array containing all these templates,
+ * trainable from a building or not.
+ */
+var attackerUnitTemplates = {};
+
+Trigger.prototype.InitSurvival = function()
 {
-	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
-	let attackerEntities = attackerEntityTemplates[Math.floor(Math.random() * attackerEntityTemplates.length)];
-	// A soldier for each 2-3 minutes of the game. Should be waves of 20 soldiers after an hour
-	let nextTime = Math.round(120000 + Math.random() * 60000);
-	let attackerCount = Math.round(cmpTimer.GetTime() / nextTime / attackerEntities.length);
-
-	// spawn attackers
-	let attackers =  [];
-	for (let attackerEntity of attackerEntities)
-		attackers.push(TriggerHelper.SpawnUnitsFromTriggerPoints("A", attackerEntity, attackerCount, 0));
-
-	for (let entityType of attackers)
-	{
-		for (let origin in entityType)
-		{
-			let cmpPlayer = QueryOwnerInterface(+origin, IID_Player);
-			if (cmpPlayer.GetState() != "active")
-				continue;
-
-			let cmpPosition =  Engine.QueryInterface(this.playerCivicCenter[cmpPlayer.GetPlayerID()], IID_Position);
-			// this shouldn't happen if the player is still active
-			if (!cmpPosition || !cmpPosition.IsInWorld)
-				continue;
-
-			// store the x and z coordinates in the command
-			let cmd = cmpPosition.GetPosition();
-			cmd.type = "attack-walk";
-			cmd.entities = entityType[origin];
-			cmd.queued = true;
-			cmd.targetClasses = undefined;
-			// send the attack-walk command
-			ProcessCommand(0, cmd);
-		}
-	}
-
-	let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-	cmpGUIInterface.PushNotification({
-		"message": markForTranslation("An enemy wave is attacking!"),
-		"translateMessage": true
-	});
-	cmpTrigger.DoAfterDelay(nextTime, "StartAnEnemyWave", {}); // The next wave will come in 3 minutes
-};
-
-Trigger.prototype.InitGame = function()
-{
-	let numberOfPlayers = TriggerHelper.GetNumberOfPlayers();
-	// Find all of the civic centers, disable some structures
-	for (let i = 1; i < numberOfPlayers; ++i)
-	{
-		let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
-		let playerEntities = cmpRangeManager.GetEntitiesByPlayer(i); // Get all of each player's entities
-
-		for (let entity of playerEntities)
-			if (TriggerHelper.EntityHasClass(entity, "CivilCentre"))
-				cmpTrigger.playerCivicCenter[i] = entity;
-	}
-
-	// Fix alliances
-	/* Until we can do something about limiting the victory conditions available for this map to "None"
-	for (let i = 1; i < numberOfPlayers; ++i)
-	{
-		let cmpPlayer = QueryPlayerIDInterface(i);
-		for (let j = 1; j < numberOfPlayers; ++j)
-			if (i != j)
-				cmpPlayer.SetAlly(j);
-		cmpPlayer.SetLockTeams(true);
-	}*/
-
-	// Make gaia black
-	QueryPlayerIDInterface(0).SetColor(0, 0, 0);
-
-	// Place the treasures
+	this.InitStartingUnits();
+	this.LoadAttackerTemplates();
+	this.SetDisableTemplates();
 	this.PlaceTreasures();
+	this.InitializeEnemyWaves();
+};
 
-	// Disable farms, civic centers and walls for all players
-	for (let i = 1; i < numberOfPlayers; ++i)
+Trigger.prototype.debugLog = function(txt)
+{
+	if (!debugLog)
+		return;
+
+	print("DEBUG [" + Math.round(TriggerHelper.GetMinutes()) + "]  " + txt + "\n");
+};
+
+Trigger.prototype.LoadAttackerTemplates = function()
+{
+	for (let civ of ["gaia", ...Object.keys(loadCivFiles(false))])
+		attackerUnitTemplates[civ] = {
+			"heroes": TriggerHelper.GetTemplateNamesByClasses("Hero", civ, undefined, true),
+			"champions": TriggerHelper.GetTemplateNamesByClasses("Champion+!Elephant", civ, undefined, true),
+			"siege": TriggerHelper.GetTemplateNamesByClasses("Siege Champion+Elephant", civ, "packed", undefined)
+		};
+
+	this.debugLog("Attacker templates:");
+	this.debugLog(uneval(attackerUnitTemplates));
+};
+
+Trigger.prototype.SetDisableTemplates = function()
+{
+	for (let i = 1; i < TriggerHelper.GetNumberOfPlayers(); ++i)
 	{
 		let cmpPlayer = QueryPlayerIDInterface(i);
-		let civ = cmpPlayer.GetCiv();
-		cmpPlayer.SetDisabledTemplates([
-			"structures/" + civ + "_field",
-			"structures/" + civ + "_corral",
-			"structures/" + civ + "_civil_centre",
-			"structures/" + civ + "_military_colony",
-			"structures/" + civ + "_wallset_stone",
-			"other/wallset_palisade"
-		]);
+		cmpPlayer.SetDisabledTemplates(disabledTemplates(cmpPlayer.GetCiv()));
 	}
 };
 
-Trigger.prototype.PlaceTreasures = function()
+/**
+ *  Remember civic centers and make women invincible.
+ */
+Trigger.prototype.InitStartingUnits = function()
 {
-	let point = ["B", "C", "D"][Math.floor(Math.random() * 3)];
-	let triggerPoints = cmpTrigger.GetTriggerPoints(point);
-	for (let point of triggerPoints)
+	for (let playerID = 1; playerID < TriggerHelper.GetNumberOfPlayers(); ++playerID)
 	{
-		let template = treasures[Math.floor(Math.random() * treasures.length)]
-		TriggerHelper.SpawnUnits(point, template, 1, 0);
+		this.playerCivicCenter[playerID] = TriggerHelper.GetPlayerEntitiesByClass(playerID, "CivilCentre")[0];
+		this.treasureFemale[playerID] = TriggerHelper.GetPlayerEntitiesByClass(playerID, "FemaleCitizen")[0];
+		Engine.QueryInterface(this.treasureFemale[playerID], IID_DamageReceiver).SetInvulnerability(true);
 	}
-	cmpTrigger.DoAfterDelay(4*60*1000, "PlaceTreasures", {}); //Place more treasures after 4 minutes
 };
 
 Trigger.prototype.InitializeEnemyWaves = function()
 {
-	let time = (5 + Math.round(Math.random() * 10)) * 60 * 1000;
-	let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-	cmpGUIInterface.AddTimeNotification({
+	let time = firstWaveTime() * 60 * 1000;
+	Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface).AddTimeNotification({
 		"message": markForTranslation("The first wave will start in %(time)s!"),
 		"translateMessage": true
 	}, time);
-	cmpTrigger.DoAfterDelay(time, "StartAnEnemyWave", {});
+	this.DoAfterDelay(time, "StartAnEnemyWave", {});
 };
 
-Trigger.prototype.DefeatPlayerOnceCCIsDestroyed = function(data)
+Trigger.prototype.StartAnEnemyWave = function()
 {
-	// Defeat a player that has lost his civic center
-	if (data.entity == cmpTrigger.playerCivicCenter[data.from])
-	{
-		TriggerHelper.DefeatPlayer(data.from);
+	let currentMin = TriggerHelper.GetMinutes();
+	let nextWaveTime = waveTime();
+	let civ = pickRandom(Object.keys(attackerUnitTemplates));
 
-		// Check if only one player remains. He will be the winner.
-		let lastPlayerStanding = 0;
-		let numPlayersStanding = 0;
-		let numberOfPlayers = TriggerHelper.GetNumberOfPlayers();
-		for (let i = 1; i < numberOfPlayers; ++i)
-		{
-			if (QueryPlayerIDInterface(i).GetState() == "active")
+	// Determine total attacker count of the current wave.
+	// Exponential increase with time, capped to the limit and fluctuating proportionally with the current wavetime.
+	let totalAttackers = Math.ceil(Math.min(totalAttackerLimit,
+		initialAttackers * Math.pow(percentPerMinute, currentMin) * nextWaveTime / maxWaveTime));
+
+	let siegeRatio = siegeFraction();
+
+	this.debugLog("Spawning " + totalAttackers + " attackers, siege ratio " + siegeRatio.toFixed(2));
+
+	let attackerCount = TriggerHelper.BalancedTemplateComposition(
+		[
 			{
-				lastPlayerStanding = i;
-				++numPlayersStanding;
+				"templates": attackerUnitTemplates[civ].heroes,
+				"count": currentMin > heroTime() && attackerUnitTemplates[civ].heroes.length ? 1 : 0
+			},
+			{
+				"templates": attackerUnitTemplates[civ].siege,
+				"frequency": siegeRatio
+			},
+			{
+				"templates": attackerUnitTemplates[civ].champions,
+				"frequency": 1 - siegeRatio
 			}
+		],
+		totalAttackers);
+
+	this.debugLog("Templates: " + uneval(attackerCount));
+
+	// Spawn the templates
+	let spawned = false;
+	for (let point of this.GetTriggerPoints("A"))
+	{
+		if (dryRun)
+		{
+			spawned = true;
+			break;
 		}
-		if (numPlayersStanding == 1)
-			TriggerHelper.SetPlayerWon(lastPlayerStanding);
+
+		// Don't spawn attackers for defeated players and players that lost their cc after win
+		let playerID = QueryOwnerInterface(point, IID_Player).GetPlayerID();
+		let civicCentre = this.playerCivicCenter[playerID];
+		if (!civicCentre)
+			continue;
+
+		// Check if the cc is garrisoned in another building
+		let targetPos = TriggerHelper.GetEntityPosition2D(civicCentre);
+		if (!targetPos)
+			continue;
+
+		for (let templateName in attackerCount)
+		{
+			let isHero = attackerUnitTemplates[civ].heroes.indexOf(templateName) != -1;
+
+			// Don't spawn gaia hero if the previous one is still alive
+			if (this.gaiaHeroes[playerID] && isHero)
+			{
+				let cmpHealth = Engine.QueryInterface(this.gaiaHeroes[playerID], IID_Health);
+				if (cmpHealth && cmpHealth.GetHitpoints() != 0)
+				{
+					this.debugLog("Not spawning hero for player " + playerID + " as the previous one is still alive");
+					continue;
+				}
+			}
+
+			if (dryRun)
+				continue;
+
+			let entities = TriggerHelper.SpawnUnits(point, templateName, attackerCount[templateName], 0);
+
+			ProcessCommand(0, {
+				"type": "attack-walk",
+				"entities": entities,
+				"x": targetPos.x,
+				"z": targetPos.y,
+				"targetClasses": undefined,
+				"allowCapture": false,
+				"queued": true
+			});
+
+			if (isHero)
+				this.gaiaHeroes[playerID] = entities[0];
+		}
+		spawned = true;
+	}
+
+	if (!spawned)
+		return;
+
+	Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface).PushNotification({
+		"message": markForTranslation("An enemy wave is attacking!"),
+		"translateMessage": true
+	});
+
+	this.DoAfterDelay(nextWaveTime * 60 * 1000, "StartAnEnemyWave", {});
+};
+
+Trigger.prototype.PlaceTreasures = function()
+{
+	let point = pickRandom(["B", "C", "D"]);
+	let triggerPoints = this.GetTriggerPoints(point);
+	for (let point of triggerPoints)
+		TriggerHelper.SpawnUnits(point, pickRandom(treasures), 1, 0);
+
+	this.DoAfterDelay(treasureTime() * 60 * 1000, "PlaceTreasures", {});
+};
+
+Trigger.prototype.OnOwnershipChanged = function(data)
+{
+	if (data.entity == this.playerCivicCenter[data.from])
+	{
+		this.playerCivicCenter[data.from] = undefined;
+
+		TriggerHelper.DefeatPlayer(
+			data.from,
+			markForTranslation("%(player)s has been defeated (lost civic center)."));
+	}
+	else if (data.entity == this.treasureFemale[data.from])
+	{
+		this.treasureFemale[data.from] = undefined;
+		Engine.DestroyEntity(data.entity);
 	}
 };
 
-var cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
-cmpTrigger.playerCivicCenter = {};
-cmpTrigger.DoAfterDelay(0, "InitGame", {});
-cmpTrigger.DoAfterDelay(1000, "InitializeEnemyWaves", {});
 
-cmpTrigger.RegisterTrigger("OnOwnershipChanged", "DefeatPlayerOnceCCIsDestroyed", { "enabled": true });
+{
+	let cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
+
+	cmpTrigger.treasureFemale = [];
+	cmpTrigger.playerCivicCenter = [];
+	cmpTrigger.gaiaHeroes = [];
+
+	cmpTrigger.RegisterTrigger("OnInitGame", "InitSurvival", { "enabled": true });
+	cmpTrigger.RegisterTrigger("OnOwnershipChanged", "OnOwnershipChanged", { "enabled": true });
+}

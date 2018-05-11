@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Wildfire Games
+/* Copyright (c) 2017 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -172,7 +172,7 @@ static ErrorReactionInternal try_gui_display_error(const wchar_t* text, bool man
 	{
 	case 103: // Debugger
 		udbg_launch_debugger();
-		//-fallthrough
+		FALLTHROUGH;
 
 	case 102: // Break
 		if(manual_break)
@@ -244,7 +244,7 @@ ErrorReactionInternal sys_display_error(const wchar_t* text, size_t flags)
 		case EOF:
 		case 'd': case 'D':
 			udbg_launch_debugger();
-			//-fallthrough
+			FALLTHROUGH;
 
 		case 'b': case 'B':
 			if(manual_break)

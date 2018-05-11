@@ -5,14 +5,17 @@
     <Pierce>20.0</Pierce>
     <Crush>15.0</Crush>
   </Armour>
-  <Attack> 
+  <Attack>
     <Capture>
-      <Value>15</Value> 
-      <MaxRange>4</MaxRange> 
-      <RepeatTime>1000</RepeatTime> 
-    </Capture> 
+      <Value>15</Value>
+      <MaxRange>4</MaxRange>
+      <RepeatTime>1000</RepeatTime>
+      <RestrictedClasses datatype="tokens">Field Palisade SiegeWall StoneWall</RestrictedClasses>
+    </Capture>
   </Attack>
-  <Auras datatype="tokens">hero_garrison</Auras>
+  <Auras datatype="tokens">
+    units/heroes/hero_garrison
+  </Auras>
   <Cost>
     <Population>2</Population>
     <BuildTime>40</BuildTime>
@@ -51,19 +54,25 @@
   </Selectable>
   <Sound>
     <SoundGroups>
-      <attack>attack/weapon/sword.xml</attack>
-      <death>actor/human/death/death.xml</death>
+      <select>voice/{lang}/civ/civ_{gender}_select.xml</select>
+      <trained>interface/alarm/alarm_create_infantry.xml</trained>
+      <order_heal>voice/{lang}/civ/civ_{gender}_heal.xml</order_heal>
+      <order_walk>voice/{lang}/civ/civ_{gender}_walk.xml</order_walk>
+      <order_attack>voice/{lang}/civ/civ_{gender}_attack.xml</order_attack>
+      <order_gather>voice/{lang}/civ/civ_{gender}_gather.xml</order_gather>
+      <order_repair>voice/{lang}/civ/civ_{gender}_repair.xml</order_repair>
+      <order_garrison>voice/{lang}/civ/civ_{gender}_garrison.xml</order_garrison>
+      <attack_melee>attack/weapon/sword.xml</attack_melee>
+      <attack_impact_ranged>attack/impact/arrow_metal.xml</attack_impact_ranged>
+      <attack_ranged>attack/weapon/arrowfly.xml</attack_ranged>
+      <walk>actor/human/movement/walk.xml</walk>
+      <run>actor/human/movement/walk.xml</run>
+      <death>actor/human/death/{gender}_death.xml</death>
     </SoundGroups>
   </Sound>
   <TrainingRestrictions>
     <Category>Hero</Category>
   </TrainingRestrictions>
-  <UnitMotion>
-    <WalkSpeed>10.5</WalkSpeed>
-    <Run>
-      <Speed>22.5</Speed>
-    </Run>
-  </UnitMotion>
   <Vision>
     <Range>88</Range>
   </Vision>

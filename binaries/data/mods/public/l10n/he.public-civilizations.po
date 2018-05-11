@@ -4,14 +4,16 @@
 # 
 # Translators:
 # adin1999 <adin1999@walla.com>, 2014
+# adin hykin <adin1664@gmail.com>, 2017
 # itayitayitay4 <itayitayitay4@gmail.com>, 2014
+# Veloxity <veloxity.ultra@gmail.com>, 2017
 # Yam Huss <yam52@walla.co.il>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-03-19 09:25+0100\n"
-"PO-Revision-Date: 2016-08-11 22:27+0000\n"
-"Last-Translator: Yam Huss <yam52@walla.co.il>\n"
+"POT-Creation-Date: 2017-06-05 09:01+0200\n"
+"PO-Revision-Date: 2017-08-30 08:56+0000\n"
+"Last-Translator: Veloxity <veloxity.ultra@gmail.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/wildfire-games/0ad/language/he/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,7 +46,7 @@ msgstr "המוקשים בלוריין שבאטיקה סיפקו לאתונה א�
 msgid ""
 "Constructing a Theatron increases the territory expanse of all buildings by "
 "+20%."
-msgstr ""
+msgstr "בניית תאטרון מגדיל את מרחב הטריטוריה של כל המבנים ב %+20"
 
 #: simulation/data/civs/athen.jsonCivBonuses[1].Name
 #: simulation/data/civs/mace.jsonCivBonuses[2].Name
@@ -74,7 +76,7 @@ msgid ""
 "city-states instituted the so-called Delian League in 478 B.C., whose "
 "purpose was to push the Persians out of the Aegean region. The allied states"
 " contributed ships and money, while the Athenians offered their entire navy."
-msgstr ""
+msgstr "זמן קצר לאחר הניצחון הימי הגדול בסאלאמיס , בעיר-המדינה היוונית הנהיגה הליגה שנקראת \"הליגה האטית-דלית\" , ב 478 לפני ספירה, שמטרתה הייתה לדחוף את הפרסים אל מחוץ לגבולות האזור האגאי. מדינות הברית תרמו ספינות וכסף, בעוד האתונאים הציעו את כל הצי שלהם ."
 
 #: simulation/data/civs/athen.jsonAINames[0]
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].Name
@@ -88,11 +90,11 @@ msgstr "פריקלס "
 
 #: simulation/data/civs/athen.jsonAINames[2]
 msgid "Cimon"
-msgstr ""
+msgstr "קימון"
 
 #: simulation/data/civs/athen.jsonAINames[3]
 msgid "Aristides"
-msgstr ""
+msgstr "אריסטידס"
 
 #: simulation/data/civs/athen.jsonAINames[4]
 msgid "Xenophon"
@@ -100,11 +102,11 @@ msgstr "קסנופון"
 
 #: simulation/data/civs/athen.jsonAINames[5]
 msgid "Hippias"
-msgstr ""
+msgstr "היפיאס"
 
 #: simulation/data/civs/athen.jsonAINames[6]
 msgid "Cleisthenes"
-msgstr ""
+msgstr "קלייסתנס"
 
 #: simulation/data/civs/athen.jsonAINames[7]
 msgid "Thucydides"
@@ -120,15 +122,15 @@ msgstr "מיליטיאדס "
 
 #: simulation/data/civs/athen.jsonAINames[10]
 msgid "Cleon"
-msgstr ""
+msgstr "קליאון"
 
 #: simulation/data/civs/athen.jsonAINames[11]
 msgid "Cleophon"
-msgstr ""
+msgstr "קלייפון"
 
 #: simulation/data/civs/athen.jsonAINames[12]
 msgid "Thrasybulus"
-msgstr ""
+msgstr "פרזבולוס"
 
 #: simulation/data/civs/athen.jsonAINames[13]
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[2].Name
@@ -163,13 +165,13 @@ msgid ""
 "Themistocles and extended 6 km from the city to the port of Piraeus. This "
 "secured the city's sea supply routes and prevented an enemy from starving "
 "out the city during a siege."
-msgstr ""
+msgstr "החומות הארוכות של אתונה נבנו תחת חסותו של תמיסטוקלס ואורכה היה 6 ק\"מ מהעיר אתונה לנמל פיראוס. זה שמר על נתיבי אספקת הים של העיר ומונע הרעבה על ידי האויב בעיר במהלך מצור."
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[2].Description
 msgid ""
 "The player gains the ability to order spear-armed troops into Phalanx "
 "formation, providing greater attack and armor."
-msgstr ""
+msgstr "השחקן יכול להזמין חיילים חמושים-בחנית לתוך מבנה פלנקס, דבר שנותן התקפה ושריון חזקים יותר ."
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[2].Name
 #: simulation/data/civs/spart.jsonCivBonuses[0].Name
@@ -186,17 +188,18 @@ msgstr "יצירת הגדוד הקלסית פותחה במאה השמינית ל
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].History
 msgid ""
-"The general whom persuaded the Athenians to invest their income from silver "
+"The general who persuaded the Athenians to invest their income from silver "
 "mines in a war navy of 200 Triremes. A key figure during the Persian Wars, "
 "he commanded the victorious Athenian navy at the decisive battle of Salamis "
 "in 479 B.C. Later, he pursued an active policy against the Persians in the "
-"Aegean, thereby laying the foundations of future Athenian power. Ostracised "
-"by the Athenians, he was forced to flee to the protection of the Persians."
-msgstr "הגנרל ששכנע את האתונאים להשקיע את ההכנסה שלהם ממכרות הכסף בחיל ים של 200 ספינות מלחמה מסוג Triremes . הוא דמות מפתח בתקופת מלחמות הפרסים, הוא פיקד על חיל הים האתונאי וניצח בקרב המכריע של סאלאמיס ב479 לפנה\"ס מאוחר יותר, הוא נרדף על מדיניות אקטיבית נגד הפרסים בים האגאי, ובכך הניח את היסודות של כוח האתונאי העתידי. , הוא נאלץ להימלט לפרסים להגנתו.\n "
+"Aegean, thereby laying the foundations of future Athenian power. However, he"
+" was eventually ostracised by the Athenians and forced to flee to the "
+"protection of the Persians."
+msgstr ""
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[1].History
 msgid "Pericles was the foremost Athenian politician of the 5th Century B.C."
-msgstr ""
+msgstr "פריקלס היה הפוליטיקאי האתונאי החשוב ביותר של המאה ה5 לפנה\"ס."
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[2].History
 #: simulation/data/civs/maur.jsonFactions[0].Technologies[0].History
@@ -226,7 +229,7 @@ msgstr "תיאטרון "
 msgid ""
 "The Hellenization civ bonus. Building a Theatron increases the territory "
 "effect of all buildings by 25%."
-msgstr ""
+msgstr "בונוס התייוונות. בניית תאטרון מגביר את השפעת השטח של כל המבנים ב 25%."
 
 #: simulation/data/civs/athen.jsonStructures[0].History
 #: simulation/data/civs/mace.jsonStructures[0].History
@@ -310,17 +313,14 @@ msgid "Celtic religion and druidry inspired their warlike mindset. "
 msgstr "הדת הקלטית ודרואידית שיבחה את רוח הלחימה של הלוחמים "
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Description
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
-msgid "Bonus to tech speed."
-msgstr "בונוס למהירות ."
+msgid "-20% resources cost for allies healers."
+msgstr ""
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Name
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
-msgid "Druides"
-msgstr "דרואידיות "
+msgid "Druids"
+msgstr "דרואידים"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].History
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
 msgid ""
 "The Druids of the Celts maintained an organized religion that advanced the "
 "technology of their people even during wartime."
@@ -343,35 +343,35 @@ msgstr "בודיקיאה "
 
 #: simulation/data/civs/brit.jsonAINames[3]
 msgid "Prasutagus"
-msgstr ""
+msgstr "פרסיטגוס "
 
 #: simulation/data/civs/brit.jsonAINames[4]
 msgid "Venutius"
-msgstr ""
+msgstr "ויינוז'ס"
 
 #: simulation/data/civs/brit.jsonAINames[5]
 msgid "Cogidubnus"
-msgstr ""
+msgstr "קקידגנוס"
 
 #: simulation/data/civs/brit.jsonAINames[6]
 msgid "Commius"
-msgstr ""
+msgstr "קומיוס"
 
 #: simulation/data/civs/brit.jsonAINames[7]
 msgid "Comux"
-msgstr ""
+msgstr "קומיוקס"
 
 #: simulation/data/civs/brit.jsonAINames[8]
 msgid "Adminius"
-msgstr ""
+msgstr "אדמיניוס"
 
 #: simulation/data/civs/brit.jsonAINames[9]
 msgid "Dubnovellaunus"
-msgstr ""
+msgstr "דבדובנולס"
 
 #: simulation/data/civs/brit.jsonAINames[10]
 msgid "Vosenius"
-msgstr ""
+msgstr "וזיניוס"
 
 #: simulation/data/civs/brit.jsonFactions[0].Technologies[0].Description
 msgid "Increased attack and movement rate for melee soldiers."
@@ -455,7 +455,7 @@ msgid ""
 "their British allies, and Kunobelinos was held up by the post-Roman Britons "
 "as one of their great heroes; a conqueror and uniter of petty kingdoms, "
 "something the post-Roman Britons or Romano-British sorely needed."
-msgstr ""
+msgstr "קאנובילינוס , (אולי ידוע יותר בצורת לתיניזיד של קאנבילים) , היה שליט רב עוצמה בשטח שהיום הוא העיר המודרנית קולצ'סטר . , הוא היה מלך לוחם שכבש את השבטים השכנים ,והיה מכונה על ידיהרומאים כמלך של הבריטים . , בזמן שיש בעלי ברית רומיים היה , לא היו מסוגל לקרוא לעוזר רומי, כפי שהם נכבשו זמן קצר לאחר האסון של רומן שלו ביער (בגרמניה) . קאנובילינוס מת ממחלה לאחר הכפפת הרוב הגדול של המחצית הדרומית של בריטניה '(המטבעות שלו היו להיות נטבעו ככל הגבולות של מה שעתיד להיות וויילס ) '('. כשהוא מת, בנו החליף אותו ')', שמת במלחמה עם הרומאים , ולאחר מכן הוחלף על ידי אחיו , . זוהי אירוניה שזה היה בנו השלישי שהוזמן בתחילה תגמול רומי זה. נראה קאנובילינוס שהיה אדיש לרומאי. הוא סחר בם באופן חופשי , אבל היה כמה נקיפות מצפון משעבדות בעלי ברית רומאיות ידועים,והשיג הכרה כמלך של בריטניה. הכרה זו הייתה כה גדולה, שהשבטים אפילו באו לסייע לבניו נגד הרומאים ובני בריתם הבריטיים ,קאנובילינוס נערך על ידי הבריטים לאחד רומאי כאחד מהגיבורים הגדולים שלהם ;כובש ומחזה רגיל של איחוד ממלכות קטנות , משהו בהודעה הרומית הבריטים או רומנו הבריטי זקוקים מאוד ."
 
 #: simulation/data/civs/brit.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -474,7 +474,7 @@ msgid ""
 "agreed upon a will with his wife and subordinates; his daughters would "
 "inherit the physical running of the territory, under Boudicca's stewardship "
 "until they were adults, and the Emperor of Rome would have overlordship, "
-"collecting taxes and being allowed to request military aide. Much the same "
+"collecting taxes and being allowed to request military aid. Much the same "
 "situation as he already held. The problem lay in that the Romans did not "
 "recognize female heirs, and thus asserted, upon Prasutagus's death, that "
 "only the Emperor's claim to the kingdom of Icenia was valid. They further "
@@ -498,7 +498,7 @@ msgid ""
 "slaughtered as they could not withdraw to safety. Boudicca herself escaped, "
 "and then slew her daughters, and then herself, to avoid further shame at "
 "Roman hands."
-msgstr ""
+msgstr "אמיאנוס מארקלינוס תיאר עד כמה קשה זה יהיה עבור להקה של זרים להתמודד עם הקלטי אם הוא קרא בעזרה של אשתו. כי היא היתה חזקה ממנו, ואפשר היה גשם מכות ובעיטות על התוקפים, שכוחה השתווה לזה את היריות של מעוט. בודיקיאה, מלכת איקני, הייתה אמורה להיות 'מאוד גבוה ומפחידה במראה; הקול שלה היה קשה מאוד וכמות גדולה של שיער אדום נפלה על כתפיה. היא לבשה טוניקה של צבעים רבים שעליהם גלימה עבה הדוקה באמצעות סיכה. בודיקיאה היה למעשה בי בתחילה ברית רומית, יחד עם בעלה, פרסיטגוס , מלך איקני. והיה בן ברית קרוב רומית לאחר התקוממות קצרה, מכובד אפילו על ידי אויביו לשעבר, עכשיו הרומאים ברית, וחופשי לפסוק ממלכתו כמסורת מולדתם כתיב, למעט במקרה אחד. פרסיטגוס , מבין שהוא הולך למות, מוסכם צוואה עם אשתו לפיקודיו; בנותיו תירשנה את הריצה הפיסית של השטח, תחת הנהלתו של בודיקיאה עד שהן היו מבוגרות, וקיסר רומא יצטרך בעלת ספינות, שתאיסוף מסים בשביל סיוע צבאי. באותו מצב כפי שהוא כבר החזיק. הבעיה הייתה נעוצה כי הרומאים לא הכירה יורשי נקבה, ובכך קבעה, לאחר מותו של פרסיטגוס , שרק את טענת הקיסר למלכות איקני הייתה תקפה. הם ציינו עוד זה היה נוהג רומי סדיר רק לאפשר ממלכת הלקוח להיות עצמאית לכל החיים של המלך הראשוני, כגון התרחש גאליטה. האימפריה רשמית סיפחה את הממלכה, והחל לחילוץ מסים קשים מיד, בטענה כי פרסיטגוס היה אסיר תודה לרומאים, שנקט כמה הלוואות במהלך חייו כי הוא לא הצליח לפרוע. התלונה של בודיקיאה על טיפול זה לבין ההתרסה של רצון בעלה המנוח הייתה נפגשה עם אכזריות; חיילים רומאים הצליפו בה, ובנותיה, רק ילדים, נאנסו. בודיקיאה ונושא אותה זעמו על החרפה שנגרמה המלכה שלהם והילדים. עם המושל הרומי בבריטניה התקשר עם הדרואידים ב קמבריה, עכשיו ויילס, בודיקיאה הצליחה למשוך עוקב יותר מחוץ לאיקני, כפי שהיו בקושי השבט הבריטי רק הולך וגדל מאוכזב במהירות עם הרומאים. בודיקיאה והצבא שלה החריבו את שלוש ערים, ביס לגיון רומי, וקוראים לזכר ארמיניוס, גרמני שהיה נתב הרומאים מאדמותיו, ואבותיהם עצמו שהסיע את קיסר ליד מאה שנה קודם לכן. בודיקיאה הובסה על ידי שגיאה טקטית מרכזית קרב הרחוב ווטלינג, מה שמוביל הרבה בכח שלה ששוחט משום שלא הצליחו לסגת למקום מבטח. בודיקיאה עצם נמלטה, ולאחר מכן הרגה בנותיה, ואחר כך לעצמה, כדי למנוע בושה עוד יותר על ידות רומיות."
 
 #: simulation/data/civs/brit.jsonFactions[0].Description
 msgid "The Celts of the British Isles."
@@ -515,10 +515,10 @@ msgstr "הבריטים היו ידועים בהכשרת כלבי מלחמה.\n "
 #: simulation/data/civs/brit.jsonHistory
 msgid ""
 "The Britons were the Celtic tribes of the British Isles. Using chariots, "
-"longswordsmen and powerful melee soldiers, they staged fearesome revolts "
+"longswordsmen and powerful melee soldiers, they staged fearsome revolts "
 "against Rome to protect their customs and interests. Also, they built "
 "thousands of unique structures such as hill forts, crannogs and brochs."
-msgstr "הבריטים היו שבטים הקלטיים של האיים הבריטיים. הם רכבו במרכבות, לוחמי חרב ארוכה וחיילי תגרה רבות עוצמה, הם מפורסמים במרידות אימתניות נגד רומא כדי להגן על המנהגים ואת האינטרסים שלהם. כמו כן, הם בנו אלפי מבנים ייחודיים כגון מבצרי גבעה, הקרנוג' והברוק.\n "
+msgstr "הבריטים היו השבטים הקלטיים של האיים הבריטיים. באמצעות מרכבות, סייפים ארוכים וחיילי תגרה רבי עוצמה, הם היו מקיימים מרידות אימתניות ברומאים כדי להגן על מכסם ועל האינטרסים שלהם. כמו כן, הם בנו אלף מבנים ייחודיים כגון מבצרי גבעה, קרנוג' וברוצ'."
 
 #: simulation/data/civs/cart.jsonName
 msgid "Carthaginians"
@@ -528,7 +528,7 @@ msgstr "קרתגו"
 msgid ""
 "Carthaginian walls, gates, and towers have 3x health of a standard wall, but"
 " also 2x build time."
-msgstr ""
+msgstr "חומות של קרתגו, שערים, ומגדלים  יש עכשיו 3x יותר חיים מהרגיל, אך גם 2x יותר זמן בנייה."
 
 #: simulation/data/civs/cart.jsonCivBonuses[0].Name
 msgid "Triple Walls"
@@ -558,8 +558,8 @@ msgid ""
 msgstr "לא בשונה מחוץ האי האיברי, צפון אפריקה הייתה ידועה כארץ גידול סוסים,  מסוגלת לגדל עד 100,000 בכל שנה. זה היה גם ביתו של הפיל.\n "
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Description
-msgid "+33% trade profit international routes."
-msgstr " בונוס של +33% במסחר בין לאומי.\n "
+msgid "10% bonus of trade profit for allies' international routes."
+msgstr ""
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Name
 msgid "Trademasters"
@@ -583,15 +583,15 @@ msgstr "חמילקרת ברקה "
 
 #: simulation/data/civs/cart.jsonAINames[2]
 msgid "Hasdrubal Barca"
-msgstr ""
+msgstr "עזרובעל בן ברקה"
 
 #: simulation/data/civs/cart.jsonAINames[3]
 msgid "Hasdrubal Gisco"
-msgstr ""
+msgstr "עזרובעל בן גיסקו"
 
 #: simulation/data/civs/cart.jsonAINames[4]
 msgid "Hanno the Elder"
-msgstr ""
+msgstr "היננו הזקן"
 
 #: simulation/data/civs/cart.jsonAINames[5]
 #: simulation/data/civs/cart.jsonFactions[0].Heroes[2].Name
@@ -600,11 +600,11 @@ msgstr "מחבל "
 
 #: simulation/data/civs/cart.jsonAINames[6]
 msgid "Mago Barca"
-msgstr ""
+msgstr "מאגו ברקה"
 
 #: simulation/data/civs/cart.jsonAINames[7]
 msgid "Hasdrubal the Fair"
-msgstr ""
+msgstr "עזרובעל המפואר"
 
 #: simulation/data/civs/cart.jsonAINames[8]
 msgid "Hanno the Great"
@@ -612,35 +612,35 @@ msgstr "האנו הגדול"
 
 #: simulation/data/civs/cart.jsonAINames[9]
 msgid "Himilco"
-msgstr ""
+msgstr "חימילקו"
 
 #: simulation/data/civs/cart.jsonAINames[10]
 msgid "Hampsicora"
-msgstr ""
+msgstr "המפסיקורה"
 
 #: simulation/data/civs/cart.jsonAINames[11]
 msgid "Hannibal Gisco"
-msgstr ""
+msgstr "חניבעל בן גיסקו"
 
 #: simulation/data/civs/cart.jsonAINames[12]
 msgid "Dido"
-msgstr ""
+msgstr "דיידו"
 
 #: simulation/data/civs/cart.jsonAINames[13]
 msgid "Xanthippus"
-msgstr ""
+msgstr "קסאנתיפוס"
 
 #: simulation/data/civs/cart.jsonAINames[14]
 msgid "Himilco Phameas"
-msgstr ""
+msgstr "חימילקו פיניאס"
 
 #: simulation/data/civs/cart.jsonAINames[15]
 msgid "Hasdrubal the Boetharch"
-msgstr ""
+msgstr "עזרובעל הברקה"
 
 #: simulation/data/civs/cart.jsonFactions[0].Technologies[0].Description
 msgid "All Traders and Ships +25% vision range."
-msgstr ""
+msgstr "כל ספינות המסחר יש +25% יותר טווח ראייה."
 
 #: simulation/data/civs/cart.jsonFactions[0].Technologies[0].Name
 msgid "Exploration"
@@ -655,7 +655,7 @@ msgstr "אף אחד לא ידע יותר טוב מקרתגו במסחר בעול
 
 #: simulation/data/civs/cart.jsonFactions[0].Technologies[1].Description
 msgid "Civic Centers, Temples, and Houses -25% build time."
-msgstr ""
+msgstr "מרכזי אזרחי, מקדשים,ובתים %-25 פחות זמן בנייה."
 
 #: simulation/data/civs/cart.jsonFactions[0].Technologies[1].Name
 msgid "Colonization"
@@ -665,7 +665,7 @@ msgstr "קולוניזציה"
 msgid ""
 "Carthaginians established many trading centers as colonies and ultimately "
 "held dominion over 300 cities and towns in North Africa alone."
-msgstr ""
+msgstr "קרתגו הקימה מרכזי מסחר רבים כקולוניות ובסופו של דבר החזיקה שליטה על 300 ערים ועיירות בצפון אפריקה לבד."
 
 #: simulation/data/civs/cart.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -701,13 +701,13 @@ msgstr "מספנת חיל הים\n "
 
 #: simulation/data/civs/cart.jsonStructures[0].Special
 msgid "Construct the powerful warships of the Carthaginian navy."
-msgstr ""
+msgstr "לבנות ספינות מלחמת עצומות של הצי הקרתגי."
 
 #: simulation/data/civs/cart.jsonStructures[0].History
 msgid ""
 "The structure is based upon the center island of the inner harbour "
 "constructed to house the war fleet of the Carthaginian navy at Carthage."
-msgstr ""
+msgstr "המבנה מבוסס על האי במרכז הנמל הפנימי שנבנה כדי לשכן בו ציי המלחמה של הצי הקרתגי בקרתגו."
 
 #: simulation/data/civs/cart.jsonStructures[1].Name
 msgid "Celtic Embassy"
@@ -764,62 +764,79 @@ msgstr "קרתגו, עיר מדינה .תוניסיה של ימינו , היתה
 msgid "Gauls"
 msgstr "הגאלים "
 
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
+msgid "-10% research time for technologies of allies."
+msgstr ""
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
+msgid "Druidic Wisdom"
+msgstr ""
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
+msgid ""
+"The Druids of the Gauls maintained an organized religion that advanced the "
+"technology of their people even during wartime."
+msgstr ""
+
 #: simulation/data/civs/gaul.jsonAINames[0]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].Name
-msgid "Britomartos"
-msgstr "בריטומרטוס"
+msgid "Viridomarus"
+msgstr ""
 
 #: simulation/data/civs/gaul.jsonAINames[1]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].Name
-msgid "Brennos"
-msgstr "ברנוס"
+msgid "Brennus"
+msgstr ""
 
 #: simulation/data/civs/gaul.jsonAINames[2]
 msgid "Cativolcus"
-msgstr ""
+msgstr "קאטיבולקוס"
 
 #: simulation/data/civs/gaul.jsonAINames[3]
 msgid "Cingetorix"
-msgstr ""
+msgstr "ורקינגטוריקס"
 
 #: simulation/data/civs/gaul.jsonAINames[4]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].Name
-msgid "Uerkingetorix"
+msgid "Vercingetorix"
 msgstr ""
 
 #: simulation/data/civs/gaul.jsonAINames[5]
 msgid "Divico"
-msgstr ""
+msgstr "דביקו"
 
 #: simulation/data/civs/gaul.jsonAINames[6]
 msgid "Ambiorix"
-msgstr ""
+msgstr "אמביוריקס"
 
 #: simulation/data/civs/gaul.jsonAINames[7]
 msgid "Liscus"
-msgstr ""
+msgstr "ליציוס"
 
 #: simulation/data/civs/gaul.jsonAINames[8]
-msgid "Valetiacos"
+msgid "Valetiacus"
 msgstr ""
 
 #: simulation/data/civs/gaul.jsonAINames[9]
 msgid "Viridovix"
-msgstr ""
+msgstr "Viridovix"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Description
 msgid ""
 "A set amount of metal and food from every structure destroyed or captured."
-msgstr ""
+msgstr "סכום קבוע של מתכת ומזון מכל מבנה שנהרס או נלקח שלל."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Name
-msgid "Uae Uictos"
-msgstr "בוז למנצחים"
+msgid "Vae Victis"
+msgstr ""
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].History
 msgid ""
-"Means Woe to the Defeated. It was the words that the Gallic Leader, Brennos,"
-" spoke at the Capitol at Rome after they took their plunder."
+"Woe to the Defeated! The Gallic chieftain Brennus seized Rome (with the "
+"exception of a garrison on Capitoline Hill). When Camillus besieged him with"
+" a relief force from Veii, he negotiated his surrender for 1000 pounds of "
+"gold, and adding the weight of his sword on the scale when the Romans "
+"complained that he used false weights he uttered those famous words."
 msgstr ""
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[1].Description
@@ -839,20 +856,20 @@ msgstr "הקרנוטים היו דרואידים מאולריקה. הם נלחמ
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].History
 msgid ""
-"When celt armies met the enemy, before the battle would start, the celt "
+"When Celtic armies met the enemy, before the battle would start, the Celtic "
 "leader would go to the first line and challenge the bravest of the enemy "
 "warriors to a single combat. The story of how Marcus Claudius Marcellus "
 "killed a Gallic leader at Clastidium (222 B.C.) is typical of such "
-"encounters. Advancing with a smallish army, Marcellus met a combined force "
-"of Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with"
-" the usual rush and terrifying cries, and their king, Britomartos, picking "
+"encounters. Advancing with a small army, Marcellus met a combined force of "
+"Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with "
+"the usual rush and terrifying cries, and their king, Viridomarus, picking "
 "out Marcellus by means of his badges of rank, made for him, shouting a "
-"challenge and brandishing his spear. Britomartos was an outstanding figure "
+"challenge and brandishing his spear. Viridomarus was an outstanding figure "
 "not only for his size but also for his adornments; for he was resplendent in"
 " bright colors and his armor shone with gold and silver. This armor, thought"
 " Marcellus, would be a fitting offering to the gods. He charged the Gaul, "
 "pierced his bright breastplate and cast him to the ground. It was an easy "
-"task to kill Britomartos and strip him of his armor."
+"task to kill Viridomarus and strip him of his armor."
 msgstr ""
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].History
@@ -864,18 +881,18 @@ msgid ""
 "that Britons had conquered Rome, the greatest civilization in the world, "
 "long before Rome conquered the Britons. We know from many ancient sources "
 "which predate Geoffrey that Rome was indeed sacked, but in 387 not 390, and "
-"that the raid was led by a man named Brennos (which was latinized to "
-"Brennus), but he and his invading horde were Gallic Senones, not British. In"
-" this episode several features of Geoffrey's editing method can be seen: he "
-"modified the historical Brennus/Brennos, created the brother Belinus, "
-"borrowed the Gallic invasion, but omitted the parts where the Celts seemed "
-"weak or foolish. His technique is both additive and subtractive. Like the "
-"tale of Trojan origin, the story of the sack of Rome is not pure "
-"fabrication; it is a creative rearrangement of the available facts, with "
-"details added as necessary. By virtue of their historical association, Beli "
-"and Bran are often muddled with the earlier brothers Belinus and Brennus "
-"(the sons of Dunvallo Molmutius) who contended for power in northern Britain"
-" in around 390 B.C., and were regarded as gods in old Celtic tradition."
+"that the raid was led by a man named Brennus, but he and his invading horde "
+"were Gallic Senones, not British. In this episode several features of "
+"Geoffrey's editing method can be seen: he modified the historical Brennus, "
+"created the brother Belinus, borrowed the Gallic invasion, but omitted the "
+"parts where the Celts seemed weak or foolish. His technique is both additive"
+" and subtractive. Like the tale of Trojan origin, the story of the sack of "
+"Rome is not pure fabrication; it is a creative rearrangement of the "
+"available facts, with details added as necessary. By virtue of their "
+"historical association, Beli and Bran are often muddled with the earlier "
+"brothers Belinus and Brennus (the sons of Dunvallo Molmutius) who contended "
+"for power in northern Britain in around 390 B.C., and were regarded as gods "
+"in old Celtic tradition."
 msgstr ""
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].History
@@ -889,7 +906,7 @@ msgid ""
 "was. Because we only know of him from Roman sources we don't know much about"
 " Vercingetorix as a child or young man, except that perhaps he was probably "
 "very high spirited and probably gained some renown in deeds."
-msgstr ""
+msgstr "ורקינגטוריקס (מגאלית: Ver-Rix Cingetos) נמנה גם המנהיג של שבט ארוורנים בגאליה (צרפת המודרנית). החל ב -52 לפנה\"ס הוא הנהיג מרד נגד הרומאים הפולשים תחת יוליוס קיסר, מעשיו בתקופת המרד זכורים עד היום. ורקינגטוריקס כנראה נולד ליד בירת השבטים שלו (Gergovia). ממה קצת מידע יש לנו ורקינגטוריקס כנראה נולד ב -72 לפנה\"ס, אביו היה קלטי ואנחנו לא יודעים מי אמא שלו. מכיוון שאנחנו יודעים עליו רק ממקורות רומים איננו יודעים הרבה על ורקינגטוריקס כילד או כנער, חוץ מזה שאולי הוא היה כנראה גבוה מאוד נמרץ וכנראה התפרסם שם ממעשיו."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Description
 msgid "The Celts of mainland Europe."
@@ -897,7 +914,7 @@ msgstr "הקלטים של אירופה התיכונה"
 
 #: simulation/data/civs/gaul.jsonStructures[0].Name
 msgid "Melonas"
-msgstr ""
+msgstr "מיילונס"
 
 #: simulation/data/civs/gaul.jsonStructures[0].History
 msgid "The Celts developed the first rotary flour mill."
@@ -910,7 +927,7 @@ msgid ""
 "metalworking, agriculture, trade and even road engineering. With heavy "
 "infantry and cavalry, Gallic warriors valiantly resisted Caesar's campaign "
 "of conquest and Rome's authoritarian rule."
-msgstr ""
+msgstr "הגאלים היו שבטים קלטיים ביבשת אירופה. הם נשלטו על ידי מעמד כוהנים של הדרואידים, הם בולטים בעיקר מתרבותם המתוחכמת של מתכת מתקדמת, חקלאות, מסחר ואפילו כבישים. עם חיל רגלים כבד ופרשים, לוחמים גאלים לחמו בגבורה בפני הקמפיין הכיבוש של קיסר של ושלטון האוטוריטרי של רומא."
 
 #: simulation/data/civs/iber.jsonName
 msgid "Iberians"
@@ -951,7 +968,7 @@ msgstr "לא בניגוד לצפון אפריקה, חצי האי האיברי ה
 msgid ""
 "Citizen-soldier infantry skirmishers and cavalry skirmishers -20% cost for "
 "allies."
-msgstr ""
+msgstr "תגרות חי\"ר אזרח-חייל תגרות פרשיות -20% פחות עלות עבור בעלי ברית."
 
 #: simulation/data/civs/iber.jsonTeamBonuses[0].Name
 msgid "Saripeko"
@@ -983,19 +1000,19 @@ msgstr "אינדיביל  "
 
 #: simulation/data/civs/iber.jsonAINames[4]
 msgid "Audax"
-msgstr ""
+msgstr "אודקס"
 
 #: simulation/data/civs/iber.jsonAINames[5]
 msgid "Ditalcus"
-msgstr ""
+msgstr "דיטיקוס"
 
 #: simulation/data/civs/iber.jsonAINames[6]
 msgid "Minurus"
-msgstr ""
+msgstr "מינרוס"
 
 #: simulation/data/civs/iber.jsonAINames[7]
 msgid "Tautalus"
-msgstr ""
+msgstr "טנטלוס"
 
 #: simulation/data/civs/iber.jsonFactions[0].Technologies[0].Description
 msgid ""
@@ -1063,7 +1080,7 @@ msgstr ""
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[2].History
 msgid ""
-"Indibil was king of the Ilegetes, a large federation ranged principally "
+"Indibil was king of the Ilergetes, a large federation ranged principally "
 "along the Ebro River in the northwest of the Iberian Peninsula. During the "
 "Barcid expansion, from 212 B.C. he had initially been talked into allying "
 "himself with the Carthaginians who had taken control of a lot of territory "
@@ -1156,8 +1173,8 @@ msgid ""
 msgstr ""
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Description
-msgid "+15% tribute and trade bonus on metal."
-msgstr "+15% בונוס משא במסחר במתכת.\n "
+msgid "+20% sell prices at market."
+msgstr ""
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Name
 msgid "Standardized Currency"
@@ -1417,11 +1434,11 @@ msgid ""
 msgstr ""
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Description
-msgid "Allied Temple techs -50% cost and research time."
+msgid "Allied temples and temple technologies -50% cost and research time."
 msgstr ""
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Name
-msgid "Evangelism."
+msgid "Ashoka's Religious Support"
 msgstr ""
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].History
@@ -1595,7 +1612,7 @@ msgid ""
 msgstr ""
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Description
-msgid "+25% trade profit land routes."
+msgid "Higher income (+15%) from land trade routes for ally's traders."
 msgstr ""
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Name
@@ -1691,10 +1708,10 @@ msgstr "אדריכלות פרסית\n "
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].History
 msgid ""
-"The Persians built the wonderful 1677 mile-long Royal Highway from Sardis to"
-" Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
-"Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
-"Elamite capital of Susa."
+"The Persians built the wonderful 2700 kilometer-long Royal Highway from "
+"Sardis to Susa; Darius the Great and Xerxes also built the magnificent "
+"Persepolis; Cyrus the Great greatly improved Ecbatana and virtually "
+"'rebuilt' the old Elamite capital of Susa."
 msgstr ""
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Description
@@ -1810,13 +1827,12 @@ msgid "Mercenary Army"
 msgstr "צבא שכירי חרב"
 
 #: simulation/data/civs/ptol.jsonCivBonuses[0].History
-#: simulation/data/civs/ptol.jsonStructures[1].History
 msgid ""
 "The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
 "foreign mercenaries for the bulk of its military force, mainly because the "
 "loyalty of native Egyptian units was often suspect. Indeed, during one "
 "native uprising, Upper Egypt was lost to the Ptolemies for decades. "
-"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"Mercenaries were often battle-hardened and their loyalty could be bought, "
 "sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
 " under the Ptolemies was so prosperous as to be the richest of Alexander's "
 "successor states."
@@ -1997,6 +2013,18 @@ msgid ""
 "Trains all 'mercenary' units."
 msgstr ""
 
+#: simulation/data/civs/ptol.jsonStructures[1].History
+msgid ""
+"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
+"foreign mercenaries for the bulk of its military force, mainly because the "
+"loyalty of native Egyptian units was often suspect. Indeed, during one "
+"native uprising, Upper Egypt was lost to the Ptolemies for decades. "
+"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
+" under the Ptolemies was so prosperous as to be the richest of Alexander's "
+"successor states."
+msgstr ""
+
 #: simulation/data/civs/ptol.jsonStructures[2].Name
 msgid "Lighthouse"
 msgstr "מגדלור "
@@ -2062,17 +2090,23 @@ msgid ""
 msgstr "אזרחות הרומית הייתה היקרה ביותר בעולם העתיק. זכויות וזכויות בסיסיות היו מוענקים לאזרחים רומיים שהכחישו עמים כבושים אחרים. הם אמרו כי פגיעה באזרח רומאי הייתה דומה לפגיעה ברומא בעצמה, מה שיגרום לכל עוצמתה של רומא ליפול על העבריין. "
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Description
-msgid "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-msgstr "אזרח חיילי בעלות הברית יכולות להשיג התקפה של +15% כאשר הם בשטח רומי."
+msgid "-20% training time for allied infantry."
+msgstr ""
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Name
-msgid "Socii"
-msgstr "עמיתים"
+msgid "Conscription"
+msgstr ""
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].History
 msgid ""
-"Being allied with Rome came with great benefits (as well as great peril)."
-msgstr "כרית ברית עם רומא יכולה להגיעה עם יתרונות גדולים (כמו גם סכנה גדולה)."
+"Many Roman soldiers were conscripted into service. While volunteers were "
+"preferred, the Roman state did maintain an annual military draft. During an "
+"emergency the draft and the terms of service were enlarged. The importance "
+"of military service in Republican Rome was so great it was a prerequisite "
+"for a political career. Members of the Senate were called Conscript Fathers "
+"because of this, reflected in how the ordo equester was said to have been "
+"\"conscripted\" into the Senate."
+msgstr ""
 
 #: simulation/data/civs/rome.jsonAINames[0]
 msgid "Lucius Junius Brutus"
@@ -2453,13 +2487,13 @@ msgstr ""
 msgid ""
 "Antiochus inherited a troubled kingdom upon the beginning of his reign. From"
 " the verge of collapse he managed to weld back together the empire Seleukus "
-"I so hard to found. The rebellious eastern satraps of Bactria and Parthia "
-"were brought to heel , temporarily securing his eastern borders. He then "
-"turned his attention to mother Greece, attempting to fulfill the dreams of "
-"his fathers by invading Greece under the pretext of liberation. The Achaean "
-"League and the Kingdom of Pergamon banded together with the Romans to defeat"
-" him at the Battle of Magnesia, forever burying the dream of reuniting "
-"Alexander's empire."
+"I fought so hard to found. The rebellious eastern satraps of Bactria and "
+"Parthia were brought to heel , temporarily securing his eastern borders. He "
+"then turned his attention to mother Greece, attempting to fulfill the dreams"
+" of his fathers by invading Greece under the pretext of liberation. The "
+"Achaean League and the Kingdom of Pergamon banded together with the Romans "
+"to defeat him at the Battle of Magnesia, forever burying the dream of "
+"reuniting Alexander's empire."
 msgstr ""
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[1].Name
@@ -2556,8 +2590,10 @@ msgid ""
 msgstr "על פי החוקה שנכתבה על ידי המחוקק ליקורגוס המיתי, מוסד אגוגה הוקם, שבו הספרטנים אומנו מגיל 6 להיות לוחמים מעולים בהגנה על המדינה הספרטנית.\n "
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Description
-msgid "Allies can train Spartiates."
-msgstr "בעלות הברית יכולה לאמן ספרטיטה.\n "
+msgid ""
+"Increases the health for citizen-soldier infantry spearmen by 10% for allies"
+" of Spartan players."
+msgstr ""
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Name
 msgid "Peloponnesian League"

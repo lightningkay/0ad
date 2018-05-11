@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -23,11 +23,10 @@
 #include "ps/CLogger.h"
 #include "simulation2/MessageTypes.h"
 #include "simulation2/components/ICmpObstructionManager.h"
+#include "simulation2/components/ICmpTerrain.h"
 #include "simulation2/components/ICmpUnitMotion.h"
+#include "simulation2/components/ICmpWaterManager.h"
 #include "simulation2/serialization/SerializeTemplates.h"
-
-#define MAX(x,y) x>y ? x : y
-#define MIN(x,y) x>y ? y : x
 
 /**
  * Obstruction implementation. This keeps the ICmpPathfinder's model of the world updated when the
@@ -62,7 +61,7 @@ public:
 
 	typedef struct {
 		entity_pos_t dx, dz;
-		entity_angle_t da;	
+		entity_angle_t da;
 		entity_pos_t size0, size1;
 		flags_t flags;
 	} Shape;
@@ -91,7 +90,7 @@ public:
 	 * Optional secondary control group identifier. Similar to m_ControlGroup; if set to a valid value,
 	 * then this field identifies an additional, secondary control group to which this entity's shape
 	 * belongs. Set to INVALID_ENTITY to not assign any secondary group. Defaults to INVALID_ENTITY.
-	 * 
+	 *
 	 * These are only necessary in case it is not sufficient for an entity to belong to only one control
 	 * group. Otherwise, they can be ignored.
 	 */
@@ -169,6 +168,9 @@ public:
 			"<element name='BlockConstruction' a:help='Whether players should be unable to begin constructing buildings placed on top of this entity'>"
 				"<data type='boolean'/>"
 			"</element>"
+			"<element name='DeleteUponConstruction' a:help='Whether this entity should be deleted when construction on a buildings placed on top of this entity is started.'>"
+				"<data type='boolean'/>"
+			"</element>"
 			"<element name='DisableBlockMovement' a:help='If true, BlockMovement will be overridden and treated as false. (This is a special case to handle foundations)'>"
 				"<data type='boolean'/>"
 			"</element>"
@@ -196,6 +198,8 @@ public:
 			m_TemplateFlags |= ICmpObstructionManager::FLAG_BLOCK_FOUNDATION;
 		if (paramNode.GetChild("BlockConstruction").ToBool())
 			m_TemplateFlags |= ICmpObstructionManager::FLAG_BLOCK_CONSTRUCTION;
+		if (paramNode.GetChild("DeleteUponConstruction").ToBool())
+			m_TemplateFlags |= ICmpObstructionManager::FLAG_DELETE_UPON_CONSTRUCTION;
 
 		m_Flags = m_TemplateFlags;
 		if (paramNode.GetChild("DisableBlockMovement").ToBool())
@@ -237,13 +241,13 @@ public:
 				b.da = entity_angle_t::FromInt(0);
 				b.flags = m_Flags;
 				m_Shapes.push_back(b);
-				max.X = MAX(max.X, b.dx + b.size0/2);
-				max.Y = MAX(max.Y, b.dz + b.size1/2);
-				min.X = MIN(min.X, b.dx - b.size0/2);
-				min.Y = MIN(min.Y, b.dz - b.size1/2);
+				max.X = std::max(max.X, b.dx + b.size0/2);
+				max.Y = std::max(max.Y, b.dz + b.size1/2);
+				min.X = std::min(min.X, b.dx - b.size0/2);
+				min.Y = std::min(min.Y, b.dz - b.size1/2);
 			}
-			m_Size0 = fixed::FromInt(2).Multiply(MAX(max.X, -min.X));
-			m_Size1 = fixed::FromInt(2).Multiply(MAX(max.Y, -min.Y));
+			m_Size0 = fixed::FromInt(2).Multiply(std::max(max.X, -min.X));
+			m_Size1 = fixed::FromInt(2).Multiply(std::max(max.Y, -min.Y));
 		}
 
 		m_Active = paramNode.GetChild("Active").ToBool();
@@ -396,7 +400,7 @@ public:
 			else if (m_Type == UNIT)
 				m_Tag = cmpObstructionManager->AddUnitShape(GetEntityId(),
 					pos.X, pos.Y, m_Clearance, (flags_t)(m_Flags | (m_Moving ? ICmpObstructionManager::FLAG_MOVING : 0)), m_ControlGroup);
-			else 
+			else
 				AddClusterShapes(pos.X, pos.Y, cmpPosition->GetRotation().Y);
 		}
 		else if (!active && m_Active)
@@ -451,27 +455,27 @@ public:
 		}
 	}
 
-	virtual bool GetBlockMovementFlag()
+	virtual bool GetBlockMovementFlag() const
 	{
 		return (m_TemplateFlags & ICmpObstructionManager::FLAG_BLOCK_MOVEMENT) != 0;
 	}
 
-	virtual ICmpObstructionManager::tag_t GetObstruction()
+	virtual ICmpObstructionManager::tag_t GetObstruction() const
 	{
 		return m_Tag;
 	}
 
-	virtual bool GetPreviousObstructionSquare(ICmpObstructionManager::ObstructionSquare& out)
+	virtual bool GetPreviousObstructionSquare(ICmpObstructionManager::ObstructionSquare& out) const
 	{
 		return GetObstructionSquare(out, true);
 	}
 
-	virtual bool GetObstructionSquare(ICmpObstructionManager::ObstructionSquare& out)
+	virtual bool GetObstructionSquare(ICmpObstructionManager::ObstructionSquare& out) const
 	{
 		return GetObstructionSquare(out, false);
 	}
 
-	virtual bool GetObstructionSquare(ICmpObstructionManager::ObstructionSquare& out, bool previousPosition)
+	virtual bool GetObstructionSquare(ICmpObstructionManager::ObstructionSquare& out, bool previousPosition) const
 	{
 		CmpPtr<ICmpPosition> cmpPosition(GetEntityHandle());
 		if (!cmpPosition)
@@ -496,7 +500,7 @@ public:
 		return true;
 	}
 
-	virtual entity_pos_t GetUnitRadius()
+	virtual entity_pos_t GetUnitRadius() const
 	{
 		if (m_Type == UNIT)
 			return m_Clearance;
@@ -504,7 +508,7 @@ public:
 			return entity_pos_t::Zero();
 	}
 
-	virtual entity_pos_t GetSize()
+	virtual entity_pos_t GetSize() const
 	{
 		if (m_Type == UNIT)
 			return m_Clearance;
@@ -518,17 +522,36 @@ public:
 			m_Clearance = clearance;
 	}
 
-	virtual bool IsControlPersistent()
+	virtual bool IsControlPersistent() const
 	{
 		return m_ControlPersist;
 	}
-	
-	virtual EFoundationCheck CheckFoundation(std::string className)
+
+	virtual bool CheckShorePlacement() const
+	{
+		ICmpObstructionManager::ObstructionSquare s;
+		if (!GetObstructionSquare(s))
+			return false;
+
+		CFixedVector2D front = CFixedVector2D(s.x, s.z) + s.v.Multiply(s.hh);
+		CFixedVector2D  back = CFixedVector2D(s.x, s.z) - s.v.Multiply(s.hh);
+
+		CmpPtr<ICmpTerrain> cmpTerrain(GetSystemEntity());
+		CmpPtr<ICmpWaterManager> cmpWaterManager(GetSystemEntity());
+		if (!cmpTerrain || !cmpWaterManager)
+			return false;
+
+		// Keep these constants in agreement with the pathfinder.
+		return cmpWaterManager->GetWaterLevel(front.X, front.Y) - cmpTerrain->GetGroundLevel(front.X, front.Y) > fixed::FromInt(1) &&
+		       cmpWaterManager->GetWaterLevel( back.X,  back.Y) - cmpTerrain->GetGroundLevel( back.X,  back.Y) < fixed::FromInt(2);
+	}
+
+	virtual EFoundationCheck CheckFoundation(const std::string& className) const
 	{
 		return  CheckFoundation(className, false);
 	}
 
-	virtual EFoundationCheck CheckFoundation(std::string className, bool onlyCenterPoint)
+	virtual EFoundationCheck CheckFoundation(const std::string& className, bool onlyCenterPoint) const
 	{
 		CmpPtr<ICmpPosition> cmpPosition(GetEntityHandle());
 		if (!cmpPosition)
@@ -554,7 +577,7 @@ public:
 		pass_class_t passClass = cmpPathfinder->GetPassabilityClass(className);
 
 		// Ignore collisions within the same control group, or with other non-foundation-blocking shapes.
-		// Note that, since the control group for each entity defaults to the entity's ID, this is typically 
+		// Note that, since the control group for each entity defaults to the entity's ID, this is typically
 		// equivalent to only ignoring the entity's own shape and other non-foundation-blocking shapes.
 		SkipControlGroupsRequireFlagObstructionFilter filter(m_ControlGroup, m_ControlGroup2,
 			ICmpObstructionManager::FLAG_BLOCK_FOUNDATION);
@@ -565,7 +588,7 @@ public:
 			return cmpPathfinder->CheckBuildingPlacement(filter, pos.X, pos.Y, cmpPosition->GetRotation().Y, m_Size0, m_Size1, GetEntityId(), passClass, onlyCenterPoint);
 	}
 
-	virtual bool CheckDuplicateFoundation()
+	virtual bool CheckDuplicateFoundation() const
 	{
 		CmpPtr<ICmpPosition> cmpPosition(GetEntityHandle());
 		if (!cmpPosition)
@@ -595,20 +618,15 @@ public:
 			return !cmpObstructionManager->TestUnitShape(filter, pos.X, pos.Y, m_Clearance, NULL);
 		else
 			return !cmpObstructionManager->TestStaticShape(filter, pos.X, pos.Y, cmpPosition->GetRotation().Y, m_Size0, m_Size1, NULL );
-	} 
+	}
 
-	virtual std::vector<entity_id_t> GetUnitCollisions()
+	virtual std::vector<entity_id_t> GetEntitiesByFlags(flags_t flags) const
 	{
 		std::vector<entity_id_t> ret;
 
 		CmpPtr<ICmpObstructionManager> cmpObstructionManager(GetSystemEntity());
 		if (!cmpObstructionManager)
 			return ret; // error
-
-		// There are four 'block' flags: construction, foundation, movement,
-		// and pathfinding. Structures have all of these flags, while units
-		// block only movement and construction.
-		flags_t flags = ICmpObstructionManager::FLAG_BLOCK_CONSTRUCTION;
 
 		// Ignore collisions within the same control group, or with other shapes that don't match the filter.
 		// Note that, since the control group for each entity defaults to the entity's ID, this is typically
@@ -619,9 +637,20 @@ public:
 		if (!GetObstructionSquare(square))
 			return ret; // error
 
-		cmpObstructionManager->GetUnitsOnObstruction(square, ret, filter);
+		cmpObstructionManager->GetUnitsOnObstruction(square, ret, filter, false);
+		cmpObstructionManager->GetStaticObstructionsOnObstruction(square, ret, filter);
 
 		return ret;
+	}
+
+	virtual std::vector<entity_id_t> GetEntitiesBlockingConstruction() const
+	{
+		return GetEntitiesByFlags(ICmpObstructionManager::FLAG_BLOCK_CONSTRUCTION);
+	}
+
+	virtual std::vector<entity_id_t> GetEntitiesDeletedUponConstruction() const
+	{
+		return GetEntitiesByFlags(ICmpObstructionManager::FLAG_DELETE_UPON_CONSTRUCTION);
 	}
 
 	virtual void SetMovingFlag(bool enabled)
@@ -648,12 +677,12 @@ public:
 		UpdateControlGroups();
 	}
 
-	virtual entity_id_t GetControlGroup() 
+	virtual entity_id_t GetControlGroup() const
 	{
 		return m_ControlGroup;
 	}
 
-	virtual entity_id_t GetControlGroup2() 
+	virtual entity_id_t GetControlGroup2() const
 	{
 		return m_ControlGroup2;
 	}
@@ -685,7 +714,7 @@ public:
 		}
 	}
 
-	void ResolveFoundationCollisions()
+	void ResolveFoundationCollisions() const
 	{
 		if (m_Type == UNIT)
 			return;
@@ -704,7 +733,7 @@ public:
 		CFixedVector2D pos = cmpPosition->GetPosition2D();
 
 		// Ignore collisions within the same control group, or with other non-foundation-blocking shapes.
-		// Note that, since the control group for each entity defaults to the entity's ID, this is typically 
+		// Note that, since the control group for each entity defaults to the entity's ID, this is typically
 		// equivalent to only ignoring the entity's own shape and other non-foundation-blocking shapes.
 		SkipControlGroupsRequireFlagObstructionFilter filter(m_ControlGroup, m_ControlGroup2,
 			ICmpObstructionManager::FLAG_BLOCK_FOUNDATION);
@@ -768,7 +797,7 @@ protected:
 		// Disable block movement and block pathfinding for the obstruction shape
 		flags &= (flags_t)(~ICmpObstructionManager::FLAG_BLOCK_MOVEMENT);
 		flags &= (flags_t)(~ICmpObstructionManager::FLAG_BLOCK_PATHFINDING);
-		
+
 		m_Tag = cmpObstructionManager->AddStaticShape(GetEntityId(),
 			x, z, a, m_Size0, m_Size1, flags, m_ControlGroup, m_ControlGroup2);
 
@@ -780,7 +809,7 @@ protected:
 			Shape& b = m_Shapes[i];
 			tag_t tag = cmpObstructionManager->AddStaticShape(GetEntityId(),
 				x + b.dx.Multiply(c) + b.dz.Multiply(s), z + b.dz.Multiply(c) - b.dx.Multiply(s), a + b.da, b.size0, b.size1, b.flags, m_ControlGroup, m_ControlGroup2);
-			m_ClusterTags.push_back(tag);	
+			m_ClusterTags.push_back(tag);
 		}
 	}
 

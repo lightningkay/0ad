@@ -6,7 +6,9 @@
 	"History": "The Romans controlled one of the largest empires of the ancient world, stretching at its peak from southern Scotland to the Sahara Desert, and containing between 60 million and 80 million inhabitants, one quarter of the Earth's population at that time. Rome also remained one of the strongest nations on earth for almost 800 years. The Romans were the supreme builders of the ancient world, excelled at siege warfare and had an exquisite infantry and navy.",
 	"Music":[
 			{"File":"Juno_Protect_You.ogg", "Type":"peace"},
-			{"File":"Elysian_Fields.ogg", "Type":"peace"}
+			{"File":"Mediterranean_Waves.ogg", "Type":"peace"},
+			{"File":"Elysian_Fields.ogg", "Type":"peace"},
+			{"File":"The_Governor.ogg", "Type":"peace"}
 		],
 	"Factions":
 	[
@@ -43,30 +45,30 @@
 					"Armament": "",
 					"Emblem": "",
 					"History": "He was the first really successful Roman general against the Carthaginians. His campaigns in Spain and Africa helped to bring Carthage to its knees during the Second Punic War. He defeated Hannibal at the Battle of Zama in 202 B.C."
-				} 
+				}
 			]
-		} 
+		}
 	],
 	"CivBonuses":
 	[
 		{
 			"Name": "Testudo Formation",
 			"History": "The Romans commonly used the Testudo or 'turtle' formation for defense: Legionaries were formed into hollow squares with twelve men on each side, standing so close together that their shields overlapped like fish scales.",
-			"Description": "Roman Legionaries can form a Testudo." 
+			"Description": "Roman Legionaries can form a Testudo."
 		},
 		{
 			"Name": "Citizenship",
 			"History": "Roman Citizenship was highly prized in the ancient world. Basic rights and privileges were afforded Roman citizens that were denied other conquered peoples. It is said that harming a Roman citizen was akin to harming Rome herself, and would cause the entire might of Rome to fall upon the perpetrator.",
 			"Description": "Any Roman citizen-soldier fighting within Roman territory gains a non-permanent +10% bonus in armor."
-		} 
+		}
 	],
 	"TeamBonuses":
 	[
 		{
-			"Name": "Socii",
-			"History": "Being allied with Rome came with great benefits (as well as great peril).",
-			"Description": "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-		} 
+			"Name": "Conscription",
+			"History": "Many Roman soldiers were conscripted into service. While volunteers were preferred, the Roman state did maintain an annual military draft. During an emergency the draft and the terms of service were enlarged. The importance of military service in Republican Rome was so great it was a prerequisite for a political career. Members of the Senate were called Conscript Fathers because of this, reflected in how the ordo equester was said to have been \"conscripted\" into the Senate.",
+			"Description": "-20% training time for allied infantry."
+		}
 	],
 	"Structures":
 	[
@@ -77,7 +79,7 @@
 			"History": "Sometimes it was a temporary camp built facing the route by which the army is to march, other times a defensive or offensive (for sieges) structure. Within the Praetorian gate, which should either front the east or the enemy, the tents of the first centuries or cohorts are pitched, and the dracos (ensigns of cohorts) and other ensigns planted. The Decumane gate is directly opposite to the Praetorian in the rear of the camp, and through this the soldiers are conducted to the place appointed for punishment or execution. It has a turf wall, and it's surrounded by a canal filled with water whenever possible for extra defense. Many towns started up as bigger military camps to evolve to more complicated cities.",
 			"Requirements": "",
 			"Phase": "",
-			"Special": "Trains citizen-soldiers from neutral or enemy territory." 
+			"Special": "Trains citizen-soldiers from neutral or enemy territory."
 		},
 		{
 			"Name": "Murus Latericius",
@@ -86,8 +88,13 @@
 			"History": "Turf walls built by legionaries during sieges.",
 			"Requirements": "",
 			"Phase": "",
-			"Special": "Can be built in neutral and enemy territory to strangle enemy towns." 
-		} 
+			"Special": "Can be built in neutral and enemy territory to strangle enemy towns."
+		}
+	],
+	"WallSets":
+	[
+		"structures/rome_wallset_stone",
+		"structures/rome_wallset_siege"
 	],
 	"StartEntities":
 	[
@@ -101,7 +108,7 @@
 		{
 			"Template": "units/rome_infantry_swordsman_b",
 			"Count": 2
-		},		
+		},
 		{
 			"Template": "units/rome_infantry_javelinist_b",
 			"Count": 2
@@ -112,17 +119,17 @@
 	],
 	"Formations":
 	[
-		"formations/null",
-		"formations/box",
-		"formations/column_closed",
-		"formations/line_closed",
-		"formations/column_open",
-		"formations/line_open",
-		"formations/flank",
-		"formations/skirmish",
-		"formations/wedge",
-		"formations/battle_line",
-		"formations/testudo"
+		"special/formations/null",
+		"special/formations/box",
+		"special/formations/column_closed",
+		"special/formations/line_closed",
+		"special/formations/column_open",
+		"special/formations/line_open",
+		"special/formations/flank",
+		"special/formations/skirmish",
+		"special/formations/wedge",
+		"special/formations/battle_line",
+		"special/formations/testudo"
 	],
 	"AINames":
 	[

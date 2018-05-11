@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <objects>
-	<script file="gui/common/functions_global_object.js"/>
-	<script file="gui/manual/manual.js"/>
+
+	<script directory="gui/common/"/>
+	<script directory="gui/manual/"/>
 
 	<!-- Add a translucent black background to fade out the menu page -->
 	<object type="image" z="0" sprite="ModernFade"/>
@@ -13,14 +14,14 @@
 		</object>
 
 		<object type="image" sprite="ModernFade" size="20 20 100%-20 100%-58">
-			<object name="mainText" type="text" style="textPanel"/>
+			<object name="mainText" type="text" style="ModernTextPanel"/>
 		</object>
 
-		<object type="button" style="ModernButtonRed" tooltip_style="snToolTip" size="100%-308 100%-52 100%-168 100%-24" hotkey="cancel">
+		<object type="button" style="ModernButtonRed" tooltip_style="snToolTip" size="100%-408 100%-52 100%-218 100%-24" hotkey="cancel">
 			<translatableAttribute id="caption">Close</translatableAttribute>
 			<action on="Press"><![CDATA[closeManual();]]></action>
 		</object>
-		<object name="url" type="button" style="ModernButtonRed" size="100%-164 100%-52 100%-24 100%-24" hidden="true">
+		<object name="url" type="button" style="ModernButtonRed" size="100%-214 100%-52 100%-24 100%-24" hidden="true">
 			<translatableAttribute id="caption">View Online</translatableAttribute>
 		</object>
 	</object>

@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Diego <jdiegomdq@gmail.com>, 2015
+# Facundo Abiega <abiegafacundo@gmail.com>, 2018
 # Guillermo Gini <guillermofgini@gmail.com>, 2015
 # Guillermo Gini <guillermofgini@gmail.com>, 2015-2016
 # Jorge Telechea <f00ck6006l3@gmail.com>, 2015
@@ -13,9 +14,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-03-19 09:25+0100\n"
-"PO-Revision-Date: 2016-05-30 01:01+0000\n"
-"Last-Translator: Guillermo Gini <guillermofgini@gmail.com>\n"
+"POT-Creation-Date: 2017-06-05 09:01+0200\n"
+"PO-Revision-Date: 2018-03-10 20:41+0000\n"
+"Last-Translator: Facundo Abiega <abiegafacundo@gmail.com>\n"
 "Language-Team: Spanish (Argentina) (http://www.transifex.com/wildfire-games/0ad/language/es_AR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -190,13 +191,14 @@ msgstr "La formación en falanges clásica se desarrolló alrededor del sigo VII
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].History
 msgid ""
-"The general whom persuaded the Athenians to invest their income from silver "
+"The general who persuaded the Athenians to invest their income from silver "
 "mines in a war navy of 200 Triremes. A key figure during the Persian Wars, "
 "he commanded the victorious Athenian navy at the decisive battle of Salamis "
 "in 479 B.C. Later, he pursued an active policy against the Persians in the "
-"Aegean, thereby laying the foundations of future Athenian power. Ostracised "
-"by the Athenians, he was forced to flee to the protection of the Persians."
-msgstr "Es el general que persuadió a los atenienses para invertir las ganancias de sus minas de plata en una flota de guerra consistente en 200 trirremes. Siendo una figura clave durante las Guerras Médicas, Temístocles comandó la victoriosa flota ateniense en la batalla decisiva de Salamina en el año 479 a.C. Después, persiguió una política activa en contra de los persas en el mar Egeo, sembrando los cimientos del futuro poder ateniense. Condenado al ostracismo por los mismos atenienses, se vio forzado a huir y pedir protección a los persas."
+"Aegean, thereby laying the foundations of future Athenian power. However, he"
+" was eventually ostracised by the Athenians and forced to flee to the "
+"protection of the Persians."
+msgstr "El general que convenció a los atenienses de invertir el ingreso de sus minas de plata en una flota de guerra de 200 Trirremes. Una figura clave en las Guerras Médicas, comandó la victoriosa flota ateniense en la batalla decisiva de Salamina en 479 a. C. Luego, implementó políticas activas contra los persas en el Egeo, consolidando así las bases del futuro poder ateniense. Sin embargo, con el tiempo fue condenado al ostracismo por los atenienses y obligado a escapar hacia la protección de los persas."
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[1].History
 msgid "Pericles was the foremost Athenian politician of the 5th Century B.C."
@@ -314,17 +316,14 @@ msgid "Celtic religion and druidry inspired their warlike mindset. "
 msgstr "La religión celta y el druidismo inspiraban la mentalidad bélica."
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Description
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
-msgid "Bonus to tech speed."
-msgstr "Bonificación a la velocidad de la tecnología."
+msgid "-20% resources cost for allies healers."
+msgstr "-20% de costo para curadores aliados."
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Name
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
-msgid "Druides"
+msgid "Druids"
 msgstr "Druidas"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].History
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
 msgid ""
 "The Druids of the Celts maintained an organized religion that advanced the "
 "technology of their people even during wartime."
@@ -478,7 +477,7 @@ msgid ""
 "agreed upon a will with his wife and subordinates; his daughters would "
 "inherit the physical running of the territory, under Boudicca's stewardship "
 "until they were adults, and the Emperor of Rome would have overlordship, "
-"collecting taxes and being allowed to request military aide. Much the same "
+"collecting taxes and being allowed to request military aid. Much the same "
 "situation as he already held. The problem lay in that the Romans did not "
 "recognize female heirs, and thus asserted, upon Prasutagus's death, that "
 "only the Emperor's claim to the kingdom of Icenia was valid. They further "
@@ -502,7 +501,7 @@ msgid ""
 "slaughtered as they could not withdraw to safety. Boudicca herself escaped, "
 "and then slew her daughters, and then herself, to avoid further shame at "
 "Roman hands."
-msgstr "Amiano Marcelino describió lo difícil que sería para una banda de extranjeros hacer frente a un celta si este llamaba a su esposa. Pues son tan fuertes como ellos y pueden llover golpes y patadas a los asaltantes de igual fuerza a los disparos de una catapulta. De Boudicca, reina de Iceni, se decía que era \"muy alta y terrorífica en su apariencia, su voz era muy dura y una gran masa de pelo rojo caía sobre sus hombros.\" Vestía una túnica de muchos colores sobre los que una capa se sujetaba con un broche. Boudicca en un principio fue una aliada romana, junto con su marido, Prasutagus, rey de los Iceni. Prasutagus había sido un aliado romano antes de la opresión, respetado como rey incluso por sus antiguos enemigos, ahora aliados de los romanos, y libre para gobernar su reino como su tradición dicta, excepto en un caso. Prasutagus, dándose cuenta que iba a morir, acordó una voluntad con su esposa y sus subordinados, sus hijas heredarían el territorio físico, bajo las órdenes de Boudicca, hasta que fueran mayores, y el emperador de Roma tendría el dominio, la recaudación de impuestos y que se les pidiera ayuda militar. El problema radicaba en que los romanos no reconocían herederas, y por lo tanto su mando tras la muerte de Prasutagus, esa afirmación solo para el emperador del reino de Icenia era válida. Señalaron además que era una práctica habitual que un reino incorporado al imperio sea independiente sólo durante la vida del rey inicial, tal como había ocurrido en Galatia. El imperio anexó formalmente el reino, y comenzó la extracción de duros impuestos inmediatamente, citando que Prasutagus estaba en deuda con los romanos, después de haber tomado varios préstamos que no había podido pagar. La queja de Boudicca sobre este tratamiento y el desafío a la voluntad de su difunto marido se encontraron con brutalidad, los soldados romanos las azotaron, y sus hijas, que eran solo unas niñas, fueron violadas. Boudicca y sus súbditos se enfurecieron por la desgracia sufrida por ella y sus hijas. Con el gobernador romano de Gran Bretaña ocupado con los druidas en Cambria, ahora Gales, Boudicca fue capaz de atraer a más seguidores fuera de Iceni, ya que eran casi la única tribu británica desilusionada de los romanos. Boudicca y su ejército arrasaron tres ciudades, se enfrentaron a una legión romana, y pidieron a la memoria de Arminius, un alemán que había expulsado a César cerca de un siglo antes. Boudicca fue derrotada por un gran error táctico en la batalla de Watling Street, que lleva a gran parte de su ejército al desastre, ya que no podían retirarse a un lugar seguro. Boudicca escapó, mató a sus hijas, y luego se suicidó para no caer en manos de los romanos."
+msgstr "Amiano Marcelino describió lo difícil que sería para unos bandidos extranjeros luchar contra un Celta si pedía ayuda a su esposa. Ella solía ser más fuerte que él y podía hacer llover golpes y patadas sobre los asaltantes con la misma fuerza que disparos de catapulta. Se decía que Boudica, la reina de los icenos, era muy alta y de apariencia aterradora, su voz era estridente y una frondosa cabellera roja caía sobre sus hombros. Vestía una túnica de muchos colores sobre la cual colgaba una gruesa capa prendida con un broche. Boudica, en un principio, había sido en realidad una aliada de Roma junto a su esposo, Prasutagus, rey de los icenos. Prasutagus había sido un aliado cercano de los Romanos luego de un breve levantamiento, sus tácticas le ganaron el respeto incluso de sus antiguos enemigos, ahora aliados romanos y tenía la libertad de reinar en su territorio acorde a la tradición nativa, excepto en un caso.  Prasutagus, cuando su muerte se acercaba, firmó un testamento junto a su esposa y subordinados: sus hijas heredarían la tierras que serían administradas por Boudica hasta que fueran adultas. El Emperador de Roma conservaría su jerarquía sobre el reino recaudando impuestos y solicitando ayuda militar. Un acuerdo muy similar al que el mismo Prasutagus tenía con Roma. El problema yacía en que los romanos no reconocían herederas mujeres al trono y por eso, luego de la muerte de Prasutagus, afirmaron que el único reclamo válido al trono de los icenos era el del Emperador. Más adelante notaron que era habitual en los romanos permitir a los reinos subordinados conservar su independencia solo durante la vida del rey inicial, como había ocurrido en Galacia. \nEl Imperio anexó formalmente el reino y comenzó a cobrar altos impuestos inmediatamente alegando que Prasutagus tenía deudas con Roma, que había tomado muchos préstamos durante su vida y nunca había devuelto.  Las quejas de Boudica por este agravio y el incumplimiento del testamento de su esposo fallecido fueron respondidas con brutalidad: soldados romanos la azotaron y sus hijas fueron violadas aún siendo niñas. Boudica y sus súbitos enfurecieron ante la deshonra hacia su reina e hijas..  Con el gobernador romano ocupado con los druidas de Cambria, hoy Gales, Boudica podía atraer más seguidores además de los icenos, ya que no eran los únicos que estaban decepcionados con los romanos. Boudica y su ejército devastaron tres ciudades, derrotaron a una legión romana y llamaron a la memoria de Arminio, un caudillo germano que había expulsado a los romanos de sus tierras y  también a la memoria de sus propios ancestros que habían ahuyentado a César casi un siglo antes. Boudica fue derrotada por un grave error táctico en la batalla de Watling Street al llevar gran parte de sus fuerzas a ser masacradas al no poder retirarse a salvo. Luego de escapar, Boudica asesinó a sus hijas y se suicidó para evitar futuras humillaciones en manos de los romanos.      "
 
 #: simulation/data/civs/brit.jsonFactions[0].Description
 msgid "The Celts of the British Isles."
@@ -519,10 +518,10 @@ msgstr "Los bretones fueron conocidos por criar perros de guerra."
 #: simulation/data/civs/brit.jsonHistory
 msgid ""
 "The Britons were the Celtic tribes of the British Isles. Using chariots, "
-"longswordsmen and powerful melee soldiers, they staged fearesome revolts "
+"longswordsmen and powerful melee soldiers, they staged fearsome revolts "
 "against Rome to protect their customs and interests. Also, they built "
 "thousands of unique structures such as hill forts, crannogs and brochs."
-msgstr "Los bretones eran las tribus célticas de las Islas Británicas. Usando carros de guerra, espadachines con espada larga y poderosos soldados de combate cuerpo a cuerpo protagonizaron temibles revueltas contra Roma con el fin de proteger sus costumbres e intereses. También construyeron miles de estructures únicas como castros, palafitos y torres de piedra."
+msgstr "Los britanos eran una tribu Celta de la isla de Gran Bretaña. Usando carros, infantería de espadas largas y poderosos guerreros cuerpo a cuerpo, montaron temerosos combates contra Roma para proteger sus costumbres e intereses. Por otra parte, construyeron cientos de estructuras únicas como los castros, crannoges y brochs. "
 
 #: simulation/data/civs/cart.jsonName
 msgid "Carthaginians"
@@ -562,8 +561,8 @@ msgid ""
 msgstr "Como en la península Ibérica, el norte de África fue conocido como un lugar de caballos, capaz de producir hasta 100.000 unidades de caballería cada año. También era el hogar del elefante del bosque del norte de África."
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Description
-msgid "+33% trade profit international routes."
-msgstr "+33% de ganancia de comercio en caminos internacionales."
+msgid "10% bonus of trade profit for allies' international routes."
+msgstr "10% adicional de ingreso de comercio para rutas aliadas internacionales. "
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Name
 msgid "Trademasters"
@@ -768,15 +767,29 @@ msgstr "Cartago, una ciudad-estado en la actual Túnez, era una formidable fuerz
 msgid "Gauls"
 msgstr "Galos"
 
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
+msgid "-10% research time for technologies of allies."
+msgstr "Las tecnologías aliadas se desarrollan un 10% más rápido."
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
+msgid "Druidic Wisdom"
+msgstr "Sabiduría Druida"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
+msgid ""
+"The Druids of the Gauls maintained an organized religion that advanced the "
+"technology of their people even during wartime."
+msgstr "Los druidas de Galia mantuvieron una religión organizada que implementó los avances tecnológicos de su pueblo incluso en tiempos de guerra. "
+
 #: simulation/data/civs/gaul.jsonAINames[0]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].Name
-msgid "Britomartos"
-msgstr "Britomartos"
+msgid "Viridomarus"
+msgstr "Viridómaro"
 
 #: simulation/data/civs/gaul.jsonAINames[1]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].Name
-msgid "Brennos"
-msgstr "Brennos"
+msgid "Brennus"
+msgstr "Breno"
 
 #: simulation/data/civs/gaul.jsonAINames[2]
 msgid "Cativolcus"
@@ -788,8 +801,8 @@ msgstr "Cingétorix"
 
 #: simulation/data/civs/gaul.jsonAINames[4]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].Name
-msgid "Uerkingetorix"
-msgstr "Uerkingetorix"
+msgid "Vercingetorix"
+msgstr "Vercingétorix"
 
 #: simulation/data/civs/gaul.jsonAINames[5]
 msgid "Divico"
@@ -804,8 +817,8 @@ msgid "Liscus"
 msgstr "Liscus"
 
 #: simulation/data/civs/gaul.jsonAINames[8]
-msgid "Valetiacos"
-msgstr "Valetiacos"
+msgid "Valetiacus"
+msgstr "Valetiacus"
 
 #: simulation/data/civs/gaul.jsonAINames[9]
 msgid "Viridovix"
@@ -817,14 +830,17 @@ msgid ""
 msgstr "Una cantidad de metal y comida de cada estructura destruida o capturada."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Name
-msgid "Uae Uictos"
-msgstr "Vae victis"
+msgid "Vae Victis"
+msgstr "Vae Victis"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].History
 msgid ""
-"Means Woe to the Defeated. It was the words that the Gallic Leader, Brennos,"
-" spoke at the Capitol at Rome after they took their plunder."
-msgstr "Significa \"¡Ay, de los vencidos!\". Estas fueron las palabras del líder galo, Breno, pronunció en el Capitolio en Roma luego de haber cobrado su botín."
+"Woe to the Defeated! The Gallic chieftain Brennus seized Rome (with the "
+"exception of a garrison on Capitoline Hill). When Camillus besieged him with"
+" a relief force from Veii, he negotiated his surrender for 1000 pounds of "
+"gold, and adding the weight of his sword on the scale when the Romans "
+"complained that he used false weights he uttered those famous words."
+msgstr "¡Ay de los vencidos! El líder galo Breno saqueó Roma (a excepción de una guarnición que estaba en el Capitolio). Cuando Camilo lo sitió con un ejército de liberación de Veii, negoció su retirada por el pago de 1000 libras de oro. Cuando los romanos le reclamaron que usaba pesos falseados, Breno arrojó su espada a la balanza pronunciando sus famosas palabras."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[1].Description
 msgid "Gallic druids gain a small melee attack."
@@ -843,21 +859,21 @@ msgstr "Los Carnutos eran druidas de Aulercia. Combatían cuando se los necesita
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].History
 msgid ""
-"When celt armies met the enemy, before the battle would start, the celt "
+"When Celtic armies met the enemy, before the battle would start, the Celtic "
 "leader would go to the first line and challenge the bravest of the enemy "
 "warriors to a single combat. The story of how Marcus Claudius Marcellus "
 "killed a Gallic leader at Clastidium (222 B.C.) is typical of such "
-"encounters. Advancing with a smallish army, Marcellus met a combined force "
-"of Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with"
-" the usual rush and terrifying cries, and their king, Britomartos, picking "
+"encounters. Advancing with a small army, Marcellus met a combined force of "
+"Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with "
+"the usual rush and terrifying cries, and their king, Viridomarus, picking "
 "out Marcellus by means of his badges of rank, made for him, shouting a "
-"challenge and brandishing his spear. Britomartos was an outstanding figure "
+"challenge and brandishing his spear. Viridomarus was an outstanding figure "
 "not only for his size but also for his adornments; for he was resplendent in"
 " bright colors and his armor shone with gold and silver. This armor, thought"
 " Marcellus, would be a fitting offering to the gods. He charged the Gaul, "
 "pierced his bright breastplate and cast him to the ground. It was an easy "
-"task to kill Britomartos and strip him of his armor."
-msgstr "Cuando los ejércitos celtas se enfrentaban a un enemigo, antes del comienzo de la batalla, el líder celta se acercaba a la primer línea y desafiaría al guerrero enemigo más valiente a un combate individual. La historia de como Marco Claudio Marcelo mató a un líder galo en Clastidio (222 a.C.) es ejemplo típico de esos encuentros. Con un ejército menos, Marcelo se enfrentó a una fuerza combinada de galos ínsubros y Gaesatae en Clastidio. El ejército galo avanzó con a toda prisa y con un griterío aterrador, como era la costumbre, y su rey, Viridómaro, al reconocer a Marcelo por sus insignias de rango, avanzó hacia él gritando un desafío y blandiendo su lanza. Viridómaro era una figura que sobresalía no solo por su tamaño, sino también por sus adornos; vestía colores brillantes y su armadura brillaba con oro y plata. Esta armadura, pensó Marcelo, sería una ofrenda digna para los dioses. Avanzó sobre el galo, le perforó el peto y lo tiró al piso. Fue una tarea sencilla matar a Viridómaro y despojarlo de su armadura."
+"task to kill Viridomarus and strip him of his armor."
+msgstr "Cuando los ejércitos celtas se enfrentaban al enemigo, antes de comenzar la batalla, el líder celta solía ir a la primera línea a desafiar a los guerreros enemigos más valientes a un combate individual. La historia de cómo Marco Claudio Marcelo mató a un líder galo en Clastidio (222 a.C.) es típica de este tipo de enfrentamientos. Mientras avanzaba con un pequeño ejército, Marcelo se encontró con una fuerza combinada de galos ínsubros y gaesatae en Clastidio. Las tropas galas avanzaron con su habitual rapidez y los aterradores gritos siguiendo a su rey, Viridómaro, quien identificó a Marcelo por sus insignias de rango y se le acercó desafiándolo a los gritos y blandiendo su lanza. Viridómaro era una figura prominente no solo por su tamaño sino también por sus ornamentos, ya que resplandecía en radiantes colores y su armadura tenía el brillo del oro y la plata. Esta armadura, pensó Marcelo, sería una gran ofrenda para los dioses. Avanzó sobre el galo, perforó su brillante pechera y lo arrojó al suelo. Fue una tarea fácil matar a Viridómaro y despojarlo de su armadura."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -868,19 +884,19 @@ msgid ""
 "that Britons had conquered Rome, the greatest civilization in the world, "
 "long before Rome conquered the Britons. We know from many ancient sources "
 "which predate Geoffrey that Rome was indeed sacked, but in 387 not 390, and "
-"that the raid was led by a man named Brennos (which was latinized to "
-"Brennus), but he and his invading horde were Gallic Senones, not British. In"
-" this episode several features of Geoffrey's editing method can be seen: he "
-"modified the historical Brennus/Brennos, created the brother Belinus, "
-"borrowed the Gallic invasion, but omitted the parts where the Celts seemed "
-"weak or foolish. His technique is both additive and subtractive. Like the "
-"tale of Trojan origin, the story of the sack of Rome is not pure "
-"fabrication; it is a creative rearrangement of the available facts, with "
-"details added as necessary. By virtue of their historical association, Beli "
-"and Bran are often muddled with the earlier brothers Belinus and Brennus "
-"(the sons of Dunvallo Molmutius) who contended for power in northern Britain"
-" in around 390 B.C., and were regarded as gods in old Celtic tradition."
-msgstr "Breno es el nombre que los historiadores romanos le dieron al famoso líder galo que tomo roma en los tiempos de Camilo. Según Godofredo de Monmouth, el clérigo que escribió \"Historia de los reyes de Bretaña\", Breno y su hermano Belino invadieron la Galia y saquearon Roma en el 390 a.C., \"probando\" que los bretones conquistaron roma, la mayor civilización del mundo, antes de que Roma conquiste a los bretones. Sabemos de varias fuentes antiguas anteriores a Godofredo que roma fue efectivamente saqueada, pero en 387, y que la invasión fue liderada por un hombre llamado Breno (Brennus en latín), pero que tanto el como su horda invasora eran senones galos, no británicos. En este episodio se pueden ver varias de las características del método de edición de Godofredo: modificó al Breno histórico, inventó al hermano Belino, tomó prestada la invasión gala, pero omitió las partes donde los celtas se veían débiles o incompetentes. Su técnica es a la vez aditiva y sustractiva. Al igual que la historia del origen troyano, la historia del saqueo de Roma no es completamente inventada. Debido a su asociación histórica, Beli y Bran son relacionados de manera difusa con los hermanos Belino y Breno (hijos de Dunvallo Molmutius) quienes compitieron por poder en el norte de Britania alrededor de 390 a.C., y eran considerados dioses en la tradición celta."
+"that the raid was led by a man named Brennus, but he and his invading horde "
+"were Gallic Senones, not British. In this episode several features of "
+"Geoffrey's editing method can be seen: he modified the historical Brennus, "
+"created the brother Belinus, borrowed the Gallic invasion, but omitted the "
+"parts where the Celts seemed weak or foolish. His technique is both additive"
+" and subtractive. Like the tale of Trojan origin, the story of the sack of "
+"Rome is not pure fabrication; it is a creative rearrangement of the "
+"available facts, with details added as necessary. By virtue of their "
+"historical association, Beli and Bran are often muddled with the earlier "
+"brothers Belinus and Brennus (the sons of Dunvallo Molmutius) who contended "
+"for power in northern Britain in around 390 B.C., and were regarded as gods "
+"in old Celtic tradition."
+msgstr "Breno es el nombre que los historiadores romanos le dan al famoso líder de los galos que ocupó Roma en el tiempo de Camilo. Según Godofredo de Monmouth, el clérigo que escribió Historia de los Reyes de Britania, Breno y su hermano Belino invadieron Galia y saquearon Roma en 390 a. C. demostrando que los britanos habían conquistado Roma, la civilización más grandiosa del mundo, mucho antes de que Roma conquistara a los britanos. Sabemos de muchas fuentes antiguas anteriores a Godofredo que Roma de hecho fue saqueada, pero en 387 no en 390 y que el ataque fue liberado por un hombre llamado Breno, pero él y su horda invasora eran galos senones, no británicos. En este episodio, se pueden observar muchas características del método de edición de Godofredo: modificó al Breno histórico, creó al hermano Belino, tomó prestada la invasión gala pero omitió las partes en donde los celtas se veían tontos o débiles. Su técnica agrega y quita detalles. Como la historia troyana, la historia del saqueo de roma no es puro invento, es una reorganización creativa de los hechos disponibles, con detalles añadidos si es necesario. Por virtud de su asociación histórica, Beli y Bran son a menudo confundidos con los anteriores hermanos Belino y Breno (hijos de Dunvallo Molmutius) que compitieron por el poder en Britania del norte alrededor de 390 a. C. y eran considerados dioses en la antigua tradición celta. "
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -1067,7 +1083,7 @@ msgstr "Caro fue un jefe de la tribu de los belos ubicada al este de los celtíb
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[2].History
 msgid ""
-"Indibil was king of the Ilegetes, a large federation ranged principally "
+"Indibil was king of the Ilergetes, a large federation ranged principally "
 "along the Ebro River in the northwest of the Iberian Peninsula. During the "
 "Barcid expansion, from 212 B.C. he had initially been talked into allying "
 "himself with the Carthaginians who had taken control of a lot of territory "
@@ -1083,7 +1099,7 @@ msgid ""
 "were again defeated, Indibil losing his life in the final battle and "
 "Mandonio being captured then later put to death. From that date onward the "
 "Ilergetes remained a pacified tribe under Roman rule."
-msgstr "Indíbil era rey de los ilergetes, una gran federación que abarcaba principalmente a lo largo del río Ebro al noroeste de la península ibérica. Durante la expansión de los Barca, desde el 212 a.C. se había hablado de aliarse con los cartagineses que habían tomado el control de mucho territorio al sur y al este; sin embargo, luego de su derrota y captura en una gran batalla, Escipión Africano lo convenció de cambiar de bando, aunque algunos afirman que en realidad lo engañó. Esa alianza no duró mucho, ya que las promesas romanas estaban vacías y los romanos actuaban más como conquistadores que como aliados. Así, mientras los romanos y sus aliados terminaban la presencia cartaginesa en Hispania en 206 a.C., Indíbil y otro príncipe tribal conocido como Mandonio, quien podría haber sido su hermano, se rebelaron contra los romanos. Fueron derrotados en batalla, pero volvieron a levantarse en una rebelión mayor que unificó a todos lo ilergetes en 205 a.C. Superados en número y en armamentos, volvieron a ser derrotados; Indíbil perdió la vida en la batalla final y Mandonio fue capturado y luego ejecutado. A partir de ese momento los ilergetes se mantuvieron como una tribu pacifica bajo el dominio romano."
+msgstr "Indíbil era el rey de los ilergetes, una federación establecida principalmente a lo largo del río Ebro al noroeste de la península ibérica. Durante la expansión bárcida. desde 21 a. C. había sido convencido en un principio de aliarse con los cartaginenses que habían tomado el control de una gran extensión de territorio al sur y al oeste. Sin embargo, tras la derrota y captura en una gran batalla fue convencido, se dice que hasta engañado, de cambiar al lado romano por Escipión el Africano. Pero la alianza no duró mucho, las promesas romanas resultaron falsas y los romanos actuaron más como conquistadores que como aliados. Entonces, mientras los romanos y sus aliados borraban la presencia cartaginesa de Hispania en 206 a. C., Indíbil y otro príncipe de una tribu llamado Mandonio, que probablemente haya sido su hermano, se levantaron en rebelión contra los romanos. Fueron derrotados en batalla, pero se levantaron en armas en una segunda y más grande rebelión que había unificado a todos los ilergetes nuevamente en 205 a. C. Superados en número y armamento fueron derrotados otra vez. Indíbil murió en la batalla final y Mandonio fue capturado y más tarde ejecutado. Desde esa fecha en adelante los ilergetes fueron una tribu pacífica bajo el mando de Roma.  "
 
 #: simulation/data/civs/iber.jsonStructures[0].Name
 msgid "Gur Oroigarri"
@@ -1160,8 +1176,8 @@ msgid ""
 msgstr "Los griegos eran muy exitosos en helenizar a diferentes extranjeros. Durante el período helenistico, el griego era la lingua franca del mundo antiguo, donde se la hablaba desde España hasta India."
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Description
-msgid "+15% tribute and trade bonus on metal."
-msgstr "+15% de bonificación en tributo y comercio de metal."
+msgid "+20% sell prices at market."
+msgstr "20% más de ganancias por ventas en el mercado"
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Name
 msgid "Standardized Currency"
@@ -1421,12 +1437,12 @@ msgid ""
 msgstr "Chatria o ksatriyas, que significa guerrero, es una de las cuatro castas del hinduísmo. Por tradición los chatria constituyen la elite militar y gobernante del sistema social del vedismo indú descrito en los vedas y las Leyes de Manu."
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Description
-msgid "Allied Temple techs -50% cost and research time."
-msgstr "Las tecnologías de los templos aliados tienen un -50% de costo y tiempo de investigación."
+msgid "Allied temples and temple technologies -50% cost and research time."
+msgstr "El costo y los tiempos de desarrollo tecnológico de los templos y templos aliados se reduce un 50%."
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Name
-msgid "Evangelism."
-msgstr "Evangelismo."
+msgid "Ashoka's Religious Support"
+msgstr "Apoyo religioso de Asoka"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].History
 msgid ""
@@ -1599,8 +1615,8 @@ msgid ""
 msgstr "Los persas reclutaban mucha infantería durante tiempos de guerra debido al gran tamaño del imperio aqueménida y la forma en que estaba compuesto. En general la infantería persa estaba bien entrenada y peleaba con mucha tenacidad. Sin embargo, eran pobres combatientes melé y mano a mano. Con excepción de los regimientos de elite, la infantería persa no era una fuerza profesional permanente."
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Description
-msgid "+25% trade profit land routes."
-msgstr "+25% de ganancias por comercio en rutas terrestres."
+msgid "Higher income (+15%) from land trade routes for ally's traders."
+msgstr "Ingresos más altos (+15 %) de las líneas de comercio terrestre con comerciantes aliados."
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Name
 msgid "Royal Road"
@@ -1695,11 +1711,11 @@ msgstr "Arquitectura persa"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].History
 msgid ""
-"The Persians built the wonderful 1677 mile-long Royal Highway from Sardis to"
-" Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
-"Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
-"Elamite capital of Susa."
-msgstr "Los persas construyeron el maravilloso Camino Real Persa de 2699 desde Sarde hasta Susa; Darío I el Grande y Jerjes I también construyeron la magnífica Persépolis; Ciro II el Grande mejoró Ecbatana y virtualmente \"reconstruyó\" la vieja capial elamita de Susa."
+"The Persians built the wonderful 2700 kilometer-long Royal Highway from "
+"Sardis to Susa; Darius the Great and Xerxes also built the magnificent "
+"Persepolis; Cyrus the Great greatly improved Ecbatana and virtually "
+"'rebuilt' the old Elamite capital of Susa."
+msgstr "Los persas construyeron el maravilloso Camino Real de 2700 kilómetros de largo desde Sardes hasta Susa; Darío I el Grande y Jerjes I también construyeron la magnífica Persépolis; Ciro II el Grande mejoró notablemente Ecbatana y virtualmente \"reconstruyó\" la antigua capital elamita de Susa."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Description
 msgid "Reduces train time for Anusiya champion infantry by half."
@@ -1814,17 +1830,16 @@ msgid "Mercenary Army"
 msgstr "Ejercito mercenario"
 
 #: simulation/data/civs/ptol.jsonCivBonuses[0].History
-#: simulation/data/civs/ptol.jsonStructures[1].History
 msgid ""
 "The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
 "foreign mercenaries for the bulk of its military force, mainly because the "
 "loyalty of native Egyptian units was often suspect. Indeed, during one "
 "native uprising, Upper Egypt was lost to the Ptolemies for decades. "
-"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"Mercenaries were often battle-hardened and their loyalty could be bought, "
 "sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
 " under the Ptolemies was so prosperous as to be the richest of Alexander's "
 "successor states."
-msgstr "La dinastía ptolemaica greco-macedónica tenía un ejercito que consistía en una gran cantidad de griegos y mercenarios extranjeros, especialmente debido a que la lealtad de las unidades egipcias nativas era dudosa. Durante un alzamiento nativo, el norte de Egipto se perdió por décadas para los ptolomeos. Los mercenarios generalmente eran veteranos y su lealtad se podía comprar, a veces barato, a veces no tan barato. Esto no era importante, ya que Egipto durante el reinado ptolomeo era tan próspero que era el estado sucesor de Alejandro más rico de todos. "
+msgstr "La dinastía ptolemaica, de origen greco-macedonio, confiaba en grandes grupos de mercenarios griegos y extranjeros para la mayor parte de su fuerza militar, principalmente porque la lealtad de las unidades egipcias nativas era dudosa. De hecho, los ptolomeos perdieron el Alto Egipto por décadas. Los mercenarios a menudo se endurecían por la batalla y su lealtad podía se comprada, a veces a un precio bajo y otras veces no. Esto no representaba un problema, ya que Egipto bajo el control de los ptolomeos era el estado más prospero desde la muerte de Alejandro.    "
 
 #: simulation/data/civs/ptol.jsonCivBonuses[1].Description
 msgid "The Ptolemaic Egyptians receive 3 additional farming technologies."
@@ -2001,6 +2016,18 @@ msgid ""
 "Trains all 'mercenary' units."
 msgstr "Se debe construir en territorio neutral. No tiene radio de efecto territorial. Entrena a todas las unidades \"mercenarias\"."
 
+#: simulation/data/civs/ptol.jsonStructures[1].History
+msgid ""
+"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
+"foreign mercenaries for the bulk of its military force, mainly because the "
+"loyalty of native Egyptian units was often suspect. Indeed, during one "
+"native uprising, Upper Egypt was lost to the Ptolemies for decades. "
+"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
+" under the Ptolemies was so prosperous as to be the richest of Alexander's "
+"successor states."
+msgstr "La dinastía ptolemaica greco-macedónica tenía un ejercito que consistía en una gran cantidad de griegos y mercenarios extranjeros, especialmente debido a que la lealtad de las unidades egipcias nativas era dudosa. Durante un alzamiento nativo, el norte de Egipto se perdió por décadas para los ptolomeos. Los mercenarios generalmente eran veteranos y su lealtad se podía comprar, a veces barato, a veces no tan barato. Esto no era importante, ya que Egipto durante el reinado ptolomeo era tan próspero que era el estado sucesor de Alejandro más rico de todos. "
+
 #: simulation/data/civs/ptol.jsonStructures[2].Name
 msgid "Lighthouse"
 msgstr "Faro"
@@ -2066,17 +2093,23 @@ msgid ""
 msgstr "La ciudadanía romana era muy preciada en el mundo antiguo. Los derechos y privilegios básicos que le pertenecían a los ciudadanos romanos les eran negados a los pueblos conquistados. Se dice que dañar a un ciudadano romano era como dañar a la misma Roma, y que causaba que toda la furia de Roma caiga sobre el perpetrador."
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Description
-msgid "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-msgstr "Los ciudadanos-soldado aliados obtienen +15% de ataque en territorio Romano."
+msgid "-20% training time for allied infantry."
+msgstr "-20% tiempo de entrenamiento para infantería aliada"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Name
-msgid "Socii"
-msgstr "Socii"
+msgid "Conscription"
+msgstr "Conscripción"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].History
 msgid ""
-"Being allied with Rome came with great benefits (as well as great peril)."
-msgstr "Ser aliado de Roma traía muchos beneficios (y muchos peligros)."
+"Many Roman soldiers were conscripted into service. While volunteers were "
+"preferred, the Roman state did maintain an annual military draft. During an "
+"emergency the draft and the terms of service were enlarged. The importance "
+"of military service in Republican Rome was so great it was a prerequisite "
+"for a political career. Members of the Senate were called Conscript Fathers "
+"because of this, reflected in how the ordo equester was said to have been "
+"\"conscripted\" into the Senate."
+msgstr "Muchos soldados Romanos eran conscriptos, es decir, obligados a prestar servicio. Si bien se prefería a los voluntarios, el estado Romano mantenía un reclutamiento militar anual. Durante una emergencia, el reclutamiento y el plazo del servicio eran extendidos. La importancia del servicio militar a la República de Roma era tan grande que era un requisito previo a la carrera política. Los miembros del Senado eran llamados Padres Conscriptos por esto: reflejaba cómo el ordo equester era \"conscripto\" en el Senado."
 
 #: simulation/data/civs/rome.jsonAINames[0]
 msgid "Lucius Junius Brutus"
@@ -2457,14 +2490,14 @@ msgstr "Seleuco I Nicátor"
 msgid ""
 "Antiochus inherited a troubled kingdom upon the beginning of his reign. From"
 " the verge of collapse he managed to weld back together the empire Seleukus "
-"I so hard to found. The rebellious eastern satraps of Bactria and Parthia "
-"were brought to heel , temporarily securing his eastern borders. He then "
-"turned his attention to mother Greece, attempting to fulfill the dreams of "
-"his fathers by invading Greece under the pretext of liberation. The Achaean "
-"League and the Kingdom of Pergamon banded together with the Romans to defeat"
-" him at the Battle of Magnesia, forever burying the dream of reuniting "
-"Alexander's empire."
-msgstr "Antíoco heredó un reino en problemas. Logró recomponer desde el borde del colapso el imperio que a Seleuco I le costó tanto fundar. Las satrapías orientales rebeldes de Bactriana y Partia fueron subyugadas, lo que aseguró temporalmente los bordes del Este. Luego volvió su atención a Grecia, e intentó completar los sueños de sus padres de invadirla con el pretexto de liberarla. La Liga Aquea y el Reino de Pérgamo se unieron con los romanos para derrotarlo en la batalla de Magnesia, sepultando para siempre el sueño de reunir el imperio alejandrino."
+"I fought so hard to found. The rebellious eastern satraps of Bactria and "
+"Parthia were brought to heel , temporarily securing his eastern borders. He "
+"then turned his attention to mother Greece, attempting to fulfill the dreams"
+" of his fathers by invading Greece under the pretext of liberation. The "
+"Achaean League and the Kingdom of Pergamon banded together with the Romans "
+"to defeat him at the Battle of Magnesia, forever burying the dream of "
+"reuniting Alexander's empire."
+msgstr "Antíoco heredó un reino problemático al comienzo de su reinado. Desde el borde del colapso luchó para unir nuevamente al imperio que Seleuco I fundó con mucho esfuerzo. Los sátrapas orientales rebeldes de Bactria y Parthia fueron forzados a obeceder, asegurando termporalmente las fronteras de oriente. Enfocó su atención entonces en la madre Grecia, intentando cumplir los sueños de sus ancestros al invadir Grecia bajo el pretexto de liberación. La Liga Aquea y el Reino de Pérgamo se unieron a los romanos para derrotarlo en la Batalla de Magnesia, sepultando para siempre el sueño de reunificar el imperio de Alejandro. "
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[1].Name
 msgid "Antiokhos G' Megas"
@@ -2560,8 +2593,10 @@ msgid ""
 msgstr "Se estableció el Agogé en la constitución escrita por el legendario legislador Licurgo, la institución donde los espartanos recibían entrenamiento desde los 6 años para convertirse en guerreros superiores para defender el estado de Esparta."
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Description
-msgid "Allies can train Spartiates."
-msgstr "Los aliados pueden entrenar Homoioi."
+msgid ""
+"Increases the health for citizen-soldier infantry spearmen by 10% for allies"
+" of Spartan players."
+msgstr "Incrementa la salud de la infantería de Ciudadanos Lanceros en 10 % para aliados de jugadores espartanos. "
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Name
 msgid "Peloponnesian League"

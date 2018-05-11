@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ public:
 			return INFO::OK;
 
 		if (!dll.IsLoaded() && !TryLoadDLL())
-			return ERR::FAIL;	
+			return ERR::FAIL;
 
 		LOGMESSAGE("Hotloading skeleton definitions from '%s'", path.string8());
 		// Set the filename for the logger to report
@@ -106,7 +106,7 @@ public:
 		CVFSFile skeletonFile;
 		if (skeletonFile.Load(m_VFS, path) != PSRETURN_OK)
 		{
-			LOGERROR("Failed to read skeleton defintions from '%s'", path.string8());
+			LOGERROR("Failed to read skeleton definitions from '%s'", path.string8());
 			return ERR::FAIL;
 		}
 
@@ -228,7 +228,7 @@ public:
 			CVFSFile skeletonFile;
 			if (skeletonFile.Load(m_VFS, path) != PSRETURN_OK)
 			{
-				LOGERROR("Failed to read skeleton defintions from '%s'", path.string8());
+				LOGERROR("Failed to read skeleton definitions from '%s'", path.string8());
 				continue;
 			}
 
@@ -247,7 +247,7 @@ public:
 
 		return loaded;
 	}
-	
+
 	/**
 	 * Creates MD5 hash key from skeletons.xml info and COLLADA converter version,
 	 * used to invalidate cached .pmd/psas
@@ -387,7 +387,7 @@ VfsPath CColladaManager::GetLoadablePath(const VfsPath& pathnameNoExtension, Fil
 	{
 		// No valid cached version was found, and no source .dae exists
 		ENSURE(ret < 0);
-		
+
 		// Check if source (uncached) .pmd/psa exists
 		sourcePath = pathnameNoExtension.ChangeExtension(extn);
 		if (m_VFS->GetFileInfo(sourcePath, NULL) != INFO::OK)

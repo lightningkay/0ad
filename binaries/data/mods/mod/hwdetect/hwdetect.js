@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Wildfire Games
+/* Copyright (C) 2015 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -230,7 +230,7 @@ function RunDetection(settings)
 	}
 
 	// Disable most graphics features on software renderers
-	if (GL_RENDERER.match(/^(Software Rasterizer|Gallium \S* on (llvm|soft)pipe.*|Mesa X11|Apple Software Renderer|GDI Generic)$/))
+	if (GL_RENDERER.match(/^(Software Rasterizer|.*(llvm|soft)pipe.*|Mesa X11|Apple Software Renderer|GDI Generic)$/))
 	{
 		warnings.push("You are using '" + GL_RENDERER + "' graphics driver, expect very poor performance!");
 		warnings.push("If possible install a proper graphics driver for your hardware.");
@@ -364,7 +364,7 @@ global.RunHardwareDetection = function(settings)
 
 	if (output.disable_allwater !== undefined)
 		Engine.SetDisableAllWater(output.disable_allwater);
-	
+
 	if (output.disable_fancywater !== undefined)
 		Engine.SetDisableFancyWater(output.disable_fancywater);
 

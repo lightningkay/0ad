@@ -2,7 +2,7 @@
 <Entity parent="template_structure_military_barracks">
   <Cost>
     <Resources>
-      <wood>100</wood>
+      <wood>150</wood>
       <stone>150</stone>
     </Resources>
   </Cost>
@@ -11,12 +11,11 @@
     <Height>15.0</Height>
   </Footprint>
   <Health>
-    <SpawnEntityOnDeath>rubble/rubble_stone_5x5</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_5x5</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>cart</Civ>
     <SpecificName>Maḥanēt</SpecificName>
-    <History>The Carthaginians incorporated stables and barracks into their city walls.</History>
     <Tooltip>Train North African citizen-soldiers. Research improvements for North African units.</Tooltip>
   </Identity>
   <Obstruction>

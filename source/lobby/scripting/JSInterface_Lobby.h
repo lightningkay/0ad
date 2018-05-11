@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 
 namespace JSI_Lobby
 {
-	void RegisterScriptFunctions(ScriptInterface& scriptInterface);
+	void RegisterScriptFunctions(const ScriptInterface& scriptInterface);
 
 	bool HasXmppClient(ScriptInterface::CxPrivate* pCxPrivate);
 	bool IsRankedGame(ScriptInterface::CxPrivate* pCxPrivate);
@@ -36,9 +36,8 @@ namespace JSI_Lobby
 	void StopXmppClient(ScriptInterface::CxPrivate* pCxPrivate);
 	void ConnectXmppClient(ScriptInterface::CxPrivate* pCxPrivate);
 	void DisconnectXmppClient(ScriptInterface::CxPrivate* pCxPrivate);
-	void SendGetGameList(ScriptInterface::CxPrivate* pCxPrivate);
+	bool IsXmppClientConnected(ScriptInterface::CxPrivate* pCxPrivate);
 	void SendGetBoardList(ScriptInterface::CxPrivate* pCxPrivate);
-	void SendGetRatingList(ScriptInterface::CxPrivate* pCxPrivate);
 	void SendGetProfile(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& player);
 	void SendGameReport(ScriptInterface::CxPrivate* pCxPrivate, JS::HandleValue data);
 	void SendRegisterGame(ScriptInterface::CxPrivate* pCxPrivate, JS::HandleValue data);
@@ -46,11 +45,11 @@ namespace JSI_Lobby
 	void SendChangeStateGame(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& nbp, const std::wstring& players);
 	JS::Value GetPlayerList(ScriptInterface::CxPrivate* pCxPrivate);
 	void LobbyClearPresenceUpdates(ScriptInterface::CxPrivate* pCxPrivate);
-	int LobbyGetMucMessageCount(ScriptInterface::CxPrivate* pCxPrivate);
 	JS::Value GetGameList(ScriptInterface::CxPrivate* pCxPrivate);
 	JS::Value GetBoardList(ScriptInterface::CxPrivate* pCxPrivate);
 	JS::Value GetProfile(ScriptInterface::CxPrivate* pCxPrivate);
-	JS::Value LobbyGuiPollMessage(ScriptInterface::CxPrivate* pCxPrivate);
+	JS::Value LobbyGuiPollNewMessage(ScriptInterface::CxPrivate* pCxPrivate);
+	JS::Value LobbyGuiPollHistoricMessages(ScriptInterface::CxPrivate* pCxPrivate);
 	void LobbySendMessage(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& message);
 	void LobbySetPlayerPresence(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& presence);
 	void LobbySetNick(ScriptInterface::CxPrivate* pCxPrivate, const std::wstring& nick);
@@ -69,4 +68,4 @@ namespace JSI_Lobby
 #endif // CONFIG2_LOBBY
 }
 
-#endif
+#endif // INCLUDED_JSI_LOBBY

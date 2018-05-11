@@ -1,63 +1,47 @@
 /**
- * Used by notifyUser() to limit the number of pings
+ * Used for acoustic GUI notifications.
+ * Define the soundfile paths and specific time thresholds (avoid spam).
+ * And store the timestamp of last interaction for each notification.
  */
-var g_LastNickNotification = -1;
+var g_SoundNotifications = {
+	"nick": { "soundfile": "audio/interface/ui/chat_alert.ogg", "threshold": 3000 }
+};
 
-function getRandom(randomMin, randomMax)
+/**
+ * Save setting for current instance and write setting to the user config file.
+ */
+function saveSettingAndWriteToUserConfig(setting, value)
 {
-	// Returns a random whole number in a min..max range.
-	// NOTE: There should probably be an engine function for this,
-	// since we'd need to keep track of random seeds for replays.
-
-	var randomNum = randomMin + (randomMax-randomMin)*Math.random();  // num is random, from A to B
-	return Math.round(randomNum);
+	Engine.ConfigDB_CreateValue("user", setting, value);
+	Engine.ConfigDB_WriteValueToFile("user", setting, value, "config/user.cfg");
 }
 
-// Get list of XML files in pathname with recursion, excepting those starting with _
-function getXMLFileList(pathname)
+/**
+ * Returns translated history and gameplay data of all civs, optionally including a mock gaia civ.
+ */
+function loadCivData(selectableOnly, gaia)
 {
-	var files = Engine.BuildDirEntList(pathname, "*.xml", true);
+	let civData = loadCivFiles(selectableOnly);
 
-	var result = [];
+	translateObjectKeys(civData, ["Name", "Description", "History", "Special"]);
 
-	// Get only subpath from filename and discard extension
-	for (var i = 0; i < files.length; ++i)
-	{
-		var file = files[i];
-		file = file.substring(pathname.length, file.length-4);
+	if (gaia)
+		civData.gaia = { "Code": "gaia", "Name": translate("Gaia") };
 
-		// Split path into directories so we can check for beginning _ character
-		var tokens = file.split("/");
-
-		if (tokens[tokens.length-1][0] != "_")
-			result.push(file);
-	}
-
-	return result;
-}
-
-function getJSONFileList(pathname)
-{
-	var files = Engine.BuildDirEntList(pathname, "*.json", false);
-
-	// Remove the path and extension from each name, since we just want the filename
-	files = [ n.substring(pathname.length, n.length-5) for each (n in files) ];
-
-	return files;
+	return deepfreeze(civData);
 }
 
 // A sorting function for arrays of objects with 'name' properties, ignoring case
 function sortNameIgnoreCase(x, y)
 {
-	var lowerX = x.name.toLowerCase();
-	var lowerY = y.name.toLowerCase();
+	let lowerX = x.name.toLowerCase();
+	let lowerY = y.name.toLowerCase();
 
 	if (lowerX < lowerY)
 		return -1;
-	else if (lowerX > lowerY)
+	if (lowerX > lowerY)
 		return 1;
-	else
-		return 0;
+	return 0;
 }
 
 /**
@@ -121,47 +105,13 @@ function translateMapTitle(mapTitle)
 	return mapTitle == "random" ? translateWithContext("map selection", "Random") : translate(mapTitle);
 }
 
-/**
- * Convert time in milliseconds to [hh:]mm:ss string representation.
- * @param time Time period in milliseconds (integer)
- * @return String representing time period
- */
-function timeToString(time)
-{
-	if (time < 1000 * 60 * 60)
-		var format = translate("mm:ss");
-	else
-		var format = translate("HH:mm:ss");
-	return Engine.FormatMillisecondsIntoDateString(time, format);
-}
-
 function removeDupes(array)
 {
 	// loop backwards to make splice operations cheaper
-	var i = array.length;
+	let i = array.length;
 	while (i--)
-	{
 		if (array.indexOf(array[i]) != i)
 			array.splice(i, 1);
-	}
-}
-
-// Filter out conflicting characters and limit the length of a given name.
-// @param name Name to be filtered.
-// @param stripUnicode Whether or not to remove unicode characters.
-// @param stripSpaces Whether or not to remove whitespace.
-function sanitizePlayerName(name, stripUnicode, stripSpaces)
-{
-	// We delete the '[', ']' characters (GUI tags) and delete the ',' characters (player name separators) by default.
-	var sanitizedName = name.replace(/[\[\],]/g, "");
-	// Optionally strip unicode
-	if (stripUnicode)
-		sanitizedName = sanitizedName.replace(/[^\x20-\x7f]/g, "");
-	// Optionally strip whitespace
-	if (stripSpaces)
-		sanitizedName = sanitizedName.replace(/\s/g, "");
-	// Limit the length to 20 characters
-	return sanitizedName.substr(0,20);
 }
 
 function singleplayerName()
@@ -230,18 +180,49 @@ function clearChatMessages()
 }
 
 /**
- * Plays a sound if user's nick is mentioned in chat
+ * Manage acoustic GUI notifications.
+ *
+ * @param {string} type - Notification type.
  */
-function notifyUser(userName, msgText)
+function soundNotification(type)
 {
-	if (Engine.ConfigDB_GetValue("user", "sound.notify.nick") != "true" ||
-	    msgText.toLowerCase().indexOf(userName.toLowerCase()) == -1)
+	if (Engine.ConfigDB_GetValue("user", "sound.notify." + type) != "true")
 		return;
 
-	let timeNow = new Date().getTime();
+	let notificationType = g_SoundNotifications[type];
+	let timeNow = Date.now();
 
-	if (!g_LastNickNotification || timeNow > g_LastNickNotification + 3000)
-		Engine.PlayUISound("audio/interface/ui/chat_alert.ogg", false);
+	if (!notificationType.lastInteractionTime || timeNow > notificationType.lastInteractionTime + notificationType.threshold)
+		Engine.PlayUISound(notificationType.soundfile, false);
 
-	g_LastNickNotification = timeNow;
+	notificationType.lastInteractionTime = timeNow;
+}
+
+/**
+ * Horizontally spaces objects within a parent
+ *
+ * @param margin The gap, in px, between the objects
+ */
+function horizontallySpaceObjects(parentName, margin = 0)
+{
+	let objects = Engine.GetGUIObjectByName(parentName).children;
+	for (let i = 0; i < objects.length; ++i)
+	{
+		let size = objects[i].size;
+		let width = size.right - size.left;
+		size.left = i * (width + margin) + margin;
+		size.right = (i + 1) * (width + margin);
+		objects[i].size = size;
+	}
+}
+
+/**
+ * Hide all children after a certain index
+ */
+function hideRemaining(parentName, start = 0)
+{
+	let objects = Engine.GetGUIObjectByName(parentName).children;
+
+	for (let i = start; i < objects.length; ++i)
+		objects[i].hidden = true;
 }

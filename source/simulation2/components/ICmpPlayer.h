@@ -1,4 +1,4 @@
-/* Copyright (C) 2011 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -25,18 +25,20 @@ class CFixedVector3D;
 
 /**
  * Player data.
- * (This interface only includes the functions needed by native code for loading maps,
- * and for minimap rendering; most player interaction is handled by scripts instead.)
+ * (This interface includes the functions needed by native code for loading maps,
+ * and for minimap rendering; most player interaction is handled by scripts instead.
+ * Also includes some functions needed for the non visual autostart.)
  */
 class ICmpPlayer : public IComponent
 {
 public:
-	virtual CColor GetColor() = 0;
+	virtual CColor GetDisplayedColor() = 0;
 	virtual std::wstring GetCiv() = 0;
 	virtual CFixedVector3D GetStartingCameraPos() = 0;
 	virtual CFixedVector3D GetStartingCameraRot() = 0;
 
 	virtual bool HasStartingCamera() = 0;
+	virtual std::string GetState() = 0;
 
 	DECLARE_INTERFACE_TYPE(Player)
 };

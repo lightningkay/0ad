@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@
 #include "renderer/SkyManager.h"
 #include "renderer/WaterManager.h"
 #include "simulation2/Simulation2.h"
+#include "simulation2/components/ICmpCinemaManager.h"
 #include "simulation2/components/ICmpObstruction.h"
 #include "simulation2/components/ICmpOwnership.h"
 #include "simulation2/components/ICmpPosition.h"
@@ -55,7 +56,7 @@ CMapWriter::CMapWriter()
 // SaveMap: try to save the current map to the given file
 void CMapWriter::SaveMap(const VfsPath& pathname, CTerrain* pTerrain,
 						 WaterManager* pWaterMan, SkyManager* pSkyMan,
-						 CLightEnv* pLightEnv, CCamera* pCamera, CCinemaManager* pCinema,
+						 CLightEnv* pLightEnv, CCamera* pCamera, CCinemaManager* UNUSED(pCinema),
 						 CPostprocManager* pPostproc,
 						 CSimulation2* pSimulation2)
 {
@@ -76,7 +77,7 @@ void CMapWriter::SaveMap(const VfsPath& pathname, CTerrain* pTerrain,
 	}
 
 	VfsPath pathnameXML = pathname.ChangeExtension(L".xml");
-	WriteXML(pathnameXML, pWaterMan, pSkyMan, pLightEnv, pCamera, pCinema, pPostproc, pSimulation2);
+	WriteXML(pathnameXML, pWaterMan, pSkyMan, pLightEnv, pCamera, pPostproc, pSimulation2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +185,7 @@ void CMapWriter::PackTerrain(CFilePacker& packer, CTerrain* pTerrain)
 
 void CMapWriter::WriteXML(const VfsPath& filename,
 						  WaterManager* pWaterMan, SkyManager* pSkyMan,
-						  CLightEnv* pLightEnv, CCamera* pCamera, CCinemaManager* pCinema,
+						  CLightEnv* pLightEnv, CCamera* pCamera,
 						  CPostprocManager* pPostproc,
 						  CSimulation2* pSimulation2)
 {
@@ -400,19 +401,21 @@ void CMapWriter::WriteXML(const VfsPath& filename,
 			}
 		}
 
-		const std::map<CStrW, CCinemaPath>& paths = pCinema->GetAllPaths();
-		std::map<CStrW, CCinemaPath>::const_iterator it = paths.begin();
 
+		CmpPtr<ICmpCinemaManager> cmpCinemaManager(sim, SYSTEM_ENTITY);
+		if (cmpCinemaManager)
 		{
+			const std::map<CStrW, CCinemaPath>& paths = cmpCinemaManager->GetPaths();
+			std::map<CStrW, CCinemaPath>::const_iterator it = paths.begin();
 			XML_Element("Paths");
 
 			for ( ; it != paths.end(); ++it )
 			{
 				fixed timescale = it->second.GetTimescale();
-				const std::vector<SplineData>& nodes = it->second.GetAllNodes();
+				const std::vector<SplineData>& position_nodes = it->second.GetAllNodes();
 				const std::vector<SplineData>& target_nodes = it->second.GetTargetSpline().GetAllNodes();
 				const CCinemaData* data = it->second.GetData();
-				
+
 				XML_Element("Path");
 				XML_Attribute("name", data->m_Name);
 				XML_Attribute("timescale", timescale);
@@ -420,46 +423,56 @@ void CMapWriter::WriteXML(const VfsPath& filename,
 				XML_Attribute("mode", data->m_Mode);
 				XML_Attribute("style", data->m_Style);
 
+				struct SEvent
+				{
+					fixed time;
+					const char* type;
+					CFixedVector3D value;
+					SEvent(fixed time, const char* type, CFixedVector3D value)
+						: time(time), type(type), value(value)
+					{}
+					bool operator<(const SEvent& another) const
+					{
+						return time < another.time;
+					}
+				};
+
+				// All events of a manipulating of camera (position/rotation/target)
+				std::vector<SEvent> events;
+				events.reserve(position_nodes.size() + target_nodes.size());
+
+				fixed last_position = fixed::Zero();
+				for (size_t i = 0; i < position_nodes.size(); ++i)
+				{
+					fixed distance = i > 0 ? position_nodes[i - 1].Distance : fixed::Zero();
+					last_position += distance;
+					events.emplace_back(last_position, "Position", position_nodes[i].Position);
+				}
+
 				fixed last_target = fixed::Zero();
-				for (size_t i = 0, j = 0; i < nodes.size(); ++i)
+				for (size_t i = 0; i < target_nodes.size(); ++i)
+				{
+					fixed distance = i > 0 ? target_nodes[i - 1].Distance : fixed::Zero();
+					last_target += distance;
+					events.emplace_back(last_target, "Target", target_nodes[i].Position);
+				}
+
+				std::sort(events.begin(), events.end());
+				for (size_t i = 0; i < events.size();)
 				{
 					XML_Element("Node");
-					fixed distance = i > 0 ? nodes[i - 1].Distance : fixed::Zero();
-					last_target += distance;
-
-					XML_Attribute("deltatime", distance);
-
+					fixed deltatime = i > 0 ? (events[i].time - events[i - 1].time) : fixed::Zero();
+					XML_Attribute("deltatime", deltatime);
+					size_t j = i;
+					for (; j < events.size() && events[j].time == events[i].time; ++j)
 					{
-						XML_Element("Position");
-						XML_Attribute("x", nodes[i].Position.X);
-						XML_Attribute("y", nodes[i].Position.Y);
-						XML_Attribute("z", nodes[i].Position.Z);
+						// Types: Position/Rotation/Target
+						XML_Element(events[j].type);
+						XML_Attribute("x", events[j].value.X);
+						XML_Attribute("y", events[j].value.Y);
+						XML_Attribute("z", events[j].value.Z);
 					}
-
-					{
-						XML_Element("Rotation");
-						XML_Attribute("x", nodes[i].Rotation.X);
-						XML_Attribute("y", nodes[i].Rotation.Y);
-						XML_Attribute("z", nodes[i].Rotation.Z);
-					}
-
-					if (j >= target_nodes.size())
-						continue;
-
-					fixed target_distance = j > 0 ? target_nodes[j - 1].Distance : fixed::Zero();
-
-					if (target_distance > last_target)
-						continue;
-
-					{
-						XML_Element("Target");
-						XML_Attribute("x", target_nodes[j].Position.X);
-						XML_Attribute("y", target_nodes[j].Position.Y);
-						XML_Attribute("z", target_nodes[j].Position.Z);
-					}
-
-					last_target = fixed::Zero();
-					++j;
+					i = j;
 				}
 			}
 		}

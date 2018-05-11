@@ -5,12 +5,11 @@
     <Height>8.0</Height>
   </Footprint>
   <Health>
-    <SpawnEntityOnDeath>rubble/rubble_celt_cc</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_brit_cc</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>brit</Civ>
     <SpecificName>Caer</SpecificName>
-    <History>This was be the center of the town, a great hall where the clan leader resided. All political matters were probably performed inside such a structure.</History>
   </Identity>
   <Obstruction>
     <Static width="25.0" depth="25.0"/>

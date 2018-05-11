@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_structure_civic">
   <AlertRaiser>
-    <MaximumLevel>2</MaximumLevel>
-    <Range>140</Range>
+    <List datatype="tokens">FemaleCitizen</List>
+    <RaiseAlertRange>140</RaiseAlertRange>
+    <EndOfAlertRange>190</EndOfAlertRange>
+    <SearchRange>100</SearchRange>
   </AlertRaiser>
   <Armour>
     <Hack op="add">5</Hack>
@@ -16,14 +18,22 @@
   <Attack>
     <Ranged>
       <Hack>0.0</Hack>
-      <Pierce>15.0</Pierce>
+      <Pierce>12.0</Pierce>
       <Crush>0.0</Crush>
       <MaxRange>72.0</MaxRange>
-      <MinRange>10.0</MinRange>
+      <MinRange>0.0</MinRange>
       <ProjectileSpeed>75.0</ProjectileSpeed>
+      <Gravity>9.81</Gravity>
       <PrepareTime>1200</PrepareTime>
       <RepeatTime>2000</RepeatTime>
       <Spread>1.5</Spread>
+      <Delay>0</Delay>
+      <PreferredClasses datatype="tokens">Human</PreferredClasses>
+      <RangeOverlay>
+        <LineTexture>outline_border.png</LineTexture>
+        <LineTextureMask>outline_border_mask.png</LineTextureMask>
+        <LineThickness>0.175</LineThickness>
+      </RangeOverlay>
     </Ranged>
   </Attack>
   <BuildingAI>
@@ -66,7 +76,7 @@
   </GarrisonHolder>
   <Health>
     <Max>3000</Max>
-    <SpawnEntityOnDeath>rubble/rubble_stone_6x6</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_6x6</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <GenericName>Civic Center</GenericName>
@@ -78,9 +88,9 @@
   <Loot>
     <xp>200</xp>
     <food>0</food>
-    <wood>50</wood>
-    <stone>50</stone>
-    <metal>50</metal>
+    <wood>200</wood>
+    <stone>200</stone>
+    <metal>200</metal>
   </Loot>
   <Obstruction>
     <Static width="30.0" depth="30.0"/>
@@ -91,8 +101,10 @@
       units/{civ}_support_female_citizen
     </Entities>
     <Technologies datatype="tokens">
-      phase_town
-      phase_city
+      phase_town_{civ}
+      phase_city_{civ}
+      unlock_spies
+      spy_counter
     </Technologies>
   </ProductionQueue>
   <ResourceDropsite>
@@ -103,11 +115,9 @@
     <SoundGroups>
       <select>interface/select/building/sel_civ_center.xml</select>
       <constructed>interface/complete/building/complete_civ_center.xml</constructed>
-      <attack>attack/weapon/arrowfly.xml</attack>
       <death>attack/destruction/building_collapse_large.xml</death>
-      <alert0>interface/alarm/alarm_alert_0.xml</alert0>
-      <alert1>interface/alarm/alarm_alert_1.xml</alert1>
-      <alert2>interface/alarm/alarm_alert_2.xml</alert2>
+      <alert_raise>interface/alarm/alarm_alert_0.xml</alert_raise>
+      <alert_end>interface/alarm/alarm_alert_1.xml</alert_end>
     </SoundGroups>
   </Sound>
   <TerritoryInfluence>

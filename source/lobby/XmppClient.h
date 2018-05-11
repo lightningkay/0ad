@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ namespace glooxwrapper
 	struct CertInfo;
 }
 
-class XmppClient : public IXmppClient, public glooxwrapper::ConnectionListener, public glooxwrapper::MUCRoomHandler, public glooxwrapper::IqHandler, public glooxwrapper::RegistrationHandler, public glooxwrapper::MessageHandler
+class XmppClient : public IXmppClient, public glooxwrapper::ConnectionListener, public glooxwrapper::MUCRoomHandler, public glooxwrapper::IqHandler, public glooxwrapper::RegistrationHandler, public glooxwrapper::MessageHandler, public glooxwrapper::Jingle::SessionHandler
 {
 	NONCOPYABLE(XmppClient);
 
@@ -42,15 +42,20 @@ private:
 	glooxwrapper::Client* m_client;
 	glooxwrapper::MUCRoom* m_mucRoom;
 	glooxwrapper::Registration* m_registration;
+	glooxwrapper::SessionManager* m_sessionManager;
 
 	// Account infos
 	std::string m_username;
 	std::string m_password;
+	std::string m_server;
+	std::string m_room;
 	std::string m_nick;
 	std::string m_xpartamuppId;
+	std::string m_echelonId;
 
 	// State
 	bool m_initialLoadComplete;
+	bool m_isConnected;
 
 public:
 	// Basic
@@ -60,15 +65,15 @@ public:
 	// Network
 	void connect();
 	void disconnect();
+	bool isConnected();
 	void recv();
-	void SendIqGetGameList();
 	void SendIqGetBoardList();
-	void SendIqGetRatingList();
 	void SendIqGetProfile(const std::string& player);
-	void SendIqGameReport(ScriptInterface& scriptInterface, JS::HandleValue data);
-	void SendIqRegisterGame(ScriptInterface& scriptInterface, JS::HandleValue data);
+	void SendIqGameReport(const ScriptInterface& scriptInterface, JS::HandleValue data);
+	void SendIqRegisterGame(const ScriptInterface& scriptInterface, JS::HandleValue data);
 	void SendIqUnregisterGame();
 	void SendIqChangeStateGame(const std::string& nbp, const std::string& players);
+	void SendIqLobbyAuth(const std::string& to, const std::string& token);
 	void SetNick(const std::string& nick);
 	void GetNick(std::string& nick);
 	void kick(const std::string& nick, const std::string& reason);
@@ -78,13 +83,12 @@ public:
 	void GetRole(const std::string& nickname, std::string& role);
 	void GetSubject(std::string& subject);
 
-	void GUIGetPlayerList(ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
-	void GUIGetGameList(ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
-	void GUIGetBoardList(ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
-	void GUIGetProfile(ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
+	void GUIGetPlayerList(const ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
+	void GUIGetGameList(const ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
+	void GUIGetBoardList(const ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
+	void GUIGetProfile(const ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
 
-	//Script
-	ScriptInterface& GetScriptInterface();
+	void SendStunEndpointToHost(StunClient::StunEndpoint* stunEndpoint, const std::string& hostJID);
 
 protected:
 	/* Xmpp handlers */
@@ -119,7 +123,11 @@ protected:
 	virtual void handleOOB(const glooxwrapper::JID& /*from*/, const glooxwrapper::OOB& oob);
 
 	/* Message Handler */
-	virtual void handleMessage(const glooxwrapper::Message& msg, glooxwrapper::MessageSession * session);
+	virtual void handleMessage(const glooxwrapper::Message& msg, glooxwrapper::MessageSession* session);
+
+	/* Session Handler */
+	virtual void handleSessionAction(gloox::Jingle::Action action, glooxwrapper::Jingle::Session* UNUSED(session), const glooxwrapper::Jingle::Session::Jingle* jingle);
+	virtual void handleSessionInitiation(const glooxwrapper::Jingle::Session::Jingle* jingle);
 
 	// Helpers
 	void GetPresenceString(const gloox::Presence::PresenceType p, std::string& presence) const;
@@ -127,26 +135,34 @@ protected:
 	std::string StanzaErrorToString(gloox::StanzaError err) const;
 	std::string ConnectionErrorToString(gloox::ConnectionError err) const;
 	std::string RegistrationResultToString(gloox::RegistrationResult res) const;
+	std::time_t ComputeTimestamp(const glooxwrapper::Message& msg) const;
 
 public:
 	/* Messages */
 	struct GUIMessage
 	{
-		std::wstring type;
-		std::wstring level;
-		std::wstring text;
-		std::wstring data;
-		std::wstring from;
-		std::wstring message;
-		std::string datetime;
+		std::string type;
+		std::string level;
+		std::string property1_name;
+		std::string property1_value;
+		std::string property2_name;
+		std::string property2_value;
+		std::time_t time;
 	};
-	void GuiPollMessage(ScriptInterface& scriptInterface, JS::MutableHandleValue ret);
+	JS::Value GuiMessageToJSVal(const ScriptInterface& scriptInterface, const GUIMessage& message, const bool historic);
+	JS::Value GuiPollNewMessage(const ScriptInterface& scriptInterface);
+	JS::Value GuiPollHistoricMessages(const ScriptInterface& scriptInterface);
 	void SendMUCMessage(const std::string& message);
 	void ClearPresenceUpdates();
-	int GetMucMessageCount();
 protected:
-	void PushGuiMessage(XmppClient::GUIMessage message);
-	void CreateGUIMessage(const std::string& type, const std::string& level, const std::string& text = "", const std::string& data = "");
+	void CreateGUIMessage(
+		const std::string& type,
+		const std::string& level = "",
+		const std::string& property1_name = "",
+		const std::string& property1_value = "",
+		const std::string& property2_name = "",
+		const std::string& property2_value = "",
+		const std::time_t time = std::time(nullptr));
 
 private:
 	/// Map of players
@@ -159,6 +175,8 @@ private:
 	std::vector<const glooxwrapper::Tag*> m_Profile;
 	/// Queue of messages for the GUI
 	std::deque<GUIMessage> m_GuiMessageQueue;
+	/// Cache of all GUI messages received since the login
+	std::vector<GUIMessage> m_HistoricGuiMessages;
 	/// Current room subject/topic.
 	std::string m_Subject;
 };

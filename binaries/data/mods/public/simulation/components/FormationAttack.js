@@ -15,6 +15,12 @@ FormationAttack.prototype.CanAttackAsFormation = function()
 	return this.canAttackAsFormation;
 };
 
+// Only called when making formation entities selectable for debugging
+FormationAttack.prototype.GetAttackTypes = function()
+{
+	return [];
+};
+
 FormationAttack.prototype.GetRange = function(target)
 {
 	var result = {"min": 0, "max": this.canAttackAsFormation ? -1 : 0};
@@ -25,7 +31,7 @@ FormationAttack.prototype.GetRange = function(target)
 		return result;
 	}
 	var members = cmpFormation.GetMembers();
-	for each (var ent in members)
+	for (var ent of members)
 	{
 		var cmpAttack = Engine.QueryInterface(ent, IID_Attack);
 		if (!cmpAttack)
@@ -35,7 +41,7 @@ FormationAttack.prototype.GetRange = function(target)
 		if (!type)
 			continue;
 
-		// if the formation can attack, take the minimum max range (so units are certainly in range), 
+		// if the formation can attack, take the minimum max range (so units are certainly in range),
 		// If the formation can't attack, take the maximum max range as the point where the formation will be disbanded
 		// Always take the minimum min range (to not get impossible situations)
 		var range = cmpAttack.GetRange(type);
@@ -58,7 +64,7 @@ FormationAttack.prototype.GetRange = function(target)
 
 	if (result.max >= 0)
 		result.max += extraRange;
-	result.min += extraRange;
+
 	return result;
 };
 

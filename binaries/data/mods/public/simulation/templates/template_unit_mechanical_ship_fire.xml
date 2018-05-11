@@ -6,26 +6,35 @@
       <Pierce>10.0</Pierce>
       <Crush>10.0</Crush>
       <MaxRange>8.0</MaxRange>
+      <PrepareTime>50</PrepareTime>
       <RepeatTime>100</RepeatTime>
     </Melee>
   </Attack>
   <Cost>
-    <BuildTime>20</BuildTime>
+    <BuildTime>30</BuildTime>
     <Resources>
-      <wood>200</wood>
+      <wood>300</wood>
     </Resources>
   </Cost>
-  <Footprint replace="">
+  <DeathDamage>
+    <Shape>Circular</Shape>
+    <Range>30</Range>
+    <FriendlyFire>true</FriendlyFire>
+    <Hack>300.0</Hack>
+    <Pierce>300.0</Pierce>
+    <Crush>300.0</Crush>
+  </DeathDamage>
+  <Footprint>
     <Square width="8.0" depth="24.0"/>
     <Height>8.0</Height>
   </Footprint>
   <Health>
     <Max>500</Max>
-    <RegenRate>-3</RegenRate>
+    <RegenRate>-6</RegenRate>
     <DamageVariants>
-      <lightdamage>0.85</lightdamage> 
-      <mediumdamage>0.65</mediumdamage> 
-      <heavydamage>0.35</heavydamage> 
+      <lightdamage>0.85</lightdamage>
+      <mediumdamage>0.65</mediumdamage>
+      <heavydamage>0.35</heavydamage>
     </DamageVariants>
   </Health>
   <Identity>
@@ -34,6 +43,7 @@
     <Tooltip>Rapidly drain the health of enemy ships. Slowly loses health due to being on fire, so use the Fire Ship quickly.</Tooltip>
     <RequiredTechnology>phase_town</RequiredTechnology>
   </Identity>
+  <Loot disable=""/>
   <Repairable disable=""/>
   <ResourceGatherer disable=""/>
   <StatusBars>
@@ -43,9 +53,9 @@
   </StatusBars>
   <UnitMotion>
     <PassabilityClass>ship-small</PassabilityClass>
-    <WalkSpeed>17.5</WalkSpeed>
+    <WalkSpeed op="mul">1.6</WalkSpeed>
     <Run>
-      <Speed>22.0</Speed>
+      <Speed op="mul">1.6</Speed>
     </Run>
   </UnitMotion>
   <Vision>

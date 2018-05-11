@@ -21,8 +21,6 @@
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.83</Murkiness>
 				<Tint r="0.254902" g="0.360784" b="0.65098"/>
-				<ReflectionTint r="0.278431" g="0.298039" b="0.588235"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -46,7 +44,6 @@
   ],
   "CircularMap": true,
   "Description": "Demo map listening to various triggers and printing warning messages about them",
-  "GameType": "endless",
   "Keywords": [
     "trigger",
     "demo"
@@ -68,7 +65,8 @@
   "RevealMap": false,
   "Script": "pyrenean_sierra.js",
   "Size": 256,
-  "TriggerScripts": ["scenarios/Triggers_demo.js"]
+  "TriggerScripts": ["scenarios/Triggers_demo.js"],
+  "VictoryConditions": []
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -14998,21 +14996,21 @@
 			<Orientation y="-3.19816"/>
 		</Entity>
 		<Entity uid="2851">
-			<Template>special/trigger_point_A</Template>
+			<Template>trigger/trigger_point_A</Template>
 			<Player>1</Player>
 			<Position x="249.40879" z="520.74244"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="52196"/>
 		</Entity>
 		<Entity uid="2852">
-			<Template>special/trigger_point_A</Template>
+			<Template>trigger/trigger_point_A</Template>
 			<Player>1</Player>
 			<Position x="412.18186" z="506.32572"/>
 			<Orientation y="2.35621"/>
 			<Actor seed="16144"/>
 		</Entity>
 		<Entity uid="2853">
-			<Template>special/trigger_point_A</Template>
+			<Template>trigger/trigger_point_A</Template>
 			<Player>1</Player>
 			<Position x="618.87043" z="513.47492"/>
 			<Orientation y="2.35621"/>

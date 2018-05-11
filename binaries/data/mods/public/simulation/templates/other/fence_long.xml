@@ -23,11 +23,7 @@
     <Icon>gaia/special_fence.png</Icon>
   </Identity>
   <Loot>
-    <xp>1</xp>
-    <food>0</food>
     <wood>20</wood>
-    <stone>0</stone>
-    <metal>0</metal>
   </Loot>
   <Minimap>
     <Color r="119" g="82" b="46"/>
@@ -46,4 +42,8 @@
   <VisualActor>
     <Actor>temp/fence_wood_long_a.xml</Actor>
   </VisualActor>
+  <WallPiece>
+    <Length>12</Length>
+    <Orientation>0.5</Orientation>
+  </WallPiece>
 </Entity>

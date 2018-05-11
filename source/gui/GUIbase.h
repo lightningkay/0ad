@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -60,6 +60,7 @@ enum EGUIMessageType
 	GUIM_MOUSE_ENTER,
 	GUIM_MOUSE_LEAVE,
 	GUIM_MOUSE_PRESS_LEFT,
+	GUIM_MOUSE_PRESS_LEFT_ITEM,
 	GUIM_MOUSE_PRESS_RIGHT,
 	GUIM_MOUSE_DOWN_LEFT,
 	GUIM_MOUSE_DOWN_RIGHT,
@@ -72,6 +73,7 @@ enum EGUIMessageType
 	GUIM_MOUSE_WHEEL_DOWN,
 	GUIM_SETTINGS_UPDATED,	// SGUIMessage.m_Value = name of setting
 	GUIM_PRESSED,
+	GUIM_RELEASED,
 	GUIM_DOUBLE_PRESSED,
 	GUIM_MOUSE_MOTION,
 	GUIM_LOAD,				// Called when an object is added to the GUI.
@@ -79,7 +81,8 @@ enum EGUIMessageType
 	GUIM_LOST_FOCUS,
 	GUIM_PRESSED_MOUSE_RIGHT,
 	GUIM_DOUBLE_PRESSED_MOUSE_RIGHT,
-	GUIM_TAB				// Used by CInput
+	GUIM_TAB,				// Used by CInput
+	GUIM_TEXTEDIT
 };
 
 /**

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
+CStrW g_UniqueLogPostfix;
 static const double RENDER_TIMEOUT = 10.0; // seconds before messages are deleted
 static const double RENDER_TIMEOUT_RATE = 10.0; // number of timed-out messages deleted per second
 static const size_t RENDER_LIMIT = 20; // maximum messages on screen at once
@@ -65,10 +66,11 @@ const char* html_header1 = "</h2>\n";
 
 CLogger::CLogger()
 {
-	OsPath mainlogPath(psLogDir()/"mainlog.html");
+	OsPath mainlogPath(psLogDir() / (L"mainlog" + g_UniqueLogPostfix + L".html"));
 	m_MainLog = new std::ofstream(OsString(mainlogPath).c_str(), std::ofstream::out | std::ofstream::trunc);
+	debug_printf("Writing the mainlog at %s\n", mainlogPath.string8().c_str());
 
-	OsPath interestinglogPath(psLogDir()/"interestinglog.html");
+	OsPath interestinglogPath(psLogDir() / (L"interestinglog" + g_UniqueLogPostfix + L".html"));
 	m_InterestingLog = new std::ofstream(OsString(interestinglogPath).c_str(), std::ofstream::out | std::ofstream::trunc);
 
 	m_OwnsStreams = true;
@@ -96,7 +98,7 @@ void CLogger::Init()
 	m_NumberOfMessages = 0;
 	m_NumberOfErrors = 0;
 	m_NumberOfWarnings = 0;
-	
+
 	*m_MainLog << html_header0 << engine_version << ") Main log" << html_header1;
 	*m_InterestingLog << html_header0 << engine_version << ") Main log (warnings and errors only)" << html_header1;
 }
@@ -117,7 +119,7 @@ CLogger::~CLogger()
 
 	*m_MainLog << "<p>Engine exited successfully on " << currentDate;
 	*m_MainLog << " at " << currentTime << buffer << "</p>\n";
-	
+
 	*m_InterestingLog << "<p>Engine exited successfully on " << currentDate;
 	*m_InterestingLog << " at " << currentTime << buffer << "</p>\n";
 
@@ -148,7 +150,7 @@ void CLogger::WriteMessage(const char* message, bool doRender = false)
 
 	*m_MainLog << "<p>" << cmessage << "</p>\n";
 	m_MainLog->flush();
-	
+
 	if (doRender)
 	{
 		if (g_Console) g_Console->InsertMessage(std::string("INFO: ") + message);

@@ -2,37 +2,35 @@
 // This assumes that the rally point has a valid position.
 function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 {
-	var data = cmpRallyPoint.GetData();
-	var rallyPos = cmpRallyPoint.GetPositions();
-	var ret = [];
-	for(var i = 0; i < rallyPos.length; ++i)
+	let data = cmpRallyPoint.GetData();
+	let rallyPos = cmpRallyPoint.GetPositions();
+	let ret = [];
+	for (let i = 0; i < rallyPos.length; ++i)
 	{
 		// Look and see if there is a command in the rally point data, otherwise just walk there.
-		var command = undefined;
-		if (data[i] && data[i].command)
-		{
-			command = data[i].command;
-		}
-		else
-		{
-			command = "walk";
-		}
+		let command = data[i] && data[i].command ? data[i].command : "walk";
 
 		// If a target was set and the target no longer exists, or no longer
 		// has a valid position, then just walk to the rally point.
 		if (data[i] && data[i].target)
 		{
-			var cmpPosition = Engine.QueryInterface(data[i].target, IID_Position);
+			let cmpPosition = Engine.QueryInterface(data[i].target, IID_Position);
 			if (!cmpPosition || !cmpPosition.IsInWorld())
-			{
-				command = "walk";
-			}
+				command = command == "gather" ? "gather-near-position" : "walk";
 		}
 
 		switch (command)
 		{
 		case "gather":
-			ret.push( {
+			ret.push({
+				"type": "gather",
+				"entities": spawnedEnts,
+				"target": data[i].target,
+				"queued": true
+			});
+			break;
+		case "gather-near-position":
+			ret.push({
 				"type": "gather-near-position",
 				"entities": spawnedEnts,
 				"x": rallyPos[i].x,
@@ -42,18 +40,18 @@ function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 				"queued": true
 			});
 			break;
-		case "repair": 
+		case "repair":
 		case "build":
-			ret.push( {
+			ret.push({
 				"type": "repair",
 				"entities": spawnedEnts,
 				"target": data[i].target,
 				"queued": true,
-				"autocontinue": (i == rallyPos.length-1)
+				"autocontinue": i == rallyPos.length - 1
 			});
 			break;
-		case "garrison": 
-			ret.push( {
+		case "garrison":
+			ret.push({
 				"type": "garrison",
 				"entities": spawnedEnts,
 				"target": data[i].target,
@@ -61,7 +59,7 @@ function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 			});
 			break;
 		case "attack-walk":
-			ret.push( {
+			ret.push({
 				"type": "attack-walk",
 				"entities": spawnedEnts,
 				"x": rallyPos[i].x,
@@ -70,8 +68,19 @@ function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 				"queued": true
 			});
 			break;
+		case "patrol":
+			ret.push({
+				"type": "patrol",
+				"entities": spawnedEnts,
+				"x": rallyPos[i].x,
+				"z": rallyPos[i].z,
+				"target": data[i].target,
+				"targetClasses": data[i].targetClasses,
+				"queued": true
+			});
+			break;
 		case "attack":
-			ret.push( {
+			ret.push({
 				"type": "attack",
 				"entities": spawnedEnts,
 				"target": data[i].target,
@@ -79,7 +88,7 @@ function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 			});
 			break;
 		case "trade":
-			ret.push( {
+			ret.push({
 				"type": "setup-trade-route",
 				"entities": spawnedEnts,
 				"source": data[i].source,
@@ -89,7 +98,7 @@ function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 			});
 			break;
 		default:
-			ret.push( {
+			ret.push({
 				"type": "walk",
 				"entities": spawnedEnts,
 				"x": rallyPos[i].x,
@@ -104,18 +113,19 @@ function GetRallyPointCommands(cmpRallyPoint, spawnedEnts)
 	// (we do not modify the RallyPoint before, as we want it to be displayed with all way-points)
 	if (ret.length > 1 && ret[ret.length-1].type == "setup-trade-route")
 	{
+		let route = [];
+		let waypoints = ret.length - 1;
 
-		var route = [];
-		var waypoints = ret.length - 1;
-		for (var i = 0; i < waypoints; ++i)
+		for (let i = 0; i < waypoints; ++i)
 		{
 			if (ret[i].type != "walk")
 			{
 				route = undefined;
 				break;
 			}
-			route.push( {"x": ret[i].x, "z": ret[i].z} );
+			route.push({ "x": ret[i].x, "z": ret[i].z });
 		}
+
 		if (route && route.length > 0)
 		{
 			ret.splice(0, waypoints);

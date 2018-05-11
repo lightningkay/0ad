@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -156,6 +156,17 @@ bool JSI_IGUIObject::getProperty(JSContext* cx, JS::HandleObject obj, JS::Handle
 			break;
 		}
 
+		case GUIST_uint:
+		{
+			u32 value;
+			GUI<u32>::GetSetting(e, propName, value);
+			if (value >= std::numeric_limits<u32>::max())
+				LOGERROR("Integer overflow on converting to GUIST_uint");
+			else
+				vp.set(JS::Int32Value(value));
+			break;
+		}
+
 		case GUIST_float:
 		{
 			float value;
@@ -284,17 +295,15 @@ bool JSI_IGUIObject::getProperty(JSContext* cx, JS::HandleObject obj, JS::Handle
 		{
 			CGUIList value;
 			GUI<CGUIList>::GetSetting(e, propName, value);
+			ScriptInterface::ToJSVal(cx, vp, value.m_Items);
+			break;
+		}
 
-			JS::RootedObject obj(cx, JS_NewArrayObject(cx, JS::HandleValueArray::empty()));
-			vp.setObject(*obj);
-
-			for (u32 i = 0; i < value.m_Items.size(); ++i)
-			{
-				JS::RootedValue val(cx);
-				ScriptInterface::ToJSVal(cx, &val, value.m_Items[i].GetOriginalString());
-				JS_SetElement(cx, obj, i, val);
-			}
-
+		case GUIST_CGUISeries:
+		{
+			CGUISeries value;
+			GUI<CGUISeries>::GetSetting(e, propName, value);
+			ScriptInterface::ToJSVal(cx, vp, value.m_Series);
 			break;
 		}
 
@@ -454,6 +463,19 @@ bool JSI_IGUIObject::setProperty(JSContext* cx, JS::HandleObject obj, JS::Handle
 		break;
 	}
 
+	case GUIST_uint:
+	{
+		u32 value;
+		if (ScriptInterface::FromJSVal(cx, vp, value))
+			GUI<u32>::SetSetting(e, propName, value);
+		else
+		{
+			JS_ReportError(cx, "Cannot convert value to u32");
+			return false;
+		}
+		break;
+	}
+
 	case GUIST_float:
 	{
 		double value;
@@ -556,35 +578,27 @@ bool JSI_IGUIObject::setProperty(JSContext* cx, JS::HandleObject obj, JS::Handle
 
 	case GUIST_CGUIList:
 	{
-		u32 length;
-		if (!vp.isObject() || !JS_GetArrayLength(cx, vpObj, &length))
+		CGUIList list;
+		if (ScriptInterface::FromJSVal(cx, vp, list.m_Items))
+			GUI<CGUIList>::SetSetting(e, propName, list);
+		else
 		{
-			JS_ReportError(cx, "List only accepts a GUIList object");
+			JS_ReportError(cx, "Failed to get list '%s'", propName.c_str());
 			return false;
 		}
+		break;
+	}
 
-		CGUIList list;
-
-		for (u32 i = 0; i < length; ++i)
+	case GUIST_CGUISeries:
+	{
+		CGUISeries series;
+		if (ScriptInterface::FromJSVal(cx, vp, series.m_Series))
+			GUI<CGUISeries>::SetSetting(e, propName, series);
+		else
 		{
-			JS::RootedValue element(cx);
-			if (!JS_GetElement(cx, vpObj, i, &element))
-			{
-				JS_ReportError(cx, "Failed to get list element");
-				return false;
-			}
-
-			std::wstring value;
-			if (!ScriptInterface::FromJSVal(cx, element, value))
-				return false;
-
-			CGUIString str;
-			str.SetValue(value);
-
-			list.m_Items.push_back(str);
+			JS_ReportError(cx, "Invalid value for chart series '%s'", propName.c_str());
+			return false;
 		}
-
-		GUI<CGUIList>::SetSetting(e, propName, list);
 		break;
 	}
 
@@ -597,7 +611,7 @@ bool JSI_IGUIObject::setProperty(JSContext* cx, JS::HandleObject obj, JS::Handle
 }
 
 
-bool JSI_IGUIObject::construct(JSContext* cx, uint argc, jsval* vp)
+bool JSI_IGUIObject::construct(JSContext* cx, uint argc, JS::Value* vp)
 {
 	JSAutoRequest rq(cx);
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
@@ -624,7 +638,7 @@ void JSI_IGUIObject::init(ScriptInterface& scriptInterface)
 	scriptInterface.DefineCustomObjectType(&JSI_class, construct, 1, JSI_props, JSI_methods, NULL, NULL);
 }
 
-bool JSI_IGUIObject::toString(JSContext* cx, uint UNUSED(argc), jsval* vp)
+bool JSI_IGUIObject::toString(JSContext* cx, uint UNUSED(argc), JS::Value* vp)
 {
 	JSAutoRequest rq(cx);
 	JS::CallReceiver rec = JS::CallReceiverFromVp(vp);
@@ -642,7 +656,7 @@ bool JSI_IGUIObject::toString(JSContext* cx, uint UNUSED(argc), jsval* vp)
 	return true;
 }
 
-bool JSI_IGUIObject::focus(JSContext* cx, uint UNUSED(argc), jsval* vp)
+bool JSI_IGUIObject::focus(JSContext* cx, uint UNUSED(argc), JS::Value* vp)
 {
 	JSAutoRequest rq(cx);
 	JS::CallReceiver rec = JS::CallReceiverFromVp(vp);
@@ -659,7 +673,7 @@ bool JSI_IGUIObject::focus(JSContext* cx, uint UNUSED(argc), jsval* vp)
 	return true;
 }
 
-bool JSI_IGUIObject::blur(JSContext* cx, uint UNUSED(argc), jsval* vp)
+bool JSI_IGUIObject::blur(JSContext* cx, uint UNUSED(argc), JS::Value* vp)
 {
 	JSAutoRequest rq(cx);
 	JS::CallReceiver rec = JS::CallReceiverFromVp(vp);
@@ -676,7 +690,7 @@ bool JSI_IGUIObject::blur(JSContext* cx, uint UNUSED(argc), jsval* vp)
 	return true;
 }
 
-bool JSI_IGUIObject::getComputedSize(JSContext* cx, uint UNUSED(argc), jsval* vp)
+bool JSI_IGUIObject::getComputedSize(JSContext* cx, uint UNUSED(argc), JS::Value* vp)
 {
 	JSAutoRequest rq(cx);
 	JS::CallReceiver rec = JS::CallReceiverFromVp(vp);

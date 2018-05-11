@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Wildfire Games
+/* Copyright (C) 2015 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -39,8 +39,8 @@ namespace gfx {
 
 std::wstring CardName()
 {
-	// GL_VENDOR+GL_RENDERER are good enough here, so we don't use wgfx_CardName,
-	// plus that can cause crashes with Nvidia Optimus and some netbooks
+	// GL_VENDOR+GL_RENDERER are good enough here, so we don't use WMI to detect the cards.
+	// On top of that WMI can cause crashes with Nvidia Optimus and some netbooks
 	// see http://trac.wildfiregames.com/ticket/1952
 	//     http://trac.wildfiregames.com/ticket/1575
 	wchar_t cardName[128];

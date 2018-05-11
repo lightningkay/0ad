@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ class TestComponentManager : public CxxTest::TestSuite
 public:
 	void setUp()
 	{
-		g_VFS = CreateVfs(20 * MiB);
+		g_VFS = CreateVfs();
 		TS_ASSERT_OK(g_VFS->Mount(L"", DataDir()/"mods"/"_test.sim", VFS_MOUNT_MUST_EXIST));
 		TS_ASSERT_OK(g_VFS->Mount(L"cache", DataDir()/"_testcache"));
 		CXeromyces::Startup();
@@ -837,7 +837,7 @@ entities:\n\
 		TS_ASSERT(man.AddComponent(man.GetSystemEntity(), CID_TemplateManager, noParam));
 		ICmpTemplateManager* tempMan = static_cast<ICmpTemplateManager*> (man.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager));
 
-		const CParamNode* testParam = tempMan->LoadTemplate(ent2, "template-serialize", -1);
+		const CParamNode* testParam = tempMan->LoadTemplate(ent2, "template-serialize");
 
 		man.AddComponent(hnd2, man.LookupCID("TestScript1_consts"), testParam->GetChild("TestScript1_consts"));
 
@@ -854,4 +854,26 @@ entities:\n\
 		TS_ASSERT(man2.DeserializeState(stateStream));
 		TS_ASSERT_EQUALS(static_cast<ICmpTest1*> (man2.QueryInterface(ent2, IID_Test1))->GetX(), 12347);
 	}
+
+	void test_dynamic_subscription()
+	{
+		CSimContext context;
+		CComponentManager man(context, g_ScriptRuntime);
+		man.LoadComponentTypes();
+
+		entity_id_t ent1 = 1;
+		CEntityHandle hnd1 = man.AllocateEntityHandle(ent1);
+
+		CParamNode noParam;
+
+		man.AddComponent(hnd1, CID_Test1A, noParam);
+		man.AddComponent(hnd1, CID_Test2A, noParam);
+
+		man.DynamicSubscriptionNonsync(MT_RenderSubmit, man.QueryInterface(ent1, IID_Test1), true);
+		man.DynamicSubscriptionNonsync(MT_RenderSubmit, man.QueryInterface(ent1, IID_Test2), true);
+
+		man.DestroyComponentsSoon(ent1);
+		man.FlushDestroyedComponents();
+	}
+
 };

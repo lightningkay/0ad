@@ -129,7 +129,8 @@
             {
                 "extractor": "javascript",
                 "filemasks": [
-                    "gui/lobby/**.js"
+                    "gui/lobby/**.js",
+                    "gui/prelobby/**.js"
                 ],
                 "options": {
                     "format": "javascript-format",
@@ -150,7 +151,8 @@
             {
                 "extractor": "xml",
                 "filemasks": [
-                    "gui/lobby/**.xml"
+                    "gui/lobby/**.xml",
+                    "gui/prelobby/**.xml"
                 ],
                 "options": {
                     "keywords": {
@@ -164,8 +166,8 @@
             {
                 "extractor": "txt",
                 "filemasks": [
-                    "gui/lobby/Terms_of_Service.txt",
-                    "gui/lobby/Terms_of_Use.txt"
+                    "gui/prelobby/Terms_of_Service.txt",
+                    "gui/prelobby/Terms_of_Use.txt"
                 ],
                 "options": {
                 }
@@ -238,13 +240,14 @@
                     "gui/common/**.js",
                     "gui/credits/**.js",
                     "gui/locale/**.js",
-                    "gui/msgbox/**.js",
                     "gui/options/**.js",
                     "gui/pregame/**.js",
+                    "gui/reference/common/**.js",
+                    "gui/reference/structree/**.js",
+                    "gui/reference/viewer/**.js",
                     "gui/replaymenu/**.js",
                     "gui/savedgames/**.js",
                     "gui/splashscreen/**.js",
-                    "gui/structree/**.js",
                     "gui/summary/**.js"
                 ],
                 "options": {
@@ -259,6 +262,7 @@
                         "markForPluralTranslation": [1, 2]
                     },
                     "commentTags": [
+                        "dennis-ignore:",
                         "Translation:"
                     ]
                 }
@@ -271,13 +275,13 @@
                     "gui/common/**.xml",
                     "gui/credits/**.xml",
                     "gui/locale/**.xml",
-                    "gui/msgbox/**.xml",
                     "gui/options/**.xml",
                     "gui/pregame/**.xml",
+                    "gui/reference/structree/**.xml",
+                    "gui/reference/viewer/**.xml",
                     "gui/replaymenu/**.xml",
                     "gui/savedgames/**.xml",
                     "gui/splashscreen/**.xml",
-                    "gui/structree/**.xml",
                     "gui/summary/**.xml"
                 ],
                 "options": {
@@ -289,7 +293,7 @@
                     }
                 }
             },
-			{
+            {
                 "extractor": "json",
                 "filemasks": [
                     "gui/credits/texts/**.json"
@@ -309,14 +313,57 @@
                 "options": {
                     "keywords": [
                         "label",
-                        "tooltip",
-                        "list"
+                        "tooltip"
                     ]
+                }
+            },
+            {
+                "extractor": "json",
+                "filemasks": [
+                    "simulation/data/resources/**.json"
+                ],
+                "options": {
+                    "keywords": [
+                        "description"
+                    ]
+                }
+            },
+            {
+                "extractor": "json",
+                "filemasks": [
+                    "simulation/data/resources/**.json"
+                ],
+                "options": {
+                    "keywords": [
+                        "name",
+                        "subtypes"
+                    ],
+                    "comments": [
+                        "Translation: Word as used at the beginning of a sentence or as a single-word sentence."
+                    ],
+                    "context": "firstWord"
+                }
+            },
+            {
+                "extractor": "json",
+                "filemasks": [
+                    "simulation/data/resources/**.json"
+                ],
+                "options": {
+                    "keywords": [
+                        "name",
+                        "subtypes"
+                    ],
+                    "comments": [
+                        "Translation: Word as used in the middle of a sentence (which may require using lowercase for your language)."
+                    ],
+                    "context": "withinSentence"
                 }
             },
             {
                 "extractor": "txt",
                 "filemasks": [
+                    "gui/gamesetup/**.txt",
                     "gui/splashscreen/splashscreen.txt",
                     "gui/text/tips/**.txt"
                 ],
@@ -341,6 +388,7 @@
                     "keywords": {
                         "GenericName": {},
                         "SpecificName": {},
+                        "History": {},
                         "VisibleClasses": {
                             "splitOnWhitespace": true
                         },
@@ -372,6 +420,7 @@
                     "keywords": {
                         "GenericName": {},
                         "SpecificName": {},
+                        "History": {},
                         "VisibleClasses": {
                             "splitOnWhitespace": true
                         },
@@ -410,6 +459,7 @@
                     "keywords": {
                         "GenericName": {},
                         "SpecificName": {},
+                        "History": {},
                         "VisibleClasses": {
                             "splitOnWhitespace": true
                         },
@@ -536,7 +586,16 @@
                     "context": "startingResources"
                  }
              },
-            {
+             {
+                "extractor": "json",
+                "filemasks": [
+                    "simulation/data/settings/trigger_difficulties.json"
+                ],
+                "options": {
+                    "keywords": ["Title", "Tooltip"]
+                }
+             },
+             {
                 "extractor": "json",
                 "filemasks": [
                     "simulation/data/settings/map_sizes.json"
@@ -544,7 +603,7 @@
                 "options": {
                     "keywords": [
                         "Name",
-                        "LongName"
+                        "Tooltip"
                     ]
                 }
             },
@@ -604,6 +663,62 @@
                 "filemasks": [
                     "maps/scenarios/**.xml",
                     "maps/skirmishes/**.xml"
+                ],
+                "options": {
+                    "keywords": {
+                        "ScriptSettings": {
+                            "extractJson": {
+                                "keywords": [
+                                    "Name",
+                                    "Description"
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "extractor": "json",
+                "filemasks": [
+                    "maps/random/rmbiome/**.json"
+                ],
+                "options": {
+                    "keywords": [
+                        "Title",
+                        "Description"
+                    ],
+                    "context": "biome definition"
+                }
+            }
+        ]
+    },
+    {
+        "output": "public-tutorials.pot",
+        "inputRoot": "..",
+        "project": "0 A.D. — Empires Ascendant",
+        "copyrightHolder": "Wildfire Games",
+        "rules": [
+            {
+                "extractor": "javascript",
+                "filemasks": [
+                    "maps/tutorials/**.js"
+                ],
+                "options": {
+                    "format": "javascript-format",
+                    "keywords": {
+                        "markForTranslation": [1],
+                        "markForTranslationWithContext": [[1], 2],
+                        "markForPluralTranslation": [1, 2]
+                    },
+                    "commentTags": [
+                        "Translation:"
+                    ]
+                }
+            },
+            {
+                "extractor": "xml",
+                "filemasks": [
+                    "maps/tutorials/**.xml"
                 ],
                 "options": {
                     "keywords": {

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@
 #include "simulation2/components/ICmpPlayer.h"
 #include "simulation2/components/ICmpPlayerManager.h"
 #include "simulation2/components/ICmpPosition.h"
+#include "simulation2/components/ICmpTerritoryDecayManager.h"
 #include "simulation2/components/ICmpTerritoryInfluence.h"
 #include "simulation2/helpers/Grid.h"
 #include "simulation2/helpers/Render.h"
@@ -60,6 +61,7 @@ public:
 	static void ClassInit(CComponentManager& componentManager)
 	{
 		componentManager.SubscribeGloballyToMessageType(MT_OwnershipChanged);
+		componentManager.SubscribeGloballyToMessageType(MT_PlayerColorChanged);
 		componentManager.SubscribeGloballyToMessageType(MT_PositionChanged);
 		componentManager.SubscribeGloballyToMessageType(MT_ValueModification);
 		componentManager.SubscribeToMessageType(MT_ObstructionMapShapeChanged);
@@ -82,8 +84,8 @@ public:
 	float m_BorderSeparation;
 
 	// Player ID   in bits 0-4 (TERRITORY_PLAYER_MASK)
-	// connected flag in bit 4 (TERRITORY_CONNECTED_MASK)
-	// blinking flag  in bit 5 (TERRITORY_BLINKING_MASK)
+	// connected flag in bit 5 (TERRITORY_CONNECTED_MASK)
+	// blinking flag  in bit 6 (TERRITORY_BLINKING_MASK)
 	// processed flag in bit 7 (TERRITORY_PROCESSED_MASK)
 	Grid<u8>* m_Territories;
 
@@ -100,6 +102,7 @@ public:
 	struct SBoundaryLine
 	{
 		bool blinking;
+		player_id_t owner;
 		CColor color;
 		SOverlayTexturedLine overlay;
 	};
@@ -124,7 +127,9 @@ public:
 		m_TriggerEvent = true;
 		m_EnableLineDebugOverlays = false;
 		m_DirtyID = 1;
+		m_DirtyBlinkingID = 1;
 		m_Visible = true;
+		m_ColorChanged = false;
 
 		m_AnimTime = 0.0;
 
@@ -170,6 +175,11 @@ public:
 		{
 			const CMessageOwnershipChanged& msgData = static_cast<const CMessageOwnershipChanged&> (msg);
 			MakeDirtyIfRelevantEntity(msgData.entity);
+			break;
+		}
+		case MT_PlayerColorChanged:
+		{
+			MakeDirty();
 			break;
 		}
 		case MT_PositionChanged:
@@ -245,8 +255,12 @@ public:
 	// To support lazy updates of territory render data,
 	// we maintain a DirtyID here and increment it whenever territories change;
 	// if a caller has a lower DirtyID then it needs to be updated.
+	// We also do the same thing for blinking updates using DirtyBlinkingID.
 
 	size_t m_DirtyID;
+	size_t m_DirtyBlinkingID;
+
+	bool m_ColorChanged;
 
 	void MakeDirty()
 	{
@@ -256,14 +270,24 @@ public:
 		m_TriggerEvent = true;
 	}
 
-	virtual bool NeedUpdate(size_t* dirtyID)
+	virtual bool NeedUpdateTexture(size_t* dirtyID)
 	{
-		if (*dirtyID != m_DirtyID)
-		{
-			*dirtyID = m_DirtyID;
-			return true;
-		}
-		return false;
+		if (*dirtyID == m_DirtyID && !m_ColorChanged)
+			return false;
+
+		*dirtyID = m_DirtyID;
+		m_ColorChanged = false;
+		return true;
+	}
+
+	virtual bool NeedUpdateAI(size_t* dirtyID, size_t* dirtyBlinkingID) const
+	{
+		if (*dirtyID == m_DirtyID && *dirtyBlinkingID == m_DirtyBlinkingID)
+			return false;
+
+		*dirtyID = m_DirtyID;
+		*dirtyBlinkingID = m_DirtyBlinkingID;
+		return true;
 	}
 
 	void CalculateCostGrid();
@@ -284,6 +308,8 @@ public:
 	{
 		m_Visible = visible;
 	}
+
+	void UpdateColors();
 
 private:
 
@@ -444,7 +470,7 @@ void CCmpTerritoryManager::CalculateTerritories()
 		u8 owner = (u8)pair.first;
 		const std::vector<entity_id_t>& ents = pair.second;
 		// With 2^16 entities, we're safe against overflows as the weight is also limited to 2^16
-		ENSURE(ents.size() < 1 << 16); 
+		ENSURE(ents.size() < 1 << 16);
 		// Compute the influence map of the current entity, then add it to the player grid
 		for (entity_id_t ent : ents)
 		{
@@ -532,6 +558,15 @@ void CCmpTerritoryManager::CalculateTerritories()
 				++m_TerritoryCellCounts[owner];
 		);
 	}
+
+	// Then recomputes the blinking tiles
+       	CmpPtr<ICmpTerritoryDecayManager> cmpTerritoryDecayManager(GetSystemEntity());
+       	if (cmpTerritoryDecayManager)
+	{
+		size_t dirtyBlinkingID = m_DirtyBlinkingID;
+	       	cmpTerritoryDecayManager->SetBlinkingEntities();
+		m_DirtyBlinkingID = dirtyBlinkingID;
+	}
 }
 
 std::vector<STerritoryBoundary> CCmpTerritoryManager::ComputeBoundaries()
@@ -593,10 +628,11 @@ void CCmpTerritoryManager::UpdateBoundaryLines()
 		CColor color(1, 0, 1, 1);
 		CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(boundaries[i].owner));
 		if (cmpPlayer)
-			color = cmpPlayer->GetColor();
+			color = cmpPlayer->GetDisplayedColor();
 
 		m_BoundaryLines.push_back(SBoundaryLine());
 		m_BoundaryLines.back().blinking = boundaries[i].blinking;
+		m_BoundaryLines.back().owner = boundaries[i].owner;
 		m_BoundaryLines.back().color = color;
 		m_BoundaryLines.back().overlay.m_SimContext = &GetSimContext();
 		m_BoundaryLines.back().overlay.m_TextureBase = textureBase;
@@ -662,7 +698,7 @@ void CCmpTerritoryManager::RenderSubmit(SceneCollector& collector)
 
 	for (size_t i = 0; i < m_BoundaryLines.size(); ++i)
 		collector.Submit(&m_BoundaryLines[i].overlay);
-	
+
 	for (size_t i = 0; i < m_DebugBoundaryLineNodes.size(); ++i)
 		collector.Submit(&m_DebugBoundaryLineNodes[i]);
 
@@ -760,18 +796,42 @@ void CCmpTerritoryManager::SetTerritoryBlinking(entity_pos_t x, entity_pos_t z, 
 		else
 			continue;
 	);
+	++m_DirtyBlinkingID;
 	m_BoundaryLinesDirty = true;
 }
 
 bool CCmpTerritoryManager::IsTerritoryBlinking(entity_pos_t x, entity_pos_t z)
 {
+	CalculateTerritories();
+	if (!m_Territories)
+		return false;
+
 	u16 i, j;
 	NearestTerritoryTile(x, z, i, j, m_Territories->m_W, m_Territories->m_H);
 	return (m_Territories->get(i, j) & TERRITORY_BLINKING_MASK) != 0;
 }
 
+void CCmpTerritoryManager::UpdateColors()
+{
+	m_ColorChanged = true;
+
+	CmpPtr<ICmpPlayerManager> cmpPlayerManager(GetSystemEntity());
+	if (!cmpPlayerManager)
+		return;
+
+	for (SBoundaryLine& boundaryLine : m_BoundaryLines)
+	{
+		CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(boundaryLine.owner));
+		if (!cmpPlayer)
+			continue;
+
+		boundaryLine.color = cmpPlayer->GetDisplayedColor();
+		boundaryLine.overlay.m_Color = boundaryLine.color;
+	}
+}
+
 TerritoryOverlay::TerritoryOverlay(CCmpTerritoryManager& manager) :
-	TerrainTextureOverlay((float)Pathfinding::NAVCELLS_PER_TILE / ICmpTerritoryManager::NAVCELLS_PER_TERRITORY_TILE), 
+	TerrainTextureOverlay((float)Pathfinding::NAVCELLS_PER_TILE / ICmpTerritoryManager::NAVCELLS_PER_TERRITORY_TILE),
 	m_TerritoryManager(manager)
 { }
 

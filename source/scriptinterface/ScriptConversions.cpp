@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -17,13 +17,12 @@
 
 #include "precompiled.h"
 
-#include "ScriptInterface.h"
+#include "ScriptConversions.h"
 
 #include "graphics/Entity.h"
+#include "maths/Vector2D.h"
 #include "ps/utf16string.h"
-#include "ps/CLogger.h"
 #include "ps/CStr.h"
-#include "scriptinterface/ScriptExtraHeaders.h" // for typed arrays
 
 #define FAIL(msg) STMT(JS_ReportError(cx, msg); return false)
 
@@ -116,53 +115,6 @@ template<> bool ScriptInterface::FromJSVal<u8>(JSContext* cx, JS::HandleValue v,
 	out = (u8)tmp;
 	return true;
 }
-
-template<> bool ScriptInterface::FromJSVal<long>(JSContext* cx, JS::HandleValue v, long& out)
-{
-	JSAutoRequest rq(cx);
-	i64 tmp;
-	bool ok = JS::ToInt64(cx, v, &tmp);
-	out = (long)tmp;
-	return ok;
-}
-
-template<> bool ScriptInterface::FromJSVal<unsigned long>(JSContext* cx, JS::HandleValue v, unsigned long& out)
-{
-	JSAutoRequest rq(cx);
-	u64 tmp;
-	bool ok = JS::ToUint64(cx, v, &tmp);
-	out = (unsigned long)tmp;
-	return ok;
-}
-
-// see comment below (where the same preprocessor condition is used)
-#if MSC_VERSION && ARCH_AMD64
-
-template<> bool ScriptInterface::FromJSVal<size_t>(JSContext* cx, JS::HandleValue v, size_t& out)
-{
-	JSAutoRequest rq(cx);
-	int tmp;
-	if(!FromJSVal<int>(cx, v, tmp))
-		return false;
-	if(temp < 0)
-		return false;
-	out = (size_t)tmp;
-	return true;
-}
-
-template<> bool ScriptInterface::FromJSVal<ssize_t>(JSContext* cx, JS::HandleValue v, ssize_t& out)
-{
-	JSAutoRequest rq(cx);
-	int tmp;
-	if(!FromJSVal<int>(cx, v, tmp))
-		return false;
-	if(tmp < 0)
-		return false;
-	out = (ssize_t)tmp;
-	return true;
-}
-
-#endif
 
 template<> bool ScriptInterface::FromJSVal<std::wstring>(JSContext* cx, JS::HandleValue v, std::wstring& out)
 {
@@ -295,35 +247,6 @@ template<> void ScriptInterface::ToJSVal<u32>(JSContext* UNUSED(cx), JS::Mutable
 	ret.set(JS::NumberValue(val));
 }
 
-template<> void ScriptInterface::ToJSVal<long>(JSContext* UNUSED(cx), JS::MutableHandleValue ret, const long& val)
-{
-	ret.set(JS::NumberValue((int)val));
-}
-
-template<> void ScriptInterface::ToJSVal<unsigned long>(JSContext* UNUSED(cx), JS::MutableHandleValue ret, const unsigned long& val)
-{
-	ret.set(JS::NumberValue((int)val));
-}
-
-// (s)size_t are considered to be identical to (unsigned) int by GCC and 
-// their specializations would cause conflicts there. On x86_64 GCC, s/size_t 
-// is equivalent to (unsigned) long, but the same solution applies; use the 
-// long and unsigned long specializations instead of s/size_t. 
-// for some reason, x64 MSC treats size_t as distinct from unsigned long:
-#if MSC_VERSION && ARCH_AMD64
-
-template<> void ScriptInterface::ToJSVal<size_t>(JSContext* UNUSED(cx), JS::MutableHandleValue ret, const size_t& val)
-{
-	ret.set(JS::NumberValue((int)val));
-}
-
-template<> void ScriptInterface::ToJSVal<ssize_t>(JSContext* UNUSED(cx), JS::MutableHandleValue ret, const ssize_t& val)
-{
-	ret.set(JS::NumberValue((int)val));
-}
-
-#endif
-
 template<> void ScriptInterface::ToJSVal<std::wstring>(JSContext* cx, JS::MutableHandleValue ret, const std::wstring& val)
 {
 	JSAutoRequest rq(cx);
@@ -376,71 +299,18 @@ template<> void ScriptInterface::ToJSVal<CStr8>(JSContext* cx, JS::MutableHandle
 }
 
 ////////////////////////////////////////////////////////////////
-// Compound types:
-
-template<typename T> static void ToJSVal_vector(JSContext* cx, JS::MutableHandleValue ret, const std::vector<T>& val)
-{
-	JSAutoRequest rq(cx);
-	JS::RootedObject obj(cx, JS_NewArrayObject(cx, 0));
-	if (!obj)
-	{
-		ret.setUndefined();
-		return;
-	}
-	for (u32 i = 0; i < val.size(); ++i)
-	{
-		JS::RootedValue el(cx);
-		ScriptInterface::ToJSVal<T>(cx, &el, val[i]);
-		JS_SetElement(cx, obj, i, el);
-	}
-	ret.setObject(*obj);
-}
-
-template<typename T> static bool FromJSVal_vector(JSContext* cx, JS::HandleValue v, std::vector<T>& out)
-{
-	JSAutoRequest rq(cx);
-	JS::RootedObject obj(cx);
-	if (!v.isObject())
-		FAIL("Argument must be an array");
-	obj = &v.toObject();
-	if (!(JS_IsArrayObject(cx, obj) || JS_IsTypedArrayObject(obj)))
-		FAIL("Argument must be an array");
-	
-	u32 length;
-	if (!JS_GetArrayLength(cx, obj, &length))
-		FAIL("Failed to get array length");
-	out.reserve(length);
-	for (u32 i = 0; i < length; ++i)
-	{
-		JS::RootedValue el(cx);
-		if (!JS_GetElement(cx, obj, i, &el))
-			FAIL("Failed to read array element");
-		T el2;
-		if (!ScriptInterface::FromJSVal<T>(cx, el, el2))
-			return false;
-		out.push_back(el2);
-	}
-	return true;
-}
-
+// Compound types
 // Instantiate various vector types:
 
-#define VECTOR(T) \
-	template<> void ScriptInterface::ToJSVal<std::vector<T> >(JSContext* cx, JS::MutableHandleValue ret, const std::vector<T>& val) \
-	{ \
-		ToJSVal_vector(cx, ret, val); \
-	} \
-	template<> bool ScriptInterface::FromJSVal<std::vector<T> >(JSContext* cx, JS::HandleValue v, std::vector<T>& out) \
-	{ \
-		return FromJSVal_vector(cx, v, out); \
-	}
-
-VECTOR(int)
-VECTOR(u32)
-VECTOR(u16)
-VECTOR(std::string)
-VECTOR(std::wstring)
-VECTOR(CStr8)
+JSVAL_VECTOR(int)
+JSVAL_VECTOR(u32)
+JSVAL_VECTOR(u16)
+JSVAL_VECTOR(std::string)
+JSVAL_VECTOR(std::wstring)
+JSVAL_VECTOR(std::vector<std::wstring>)
+JSVAL_VECTOR(CStr8)
+JSVAL_VECTOR(std::vector<CStr8>)
+JSVAL_VECTOR(std::vector<std::string>)
 
 
 class IComponent;
@@ -452,4 +322,26 @@ template<> void ScriptInterface::ToJSVal<std::vector<IComponent*> >(JSContext* c
 template<> bool ScriptInterface::FromJSVal<std::vector<Entity> >(JSContext* cx, JS::HandleValue v, std::vector<Entity>& out)
 {
 	return FromJSVal_vector(cx, v, out);
+}
+
+template<> void ScriptInterface::ToJSVal<CVector2D>(JSContext* cx, JS::MutableHandleValue ret, const CVector2D& val)
+{
+	std::vector<float> vec = {val.X, val.Y};
+	ToJSVal_vector(cx, ret, vec);
+}
+
+template<> bool ScriptInterface::FromJSVal<CVector2D>(JSContext* cx, JS::HandleValue v, CVector2D& out)
+{
+	std::vector<float> vec;
+
+	if (!FromJSVal_vector(cx, v, vec))
+		return false;
+
+	if (vec.size() != 2)
+		return false;
+
+	out.X = vec[0];
+	out.Y = vec[1];
+
+	return true;
 }

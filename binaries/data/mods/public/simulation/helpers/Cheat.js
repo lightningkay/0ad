@@ -50,7 +50,7 @@ function Cheat(input)
 	case "defeatplayer":
 		cmpPlayer = QueryPlayerIDInterface(input.parameter);
 		if (cmpPlayer)
-			cmpPlayer.SetState("defeated");
+			cmpPlayer.SetState("defeated", markForTranslation("%(player)s has been defeated (cheat)."));
 		return;
 	case "createunits":
 		var cmpProductionQueue = input.selected.length && Engine.QueryInterface(input.selected[0], IID_ProductionQueue);
@@ -88,10 +88,10 @@ function Cheat(input)
 		else
 			return;
 
-		// check if specialised tech exists (like phase_town_athen)
-		var cmpDataTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_DataTemplateManager);
-		if (cmpDataTemplateManager.ListAllTechs().indexOf(parameter + "_" + cmpPlayer.civ) > -1)
+		if (TechnologyTemplates.Has(parameter + "_" + cmpPlayer.civ))
 			parameter += "_" + cmpPlayer.civ;
+		else
+			parameter += "_generic";
 
 		Cheat({ "player": input.player, "action": "researchTechnology", "parameter": parameter, "selected": input.selected });
 		return;
@@ -138,17 +138,12 @@ function Cheat(input)
 			}
 		}
 
-		// check, if technology exists
-		var template = cmpTechnologyManager.GetTechnologyTemplate(techname);
-		if (!template)
-			return;
-
-		// check, if technology is already researched
-		if (!cmpTechnologyManager.IsTechnologyResearched(techname))
+		if (TechnologyTemplates.Has(techname) &&
+		    !cmpTechnologyManager.IsTechnologyResearched(techname))
 			cmpTechnologyManager.ResearchTechnology(techname);
 		return;
 	case "metaCheat":
-		for (let resource of ["food", "wood", "metal", "stone"])
+		for (let resource of Resources.GetCodes())
 			Cheat({ "player": input.player, "action": "addresource", "text": resource, "parameter": input.parameter });
 		Cheat({ "player": input.player, "action": "maxpopulation" });
 		Cheat({ "player": input.player, "action": "changemaxpopulation" });
@@ -156,6 +151,16 @@ function Cheat(input)
 		for (let i=0; i<2; ++i)
 			Cheat({ "player": input.player, "action": "changephase", "selected": input.selected });
 		return;
+	case "playRetro":
+		let play = input.parameter.toLowerCase() != "off";
+		cmpGuiInterface.PushNotification({
+			"type": "play-tracks",
+			"tracks": play && input.parameter.split(" "),
+			"lock": play,
+			"players": [input.player]
+		});
+		return;
+
 	default:
 		warn("Cheat '" + input.action + "' is not implemented");
 		return;

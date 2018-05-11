@@ -9,24 +9,14 @@ const g_MapSizes = prepareForDropdown(g_Settings && g_Settings.MapSizes);
 const g_MapTypes = prepareForDropdown(g_Settings && g_Settings.MapTypes);
 
 /**
- * Whether or not to display timestamps in the chat window.
+ * Used for civ settings display of the selected game.
  */
-const g_ShowTimestamp = Engine.ConfigDB_GetValue("user", "lobby.chattimestamp") == "true";
-
-/**
- * Mute clients who exceed the rate of 1 message per second for this time
- */
-const g_SpamBlockTimeframe = 5;
-
-/**
- * Mute spammers for this time.
- */
-const g_SpamBlockDuration = 30;
+const g_CivData = loadCivData(false, false);
 
 /**
  * A symbol which is prepended to the username of moderators.
  */
-const g_ModeratorPrefix = "@";
+var g_ModeratorPrefix = "@";
 
 /**
  * Current username. Cannot contain whitespace.
@@ -34,23 +24,29 @@ const g_ModeratorPrefix = "@";
 const g_Username = Engine.LobbyGetNick();
 
 /**
+ * Lobby server address to construct host JID.
+ */
+const g_LobbyServer = Engine.ConfigDB_GetValue("user", "lobby.server");
+
+/**
  * Current games will be listed in these colors.
  */
-const g_GameColors = {
+var g_GameColors = {
 	"init": "0 219 0",
 	"waiting": "255 127 0",
-	"running": "219 0 0"
+	"running": "219 0 0",
+	"incompatible": "gray"
 };
 
 /**
  * Initial sorting order of the gamelist.
  */
-const g_GameStatusOrder = ["init", "waiting", "running"];
+var g_GameStatusOrder = ["init", "waiting", "running", "incompatible"];
 
 /**
  * The playerlist will be assembled using these values.
  */
-const g_PlayerStatuses = {
+var g_PlayerStatuses = {
 	"available": { "color": "0 219 0",     "status": translate("Online") },
 	"away":      { "color": "229 76 13",   "status": translate("Away") },
 	"playing":   { "color": "200 0 0",     "status": translate("Busy") },
@@ -58,20 +54,36 @@ const g_PlayerStatuses = {
 	"unknown":   { "color": "178 178 178", "status": translateWithContext("lobby presence", "Unknown") }
 };
 
+var g_RoleNames = {
+	"moderator": translate("Moderator"),
+	"participant": translate("Player"),
+	"visitor": translate("Muted Player")
+};
+
 /**
  * Color for error messages in the chat.
  */
-const g_SystemColor = "150 0 0";
+var g_SystemColor = "150 0 0";
 
 /**
  * Color for private messages in the chat.
  */
-const g_PrivateMessageColor = "0 150 0";
+var g_PrivateMessageColor = "0 150 0";
 
 /**
  * Used for highlighting the sender of chat messages.
  */
-const g_SenderFont = "sans-bold-13";
+var g_SenderFont = "sans-bold-13";
+
+/**
+ * Color to highlight chat commands in the explanation.
+ */
+var g_ChatCommandColor = "200 200 255";
+
+/**
+ * Indicates if the lobby is opened as a dialog or window.
+ */
+var g_Dialog = false;
 
 /**
  * All chat messages received since init (i.e. after lobby join and after returning from a game).
@@ -87,14 +99,7 @@ var g_UserRating = "";
 /**
  * All games currently running.
  */
-var g_GameList = {};
-
-/**
- * Remembers how many messages were sent by each user since the last reset.
- *
- * For example { "username": [numMessagesSinceReset, lastReset, timeBlocked] }
- */
-var g_SpamMonitor = {};
+var g_GameList = [];
 
 /**
  * Used to restore the selection after updating the playerlist.
@@ -112,90 +117,276 @@ var g_SelectedGameIP = "";
 var g_SelectedGamePort = "";
 
 /**
- * Notifications sent by XmppClient.cpp
+ * Whether the current user has been kicked or banned.
+ */
+var g_Kicked = false;
+
+/**
+ * Whether the player was already asked to reconnect to the lobby.
+ * Ensures that no more than one message box is opened at a time.
+ */
+var g_AskedReconnect = false;
+
+/**
+ * Processing of notifications sent by XmppClient.cpp.
+ *
+ * @returns true if the playerlist GUI must be updated.
  */
 var g_NetMessageTypes = {
 	"system": {
 		// Three cases are handled in prelobby.js
-		"registered": msg => {
-		},
+		"registered": msg => false,
 		"connected": msg => {
+
+			g_AskedReconnect = false;
+			updateConnectedState();
+			return false;
 		},
 		"disconnected": msg => {
+
 			updateGameList();
 			updateLeaderboard();
-			updatePlayerList();
-			Engine.GetGUIObjectByName("hostButton").enabled = false;
+			updateConnectedState();
 
-			addChatMessage({
-				"from": "system",
-				"text": translate("Disconnected.") + msg.text,
-				"color": g_SystemColor
-			});
+			if (!g_Kicked)
+			{
+				addChatMessage({
+					"from": "system",
+					"time": msg.time,
+					"text": translate("Disconnected.") + " " + msg.reason
+				});
+				reconnectMessageBox();
+			}
+
+			return true;
 		},
 		"error": msg => {
 			addChatMessage({
 				"from": "system",
-				"text": msg.text,
-				"color": g_SystemColor
+				"time": msg.time,
+				"text": msg.text
 			});
+			return false;
 		}
 	},
 	"chat": {
 		"subject": msg => {
-			updateSubject(msg.text);
+			updateSubject(msg.subject);
+
+			if (msg.nick)
+				addChatMessage({
+					"text": "/special " + sprintf(translate("%(nick)s changed the lobby subject to %(subject)s"), {
+						"nick": msg.nick,
+						"subject": msg.subject
+					}),
+					"time": msg.time,
+					"isSpecial": true
+				});
+			return false;
 		},
 		"join": msg => {
 			addChatMessage({
 				"text": "/special " + sprintf(translate("%(nick)s has joined."), {
-					"nick": msg.text
+					"nick": msg.nick
 				}),
+				"time": msg.time,
 				"isSpecial": true
 			});
-			Engine.SendGetRatingList();
+			return true;
 		},
 		"leave": msg => {
 			addChatMessage({
 				"text": "/special " + sprintf(translate("%(nick)s has left."), {
-					"nick": msg.text
+					"nick": msg.nick
 				}),
+				"time": msg.time,
 				"isSpecial": true
 			});
+
+			if (msg.nick == g_Username)
+				Engine.DisconnectXmppClient();
+
+			return true;
 		},
-		"presence": msg => {
+		"presence": msg => true,
+		"role": msg => {
+			Engine.GetGUIObjectByName("chatInput").hidden = Engine.LobbyGetPlayerRole(g_Username) == "visitor";
+
+			let me = g_Username == msg.nick;
+			let newrole = Engine.LobbyGetPlayerRole(msg.nick);
+			let txt =
+				newrole == "visitor" ?
+					me ?
+						translate("You have been muted.") :
+						translate("%(nick)s has been muted.") :
+				newrole == "moderator" ?
+					me ?
+						translate("You are now a moderator.") :
+						translate("%(nick)s is now a moderator.") :
+				msg.oldrole == "visitor" ?
+					me ?
+						translate("You have been unmuted.") :
+						translate("%(nick)s has been unmuted.") :
+					me ?
+						translate("You are not a moderator anymore.") :
+						translate("%(nick)s is not a moderator anymore.");
+
+			addChatMessage({
+				"text": "/special " + sprintf(txt, { "nick": msg.nick }),
+				"time": msg.time,
+				"isSpecial": true
+			});
+
+			if (g_SelectedPlayer == msg.nick)
+				updateUserRoleText(g_SelectedPlayer);
+
+			return false;
 		},
 		"nick": msg => {
 			addChatMessage({
 				"text": "/special " + sprintf(translate("%(oldnick)s is now known as %(newnick)s."), {
-					"oldnick": msg.text,
-					"newnick": msg.data
+					"oldnick": msg.oldnick,
+					"newnick": msg.newnick
 				}),
+				"time": msg.time,
 				"isSpecial": true
 			});
+			return true;
+		},
+		"kicked": msg => {
+			handleKick(false, msg.nick, msg.reason, msg.time, msg.historic);
+			return true;
+		},
+		"banned": msg => {
+			handleKick(true, msg.nick, msg.reason, msg.time, msg.historic);
+			return true;
 		},
 		"room-message": msg => {
 			addChatMessage({
 				"from": escapeText(msg.from),
 				"text": escapeText(msg.text),
-				"datetime": msg.datetime
+				"time": msg.time,
+				"historic": msg.historic
 			});
+			return false;
 		},
 		"private-message": msg => {
-			if (Engine.LobbyGetPlayerRole(msg.from) == "moderator")
+			// Announcements and the Message of the Day are sent by the server directly
+			if (!msg.from)
+				messageBox(
+					400, 250,
+					msg.text.trim(),
+					translate("Notice")
+				);
+
+			// We intend to not support private messages between users
+			if (!msg.from || Engine.LobbyGetPlayerRole(msg.from) == "moderator")
 				// some XMPP clients send trailing whitespace
 				addChatMessage({
-					"from": escapeText(msg.from),
+					"from": escapeText(msg.from || "system"),
 					"text": escapeText(msg.text.trim()),
-					"datetime": msg.datetime,
-					"private" : true
+					"time": msg.time,
+					"historic": msg.historic,
+					"private": true
 				});
+			return false;
 		}
 	},
 	"game": {
-		"gamelist": msg => updateGameList(),
-		"profile": msg => updateProfile(),
-		"leaderboard": msg => updateLeaderboard(),
-		"ratinglist": msg => updatePlayerList()
+		"gamelist": msg => {
+			updateGameList();
+			return false;
+		},
+		"profile": msg => {
+			updateProfile();
+			return false;
+		},
+		"leaderboard": msg => {
+			updateLeaderboard();
+			return false;
+		},
+		"ratinglist": msg => {
+			return true;
+		}
+	}
+};
+
+/**
+ * Commands that can be entered by clients via chat input.
+ * A handler returns true if the user input should be sent as a chat message.
+ */
+var g_ChatCommands = {
+	"away": {
+		"description": translate("Set your state to 'Away'."),
+		"handler": args => {
+			Engine.LobbySetPlayerPresence("away");
+			return false;
+		}
+	},
+	"back": {
+		"description": translate("Set your state to 'Online'."),
+		"handler": args => {
+			Engine.LobbySetPlayerPresence("available");
+			return false;
+		}
+	},
+	"kick": {
+		"description": translate("Kick a specified user from the lobby. Usage: /kick nick reason"),
+		"handler": args => {
+			Engine.LobbyKick(args[0] || "", args[1] || "");
+			return false;
+		},
+		"moderatorOnly": true
+	},
+	"ban": {
+		"description": translate("Ban a specified user from the lobby. Usage: /ban nick reason"),
+		"handler": args => {
+			Engine.LobbyBan(args[0] || "", args[1] || "");
+			return false;
+		},
+		"moderatorOnly": true
+	},
+	"help": {
+		"description": translate("Show this help."),
+		"handler": args => {
+			let isModerator = Engine.LobbyGetPlayerRole(g_Username) == "moderator";
+			let text = translate("Chat commands:");
+			for (let command in g_ChatCommands)
+				if (!g_ChatCommands[command].moderatorOnly || isModerator)
+					// Translation: Chat command help format
+					text += "\n" + sprintf(translate("%(command)s - %(description)s"), {
+						"command": coloredText(command, g_ChatCommandColor),
+						"description": g_ChatCommands[command].description
+					});
+
+			addChatMessage({
+				"from": "system",
+				"text": text
+			});
+			return false;
+		}
+	},
+	"me": {
+		"description": translate("Send a chat message about yourself. Example: /me goes swimming."),
+		"handler": args => true
+	},
+	"say": {
+		"description": translate("Send text as a chat message (even if it starts with slash). Example: /say /help is a great command."),
+		"handler": args => true
+	},
+	"clear": {
+		"description": translate("Clear all chat scrollback."),
+		"handler": args => {
+			clearChatMessages();
+			return false;
+		}
+	},
+	"quit": {
+		"description": translate("Return to the main menu."),
+		"handler": args => {
+			leaveLobby();
+			return false;
+		}
 	}
 };
 
@@ -206,30 +397,131 @@ var g_NetMessageTypes = {
  */
 function init(attribs)
 {
+	g_Dialog = attribs && attribs.dialog;
+
 	if (!g_Settings)
 	{
-		returnToMainMenu();
+		leaveLobby();
 		return;
 	}
 
 	initMusic();
 	global.music.setState(global.music.states.MENU);
 
+	initDialogStyle();
 	initGameFilters();
+	updateConnectedState();
 
 	Engine.LobbySetPlayerPresence("available");
-	Engine.SendGetGameList();
 
 	// When rejoining the lobby after a game, we don't need to process presence changes
 	Engine.LobbyClearPresenceUpdates();
 	updatePlayerList();
 	updateSubject(Engine.LobbyGetRoomSubject());
+	updateLobbyColumns();
+
+	updateToggleBuddy();
+	Engine.GetGUIObjectByName("chatInput").tooltip = colorizeAutocompleteHotkey();
+
+	// Get all messages since the login
+	for (let msg of Engine.LobbyGuiPollHistoricMessages())
+		g_NetMessageTypes[msg.type][msg.level](msg);
+
+	if (!Engine.IsXmppClientConnected())
+		reconnectMessageBox();
 }
 
-function returnToMainMenu()
+function reconnectMessageBox()
 {
-	Engine.StopXmppClient();
-	Engine.SwitchGuiPage("page_pregame.xml");
+	if (g_AskedReconnect)
+		return;
+
+	g_AskedReconnect = true;
+
+	messageBox(
+		400, 200,
+		translate("You have been disconnected from the lobby. Do you want to reconnect?"),
+		translate("Confirmation"),
+		[translate("No"), translate("Yes")],
+		[null, Engine.ConnectXmppClient]);
+}
+
+/**
+ * Set style of GUI elements and the window style.
+ */
+function initDialogStyle()
+{
+	let lobbyWindow = Engine.GetGUIObjectByName("lobbyWindow");
+	lobbyWindow.sprite = g_Dialog ? "ModernDialog" : "ModernWindow";
+	lobbyWindow.size = g_Dialog ? "42 42 100%-42 100%-42" : "0 0 100% 100%";
+	Engine.GetGUIObjectByName("lobbyWindowTitle").size = g_Dialog ? "50%-128 -16 50%+128 16" : "50%-128 4 50%+128 36";
+
+	Engine.GetGUIObjectByName("leaveButton").caption = g_Dialog ?
+		translateWithContext("previous page", "Back") :
+		translateWithContext("previous page", "Main Menu");
+
+	Engine.GetGUIObjectByName("hostButton").hidden = g_Dialog;
+	Engine.GetGUIObjectByName("joinGameButton").hidden = g_Dialog;
+	Engine.GetGUIObjectByName("gameInfoEmpty").size = "0 0 100% 100%-24" + (g_Dialog ? "" : "-30");
+	Engine.GetGUIObjectByName("gameInfo").size = "0 0 100% 100%-24" + (g_Dialog ? "" : "-60");
+
+	Engine.GetGUIObjectByName("middlePanel").size = "20%+5 " + (g_Dialog ? "18" : "40") + " 100%-255 100%-20";
+	Engine.GetGUIObjectByName("rightPanel").size = "100%-250 " + (g_Dialog ? "18" : "40") + " 100%-20 100%-20";
+	Engine.GetGUIObjectByName("leftPanel").size = "20 " + (g_Dialog ? "18" : "40") + " 20% 100%-315";
+
+	if (g_Dialog)
+	{
+		Engine.GetGUIObjectByName("lobbyDialogToggle").onPress = leaveLobby;
+		Engine.GetGUIObjectByName("cancelDialog").onPress = leaveLobby;
+	}
+}
+
+/**
+ * Set style of GUI elements according to the connection state of the lobby.
+ */
+function updateConnectedState()
+{
+	Engine.GetGUIObjectByName("chatInput").hidden = !Engine.IsXmppClientConnected();
+
+	for (let button of ["host", "leaderboard", "userprofile", "toggleBuddy"])
+		Engine.GetGUIObjectByName(button + "Button").enabled = Engine.IsXmppClientConnected();
+}
+
+function updateLobbyColumns()
+{
+	let gameRating = Engine.ConfigDB_GetValue("user", "lobby.columns.gamerating") == "true";
+
+	// Only show the selected columns
+	let gamesBox = Engine.GetGUIObjectByName("gamesBox");
+	gamesBox.hidden_mapType = gameRating;
+	gamesBox.hidden_gameRating = !gameRating;
+
+	// Only show the filters of selected columns
+	let mapTypeFilter = Engine.GetGUIObjectByName("mapTypeFilter");
+	mapTypeFilter.hidden = gameRating;
+	let gameRatingFilter = Engine.GetGUIObjectByName("gameRatingFilter");
+	gameRatingFilter.hidden = !gameRating;
+
+	// Keep filters right above the according column
+	let playersNumberFilter = Engine.GetGUIObjectByName("playersNumberFilter");
+	let size = playersNumberFilter.size;
+	size.rleft = gameRating ? 74 : 90;
+	size.rright = gameRating ? 84 : 100;
+	playersNumberFilter.size = size;
+}
+
+function leaveLobby()
+{
+	if (g_Dialog)
+	{
+		Engine.LobbySetPlayerPresence("playing");
+		Engine.PopGuiPage();
+	}
+	else
+	{
+		Engine.StopXmppClient();
+		Engine.SwitchGuiPage("page_pregame.xml");
+	}
 }
 
 function initGameFilters()
@@ -247,6 +539,20 @@ function initGameFilters()
 	mapTypeFilter.list = [translateWithContext("map", "Any")].concat(g_MapTypes.Title);
 	mapTypeFilter.list_data = [""].concat(g_MapTypes.Name);
 
+	let gameRatingOptions = [">1500", ">1400", ">1300", ">1200", "<1200", "<1100", "<1000"];
+	gameRatingOptions = prepareForDropdown(gameRatingOptions.map(r => ({
+		"value": r,
+		"label": sprintf(
+			r[0] == ">" ?
+				translateWithContext("gamelist filter", "> %(rating)s") :
+				translateWithContext("gamelist filter", "< %(rating)s"),
+			{ "rating": r.substr(1) })
+	})));
+
+	let gameRatingFilter = Engine.GetGUIObjectByName("gameRatingFilter");
+	gameRatingFilter.list = [translateWithContext("map", "Any")].concat(gameRatingOptions.label);
+	gameRatingFilter.list_data = [""].concat(gameRatingOptions.value);
+
 	resetFilters();
 }
 
@@ -255,7 +561,8 @@ function resetFilters()
 	Engine.GetGUIObjectByName("mapSizeFilter").selected = 0;
 	Engine.GetGUIObjectByName("playersNumberFilter").selected = 0;
 	Engine.GetGUIObjectByName("mapTypeFilter").selected = g_MapTypes.Default;
-	Engine.GetGUIObjectByName("showFullFilter").checked = false;
+	Engine.GetGUIObjectByName("gameRatingFilter").selected = 0;
+	Engine.GetGUIObjectByName("filterOpenGames").checked = false;
 
 	applyFilters();
 }
@@ -277,7 +584,8 @@ function filterGame(game)
 	let mapSizeFilter = Engine.GetGUIObjectByName("mapSizeFilter");
 	let playersNumberFilter = Engine.GetGUIObjectByName("playersNumberFilter");
 	let mapTypeFilter = Engine.GetGUIObjectByName("mapTypeFilter");
-	let showFullFilter = Engine.GetGUIObjectByName("showFullFilter");
+	let gameRatingFilter = Engine.GetGUIObjectByName("gameRatingFilter");
+	let filterOpenGames = Engine.GetGUIObjectByName("filterOpenGames");
 
 	// We assume index 0 means display all for any given filter.
 	if (mapSizeFilter.selected != 0 &&
@@ -292,16 +600,65 @@ function filterGame(game)
 	    game.mapType != mapTypeFilter.list_data[mapTypeFilter.selected])
 		return true;
 
-	if (!showFullFilter.checked && game.maxnbp <= game.nbp)
+	if (filterOpenGames.checked && (game.nbp >= game.maxnbp || game.state != "init"))
 		return true;
+
+	if (gameRatingFilter.selected > 0)
+	{
+		let selected = gameRatingFilter.list_data[gameRatingFilter.selected];
+		if (selected.startsWith(">") && +selected.substr(1) >= game.gameRating ||
+		    selected.startsWith("<") && +selected.substr(1) <= game.gameRating)
+			return true;
+	}
 
 	return false;
 }
 
+function handleKick(banned, nick, reason, time, historic)
+{
+	let kickString = nick == g_Username ?
+		banned ?
+			translate("You have been banned from the lobby!") :
+			translate("You have been kicked from the lobby!") :
+		banned ?
+			translate("%(nick)s has been banned from the lobby.") :
+			translate("%(nick)s has been kicked from the lobby.");
+
+	if (reason)
+		reason = sprintf(translateWithContext("lobby kick", "Reason: %(reason)s"), {
+			"reason": reason
+		});
+
+	if (nick != g_Username)
+	{
+		addChatMessage({
+			"text": "/special " + sprintf(kickString, { "nick": nick }) + " " + reason,
+			"time": time,
+			"historic": historic,
+			"isSpecial": true
+		});
+		return;
+	}
+
+	addChatMessage({
+		"from": "system",
+		"time": time,
+		"text": kickString + " " + reason,
+	});
+
+	g_Kicked = true;
+
+	Engine.DisconnectXmppClient();
+
+	messageBox(
+		400, 250,
+		kickString + "\n" + reason,
+		banned ? translate("BANNED") : translate("KICKED")
+	);
+}
+
 /**
  * Update the subject GUI object.
- *
- * @param {string} newSubject
  */
 function updateSubject(newSubject)
 {
@@ -319,6 +676,19 @@ function updateSubject(newSubject)
 }
 
 /**
+ * Update the caption of the toggle buddy button.
+ */
+function updateToggleBuddy()
+{
+	let playerList = Engine.GetGUIObjectByName("playersBox");
+	let playerName = playerList.list[playerList.selected];
+
+	let toggleBuddyButton = Engine.GetGUIObjectByName("toggleBuddyButton");
+	toggleBuddyButton.caption = g_Buddies.indexOf(playerName) != -1 ? translate("Unmark as Buddy") : translate("Mark as Buddy");
+	toggleBuddyButton.enabled = playerName && playerName != g_Username;
+}
+
+/**
  * Do a full update of the player listing, including ratings from cached C++ information.
  */
 function updatePlayerList()
@@ -327,26 +697,34 @@ function updatePlayerList()
 	let sortBy = playersBox.selected_column || "name";
 	let sortOrder = playersBox.selected_column_order || 1;
 
-	if (playersBox.selected > -1)
-		g_SelectedPlayer = playersBox.list[playersBox.selected];
-
+	let buddyStatusList = [];
 	let playerList = [];
 	let presenceList = [];
 	let nickList = [];
 	let ratingList = [];
 
-	let cleanPlayerList = Engine.GetPlayerList().sort((a, b) => {
+	let cleanPlayerList = Engine.GetPlayerList().map(player => {
+		player.isBuddy = g_Buddies.indexOf(player.name) != -1;
+		return player;
+	}).sort((a, b) => {
 		let sortA, sortB;
+		let statusOrder = Object.keys(g_PlayerStatuses);
+		let statusA = statusOrder.indexOf(a.presence) + a.name.toLowerCase();
+		let statusB = statusOrder.indexOf(b.presence) + b.name.toLowerCase();
+
 		switch (sortBy)
 		{
+		case 'buddy':
+			sortA = (a.isBuddy ? 1 : 2) + statusA;
+			sortB = (b.isBuddy ? 1 : 2) + statusB;
+			break;
 		case 'rating':
 			sortA = +a.rating;
 			sortB = +b.rating;
 			break;
 		case 'status':
-			let statusOrder = Object.keys(g_PlayerStatuses);
-			sortA = statusOrder.indexOf(a.presence);
-			sortB = statusOrder.indexOf(b.presence);
+			sortA = statusA;
+			sortB = statusB;
 			break;
 		case 'name':
 		default:
@@ -371,65 +749,147 @@ function updatePlayerList()
 			warn("Unknown presence:" + player.presence);
 
 		let statusColor = g_PlayerStatuses[presence].color;
-		let coloredName = colorPlayerName((player.role == "moderator" ? g_ModeratorPrefix : "") + player.name);
-		let coloredPresence = '[color="' + statusColor + '"]' + g_PlayerStatuses[presence].status + "[/color]";
-		let coloredRating = '[color="' + statusColor + '"]' + rating + "[/color]";
-
-		playerList.push(coloredName);
-		presenceList.push(coloredPresence);
-		ratingList.push(coloredRating);
+		buddyStatusList.push(player.isBuddy ? coloredText(g_BuddySymbol, statusColor) : "");
+		playerList.push(colorPlayerName((player.role == "moderator" ? g_ModeratorPrefix : "") + player.name));
+		presenceList.push(coloredText(g_PlayerStatuses[presence].status, statusColor));
+		ratingList.push(coloredText(rating, statusColor));
 		nickList.push(player.name);
 	}
 
+	playersBox.list_buddy = buddyStatusList;
 	playersBox.list_name = playerList;
 	playersBox.list_status = presenceList;
 	playersBox.list_rating = ratingList;
 	playersBox.list = nickList;
 
-	// To reduce rating-server load, only send the GUI event if the selection actually changed
-	if (playersBox.selected != playersBox.list.indexOf(g_SelectedPlayer))
-		playersBox.selected = playersBox.list.indexOf(g_SelectedPlayer);
+	playersBox.selected = playersBox.list.indexOf(g_SelectedPlayer);
 }
 
 /**
- * Display the profile of the selected player.
+* Toggle buddy state for a player in playerlist within the user config
+*/
+function toggleBuddy()
+{
+	let playerList = Engine.GetGUIObjectByName("playersBox");
+	let name = playerList.list[playerList.selected];
+
+	if (!name || name == g_Username || name.indexOf(g_BuddyListDelimiter) != -1)
+		return;
+
+	let index = g_Buddies.indexOf(name);
+	if (index != -1)
+		g_Buddies.splice(index, 1);
+	else
+		g_Buddies.push(name);
+
+	updateToggleBuddy();
+
+	saveSettingAndWriteToUserConfig("lobby.buddies", g_Buddies.filter(nick => nick).join(g_BuddyListDelimiter) || g_BuddyListDelimiter);
+
+	updatePlayerList();
+	updateGameList();
+}
+
+/**
+ * Select the game where the selected player is currently playing, observing or offline.
+ * Selects in that order to account for players that occur in multiple games.
+ */
+function selectGameFromPlayername()
+{
+	if (!g_SelectedPlayer)
+		return;
+
+	let gameList = Engine.GetGUIObjectByName("gamesBox");
+	let foundAsObserver = false;
+
+	for (let i = 0; i < g_GameList.length; ++i)
+		for (let player of stringifiedTeamListToPlayerData(g_GameList[i].players))
+		{
+			if (g_SelectedPlayer != splitRatingFromNick(player.Name).nick)
+				continue;
+
+			gameList.auto_scroll = true;
+			if (player.Team == "observer")
+			{
+				foundAsObserver = true;
+				gameList.selected = i;
+			}
+			else if (!player.Offline)
+			{
+				gameList.selected = i;
+				return;
+			}
+			else if (!foundAsObserver)
+				gameList.selected = i;
+		}
+}
+
+function onPlayerListSelection()
+{
+	let playerList = Engine.GetGUIObjectByName("playersBox");
+	if (playerList.selected == playerList.list.indexOf(g_SelectedPlayer))
+		return;
+
+	g_SelectedPlayer = playerList.list[playerList.selected];
+	lookupSelectedUserProfile("playersBox");
+	updateToggleBuddy();
+	selectGameFromPlayername();
+}
+
+function setLeaderboardVisibility(visible)
+{
+	if (visible)
+		Engine.SendGetBoardList();
+
+	lookupSelectedUserProfile(visible ? "leaderboardBox" : "playersBox");
+	Engine.GetGUIObjectByName("leaderboard").hidden = !visible;
+	Engine.GetGUIObjectByName("fade").hidden = !visible;
+}
+
+function setUserProfileVisibility(visible)
+{
+	Engine.GetGUIObjectByName("profileFetch").hidden = !visible;
+	Engine.GetGUIObjectByName("fade").hidden = !visible;
+}
+
+/**
+ * Display the profile of the player in the user profile window.
+ */
+function lookupUserProfile()
+{
+	Engine.SendGetProfile(Engine.GetGUIObjectByName("fetchInput").caption);
+}
+
+/**
+ * Display the profile of the selected player in the main window.
  * Displays N/A for all stats until updateProfile is called when the stats
  * are actually received from the bot.
- *
- * @param {string} caller - From which screen is the user requesting data from?
  */
-function displayProfile(caller)
+function lookupSelectedUserProfile(guiObjectName)
 {
-	let playerList;
-
-	if (caller == "leaderboard")
-		playerList = Engine.GetGUIObjectByName("leaderboardBox");
-	else if (caller == "lobbylist")
-		playerList = Engine.GetGUIObjectByName("playersBox");
-	else if (caller == "fetch")
-	{
-		Engine.SendGetProfile(Engine.GetGUIObjectByName("fetchInput").caption);
-		return;
-	}
-	else
-		return;
-
+	let playerList = Engine.GetGUIObjectByName(guiObjectName);
 	let playerName = playerList.list[playerList.selected];
-	Engine.GetGUIObjectByName("profileArea").hidden = !playerName;
+
+	Engine.GetGUIObjectByName("profileArea").hidden = !playerName && !Engine.GetGUIObjectByName("usernameText").caption;
 	if (!playerName)
 		return;
 
 	Engine.SendGetProfile(playerName);
 
-	let isModerator = Engine.LobbyGetPlayerRole(playerName) == "moderator";
-	Engine.GetGUIObjectByName("usernameText").caption = playerList.list_name[playerList.selected];
-	Engine.GetGUIObjectByName("roleText").caption = isModerator ? translate("Moderator") : translate("Player");
+	Engine.GetGUIObjectByName("usernameText").caption = playerName;
 	Engine.GetGUIObjectByName("rankText").caption = translate("N/A");
 	Engine.GetGUIObjectByName("highestRatingText").caption = translate("N/A");
 	Engine.GetGUIObjectByName("totalGamesText").caption = translate("N/A");
 	Engine.GetGUIObjectByName("winsText").caption = translate("N/A");
 	Engine.GetGUIObjectByName("lossesText").caption = translate("N/A");
 	Engine.GetGUIObjectByName("ratioText").caption = translate("N/A");
+
+	updateUserRoleText(playerName);
+}
+
+function updateUserRoleText(playerName)
+{
+	Engine.GetGUIObjectByName("roleText").caption = g_RoleNames[Engine.LobbyGetPlayerRole(playerName) || "participant"];
 }
 
 /**
@@ -439,10 +899,7 @@ function updateProfile()
 {
 	let attributes = Engine.GetProfile()[0];
 
-	let user = sprintf(translate("%(nick)s (%(rating)s)"), {
-		"nick": attributes.player,
-		"rating": attributes.rating
-	});
+	let user = colorPlayerName(attributes.player, attributes.rating);
 
 	if (!Engine.GetGUIObjectByName("profileFetch").hidden)
 	{
@@ -451,7 +908,13 @@ function updateProfile()
 		Engine.GetGUIObjectByName("profileErrorText").hidden = profileFound;
 
 		if (!profileFound)
+		{
+			Engine.GetGUIObjectByName("profileErrorText").caption = sprintf(
+				translate("Player \"%(nick)s\" not found."),
+				{ "nick": attributes.player }
+			);
 			return;
+		}
 
 		Engine.GetGUIObjectByName("profileUsernameText").caption = user;
 		Engine.GetGUIObjectByName("profileRankText").caption = attributes.rank;
@@ -502,7 +965,7 @@ function updateLeaderboard()
 	{
 		list_name.push(boardList[i].name);
 		list_rating.push(boardList[i].rating);
-		list_rank.push(+i+1);
+		list_rank.push(+i + 1);
 		list.push(boardList[i].name);
 	}
 
@@ -521,8 +984,8 @@ function updateLeaderboard()
 function updateGameList()
 {
 	let gamesBox = Engine.GetGUIObjectByName("gamesBox");
-	let sortBy = gamesBox.selected_column || "status";
-	let sortOrder = gamesBox.selected_column_order || 1;
+	let sortBy = gamesBox.selected_column;
+	let sortOrder = gamesBox.selected_column_order;
 
 	if (gamesBox.selected > -1)
 	{
@@ -530,29 +993,59 @@ function updateGameList()
 		g_SelectedGamePort = g_GameList[gamesBox.selected].port;
 	}
 
-	g_GameList = Engine.GetGameList().filter(game => !filterGame(game)).sort((a, b) => {
+	g_GameList = Engine.GetGameList().map(game => {
+
+		game.hasBuddies = 0;
+
+		// Compute average rating of participating players
+		let playerRatings = [];
+
+		for (let player of stringifiedTeamListToPlayerData(game.players))
+		{
+			let playerNickRating = splitRatingFromNick(player.Name);
+
+			if (player.Team != "observer")
+				playerRatings.push(playerNickRating.rating || g_DefaultLobbyRating);
+
+			// Sort games with playing buddies above games with spectating buddies
+			if (game.hasBuddies < 2 && g_Buddies.indexOf(playerNickRating.nick) != -1)
+				game.hasBuddies = player.Team == "observer" ? 1 : 2;
+		}
+
+		game.gameRating =
+			playerRatings.length ?
+				Math.round(playerRatings.reduce((sum, current) => sum + current) / playerRatings.length) :
+				g_DefaultLobbyRating;
+
+		if (!hasSameMods(JSON.parse(game.mods), Engine.GetEngineInfo().mods))
+			game.state = "incompatible";
+
+		return game;
+	}).filter(game => !filterGame(game)).sort((a, b) => {
 		let sortA, sortB;
 		switch (sortBy)
 		{
 		case 'name':
+			sortA = g_GameStatusOrder.indexOf(a.state) + a.name.toLowerCase();
+			sortB = g_GameStatusOrder.indexOf(b.state) + b.name.toLowerCase();
+			break;
+		case 'gameRating':
 		case 'mapSize':
 		case 'mapType':
 			sortA = a[sortBy];
 			sortB = b[sortBy];
+			break;
+		case 'buddy':
+			sortA = String(b.hasBuddies) + g_GameStatusOrder.indexOf(a.state) + a.name.toLowerCase();
+			sortB = String(a.hasBuddies) + g_GameStatusOrder.indexOf(b.state) + b.name.toLowerCase();
 			break;
 		case 'mapName':
 			sortA = translate(a.niceMapName);
 			sortB = translate(b.niceMapName);
 			break;
 		case 'nPlayers':
-			// Compare playercount ratio
-			sortA = a.nbp * b.maxnbp;
-			sortB = b.nbp * a.maxnbp;
-			break;
-		case 'status':
-		default:
-			sortA = g_GameStatusOrder.indexOf(a.state);
-			sortB = g_GameStatusOrder.indexOf(b.state);
+			sortA = a.maxnbp;
+			sortB = b.maxnbp;
 			break;
 		}
 		if (sortA < sortB) return -sortOrder;
@@ -560,11 +1053,13 @@ function updateGameList()
 		return 0;
 	});
 
+	let list_buddy = [];
 	let list_name = [];
 	let list_mapName = [];
 	let list_mapSize = [];
 	let list_mapType = [];
 	let list_nPlayers = [];
+	let list_gameRating = [];
 	let list = [];
 	let list_data = [];
 	let selectedGameIndex = -1;
@@ -578,23 +1073,30 @@ function updateGameList()
 		if (game.ip == g_SelectedGameIP && game.port == g_SelectedGamePort)
 			selectedGameIndex = +i;
 
-		list_name.push('[color="' + g_GameColors[game.state] + '"]' + gameName);
+		list_buddy.push(game.hasBuddies ? coloredText(g_BuddySymbol, g_GameColors[game.state]) : "");
+		list_name.push(coloredText(gameName, g_GameColors[game.state]));
 		list_mapName.push(translateMapTitle(game.niceMapName));
 		list_mapSize.push(translateMapSize(game.mapSize));
 		list_mapType.push(g_MapTypes.Title[mapTypeIdx] || "");
 		list_nPlayers.push(game.nbp + "/" + game.maxnbp);
+		list_gameRating.push(game.gameRating);
 		list.push(gameName);
 		list_data.push(i);
 	}
 
+	gamesBox.list_buddy = list_buddy;
 	gamesBox.list_name = list_name;
 	gamesBox.list_mapName = list_mapName;
 	gamesBox.list_mapSize = list_mapSize;
 	gamesBox.list_mapType = list_mapType;
 	gamesBox.list_nPlayers = list_nPlayers;
+	gamesBox.list_gameRating = list_gameRating;
+
 	// Change these last, otherwise crash
 	gamesBox.list = list;
 	gamesBox.list_data = list_data;
+
+	gamesBox.auto_scroll = false;
 	gamesBox.selected = selectedGameIndex;
 
 	updateGameSelection();
@@ -608,7 +1110,7 @@ function updateGameSelection()
 	let game = selectedGame();
 
 	Engine.GetGUIObjectByName("gameInfo").hidden = !game;
-	Engine.GetGUIObjectByName("joinGameButton").hidden = !game;
+	Engine.GetGUIObjectByName("joinGameButton").hidden = g_Dialog || !game;
 	Engine.GetGUIObjectByName("gameInfoEmpty").hidden = game;
 
 	if (!game)
@@ -628,8 +1130,9 @@ function updateGameSelection()
 	sgGameStartTime.hidden = !game.startTime;
 	if (game.startTime)
 		sgGameStartTime.caption = sprintf(
+			// Translation: %(time)s is the hour and minute here.
 			translate("Game started at %(time)s"), {
-				"time": Engine.FormatMillisecondsIntoDateString(+game.startTime*1000, translate("HH:mm"))
+				"time": Engine.FormatMillisecondsIntoDateStringLocal(+game.startTime * 1000, translate("HH:mm"))
 			});
 
 	sgNbPlayers.caption = sprintf(
@@ -665,18 +1168,35 @@ function selectedGame()
 function joinButton()
 {
 	let game = selectedGame();
-	if (!game)
+	if (!game || g_Dialog)
 		return;
 
-	let username = g_UserRating ? g_Username + " (" + g_UserRating + ")" : g_Username;
+	let rating = getRejoinRating(game);
+	let username = rating ? g_Username + " (" + rating + ")" : g_Username;
 
-	if (game.state == "init" || stringifiedTeamListToPlayerData(game.players).some(player => player.Name == username))
+	if (game.state == "incompatible")
+		messageBox(
+			400, 200,
+			translate("Your active mods do not match the mods of this game.") + "\n\n" +
+				comparedModsString(JSON.parse(game.mods), Engine.GetEngineInfo().mods) + "\n\n" +
+				translate("Do you want to switch to the mod selection page?"),
+			translate("Incompatible mods"),
+			[translate("No"), translate("Yes")],
+			[
+				null,
+				() => {
+					Engine.SwitchGuiPage("page_modmod.xml", {
+						"cancelbutton": true
+					});
+				}
+			]
+		);
+	else if (game.state == "init" || stringifiedTeamListToPlayerData(game.players).some(player => player.Name == username))
 		joinSelectedGame();
 	else
 		messageBox(
 			400, 200,
-			translate("The game has already started.") + "\n" +
-				translate("Do you want to join as observer?"),
+			translate("The game has already started. Do you want to join as observer?"),
 			translate("Confirmation"),
 			[translate("No"), translate("Yes")],
 			[null, joinSelectedGame]
@@ -692,7 +1212,20 @@ function joinSelectedGame()
 	if (!game)
 		return;
 
-	if (game.ip.split('.').length != 4)
+	let ip;
+	let port;
+	if (game.stunIP)
+	{
+		ip = game.stunIP;
+		port = game.stunPort;
+	}
+	else
+	{
+		ip = game.ip;
+		port = game.port;
+	}
+
+	if (ip.split('.').length != 4)
 	{
 		addChatMessage({
 			"from": "system",
@@ -706,11 +1239,27 @@ function joinSelectedGame()
 
 	Engine.PushGuiPage("page_gamesetup_mp.xml", {
 		"multiplayerGameType": "join",
-		"ip": game.ip,
-		"port": game.port,
+		"ip": ip,
+		"port": port,
 		"name": g_Username,
-		"rating": g_UserRating
+		"rating": getRejoinRating(game),
+		"useSTUN": !!game.stunIP,
+		"hostJID": game.hostUsername + "@" + g_LobbyServer + "/0ad"
 	});
+}
+
+/**
+ * Rejoin games with the original playername, even if the rating changed meanwhile.
+ */
+function getRejoinRating(game)
+{
+	for (let player of stringifiedTeamListToPlayerData(game.players))
+	{
+		let playerNickRating = splitRatingFromNick(player.Name);
+		if (playerNickRating.nick == g_Username)
+			return playerNickRating.rating;
+	}
+	return g_UserRating;
 }
 
 /**
@@ -731,11 +1280,12 @@ function hostGame()
 function onTick()
 {
 	updateTimers();
-	checkSpamMonitor();
+
+	let updateList = false;
 
 	while (true)
 	{
-		let msg = Engine.LobbyGuiPollMessage();
+		let msg = Engine.LobbyGuiPollNewMessage();
 		if (!msg)
 			break;
 
@@ -749,13 +1299,15 @@ function onTick()
 			warn("Unrecognised message level: " + msg.level);
 			continue;
 		}
-		g_NetMessageTypes[msg.type][msg.level](msg);
 
-		// To improve performance, only update the playerlist GUI when
-		// the last update in the current stack is processed
-		if (msg.type == "chat" && Engine.LobbyGetMucMessageCount() == 0)
-			updatePlayerList();
+		if (g_NetMessageTypes[msg.type][msg.level](msg))
+			updateList = true;
 	}
+
+	// To improve performance, only update the playerlist GUI when
+	// the last update in the current stack is processed
+	if (updateList)
+		updatePlayerList();
 }
 
 /**
@@ -769,7 +1321,7 @@ function submitChatInput()
 	if (!text.length)
 		return;
 
-	if (!handleSpecialCommand(text) && !isSpam(text, g_Username))
+	if (handleChatCommand(text))
 		Engine.LobbySendMessage(text);
 
 	input.caption = "";
@@ -779,49 +1331,41 @@ function submitChatInput()
  * Handle all '/' commands.
  *
  * @param {string} text - Text to be checked for commands.
- * @returns {boolean} true if more text processing is needed, false otherwise.
+ * @returns {boolean} true if the text should be sent via chat.
  */
-function handleSpecialCommand(text)
+function handleChatCommand(text)
 {
 	if (text[0] != '/')
-		return false;
+		return true;
 
-	let [cmd, nick] = ircSplit(text);
+	let [cmd, args] = ircSplit(text);
+	args = ircSplit("/" + args);
 
-	switch (cmd)
+	if (!g_ChatCommands[cmd])
 	{
-	case "away":
-		Engine.LobbySetPlayerPresence("away");
-		break;
-	case "back":
-		Engine.LobbySetPlayerPresence("available");
-		break;
-	case "kick":
-		// TODO: Split reason from nick and pass it too
-		Engine.LobbyKick(nick, "");
-		break;
-	case "ban":
-		Engine.LobbyBan(nick, "");
-		break;
-	case "quit":
-		returnToMainMenu();
-		break;
-	case "clear":
-		clearChatMessages();
-		break;
-	case "say":
-	case "me":
-		return false;
-	default:
 		addChatMessage({
 			"from": "system",
 			"text": sprintf(
-				translate("We're sorry, the '%(cmd)s' command is not supported."),
-				{ "cmd": cmd }
-			)
+				translate("The command '%(cmd)s' is not supported."), {
+					"cmd": coloredText(cmd, g_ChatCommandColor)
+				})
 		});
+		return false;
 	}
-	return true;
+
+	if (g_ChatCommands[cmd].moderatorOnly && Engine.LobbyGetPlayerRole(g_Username) != "moderator")
+	{
+		addChatMessage({
+			"from": "system",
+			"text": sprintf(
+				translate("The command '%(cmd)s' is restricted to moderators."), {
+					"cmd": coloredText(cmd, g_ChatCommandColor)
+				})
+		});
+		return false;
+	}
+
+	return g_ChatCommands[cmd].handler(args);
 }
 
 /**
@@ -840,15 +1384,9 @@ function addChatMessage(msg)
 		if (g_Username != msg.from)
 		{
 			msg.text = msg.text.replace(g_Username, colorPlayerName(g_Username));
-			notifyUser(g_Username, msg.text);
-		}
 
-		// Run spam test if it's not a historical message
-		if (!msg.datetime)
-		{
-			updateSpamMonitor(msg.from);
-			if (isSpam(msg.text, msg.from))
-				return;
+			if (!msg.historic && msg.text.toLowerCase().indexOf(g_Username.toLowerCase()) != -1)
+				soundNotification("nick");
 		}
 	}
 
@@ -860,7 +1398,6 @@ function addChatMessage(msg)
 	Engine.GetGUIObjectByName("chatText").caption = g_ChatMessages.join("\n");
 }
 
-
 /**
  * Splits given input into command and argument.
  */
@@ -869,7 +1406,7 @@ function ircSplit(string)
 	let idx = string.indexOf(' ');
 
 	if (idx != -1)
-		return [string.substr(1,idx-1), string.substr(idx+1)];
+		return [string.substr(1, idx - 1), string.substr(idx + 1)];
 
 	return [string.substr(1), ""];
 }
@@ -883,13 +1420,9 @@ function ircSplit(string)
 function ircFormat(msg)
 {
 	let formattedMessage = "";
+	let coloredFrom = msg.from && colorPlayerName(msg.from);
 
-	let coloredFrom = !msg.from ? "" :
-		msg.color ?
-			'[color="' + msg.color + '"]' + msg.from + "[/color]" :
-			colorPlayerName(msg.from);
-
-	// Handle commands allowed past handleSpecialCommand.
+	// Handle commands allowed past handleChatCommand.
 	if (msg.text[0] == '/')
 	{
 		let [command, message] = ircSplit(msg.text);
@@ -945,6 +1478,8 @@ function ircFormat(msg)
 			}
 			break;
 		}
+		default:
+			return "";
 		}
 	}
 	else
@@ -954,8 +1489,7 @@ function ircFormat(msg)
 		// Translation: IRC message prefix.
 		if (msg.private)
 			senderString = sprintf(translateWithContext("lobby private message", "(%(private)s) <%(sender)s>"), {
-				"private": '[color="' + g_PrivateMessageColor + '"]' +
-							translate("Private")  + '[/color]',
+				"private": coloredText(translate("Private"), g_PrivateMessageColor),
 				"sender": coloredFrom
 			});
 		else
@@ -971,27 +1505,13 @@ function ircFormat(msg)
 	}
 
 	// Add chat message timestamp
-	if (!g_ShowTimestamp)
+	if (Engine.ConfigDB_GetValue("user", "chat.timestamp") != "true")
 		return formattedMessage;
-
-	let time;
-	if (msg.datetime)
-	{
-		let dTime = msg.datetime.split("T");
-		let parserDate = dTime[0].split("-");
-		let parserTime = dTime[1].split(":");
-		// See http://xmpp.org/extensions/xep-0082.html#sect-idp285136 for format of datetime
-		// Date takes Year, Month, Day, Hour, Minute, Second
-		time = new Date(Date.UTC(parserDate[0], parserDate[1], parserDate[2],
-			parserTime[0], parserTime[1], parserTime[2].split("Z")[0]));
-	}
-	else
-		time = new Date(Date.now());
 
 	// Translation: Time as shown in the multiplayer lobby (when you enable it in the options page).
 	// For a list of symbols that you can use, see:
 	// https://sites.google.com/site/icuprojectuserguide/formatparse/datetime?pli=1#TOC-Date-Field-Symbol-Table
-	let timeString = Engine.FormatMillisecondsIntoDateString(time.getTime(), translate("HH:mm"));
+	let timeString = Engine.FormatMillisecondsIntoDateStringLocal(msg.time ? msg.time * 1000 : Date.now(), translate("HH:mm"));
 
 	// Translation: Time prefix as shown in the multiplayer lobby (when you enable it in the options page).
 	let timePrefixString = sprintf(translate("\\[%(time)s]"), {
@@ -1000,101 +1520,21 @@ function ircFormat(msg)
 
 	// Translation: IRC message format when there is a time prefix.
 	return sprintf(translate("%(time)s %(message)s"), {
-		"time": senderFont(timePrefixString),
+		"time": timePrefixString,
 		"message": formattedMessage
 	});
- }
-
-/**
- * Update the spam monitor.
- *
- * @param {string} from - User to update.
- */
-function updateSpamMonitor(from)
-{
-	if (g_SpamMonitor[from])
-		++g_SpamMonitor[from].count;
-	else
-		g_SpamMonitor[from] = {
-			"count": 1,
-			"lastSend": Math.floor(Date.now() / 1000),
-			"lastBlock": 0
-		};
 }
 
 /**
- * Check if a message is spam.
- *
- * @param {string} text - Body of message.
- * @param {string} from - Sender of message.
- *
- * @returns {boolean} - True if message should be blocked.
- */
-function isSpam(text, from)
-{
-	// Integer time in seconds.
-	let time = Math.floor(Date.now() / 1000);
-
-	// Initialize if not already in the database.
-	if (!g_SpamMonitor[from])
-		g_SpamMonitor[from] = {
-			"count": 1,
-			"lastSend": time,
-			"lastBlock": 0
-		};
-
-	// Block blank lines.
-	if (!text.trim())
-		return true;
-
-	// Block users who are still within their spam block period.
-	if (g_SpamMonitor[from].lastBlock + g_SpamBlockDuration >= time)
-		return true;
-
-	// Block users who exceed the rate of 1 message per second for
-	// five seconds and are not already blocked.
-	if (g_SpamMonitor[from].count == g_SpamBlockTimeframe + 1)
-	{
-		g_SpamMonitor[from].lastBlock = time;
-
-		if (from == g_Username)
-			addChatMessage({
-				"from": "system",
-				"text": translate("Please do not spam. You have been blocked for thirty seconds.")
-			});
-
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Reset timer used to measure message send speed.
- * Clear message count every 5 seconds.
- */
-function checkSpamMonitor()
-{
-	let time = Math.floor(Date.now() / 1000);
-
-	for (let i in g_SpamMonitor)
-	{
-		// Reset the spam-status after being silent long enough
-		if (g_SpamMonitor[i].lastSend + g_SpamBlockTimeframe <= time)
-		{
-			g_SpamMonitor[i].count = 0;
-			g_SpamMonitor[i].lastSend = time;
-		}
-	}
-}
-
-/**
- *  Generate a (mostly) unique color for this player based on their name.
- *  @see http://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-jquery-javascript
- *  @param {string} playername
+ * Generate a (mostly) unique color for this player based on their name.
+ * @see http://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-jquery-javascript
+ * @param {string} playername
  */
 function getPlayerColor(playername)
 {
+	if (playername == "system")
+		return g_SystemColor;
+
 	// Generate a probably-unique hash for the player name and use that to create a color.
 	let hash = 0;
 	for (let i in playername)
@@ -1111,12 +1551,19 @@ function getPlayerColor(playername)
 /**
  * Returns the given playername wrapped in an appropriate color-tag.
  *
- *  @param {string} playername
+ * @param {string} playername
+ * @param {string} rating
  */
-function colorPlayerName(playername)
+function colorPlayerName(playername, rating)
 {
-	return '[color="' + getPlayerColor(playername.replace(g_ModeratorPrefix, "")) + '"]' +
-		playername + '[/color]';
+	return coloredText(
+		(rating ? sprintf(
+			translate("%(nick)s (%(rating)s)"), {
+				"nick": playername,
+				"rating": rating
+			}) : playername
+		),
+		getPlayerColor(playername.replace(g_ModeratorPrefix, "")));
 }
 
 function senderFont(text)

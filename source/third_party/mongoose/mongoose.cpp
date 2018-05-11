@@ -20,6 +20,14 @@
 # pragma warning(disable:4100) // unreferenced formal parameter
 # pragma warning(disable:4245) // signed/unsigned mismatch
 # pragma warning(disable:4505) // unreferenced local function has been removed
+#if _MSC_VER > 1800
+# pragma warning(disable:4365) // signed unsigned mismatch
+# pragma warning(disable:4191) // unsafe conversion
+# pragma warning(disable:4820) // incorrect padding
+# pragma warning(disable:4668) // macro error
+# pragma warning(disable:4710) // function not inlined
+# pragma warning(disable:4711) // selected for automatic inline expansion
+#endif
 # pragma comment(lib, "ws2_32.lib")
 #endif
 
@@ -178,10 +186,12 @@ typedef struct {HANDLE signal, broadcast;} pthread_cond_t;
 typedef DWORD pthread_t;
 #define pid_t HANDLE // MINGW typedefs pid_t to int. Using #define here.
 
+#if _MSC_VER < 1900
 struct timespec {
   long tv_nsec;
   long tv_sec;
 };
+#endif
 
 static int pthread_mutex_lock(pthread_mutex_t *);
 static int pthread_mutex_unlock(pthread_mutex_t *);

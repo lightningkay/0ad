@@ -1,37 +1,26 @@
 function Loot() {}
 
 Loot.prototype.Schema =
-	"<optional>" +
-		"<element name='xp'><data type='nonNegativeInteger'/></element>" +
-	"</optional>" +
-	"<optional>" +
-		"<element name='food'><data type='nonNegativeInteger'/></element>" +
-	"</optional>" +
-	"<optional>" +
-		"<element name='wood'><data type='nonNegativeInteger'/></element>" +
-	"</optional>" +
-	"<optional>" +
-		"<element name='stone'><data type='nonNegativeInteger'/></element>" +
-	"</optional>" +
-	"<optional>" +
-		"<element name='metal'><data type='nonNegativeInteger'/></element>" +
-	"</optional>";
+	"<a:help>Specifies the loot credited when this entity is killed.</a:help>" +
+	"<a:example>" +
+		"<xp>35</xp>" +
+		"<metal>10</metal>" +
+	"</a:example>" +
+	Resources.BuildSchema("nonNegativeInteger", ["xp"]);
 
 Loot.prototype.Serialize = null; // we have no dynamic state to save
 
 Loot.prototype.GetXp = function()
 {
-	return +(this.template.xp || 0);
+	return Math.floor(ApplyValueModificationsToEntity("Loot/xp", +(this.template.xp || 0), this.entity));
 };
 
 Loot.prototype.GetResources = function()
 {
-	return {
-		"food": +(this.template.food || 0),
-		"wood": +(this.template.wood || 0),
-		"metal": +(this.template.metal || 0),
-		"stone": +(this.template.stone || 0)
-	};
+	let ret = {};
+	for (let res of Resources.GetCodes())
+		ret[res] = Math.floor(ApplyValueModificationsToEntity("Loot/" + res, +(this.template[res] || 0), this.entity));
+	return ret;
 };
 
 Engine.RegisterComponentType(IID_Loot, "Loot", Loot);

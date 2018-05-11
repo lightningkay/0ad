@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <objects>
-	<script file="gui/common/functions_global_object.js"/>
-	<script file="gui/splashscreen/splashscreen.js"/>
+
+	<script directory="gui/common/"/>
+	<script directory="gui/splashscreen/"/>
 
 	<!-- Add a translucent black background to fade out the menu page -->
 	<object type="image" z="0" sprite="ModernFade"/>
@@ -12,7 +13,7 @@
 			<translatableAttribute id="caption">Welcome!</translatableAttribute>
 		</object>
 
-		<object name="mainText" type="text" sprite="ModernDarkBoxGold" style="textPanel" size="20 20 100%-20 100%-52">
+		<object name="mainText" type="text" style="ModernTextPanel" size="20 20 100%-20 100%-52">
 			<object name="displaySplashScreenText" size="30 100%-30 100% 100%-8" type="text" style="ModernLeftLabelText">
 				<translatableAttribute id="caption">Show this message in the future</translatableAttribute>
 			</object>
@@ -27,9 +28,8 @@
 		<object name="btnOK" type="button" style="ModernButtonRed" size="18 100%-45 50%-5 100%-17" hotkey="cancel">
 			<translatableAttribute id="caption">OK</translatableAttribute>
 			<action on="Press"><![CDATA[
-			let version = Engine.GetGUIObjectByName("displaySplashScreen").checked ? 0 : Engine.GetFileMTime("gui/splashscreen/splashscreen.txt");
-			Engine.ConfigDB_CreateValue("user", "splashscreenversion", version);
-			Engine.ConfigDB_WriteValueToFile("user", "splashscreenversion", version, "config/user.cfg");
+			saveSettingAndWriteToUserConfig("gui.splashscreen.enable", String(Engine.GetGUIObjectByName("displaySplashScreen").checked));
+			saveSettingAndWriteToUserConfig("gui.splashscreen.version", Engine.GetFileMTime("gui/splashscreen/splashscreen.txt"));
 			Engine.PopGuiPageCB();
 			]]></action>
 		</object>

@@ -9,7 +9,6 @@
   </Footprint>
   <Health>
     <Max>500</Max>
-    <SpawnEntityOnDeath disable=""/>
   </Health>
   <Identity>
     <Civ>gaia</Civ>
@@ -18,6 +17,10 @@
     <Classes datatype="tokens">-StoneWall Palisade</Classes>
     <Icon>gaia/special_palisade.png</Icon>
   </Identity>
+  <Loot>
+    <wood>10</wood>
+    <stone>0</stone>
+  </Loot>
   <Obstruction>
     <Static width="3.0" depth="11.0"/>
   </Obstruction>
@@ -26,4 +29,8 @@
   <VisualActor>
     <Actor>props/special/palisade_tall_spikes.xml</Actor>
   </VisualActor>
+  <WallPiece>
+    <Length>11</Length>
+    <Orientation>0.5</Orientation>
+  </WallPiece>
 </Entity>

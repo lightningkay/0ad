@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 
 // Types - when including them into the engine.
 #include "CButton.h"
+#include "CChart.h"
 #include "CCheckBox.h"
 #include "CDropDown.h"
 #include "CImage.h"
@@ -32,6 +33,7 @@
 #include "COList.h"
 #include "CProgressBar.h"
 #include "CRadioButton.h"
+#include "CSlider.h"
 #include "CText.h"
 #include "CTooltip.h"
 #include "MiniMap.h"
@@ -66,13 +68,24 @@ InReaction CGUI::HandleEvent(const SDL_Event_* ev)
 {
 	InReaction ret = IN_PASS;
 
-	if (ev->ev.type == SDL_HOTKEYDOWN)
+	if (ev->ev.type == SDL_HOTKEYDOWN || ev->ev.type == SDL_HOTKEYUP)
 	{
 		const char* hotkey = static_cast<const char*>(ev->ev.user.data1);
+
 		std::map<CStr, std::vector<IGUIObject*> >::iterator it = m_HotkeyObjects.find(hotkey);
 		if (it != m_HotkeyObjects.end())
 			for (IGUIObject* const& obj : it->second)
-				obj->SendEvent(GUIM_PRESSED, "press");
+			{
+				// Update hotkey status before sending the event,
+				// else the status will be outdated when processing the GUI event.
+				HotkeyInputHandler(ev);
+				ret = IN_HANDLED;
+
+				if (ev->ev.type == SDL_HOTKEYDOWN)
+					obj->SendEvent(GUIM_PRESSED, "press");
+				else
+					obj->SendEvent(GUIM_RELEASED, "release");
+			}
 	}
 
 	else if (ev->ev.type == SDL_MOUSEMOTION)
@@ -80,7 +93,7 @@ InReaction CGUI::HandleEvent(const SDL_Event_* ev)
 		// Yes the mouse position is stored as float to avoid
 		//  constant conversions when operating in a
 		//  float-based environment.
-		m_MousePos = CPos((float)ev->ev.motion.x * g_GuiScale, (float)ev->ev.motion.y * g_GuiScale);
+		m_MousePos = CPos((float)ev->ev.motion.x / g_GuiScale, (float)ev->ev.motion.y / g_GuiScale);
 
 		SGUIMessage msg(GUIM_MOUSE_MOTION);
 		GUI<SGUIMessage>::RecurseObject(GUIRR_HIDDEN | GUIRR_GHOST, m_BaseObject,
@@ -107,7 +120,7 @@ InReaction CGUI::HandleEvent(const SDL_Event_* ev)
 	CPos oldMousePos = m_MousePos;
 	if (ev->ev.type == SDL_MOUSEBUTTONDOWN || ev->ev.type == SDL_MOUSEBUTTONUP)
 	{
-		m_MousePos = CPos((float)ev->ev.button.x * g_GuiScale, (float)ev->ev.button.y * g_GuiScale);
+		m_MousePos = CPos((float)ev->ev.button.x / g_GuiScale, (float)ev->ev.button.y / g_GuiScale);
 	}
 
 	// Only one object can be hovered
@@ -312,6 +325,8 @@ void CGUI::Initialize()
 	AddObjectType("olist",			&COList::ConstructObject);
 	AddObjectType("dropdown",		&CDropDown::ConstructObject);
 	AddObjectType("tooltip",		&CTooltip::ConstructObject);
+	AddObjectType("chart",			&CChart::ConstructObject);
+	AddObjectType("slider",			&CSlider::ConstructObject);
 }
 
 void CGUI::Draw()
@@ -663,15 +678,26 @@ SGUIText CGUI::GenerateText(const CGUIString& string, const CStrW& FontW, const 
 				x += Feedback2.m_Size.cx;
 
 				if (WordWrapping && x > width_range[To] && j!=temp_from && !Feedback2.m_NewLine)
+				{
+					// The calculated width of each word includes the space between the current
+					// word and the next. When we're wrapping, we need subtract the width of the
+					// space after the last word on the line before the wrap.
+					CFontMetrics currentFont(Font);
+					line_width -= currentFont.GetCharacterWidth(*L" ");
 					break;
+				}
 
 				// Let line_height be the maximum m_Height we encounter.
 				line_height = std::max(line_height, Feedback2.m_Size.cy);
 
-				line_width += Feedback2.m_Size.cx;
-
+				// If the current word is an explicit new line ("\n"),
+				// break now before adding the width of this character.
+				// ("\n" doesn't have a glyph, thus is given the same width as
+				// the "missing glyph" character by CFont::GetCharacterWidth().)
 				if (WordWrapping && Feedback2.m_NewLine)
 					break;
+
+				line_width += Feedback2.m_Size.cx;
 			}
 
 			float dx = 0.f;
@@ -731,8 +757,6 @@ SGUIText CGUI::GenerateText(const CGUIString& string, const CStrW& FontW, const 
 				// Append X value.
 				x += Feedback2.m_Size.cx;
 
-				Text.m_Size.cx = std::max(Text.m_Size.cx, x+BufferZone);
-
 				// The first word overrides the width limit, what we
 				//  do, in those cases, are just drawing that word even
 				//  though it'll extend the object.
@@ -768,10 +792,11 @@ SGUIText CGUI::GenerateText(const CGUIString& string, const CStrW& FontW, const 
 			}
 
 			// Reset X
-			x = 0.f;
+			x = BufferZone;
 
-			// Update height of all
-			Text.m_Size.cy = std::max(Text.m_Size.cy, y+BufferZone);
+			// Update dimensions
+			Text.m_Size.cx = std::max(Text.m_Size.cx, line_width + BufferZone * 2);
+			Text.m_Size.cy = std::max(Text.m_Size.cy, y + BufferZone);
 
 			FirstLine = false;
 
@@ -797,10 +822,10 @@ void CGUI::DrawText(SGUIText& Text, const CColor& DefaultColor, const CPos& pos,
 	{
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(
-			clipping.left / g_GuiScale,
-			g_yres - clipping.bottom / g_GuiScale,
-			clipping.GetWidth() / g_GuiScale,
-			clipping.GetHeight() / g_GuiScale);
+			clipping.left * g_GuiScale,
+			g_yres - clipping.bottom * g_GuiScale,
+			clipping.GetWidth() * g_GuiScale,
+			clipping.GetHeight() * g_GuiScale);
 	}
 
 	CTextRenderer textRenderer(tech->GetShader());

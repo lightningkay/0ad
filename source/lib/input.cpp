@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Wildfire Games
+/* Copyright (C) 2017 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -77,14 +77,17 @@ void in_push_priority_event(const SDL_Event_* event)
 	priority_events.push_back(*event);
 }
 
+int in_poll_priority_event(SDL_Event_* event)
+{
+	if (priority_events.empty())
+		return 0;
+
+	*event = priority_events.front();
+	priority_events.pop_front();
+	return 1;
+}
+
 int in_poll_event(SDL_Event_* event)
 {
-	if (!priority_events.empty())
-	{
-		*event = priority_events.front();
-		priority_events.pop_front();
-		return 1;
-	}
-
-	return SDL_PollEvent(&event->ev);
+	return in_poll_priority_event(event) ? 1 : SDL_PollEvent(&event->ev);
 }

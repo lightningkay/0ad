@@ -2,24 +2,17 @@
 
 <objects>
 
-<script file="gui/common/color.js"/>
-<script file="gui/common/colorFades.js"/>
-<script file="gui/common/functions_civinfo.js"/>
-<script file="gui/common/functions_global_object.js"/>
-<script file="gui/common/functions_utility.js"/>
-<script file="gui/common/gamedescription.js"/>
-<script file="gui/common/l10n.js"/>
-<script file="gui/common/music.js"/>
-<script file="gui/common/network.js"/>
-<script file="gui/common/settings.js"/>
-<script file="gui/common/timer.js"/>
-<script file="gui/common/tooltips.js"/>
-
+<script directory="gui/common/"/>
 <script directory="gui/session/"/>
 
-<object name="sn" hotkey="session.gui.toggle">
+<object name="session">
+
 	<action on="Tick">
 		onTick();
+	</action>
+
+	<action on="WindowResized">
+		onWindowResized();
 	</action>
 
 	<action on="SimulationUpdate">
@@ -30,8 +23,8 @@
 		onReplayFinished();
 	</action>
 
-	<action on="Press">
-		this.hidden = !this.hidden;
+	<action on="ReplayOutOfSync">
+		onReplayOutOfSync();
 	</action>
 
 	<!-- Hotkeys won't work properly unless outside menu -->
@@ -51,16 +44,31 @@
 		</action>
 	</object>
 
+	<!-- Network status -->
+	<object name="netStatus" type="text" style="netStatus" z="0" hidden="true">
+		<object type="button"
+			name="disconnectedExitButton"
+			style="StoneButton"
+			size="50%-84 50%+128 50%+84 50%+160"
+			tooltip_style="sessionToolTip"
+			z="0"
+		>
+			<translatableAttribute id="caption">Exit</translatableAttribute>
+			<action on="Press">leaveGame();</action>
+		</object>
+		<object name="loadingClientsText" size="50%-300 50%+60 50%+300 50%+110" type="text" style="netStatusPlayersText" hidden="true" z="0"/>
+	</object>
+
 	<!-- Pause Overlay -->
 	<object type="button" name="pauseOverlay" size="0 0 100% 100%" tooltip_style="sessionToolTip" hidden="true" z="0">
-		<object size="0 0 100% 100%" type="image" sprite="devCommandsBackground" ghost="true" z="0"/>
+		<object size="0 0 100% 100%" type="image" sprite="sessionOverlayBackground" ghost="true" z="0"/>
 		<object size="50%-128 40%-20 50%+128 40%+20" type="text" style="PauseText" ghost="true" z="0">
 			<translatableAttribute id="caption">Game Paused</translatableAttribute>
 		</object>
 		<object name="resumeMessage" size="50%-128 40%+20 50%+128 40%+40" type="text" style="ResumeMessageText" ghost="true" z="0">
 			<translatableAttribute id="caption">Click to Resume Game</translatableAttribute>
 		</object>
-		<object name="pausedByText" size="30% 40%+50 70% 100%" type="text" style="PausedByText" ghost="true" hidden="true" z="0"/>
+		<object name="pausedByText" size="30% 40%+50 70% 100%" type="text" style="netStatusPlayersText" ghost="true" hidden="true" z="0"/>
 		<action on="Press">togglePause();</action>
 	</object>
 
@@ -71,7 +79,7 @@
 
 	<!-- Chat messages -->
 	<object name="chatPanel" size="0 130 100% 100%-240" type="image" ghost="true" z="0" absolute="true">
-		<object name="chatText" size="3 1 100%-1 100%-1" type="text" style="chatPanel" ghost="true"/>
+		<object name="chatText" size="3 1 100%-1 100%-1" type="text" style="chatPanelOverlay" ghost="true"/>
 	</object>
 
 	<!-- Entity selection state text -->
@@ -88,8 +96,9 @@
 	<include file="gui/session/developer_overlay.xml"/>
 	<include file="gui/session/diplomacy_window.xml"/>
 	<include file="gui/session/objectives_window.xml"/>
-	<include file="gui/session/trade_window.xml"/>
 	<include file="gui/session/top_panel.xml"/>
+	<include file="gui/session/trade_window.xml"/>
+	<include file="gui/session/tutorial_panel.xml"/>
 	<include file="gui/session/menu.xml"/>
 
 	<!-- Contains miscellanious objects s.a.: the technology research -->
@@ -145,20 +154,5 @@
 
 <!-- Selection bandbox -->
 <object name="bandbox" type="image" sprite="bandbox" ghost="true" hidden="true" z="200"/>
-
-<!-- Network status -->
-<object name="netStatus" type="text" style="netStatus" z="200" hidden="true">
-	<object type="button"
-		name="disconnectedExitButton"
-		style="StoneButton"
-		size="50%-84 50%+128 50%+84 50%+160"
-		tooltip_style="sessionToolTip"
-	>
-		<object size="0 0 100% 100%" type="text" style="CenteredButtonText" name="disconnectedExitButtonText" ghost="true">
-			<translatableAttribute id="caption">Exit</translatableAttribute>
-		</object>
-		<action on="Press">leaveGame();</action>
-	</object>
-</object>
 
 </objects>
