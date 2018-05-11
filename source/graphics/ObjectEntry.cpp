@@ -63,7 +63,7 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 
 	for (std::multimap<CStr, CObjectBase::Samp>::iterator it = variation.samplers.begin(); it != variation.samplers.end(); ++it)
 		m_Samplers.push_back(it->second);
-	
+
 	m_ModelName = variation.model;
 
 	if (! variation.color.empty())
@@ -80,14 +80,14 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 	if (variation.decal.m_SizeX && variation.decal.m_SizeZ)
 	{
 		CMaterial material = g_Renderer.GetMaterialManager().LoadMaterial(m_Base->m_Material);
-		
+
 		for (const CObjectBase::Samp& samp : m_Samplers)
 		{
 			CTextureProperties textureProps(samp.m_SamplerFile);
 			textureProps.SetWrap(GL_CLAMP_TO_BORDER);
 			CTexturePtr texture = g_Renderer.GetTextureManager().CreateTexture(textureProps);
 			// TODO: Should check which renderpath is selected and only preload the necessary textures.
-			texture->Prefetch(); 
+			texture->Prefetch();
 			material.AddSampler(CMaterial::TextureSampler(samp.m_SamplerName, texture));
 		}
 
@@ -121,26 +121,26 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 		return false;
 	}
 
-	// delete old model, create new 
+	// delete old model, create new
 	CModel* model = new CModel(objectManager.GetSkeletonAnimManager(), m_Simulation);
 	delete m_Model;
 	m_Model = model;
 	model->SetMaterial(g_Renderer.GetMaterialManager().LoadMaterial(m_Base->m_Material));
 	model->GetMaterial().AddStaticUniform("objectColor", CVector4D(m_Color.r, m_Color.g, m_Color.b, m_Color.a));
 	model->InitModel(modeldef);
-	
+
 	if (m_Samplers.empty())
 		LOGERROR("Actor '%s' has no textures.", utf8_from_wstring(m_Base->m_ShortName));
-	
+
 	for (const CObjectBase::Samp& samp : m_Samplers)
 	{
 		CTextureProperties textureProps(samp.m_SamplerFile);
 		textureProps.SetWrap(GL_CLAMP_TO_EDGE);
 		CTexturePtr texture = g_Renderer.GetTextureManager().CreateTexture(textureProps);
-		// if we've loaded this model we're probably going to render it soon, so prefetch its texture. 
+		// if we've loaded this model we're probably going to render it soon, so prefetch its texture.
 		// All textures are prefetched even in the fixed pipeline, including the normal maps etc.
 		// TODO: Should check which renderpath is selected and only preload the necessary textures.
-		texture->Prefetch(); 
+		texture->Prefetch();
 		model->GetMaterial().AddSampler(CMaterial::TextureSampler(samp.m_SamplerName, texture));
 	}
 
@@ -150,7 +150,7 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 		                 [&](const CObjectBase::Samp& sampler) { return sampler.m_SamplerName == requSampName; }) == m_Samplers.end())
 			LOGERROR("Actor %s: required texture sampler %s not found (material %s)", utf8_from_wstring(m_Base->m_ShortName), requSampName.string().c_str(), m_Base->m_Material.string8().c_str());
 	}
-	
+
 	// calculate initial object space bounds, based on vertex positions
 	model->CalcStaticObjectBounds();
 
@@ -164,6 +164,7 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 		CSkeletonAnim* anim = model->BuildAnimation(
 			it->second.m_FileName,
 			name,
+			it->second.m_ID,
 			it->second.m_Frequency,
 			it->second.m_Speed,
 			it->second.m_ActionPos,
@@ -178,6 +179,7 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 	{
 		CSkeletonAnim* anim = new CSkeletonAnim();
 		anim->m_Name = "idle";
+		anim->m_ID = "";
 		anim->m_AnimDef = NULL;
 		anim->m_Frequency = 0;
 		anim->m_Speed = 0.f;
@@ -253,9 +255,9 @@ bool CObjectEntry::BuildVariation(const std::vector<std::set<CStr> >& selections
 	return true;
 }
 
-CSkeletonAnim* CObjectEntry::GetRandomAnimation(const CStr& animationName) const
+CSkeletonAnim* CObjectEntry::GetRandomAnimation(const CStr& animationName, const CStr& ID) const
 {
-	std::vector<CSkeletonAnim*> anims = GetAnimations(animationName);
+	std::vector<CSkeletonAnim*> anims = GetAnimations(animationName, ID);
 
 	int totalFreq = 0;
 	for (CSkeletonAnim* anim : anims)
@@ -271,11 +273,10 @@ CSkeletonAnim* CObjectEntry::GetRandomAnimation(const CStr& animationName) const
 		if (r < 0)
 			return anim;
 	}
-	LOGERROR("No animation found for name %s", animationName);
 	return NULL;
 }
 
-std::vector<CSkeletonAnim*> CObjectEntry::GetAnimations(const CStr& animationName) const
+std::vector<CSkeletonAnim*> CObjectEntry::GetAnimations(const CStr& animationName, const CStr& ID) const
 {
 	std::vector<CSkeletonAnim*> anims;
 
@@ -283,12 +284,10 @@ std::vector<CSkeletonAnim*> CObjectEntry::GetAnimations(const CStr& animationNam
 	SkeletonAnimMap::const_iterator upper = m_Animations.upper_bound(animationName);
 
 	for (SkeletonAnimMap::const_iterator it = lower; it != upper; ++it)
-		anims.push_back(it->second);
-
-	if (anims.empty())
-		for (const std::pair<CStr, CSkeletonAnim*>& anim : m_Animations)
-			if (anim.second->m_Frequency > 0)
-				anims.push_back(anim.second);
+	{
+		if (ID.empty() || it->second->m_ID == ID)
+			anims.push_back(it->second);
+	}
 
 	if (anims.empty())
 	{

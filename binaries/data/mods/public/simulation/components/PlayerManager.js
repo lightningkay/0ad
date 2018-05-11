@@ -24,7 +24,7 @@ PlayerManager.prototype.AddPlayer = function(ent)
 	}
 	newDiplo[id] = 1;
 	cmpPlayer.SetDiplomacy(newDiplo);
-	
+
 	return id;
 };
 
@@ -41,16 +41,20 @@ PlayerManager.prototype.ReplacePlayer = function(id, ent)
 	{
 		var cmpOwnership = Engine.QueryInterface(e, IID_Ownership);
 		if (cmpOwnership)
-			cmpOwnership.SetOwner(-1);
+			cmpOwnership.SetOwner(INVALID_PLAYER);
 	}
 
 	var oldent = this.playerEntities[id];
 	var cmpPlayer = Engine.QueryInterface(oldent, IID_Player);
 	var diplo = cmpPlayer.GetDiplomacy();
+	var color = cmpPlayer.GetColor();
+
 	var cmpPlayer = Engine.QueryInterface(ent, IID_Player);
 	cmpPlayer.SetPlayerID(id);
 	this.playerEntities[id] = ent;
+	cmpPlayer.SetColor(color);
 	cmpPlayer.SetDiplomacy(diplo);
+
 	Engine.DestroyEntity(oldent);
 	Engine.FlushDestroyedEntities();
 
@@ -81,15 +85,48 @@ PlayerManager.prototype.GetPlayerByID = function(id)
 	return INVALID_ENTITY;
 };
 
+/**
+ * Returns the number of players including gaia.
+ */
 PlayerManager.prototype.GetNumPlayers = function()
 {
 	return this.playerEntities.length;
 };
 
+/**
+ * Returns IDs of all players including gaia.
+ */
+PlayerManager.prototype.GetAllPlayers = function()
+{
+	let players = [];
+	for (let i = 0; i < this.playerEntities.length; ++i)
+		players.push(i);
+	return players;
+};
+
+/**
+ * Returns IDs of all players excluding gaia.
+ */
+PlayerManager.prototype.GetNonGaiaPlayers = function()
+{
+	let players = [];
+	for (let i = 1; i < this.playerEntities.length; ++i)
+		players.push(i);
+	return players;
+};
+
+/**
+ * Returns IDs of all players excluding gaia that are not defeated nor have won.
+ */
+PlayerManager.prototype.GetActivePlayers = function()
+{
+	return this.GetNonGaiaPlayers().filter(playerID => QueryPlayerIDInterface(playerID).GetState() == "active");
+};
+
 PlayerManager.prototype.RemoveAllPlayers = function()
 {
 	// Destroy existing player entities
-	for each (var id in this.playerEntities)
+	for (var id of this.playerEntities)
 		Engine.DestroyEntity(id);
 
 	this.playerEntities = [];
@@ -97,7 +134,7 @@ PlayerManager.prototype.RemoveAllPlayers = function()
 
 PlayerManager.prototype.RemoveLastPlayer = function()
 {
-	if (this.playerEntities.length == 0) 
+	if (this.playerEntities.length == 0)
 		return;
 
 	var lastId = this.playerEntities.pop();

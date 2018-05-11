@@ -2,7 +2,6 @@
 
 <Scenario version="6">
 	<Environment>
-		<LightingModel>standard</LightingModel>
 		<SkySet>cloudless</SkySet>
 		<SunColor r="0.776471" g="0.74902" b="0.576471"/>
 		<SunElevation angle="0.785398"/>
@@ -14,12 +13,9 @@
 				<Type>lake</Type>
 				<Color r="0.294118" g="0.34902" b="0.694118"/>
 				<Height>20.6689</Height>
-				<Shininess>1.46484</Shininess>
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.800781</Murkiness>
 				<Tint r="0.458824" g="0.439216" b="0.384314"/>
-				<ReflectionTint r="0.564706" g="0.513726" b="0.419608"/>
-				<ReflectionTintStrength>0.199219</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -32,7 +28,6 @@
 {
   "CircularMap": true,
   "Description": "Walls.",
-  "GameType": "conquest",
   "Keywords": [
     "demo"
   ],
@@ -98,7 +93,10 @@
       "Team": -1
     }
   ],
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -6218,25 +6216,25 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1101">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="755.0876" z="330.53211"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1102">
-			<Template>gaia/special_treasure_food_barrel</Template>
+			<Template>gaia/treasure/food_barrel</Template>
 			<Player>0</Player>
 			<Position x="754.49476" z="324.57547"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1103">
-			<Template>gaia/special_treasure_food_crate</Template>
+			<Template>gaia/treasure/food_crate</Template>
 			<Player>0</Player>
 			<Position x="745.7685" z="321.16709"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1104">
-			<Template>gaia/special_treasure_food_jars</Template>
+			<Template>gaia/treasure/food_jars</Template>
 			<Player>0</Player>
 			<Position x="745.21241" z="333.88807"/>
 			<Orientation y="2.35621"/>
@@ -6262,73 +6260,73 @@
 			<Orientation y="-1.21802"/>
 		</Entity>
 		<Entity uid="1111">
-			<Template>gaia/special_treasure_stone</Template>
+			<Template>gaia/treasure/stone</Template>
 			<Player>0</Player>
 			<Position x="667.71314" z="766.90296"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1112">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="658.5406" z="775.89271"/>
 			<Orientation y="2.98516"/>
 		</Entity>
 		<Entity uid="1113">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="662.79511" z="767.72455"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1114">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="274.3469" z="249.64464"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1115">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="268.27552" z="243.54738"/>
 			<Orientation y="0.45035"/>
 		</Entity>
 		<Entity uid="1116">
-			<Template>gaia/special_treasure_stone</Template>
+			<Template>gaia/treasure/stone</Template>
 			<Player>0</Player>
 			<Position x="273.67017" z="240.76337"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1117">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="308.35636" z="297.7444"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1118">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="306.0633" z="301.75886"/>
 			<Orientation y="-2.36419"/>
 		</Entity>
 		<Entity uid="1119">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="310.74668" z="299.88062"/>
 			<Orientation y="0.66025"/>
 		</Entity>
 		<Entity uid="1120">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="695.6847" z="826.72059"/>
 			<Orientation y="-2.3008"/>
 		</Entity>
 		<Entity uid="1121">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="691.86841" z="828.90064"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1122">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="694.17322" z="831.77723"/>
 			<Orientation y="2.35621"/>
@@ -6519,7 +6517,7 @@
 			<Orientation y="-0.23321"/>
 		</Entity>
 		<Entity uid="1156">
-			<Template>other/cart_tophet</Template>
+			<Template>structures/cart_tophet</Template>
 			<Player>1</Player>
 			<Position x="732.68989" z="766.48951"/>
 			<Orientation y="-2.34728"/>
@@ -6661,28 +6659,28 @@
 			<Obstruction group="1173" group2="1176"/>
 		</Entity>
 		<Entity uid="1178">
-			<Template>structures/cart_wall</Template>
+			<Template>structures/cart_wall_medium</Template>
 			<Player>1</Player>
 			<Position x="543.22876" z="689.56"/>
 			<Orientation y="-1.96174"/>
 			<Obstruction group="1174" group2="1182"/>
 		</Entity>
 		<Entity uid="1179">
-			<Template>structures/cart_wall</Template>
+			<Template>structures/cart_wall_medium</Template>
 			<Player>1</Player>
 			<Position x="536.6106" z="704.71753"/>
 			<Orientation y="1.18076"/>
 			<Obstruction group="1182" group2="1183"/>
 		</Entity>
 		<Entity uid="1180">
-			<Template>structures/cart_wall</Template>
+			<Template>structures/cart_wall_medium</Template>
 			<Player>1</Player>
 			<Position x="514.39582" z="756.83973"/>
 			<Orientation y="-1.9563"/>
 			<Obstruction group="1184" group2="1185"/>
 		</Entity>
 		<Entity uid="1181">
-			<Template>structures/cart_wall</Template>
+			<Template>structures/cart_wall_medium</Template>
 			<Player>1</Player>
 			<Position x="505.74915" z="776.76172"/>
 			<Orientation y="1.22233"/>

@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
  * along with 0 A.D.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_ICMPRALLYPOINT
-#define INCLUDED_ICMPRALLYPOINT
+#ifndef INCLUDED_ICMPRALLYPOINTRENDERER
+#define INCLUDED_ICMPRALLYPOINTRENDERER
 
 #include "maths/FixedVector2D.h"
 #include "simulation2/helpers/Position.h"
@@ -48,9 +48,12 @@ public:
 	virtual void Reset() = 0;
 
 	/// Returns true if at least one display rally point is set
-	virtual bool IsSet() = 0;
+	virtual bool IsSet() const = 0;
+
+	/// Updates the line color
+	virtual void UpdateColor() = 0;
 
 	DECLARE_INTERFACE_TYPE(RallyPointRenderer)
 };
 
-#endif // INCLUDED_ICMPRALLYPOINT
+#endif // INCLUDED_ICMPRALLYPOINTRENDERER

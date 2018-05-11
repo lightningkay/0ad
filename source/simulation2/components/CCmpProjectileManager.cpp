@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@
 #include "ICmpPosition.h"
 #include "ICmpRangeManager.h"
 #include "ICmpTerrain.h"
-#include "ICmpVisual.h"
 #include "simulation2/MessageTypes.h"
 
 #include "graphics/Frustum.h"
@@ -75,7 +74,7 @@ public:
 		// Because this is just graphical effects, and because it's all non-deterministic floating point,
 		// we don't do much serialization here.
 		// (That means projectiles will vanish if you save/load - is that okay?)
-		
+
 		// The attack code stores the id so that the projectile gets deleted when it hits the target
 		serialize.NumberU32_Unbounded("next id", m_NextId);
 	}
@@ -83,7 +82,7 @@ public:
 	virtual void Deserialize(const CParamNode& paramNode, IDeserializer& deserialize)
 	{
 		Init(paramNode);
-		
+
 		// The attack code stores the id so that the projectile gets deleted when it hits the target
 		deserialize.NumberU32_Unbounded("next id", m_NextId);
 	}
@@ -107,12 +106,15 @@ public:
 		}
 	}
 
-	virtual uint32_t LaunchProjectileAtPoint(entity_id_t source, const CFixedVector3D& target, fixed speed, fixed gravity)
+	virtual uint32_t LaunchProjectileAtPoint(const CFixedVector3D& launchPoint, const CFixedVector3D& target, fixed speed, fixed gravity, const std::wstring& actorName, const std::wstring& impactActorName, fixed impactAnimationLifetime)
 	{
-		return LaunchProjectile(source, target, speed, gravity);
+		return LaunchProjectile(launchPoint, target, speed, gravity, actorName, impactActorName, impactAnimationLifetime);
 	}
-	
+
 	virtual void RemoveProjectile(uint32_t);
+
+	void RenderModel(CModelAbstract& model, const CVector3D& position, SceneCollector& collector, const CFrustum& frustum, bool culling,
+		ICmpRangeManager::CLosQuerier los, bool losRevealAll) const;
 
 private:
 	struct Projectile
@@ -124,15 +126,18 @@ private:
 		float time;
 		float timeHit;
 		float gravity;
-		bool stopped;
+		float impactAnimationLifetime;
 		uint32_t id;
-		
+		std::wstring impactActorName;
+		bool isImpactAnimationCreated;
+		bool stopped;
+
 		CVector3D position(float t)
 		{
 			float t2 = t;
 			if (t2 > timeHit)
 				t2 = timeHit + logf(1.f + t2 - timeHit);
-			
+
 			CVector3D ret(origin);
 			ret.X += v.X * t2;
 			ret.Z += v.Z * t2;
@@ -141,63 +146,63 @@ private:
 		}
 	};
 
+	struct ProjectileImpactAnimation
+	{
+		CUnit* unit;
+		CVector3D pos;
+		float time;
+	};
+
 	std::vector<Projectile> m_Projectiles;
 
+	std::vector<ProjectileImpactAnimation> m_ProjectileImpactAnimations;
+
 	uint32_t m_ActorSeed;
-	
+
 	uint32_t m_NextId;
 
-	uint32_t LaunchProjectile(entity_id_t source, CFixedVector3D targetPoint, fixed speed, fixed gravity);
+	uint32_t LaunchProjectile(CFixedVector3D launchPoint, CFixedVector3D targetPoint, fixed speed, fixed gravity,
+		const std::wstring& actorName, const std::wstring& impactActorName, fixed impactAnimationLifetime);
 
-	void AdvanceProjectile(Projectile& projectile, float dt);
+	void AdvanceProjectile(Projectile& projectile, float dt) const;
 
 	void Interpolate(float frameTime);
 
-	void RenderSubmit(SceneCollector& collector, const CFrustum& frustum, bool culling);
+	void RenderSubmit(SceneCollector& collector, const CFrustum& frustum, bool culling) const;
 };
 
 REGISTER_COMPONENT_TYPE(ProjectileManager)
 
-uint32_t CCmpProjectileManager::LaunchProjectile(entity_id_t source, CFixedVector3D targetPoint, fixed speed, fixed gravity)
+uint32_t CCmpProjectileManager::LaunchProjectile(CFixedVector3D launchPoint, CFixedVector3D targetPoint, fixed speed, fixed gravity, const std::wstring& actorName, const std::wstring& impactActorName, fixed impactAnimationLifetime)
 {
 	// This is network synced so don't use GUI checks before incrementing or it breaks any non GUI simulations
 	uint32_t currentId = m_NextId++;
-	
-	if (!GetSimContext().HasUnitManager())
+
+	if (!GetSimContext().HasUnitManager() || actorName.empty())
 		return currentId; // do nothing if graphics are disabled
-
-	CmpPtr<ICmpVisual> cmpSourceVisual(GetSimContext(), source);
-	if (!cmpSourceVisual)
-		return currentId;
-
-	std::wstring name = cmpSourceVisual->GetProjectileActor();
-	if (name.empty())
-	{
-		// If the actor was actually loaded, complain that it doesn't have a projectile
-		if (!cmpSourceVisual->GetActorShortName().empty())
-			LOGERROR("Unit with actor '%s' launched a projectile but has no actor on 'projectile' attachpoint", utf8_from_wstring(cmpSourceVisual->GetActorShortName()));
-		return currentId;
-	}
 
 	Projectile projectile;
 	projectile.id = currentId;
 	projectile.time = 0.f;
 	projectile.stopped = false;
 	projectile.gravity = gravity.ToFloat();
-	
-	projectile.origin = cmpSourceVisual->GetProjectileLaunchPoint();
-	if (!projectile.origin)
+	projectile.isImpactAnimationCreated = false;
+
+	if (!impactActorName.empty())
 	{
-		// If there's no explicit launch point, take a guess based on the entity position
-		CmpPtr<ICmpPosition> sourcePos(GetSimContext(), source);
-		if (!sourcePos)
-			return currentId;
-		projectile.origin = sourcePos->GetPosition();
-		projectile.origin.Y += 3.f;
+		projectile.impactActorName = impactActorName;
+		projectile.impactAnimationLifetime = impactAnimationLifetime.ToFloat();
+	}
+	else
+	{
+		projectile.impactActorName = L"";
+		projectile.impactAnimationLifetime = 0.0f;
 	}
 
+	projectile.origin = launchPoint;
+
 	std::set<CStr> selections;
-	projectile.unit = GetSimContext().GetUnitManager().CreateUnit(name, m_ActorSeed++, selections);
+	projectile.unit = GetSimContext().GetUnitManager().CreateUnit(actorName, m_ActorSeed++, selections);
 	if (!projectile.unit) // The error will have already been logged
 		return currentId;
 
@@ -211,11 +216,11 @@ uint32_t CCmpProjectileManager::LaunchProjectile(entity_id_t source, CFixedVecto
 	projectile.v.Y = offset.Y / projectile.timeHit  + 0.5f * projectile.gravity * projectile.timeHit;
 
 	m_Projectiles.push_back(projectile);
-	
+
 	return projectile.id;
 }
 
-void CCmpProjectileManager::AdvanceProjectile(Projectile& projectile, float dt)
+void CCmpProjectileManager::AdvanceProjectile(Projectile& projectile, float dt) const
 {
 	projectile.time += dt;
 	if (projectile.stopped)
@@ -226,7 +231,7 @@ void CCmpProjectileManager::AdvanceProjectile(Projectile& projectile, float dt)
 		delta = projectile.pos;
 	else // For big dt delta is unprecise
 		delta = projectile.position(projectile.time - 0.1f);
-	
+
 	projectile.pos = projectile.position(projectile.time);
 
 	delta = projectile.pos - delta;
@@ -282,21 +287,57 @@ void CCmpProjectileManager::Interpolate(float frameTime)
 	// Remove the ones that have reached their target
 	for (size_t i = 0; i < m_Projectiles.size(); )
 	{
-		// Projectiles hitting targets get removed immediately.
-		// Those hitting the ground stay for a while, because it looks pretty.
-		if (m_Projectiles[i].stopped)
+		if (!m_Projectiles[i].stopped)
 		{
-			if (m_Projectiles[i].time - m_Projectiles[i].timeHit > PROJECTILE_DECAY_TIME)
-			{
-				// Delete in-place by swapping with the last in the list
-				std::swap(m_Projectiles[i], m_Projectiles.back());
-				GetSimContext().GetUnitManager().DeleteUnit(m_Projectiles.back().unit);
-				m_Projectiles.pop_back();
-				continue; // don't increment i
-			}
+			++i;
+			continue;
 		}
 
+		if (!m_Projectiles[i].impactActorName.empty() && !m_Projectiles[i].isImpactAnimationCreated)
+		{
+			m_Projectiles[i].isImpactAnimationCreated = true;
+			CMatrix3D transform;
+			CQuaternion quat;
+			quat.ToMatrix(transform);
+			transform.Translate(m_Projectiles[i].pos);
+
+			std::set<CStr> selections;
+			CUnit* unit = GetSimContext().GetUnitManager().CreateUnit(m_Projectiles[i].impactActorName, m_ActorSeed++, selections);
+			unit->GetModel().SetTransform(transform);
+
+			ProjectileImpactAnimation projectileImpactAnimation;
+			projectileImpactAnimation.unit = unit;
+			projectileImpactAnimation.time = m_Projectiles[i].impactAnimationLifetime;
+			projectileImpactAnimation.pos = m_Projectiles[i].pos;
+			m_ProjectileImpactAnimations.push_back(projectileImpactAnimation);
+		}
+
+		// Projectiles hitting targets get removed immediately.
+		// Those hitting the ground stay for a while, because it looks pretty.
+		if (m_Projectiles[i].time - m_Projectiles[i].timeHit > PROJECTILE_DECAY_TIME)
+		{
+			// Delete in-place by swapping with the last in the list
+			std::swap(m_Projectiles[i], m_Projectiles.back());
+			GetSimContext().GetUnitManager().DeleteUnit(m_Projectiles.back().unit);
+			m_Projectiles.pop_back();
+			continue;
+		}
 		++i;
+	}
+
+	for (size_t i = 0; i < m_ProjectileImpactAnimations.size();)
+	{
+		if (m_ProjectileImpactAnimations[i].time > 0)
+		{
+			m_ProjectileImpactAnimations[i].time -= frameTime;
+			++i;
+		}
+		else
+		{
+			std::swap(m_ProjectileImpactAnimations[i], m_ProjectileImpactAnimations.back());
+			GetSimContext().GetUnitManager().DeleteUnit(m_ProjectileImpactAnimations.back().unit);
+			m_ProjectileImpactAnimations.pop_back();
+		}
 	}
 }
 
@@ -316,30 +357,40 @@ void CCmpProjectileManager::RemoveProjectile(uint32_t id)
 	}
 }
 
-void CCmpProjectileManager::RenderSubmit(SceneCollector& collector, const CFrustum& frustum, bool culling)
+void CCmpProjectileManager::RenderModel(CModelAbstract& model, const CVector3D& position, SceneCollector& collector,
+	const CFrustum& frustum, bool culling, ICmpRangeManager::CLosQuerier los, bool losRevealAll) const
+{
+	// Don't display objects outside the visible area
+	ssize_t posi = (ssize_t)(0.5f + position.X / TERRAIN_TILE_SIZE);
+	ssize_t posj = (ssize_t)(0.5f + position.Z / TERRAIN_TILE_SIZE);
+	if (!losRevealAll && !los.IsVisible(posi, posj))
+		return;
+
+	model.ValidatePosition();
+
+	if (culling && !frustum.IsBoxVisible(model.GetWorldBoundsRec()))
+		return;
+
+	// TODO: do something about LOS (copy from CCmpVisualActor)
+
+	collector.SubmitRecursive(&model);
+}
+
+void CCmpProjectileManager::RenderSubmit(SceneCollector& collector, const CFrustum& frustum, bool culling) const
 {
 	CmpPtr<ICmpRangeManager> cmpRangeManager(GetSystemEntity());
 	int player = GetSimContext().GetCurrentDisplayedPlayer();
 	ICmpRangeManager::CLosQuerier los(cmpRangeManager->GetLosQuerier(player));
 	bool losRevealAll = cmpRangeManager->GetLosRevealAll(player);
 
-	for (size_t i = 0; i < m_Projectiles.size(); ++i)
+	for (const Projectile& projectile : m_Projectiles)
 	{
-		// Don't display projectiles outside the visible area
-		ssize_t posi = (ssize_t)(0.5f + m_Projectiles[i].pos.X / TERRAIN_TILE_SIZE);
-		ssize_t posj = (ssize_t)(0.5f + m_Projectiles[i].pos.Z / TERRAIN_TILE_SIZE);
-		if (!losRevealAll && !los.IsVisible(posi, posj))
-			continue;
+		RenderModel(projectile.unit->GetModel(), projectile.pos, collector, frustum, culling, los, losRevealAll);
+	}
 
-		CModelAbstract& model = m_Projectiles[i].unit->GetModel();
-
-		model.ValidatePosition();
-
-		if (culling && !frustum.IsBoxVisible(model.GetWorldBoundsRec()))
-			continue;
-
-		// TODO: do something about LOS (copy from CCmpVisualActor)
-
-		collector.SubmitRecursive(&model);
+	for (const ProjectileImpactAnimation& projectileImpactAnimation : m_ProjectileImpactAnimations)
+	{
+		RenderModel(projectileImpactAnimation.unit->GetModel(), projectileImpactAnimation.pos,
+			collector, frustum, culling, los, losRevealAll);
 	}
 }

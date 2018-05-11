@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Wildfire Games
+/* Copyright (C) 2017 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -146,7 +146,7 @@ extern const char* ogl_ExtensionString();
  *
  * when an error is reported, insert calls to this in a binary-search scheme
  * to quickly narrow down the actual error location.
- * 
+ *
  * reports a bogus invalid_operation error if called before OpenGL is
  * initialized, so don't!
  *
@@ -158,6 +158,16 @@ extern void ogl_WarnIfErrorLoc(const char *file, int line);
 #else
 # define ogl_WarnIfError() ogl_WarnIfErrorLoc(__FILE__, __LINE__)
 #endif
+
+/**
+* get a name of the error.
+*
+* useful for debug.
+*
+* @return read-only C string of unspecified length containing
+* the error's name.
+**/
+extern const char* ogl_GetErrorName(GLenum err);
 
 /**
  * ignore and reset the specified OpenGL error.

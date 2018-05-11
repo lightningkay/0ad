@@ -4,7 +4,9 @@
     <PlacementType>land-shore</PlacementType>
     <Category>Wall</Category>
   </BuildRestrictions>
-  <Capturable disable=""/>
+  <Capturable>
+    <CapturePoints>1200</CapturePoints>
+  </Capturable>
   <Cost>
     <BuildTime>25</BuildTime>
     <Resources>
@@ -17,7 +19,7 @@
   </Footprint>
   <Health>
     <Max>3000</Max>
-    <SpawnEntityOnDeath>rubble/rubble_wall</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_2x2</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Classes datatype="tokens">-ConquestCritical Defensive StoneWall</Classes>
@@ -27,11 +29,8 @@
     <RequiredTechnology>phase_town</RequiredTechnology>
   </Identity>
   <Loot>
-    <xp>100</xp>
-    <food>0</food>
-    <wood>5</wood>
+    <wood>0</wood>
     <stone>15</stone>
-    <metal>0</metal>
   </Loot>
   <Obstruction>
     <Static width="6.0" depth="6.0"/>
@@ -48,6 +47,9 @@
       <death>attack/destruction/building_collapse_large.xml</death>
     </SoundGroups>
   </Sound>
+  <TerritoryDecay>
+    <DecayRate>5.0</DecayRate>
+  </TerritoryDecay>
   <TerritoryInfluence>
     <Root>false</Root>
     <Radius>20</Radius>
@@ -56,7 +58,4 @@
   <Vision>
     <Range>20</Range>
   </Vision>
-  <VisualActor>
-    <FoundationActor>structures/fndn_wall.xml</FoundationActor>
-  </VisualActor>
 </Entity>

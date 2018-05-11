@@ -18,12 +18,9 @@
 				<Type>lake</Type>
 				<Color r="0.239216" g="0.294118" b="0.419608"/>
 				<Height>19.9</Height>
-				<Shininess>8.54492</Shininess>
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.626953</Murkiness>
 				<Tint r="0" g="1" b="1"/>
-				<ReflectionTint r="0.27451" g="0.294118" b="0.584314"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -49,7 +46,6 @@
   ],
   "CircularMap": true,
   "Description": "The mountains buffering the Persian homeland, straddling Persis, Susiana, and Media.\u000a\u000aPlayers start the match near the Persian Gulf in their own province with 1 free Temple. \u000a\u000aAccess to untapped resources and territories can be found through the rugged hinterlands.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Zagros Mountains (2)",
@@ -64,7 +60,10 @@
   "Preview": "zagros_mountains_skirmish_2.png",
   "RevealMap": false,
   "Script": "latium.js",
-  "Size": 256
+  "Size": 256,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>

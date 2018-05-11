@@ -5,6 +5,14 @@
 	<!-- ================================  ================================ -->
 	<!-- Text Styles -->
 	<!-- ================================  ================================ -->
+
+	<style name="DiplomacyText"
+		font="sans-bold-stroke-14"
+		textcolor="white"
+		text_align="left"
+		text_valign="top"
+	/>
+
 	<style name="PauseText"
 		font="sans-bold-24"
 		textcolor="white"
@@ -19,7 +27,7 @@
 		text_valign="center"
 	/>
 
-	<style name="PausedByText"
+	<style name="netStatusPlayersText"
 		font="sans-bold-16"
 		textcolor="white"
 		text_align="center"
@@ -231,7 +239,7 @@
 	<!-- ================================  ================================ -->
 	<!-- Misc Styles -->
 	<!-- ================================  ================================ -->
-	<style name="chatPanel"
+	<style name="chatPanelOverlay"
 		buffer_zone="5"
 		font="sans-bold-stroke-14"
 		textcolor="white"
@@ -260,6 +268,6 @@
 		textcolor="255 255 255"
 		text_align="center"
 		text_valign="center"
-		sprite="netStatusBackground"
+		sprite="sessionOverlayBackground"
 	/>
 </styles>

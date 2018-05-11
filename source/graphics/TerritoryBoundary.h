@@ -21,14 +21,16 @@
 #include <vector>
 
 #include "maths/Vector2D.h"
-#include "simulation2/helpers/Grid.h"
 #include "simulation2/helpers/Player.h"
+
+template<typename T>
+class Grid;
 
 /**
  * Describes an outline of a territory, where the latter are understood to mean the largest sets of mutually connected tiles
  * ('connected' as in the mathematical sense from graph theory) that are either all reachable or all unreachable from a root
  * influence entity.
- * 
+ *
  * Note that the latter property is also called the 'connected' flag in the territory manager terminology, because for tiles
  * to be reachable from a root influence entity they must in fact be mathematically connected. Hence, you should not confuse
  * the 'connected' flag with the pure mathematical concept of connectedness, because in the former it is implicitly

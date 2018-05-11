@@ -8,7 +8,7 @@ m.TERRITORY_BLINKING_MASK = 0x40;
 
 m.createObstructionMap = function(gameState, accessIndex, template)
 {
-	let passabilityMap = gameState.getMap();
+	let passabilityMap = gameState.getPassabilityMap();
 	let territoryMap = gameState.ai.territoryMap;
 	let ratio = territoryMap.cellSize / passabilityMap.cellSize;
 
@@ -44,7 +44,7 @@ m.createObstructionMap = function(gameState, accessIndex, template)
 
 	for (let k = 0; k < territoryMap.data.length; ++k)
 	{
-		let tilePlayer = (territoryMap.data[k] & m.TERRITORY_PLAYER_MASK);
+		let tilePlayer = territoryMap.data[k] & m.TERRITORY_PLAYER_MASK;
 		let isConnected = (territoryMap.data[k] & m.TERRITORY_BLINKING_MASK) == 0;
 		if (tilePlayer === PlayerID)
 		{
@@ -68,7 +68,7 @@ m.createObstructionMap = function(gameState, accessIndex, template)
 		}
 
 		let x = ratio * (k % territoryMap.width);
-		let y = ratio * (Math.floor(k / territoryMap.width));
+		let y = ratio * Math.floor(k / territoryMap.width);
 		for (let ix = 0; ix < ratio; ++ix)
 		{
 			for (let iy = 0; iy < ratio; ++iy)
@@ -87,10 +87,14 @@ m.createObstructionMap = function(gameState, accessIndex, template)
 
 	if (template && template.buildDistance())
 	{
-		let minDist = +template.buildDistance().MinDistance;
-		let fromClass = template.buildDistance().FromClass;
-		if (minDist && fromClass)
+		let distance = template.buildDistance();
+		let minDist = distance.MinDistance ? +distance.MinDistance : 0;
+		if (minDist)
 		{
+			let obstructionRadius = template.obstructionRadius();
+			if (obstructionRadius)
+				minDist -= obstructionRadius.min;
+			let fromClass = distance.FromClass;
 			let cellSize = passabilityMap.cellSize;
 			let cellDist = 1 + minDist / cellSize;
 			let structures = gameState.getOwnStructures().filter(API3.Filters.byClass(fromClass));
@@ -114,19 +118,36 @@ m.createTerritoryMap = function(gameState)
 {
 	let map = gameState.ai.territoryMap;
 
-	let ret = new API3.Map(gameState.sharedScript, "territory", map.data);	
+	let ret = new API3.Map(gameState.sharedScript, "territory", map.data);
 	ret.getOwner = function(p) { return this.point(p) & m.TERRITORY_PLAYER_MASK; };
 	ret.getOwnerIndex = function(p) { return this.map[p] & m.TERRITORY_PLAYER_MASK; };
+	ret.isBlinking = function(p) { return (this.point(p) & m.TERRITORY_BLINKING_MASK) != 0; };
 	return ret;
 };
 
-/** flag cells around the border of the map (2 if all points into that cell are inaccessible, 1 otherwise) */
+/**
+ *  The borderMap contains some border and frontier information:
+ *  - border of the map filled once:
+ *     - all mini-cells (1x1) from the big cell (8x8) inaccessibles => bit 0
+ *     - inside a given distance to the border                      => bit 1
+ *  - frontier of our territory (updated regularly in updateFrontierMap)
+ *     - narrow border (inside our territory)                       => bit 2
+ *     - large border (inside our territory, exclusive of narrow)   => bit 3
+ */
+
+m.outside_Mask = 1;
+m.border_Mask = 2;
+m.fullBorder_Mask = m.outside_Mask | m.border_Mask;
+m.narrowFrontier_Mask = 4;
+m.largeFrontier_Mask = 8;
+m.fullFrontier_Mask = m.narrowFrontier_Mask | m.largeFrontier_Mask;
+
 m.createBorderMap = function(gameState)
 {
 	let map = new API3.Map(gameState.sharedScript, "territory");
 	let width = map.width;
 	let border = Math.round(80 / map.cellSize);
-	let passabilityMap = gameState.sharedScript.passabilityMap;
+	let passabilityMap = gameState.getPassabilityMap();
 	let obstructionMask = gameState.getPassabilityClassMask("unrestricted");
 	if (gameState.circularMap)
 	{
@@ -139,13 +160,13 @@ m.createBorderMap = function(gameState)
 			let radius = dx*dx + dy*dy;
 			if (radius < radcut)
 				continue;
-			map.map[j] = 2;
+			map.map[j] = m.outside_Mask;
 			let ind = API3.getMapIndices(j, map, passabilityMap);
 			for (let k of ind)
 			{
 				if (passabilityMap.data[k] & obstructionMask)
 					continue;
-				map.map[j] = 1;
+				map.map[j] = m.border_Mask;
 				break;
 			}
 		}
@@ -159,13 +180,13 @@ m.createBorderMap = function(gameState)
 			let iy = Math.floor(j/width);
 			if (ix < border || ix >= borderCut || iy < border || iy >= borderCut)
 			{
-				map.map[j] = 2;
+				map.map[j] = m.outside_Mask;
 				let ind = API3.getMapIndices(j, map, passabilityMap);
 				for (let k of ind)
 				{
 					if (passabilityMap.data[k] & obstructionMask)
 						continue;
-					map.map[j] = 1;
+					map.map[j] = m.border_Mask;
 					break;
 				}
 			}
@@ -176,61 +197,11 @@ m.createBorderMap = function(gameState)
 	return map;
 };
 
-/** map of our frontier : 2 means narrow border, 1 means large border */
-m.createFrontierMap = function(gameState)
-{
-	let territoryMap = gameState.ai.HQ.territoryMap;
-	let borderMap = gameState.ai.HQ.borderMap;
-	const around = [ [-0.7,0.7], [0,1], [0.7,0.7], [1,0], [0.7,-0.7], [0,-1], [-0.7,-0.7], [-1,0] ];
-
-	let map = new API3.Map(gameState.sharedScript, "territory");
-	let width = map.width;
-	let insideSmall = Math.round(45 / map.cellSize);
-	let insideLarge = Math.round(80 / map.cellSize);	// should be about the range of towers
-
-	for (let j = 0; j < territoryMap.length; ++j)
-	{
-		if (territoryMap.getOwnerIndex(j) !== PlayerID || borderMap.map[j] > 1)
-			continue;
-		let ix = j%width;
-		let iz = Math.floor(j/width);
-		for (let a of around)
-		{
-			let jx = ix + Math.round(insideSmall*a[0]);
-			if (jx < 0 || jx >= width)
-				continue;
-			let jz = iz + Math.round(insideSmall*a[1]);
-			if (jz < 0 || jz >= width)
-				continue;
-			if (borderMap.map[jx+width*jz] > 1)
-				continue;
-			if (!gameState.isPlayerAlly(territoryMap.getOwnerIndex(jx+width*jz)))
-			{
-				map.map[j] = 2;
-				break;
-			}
-			jx = ix + Math.round(insideLarge*a[0]);
-			if (jx < 0 || jx >= width)
-				continue;
-			jz = iz + Math.round(insideLarge*a[1]);
-			if (jz < 0 || jz >= width)
-				continue;
-			if (borderMap.map[jx+width*jz] > 1)
-				continue;
-			if (!gameState.isPlayerAlly(territoryMap.getOwnerIndex(jx+width*jz)))
-				map.map[j] = 1;
-		}
-	}
-
-//    m.debugMap(gameState, map);
-	return map;
-};
-
 m.debugMap = function(gameState, map)
 {
 	let width = map.width;
 	let cell = map.cellSize;
-	gameState.getEntities().forEach( function (ent) {
+	gameState.getEntities().forEach(ent => {
 		let pos = ent.position();
 		if (!pos)
 			return;
@@ -238,11 +209,11 @@ m.debugMap = function(gameState, map)
 		let z = Math.round(pos[1] / cell);
 		let id = x + width*z;
 		if (map.map[id] == 1)
-			Engine.PostCommand(PlayerID,{"type": "set-shading-color", "entities": [ent.id()], "rgb": [2,0,0]});
+			Engine.PostCommand(PlayerID, { "type": "set-shading-color", "entities": [ent.id()], "rgb": [2, 0, 0] });
 		else if (map.map[id] == 2)
-			Engine.PostCommand(PlayerID,{"type": "set-shading-color", "entities": [ent.id()], "rgb": [0,2,0]});
+			Engine.PostCommand(PlayerID, { "type": "set-shading-color", "entities": [ent.id()], "rgb": [0, 2, 0] });
 		else if (map.map[id] == 3)
-			Engine.PostCommand(PlayerID,{"type": "set-shading-color", "entities": [ent.id()], "rgb": [0,0,2]});
+			Engine.PostCommand(PlayerID, { "type": "set-shading-color", "entities": [ent.id()], "rgb": [0, 0, 2] });
 	});
 };
 

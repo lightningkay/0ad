@@ -2,7 +2,6 @@
 
 <Scenario version="6">
 	<Environment>
-		<LightingModel>standard</LightingModel>
 		<SkySet>sunny</SkySet>
 		<SunColor r="0.729412" g="0.701961" b="0.501961"/>
 		<SunElevation angle="0.773126"/>
@@ -12,14 +11,11 @@
 		<Water>
 			<WaterBody>
 				<Type>clap</Type>
-				<Color r="0.294118" g="0.34902" b="0.694118"/>
+				<Color r="0.294118" g="0.3902" b="0.694118"/>
 				<Height>21.1935</Height>
-				<Shininess>1.46484</Shininess>
 				<Waviness>8</Waviness>
-				<Murkiness>0.870117</Murkiness>
-				<Tint r="0.392157" g="0.47451" b="0.654902"/>
-				<ReflectionTint r="0.392157" g="0.47451" b="0.654902"/>
-				<ReflectionTintStrength>0.355469</ReflectionTintStrength>
+				<Murkiness>0.65</Murkiness>
+				<Tint r="0.3" g="0.36" b="0.44"/>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -33,7 +29,6 @@
   "CircularMap": true,
   "Preview" : "siwa_oasis.png",
   "Description": "Carthage vs. Macedon vs. Persia vs. Iberia! A large oasis acts as the hub of mountainous spokes that divide the home territories of each player.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Siwa Oasis",
@@ -103,7 +98,10 @@
       "Team": -1
     }
   ],
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -14051,7 +14049,7 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="2745">
-			<Template>units/iber_cavalry_spearman_e</Template>
+			<Template>units/iber_cavalry_javelinist_e</Template>
 			<Player>4</Player>
 			<Position x="801.80878" z="485.6356"/>
 			<Orientation y="-2.29636"/>

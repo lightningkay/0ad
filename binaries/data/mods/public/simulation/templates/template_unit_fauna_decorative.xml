@@ -8,6 +8,7 @@
     <Altitude>0</Altitude>
     <Anchor>upright</Anchor>
     <Floating>false</Floating>
+    <FloatDepth>0.0</FloatDepth>
     <TurnRate>6.0</TurnRate>
   </Position>
   <Selectable>
@@ -20,11 +21,11 @@
     </Overlay>
   </Selectable>
   <UnitAI>
-    <AlertReactiveLevel>0</AlertReactiveLevel>
     <DefaultStance>passive</DefaultStance>
     <NaturalBehaviour>passive</NaturalBehaviour>
     <FormationController>false</FormationController>
     <CanGuard>false</CanGuard>
+    <CanPatrol>false</CanPatrol>
     <RoamDistance>20</RoamDistance>
     <FleeDistance>10.0</FleeDistance>
     <RoamTimeMin>10000</RoamTimeMin>
@@ -34,7 +35,10 @@
   </UnitAI>
   <UnitMotion>
     <FormationController>false</FormationController>
-    <WalkSpeed>8.0</WalkSpeed>
+    <WalkSpeed op="mul">1.2</WalkSpeed>
+    <Run>
+      <Speed op="mul">1.2</Speed>
+    </Run>
     <PassabilityClass>unrestricted</PassabilityClass>
     <CostClass>default</CostClass>
   </UnitMotion>

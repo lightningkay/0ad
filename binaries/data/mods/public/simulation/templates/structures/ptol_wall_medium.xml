@@ -19,8 +19,7 @@
   </GarrisonHolder>
   <Identity>
     <Civ>ptol</Civ>
-    <History>Ptolemaic cities were surrounded by limestone walls for protection against enemy attacks. Some of these fortifications were massive structures.</History>
-    <SelectionGroupName>structures/mace_wallset_stone</SelectionGroupName>
+    <SelectionGroupName>structures/ptol_wallset_stone</SelectionGroupName>
     <SpecificName>h-n-njwt</SpecificName>
   </Identity>
   <Obstruction>
@@ -30,6 +29,6 @@
     <Actor>structures/ptolemies/wall_medium.xml</Actor>
   </VisualActor>
   <WallPiece>
-    <Length>26.0</Length>
+    <Length>25</Length>
   </WallPiece>
 </Entity>

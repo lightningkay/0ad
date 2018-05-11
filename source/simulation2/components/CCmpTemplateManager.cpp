@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ public:
 	virtual void Serialize(ISerializer& serialize)
 	{
 		std::map<CStr, std::vector<entity_id_t>> templateMap;
-		
+
 		for (const std::pair<entity_id_t, std::string>& templateEnt : m_LatestTemplates)
 			if (!ENTITY_IS_LOCAL(templateEnt.first))
 				templateMap[templateEnt.second].push_back(templateEnt.first);
@@ -76,7 +76,7 @@ public:
 		SerializeMap<SerializeString, SerializeVector<SerializeU32_Unbounded>>()(deserialize, "templates", templateMap);
 		for (const std::pair<CStr, std::vector<entity_id_t>>& mapEl : templateMap)
 			for (entity_id_t id : mapEl.second)
-				m_LatestTemplates[id] = mapEl.first;	
+				m_LatestTemplates[id] = mapEl.first;
 	}
 
 	virtual void HandleMessage(const CMessage& msg, bool UNUSED(global))
@@ -100,23 +100,23 @@ public:
 		m_DisableValidation = true;
 	}
 
-	virtual const CParamNode* LoadTemplate(entity_id_t ent, const std::string& templateName, int playerID);
+	virtual const CParamNode* LoadTemplate(entity_id_t ent, const std::string& templateName);
 
 	virtual const CParamNode* GetTemplate(const std::string& templateName);
 
 	virtual const CParamNode* GetTemplateWithoutValidation(const std::string& templateName);
 
-	virtual bool TemplateExists(const std::string& templateName);
+	virtual bool TemplateExists(const std::string& templateName) const;
 
 	virtual const CParamNode* LoadLatestTemplate(entity_id_t ent);
 
-	virtual std::string GetCurrentTemplateName(entity_id_t ent);
+	virtual std::string GetCurrentTemplateName(entity_id_t ent) const;
 
-	virtual std::vector<std::string> FindAllTemplates(bool includeActors);
+	virtual std::vector<std::string> FindAllTemplates(bool includeActors) const;
 
-	virtual std::vector<std::string> FindAllPlaceableTemplates(bool includeActors);
+	virtual std::vector<std::string> FindUsedTemplates() const;
 
-	virtual std::vector<entity_id_t> GetEntitiesUsingTemplate(const std::string& templateName);
+	virtual std::vector<entity_id_t> GetEntitiesUsingTemplate(const std::string& templateName) const;
 
 private:
 	// Template loader
@@ -135,23 +135,16 @@ private:
 
 	// Remember the template used by each entity, so we can return them
 	// again for deserialization.
-	// TODO: should store player ID etc.
 	std::map<entity_id_t, std::string> m_LatestTemplates;
 };
 
 REGISTER_COMPONENT_TYPE(TemplateManager)
 
-const CParamNode* CCmpTemplateManager::LoadTemplate(entity_id_t ent, const std::string& templateName, int UNUSED(playerID))
+const CParamNode* CCmpTemplateManager::LoadTemplate(entity_id_t ent, const std::string& templateName)
 {
 	m_LatestTemplates[ent] = templateName;
 
-	const CParamNode* templateRoot = GetTemplate(templateName);
-	if (!templateRoot)
-		return NULL;
-
-	// TODO: Eventually we need to support techs in here, and return a different template per playerID
-
-	return templateRoot;
+	return GetTemplate(templateName);
 }
 
 const CParamNode* CCmpTemplateManager::GetTemplate(const std::string& templateName)
@@ -196,7 +189,7 @@ const CParamNode* CCmpTemplateManager::GetTemplateWithoutValidation(const std::s
 	return &templateRoot;
 }
 
-bool CCmpTemplateManager::TemplateExists(const std::string& templateName)
+bool CCmpTemplateManager::TemplateExists(const std::string& templateName) const
 {
 	return m_templateLoader.TemplateExists(templateName);
 }
@@ -206,10 +199,10 @@ const CParamNode* CCmpTemplateManager::LoadLatestTemplate(entity_id_t ent)
 	std::map<entity_id_t, std::string>::const_iterator it = m_LatestTemplates.find(ent);
 	if (it == m_LatestTemplates.end())
 		return NULL;
-	return LoadTemplate(ent, it->second, -1);
+	return LoadTemplate(ent, it->second);
 }
 
-std::string CCmpTemplateManager::GetCurrentTemplateName(entity_id_t ent)
+std::string CCmpTemplateManager::GetCurrentTemplateName(entity_id_t ent) const
 {
 	std::map<entity_id_t, std::string>::const_iterator it = m_LatestTemplates.find(ent);
 	if (it == m_LatestTemplates.end())
@@ -217,30 +210,30 @@ std::string CCmpTemplateManager::GetCurrentTemplateName(entity_id_t ent)
 	return it->second;
 }
 
-std::vector<std::string> CCmpTemplateManager::FindAllTemplates(bool includeActors)
+std::vector<std::string> CCmpTemplateManager::FindAllTemplates(bool includeActors) const
 {
 	ETemplatesType templatesType = includeActors ? ALL_TEMPLATES : SIMULATION_TEMPLATES;
 	return m_templateLoader.FindTemplates("", true, templatesType);
 }
 
-std::vector<std::string> CCmpTemplateManager::FindAllPlaceableTemplates(bool includeActors)
+std::vector<std::string> CCmpTemplateManager::FindUsedTemplates() const
 {
-	ScriptInterface& scriptInterface = this->GetSimContext().GetScriptInterface();
-
-	ETemplatesType templatesType = includeActors ? ALL_TEMPLATES : SIMULATION_TEMPLATES;
-	return m_templateLoader.FindPlaceableTemplates("", true, templatesType, scriptInterface);
+	std::vector<std::string> usedTemplates;
+	for (const std::pair<entity_id_t, std::string>& p : m_LatestTemplates)
+		if (std::find(usedTemplates.begin(), usedTemplates.end(), p.second) == usedTemplates.end())
+			usedTemplates.push_back(p.second);
+	return usedTemplates;
 }
 
 /**
  * Get the list of entities using the specified template
  */
-std::vector<entity_id_t> CCmpTemplateManager::GetEntitiesUsingTemplate(const std::string& templateName)
+std::vector<entity_id_t> CCmpTemplateManager::GetEntitiesUsingTemplate(const std::string& templateName) const
 {
 	std::vector<entity_id_t> entities;
-	for (std::map<entity_id_t, std::string>::const_iterator it = m_LatestTemplates.begin(); it != m_LatestTemplates.end(); ++it)
-	{
-		if(it->second == templateName)
-			entities.push_back(it->first);
-	}
+	for (const std::pair<entity_id_t, std::string>& p : m_LatestTemplates)
+		if (p.second == templateName)
+			entities.push_back(p.first);
+
 	return entities;
 }

@@ -7,7 +7,6 @@
   <Identity>
     <Civ>cart</Civ>
     <SpecificName>Mijdil-šaʿar</SpecificName>
-    <History>The tower sections constituted a 4th level where they rose up to provide even higher firing level platform than that of the top of the wall run.</History>
   </Identity>
   <Obstruction>
     <Obstructions>
@@ -20,6 +19,6 @@
     <Actor>structures/carthaginians/wall_gate.xml</Actor>
   </VisualActor>
   <WallPiece>
-    <Length>25.0</Length>
+    <Length>38.0</Length>
   </WallPiece>
 </Entity>

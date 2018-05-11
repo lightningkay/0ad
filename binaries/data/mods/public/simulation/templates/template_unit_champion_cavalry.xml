@@ -7,7 +7,7 @@
   </Armour>
   <Cost>
     <Population>1</Population>
-    <BuildTime>40</BuildTime>
+    <BuildTime>30</BuildTime>
     <Resources>
       <food>250</food>
       <wood>0</wood>
@@ -20,13 +20,13 @@
     <Height>5.0</Height>
   </Footprint>
   <Health>
-    <Max>270</Max>
+    <Max>240</Max>
   </Health>
   <Identity>
     <GenericName>Champion Cavalry</GenericName>
     <VisibleClasses datatype="tokens">Cavalry</VisibleClasses>
     <Formations datatype="tokens">
-      formations/wedge
+      special/formations/wedge
     </Formations>
   </Identity>
   <Position>
@@ -49,7 +49,7 @@
       <order_garrison>voice/{lang}/civ/civ_{gender}_garrison.xml</order_garrison>
       <walk>actor/mounted/movement/walk.xml</walk>
       <run>actor/mounted/movement/walk.xml</run>
-      <attack>attack/weapon/sword.xml</attack>
+      <attack_melee>attack/weapon/sword.xml</attack_melee>
       <death>actor/fauna/death/death_horse.xml</death>
       <trained>interface/alarm/alarm_create_cav.xml</trained>
     </SoundGroups>
@@ -58,11 +58,9 @@
     <HeightOffset>6.5</HeightOffset>
   </StatusBars>
   <UnitMotion>
-    <WalkSpeed>16.5</WalkSpeed>
+    <WalkSpeed op="mul">2.25</WalkSpeed>
     <Run>
-      <Speed>26.0</Speed>
-      <Range>1000.0</Range>
-      <RangeMin>10.0</RangeMin>
+      <Speed op="mul">2.25</Speed>
     </Run>
   </UnitMotion>
   <Vision>

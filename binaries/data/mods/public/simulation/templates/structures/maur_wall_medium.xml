@@ -27,8 +27,11 @@
     <Civ>maur</Civ>
     <SelectionGroupName>structures/maur_wallset_stone</SelectionGroupName>
     <SpecificName>Shilabanda</SpecificName>
-    <History>Mauryan city walls were generally made out of wood, which is an abundant resource in ancient India.</History>
   </Identity>
+  <Loot>
+    <wood>15</wood>
+    <stone>0</stone>
+  </Loot>
   <Obstruction>
     <Static width="25.0" depth="7.5"/>
   </Obstruction>
@@ -36,6 +39,6 @@
     <Actor>structures/mauryans/wall_medium.xml</Actor>
   </VisualActor>
   <WallPiece>
-    <Length>24.0</Length>
+    <Length>24.1</Length>
   </WallPiece>
 </Entity>

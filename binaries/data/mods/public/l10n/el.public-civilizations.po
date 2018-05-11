@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Adrian Pappas <pappasadrian@gmail.com>, 2013
+# Aristomahos Nikiforakis <barbounism@gmail.com>, 2016-2017
 # Armando Stylianakis <armandos.styl@gmail.com>, 2016
 # LOUKAS SKOUROLIAKOS, 2015
 # Christo Keller <christoniancoder@gmail.com>, 2014
@@ -13,12 +14,15 @@
 # George Charoupas <labaxp@gmail.com>, 2015
 # MasterWord, 2015
 # manitarious gr <manitarious@gmail.com>, 2015
+# Lampros Lampreas <marbiourd@hotmail.com>, 2016
 # LOUKAS SKOUROLIAKOS, 2015
 # malvanos <malvanos@gmail.com>, 2014
 # Menelaos Vergis <menelaosvergis@gmail.com>, 2014
 # ridergr <ridergr@gmail.com>, 2014
 # Savoritias <inactive+Savoritias@transifex.com>, 2014
 # Sotiris K <sotok42@gmail.com>, 2015
+# Steven Gikas <stevengk123@gmail.com>, 2017
+# Vasilis Drosos <basilisd@gmail.com>, 2016-2017
 # XTos <christos.kyratzis@gmail.com>, 2014
 # Yiannis Fistikis <jfistikis@mailinator.com>, 2013
 # ZedRyder <zedryder@gmail.com>, 2014
@@ -27,9 +31,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-03-19 09:25+0100\n"
-"PO-Revision-Date: 2016-07-27 14:30+0000\n"
-"Last-Translator: Κωνσταντίνος Σπάρταλης <consta.spartalis@gmail.com>\n"
+"POT-Creation-Date: 2017-06-05 09:01+0200\n"
+"PO-Revision-Date: 2017-10-15 14:27+0000\n"
+"Last-Translator: Steven Gikas <stevengk123@gmail.com>\n"
 "Language-Team: Greek (http://www.transifex.com/wildfire-games/0ad/language/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -62,7 +66,7 @@ msgstr "Τα ορυχεία στο Λαύριο της Αττικής παρεί
 msgid ""
 "Constructing a Theatron increases the territory expanse of all buildings by "
 "+20%."
-msgstr "Κατασκευάζοντας ένα Θέατρο αυξάνεται +20% η επέκταση περιοχής για όλα τα κτίρια."
+msgstr "Με την κατασκευή ενός Θεάτρου αυξάνεται κατά +20% η επέκταση περιοχής για όλα τα κτίρια."
 
 #: simulation/data/civs/athen.jsonCivBonuses[1].Name
 #: simulation/data/civs/mace.jsonCivBonuses[2].Name
@@ -92,7 +96,7 @@ msgid ""
 "city-states instituted the so-called Delian League in 478 B.C., whose "
 "purpose was to push the Persians out of the Aegean region. The allied states"
 " contributed ships and money, while the Athenians offered their entire navy."
-msgstr "Λίγο μετά τις μεγάλες ναυτικές νίκες στη Σαλαμίνα και τη Μυκάλη, οι ελληνικές πόλεις-κράτη σύστασαν τη λεγόμενη Δηλιακή Συμμαχία το 478 π.Χ., σκοπός της οποίας ήταν να διώξει τους Πέρσες έξω από την περιοχή του Αιγαίου. Τα συμμαχικά κράτη συνέβαλαν πλοία και χρήματα, ενώ οι Αθηναίοι προσέφεραν το σύνολο του στόλου τους."
+msgstr "Λίγο μετά τις μεγάλες ναυτικές νίκες στη Σαλαμίνα και τη Μυκάλη, οι ελληνικές πόλεις-κράτη σύστησαν τη λεγόμενη Δηλιακή Συμμαχία το 478 π.Χ., σκοπός της οποίας ήταν να διώξει τους Πέρσες έξω από την περιοχή του Αιγαίου. Τα συμμαχικά κράτη συνέβαλαν πλοία και χρήματα, ενώ οι Αθηναίοι προσέφεραν το σύνολο του στόλου τους."
 
 #: simulation/data/civs/athen.jsonAINames[0]
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].Name
@@ -159,7 +163,7 @@ msgstr "Δημοσθένης"
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[0].Description
 msgid "Athenian triremes can train Marines (Epibastes Athenaikos)."
-msgstr "Οι Αθηναϊκές τρηίρεις μπορούν να εκπαιδεύσουν ναύτες (Επιβαστές Αθηναϊκοί)"
+msgstr "Οι Αθηναϊκές τριήρεις μπορούν να εκπαιδεύσουν Ναυτικούς (Αθηναϊκός Επιβαστής)"
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[0].Name
 msgid "Iphicratean Reforms"
@@ -187,7 +191,7 @@ msgstr "Τα Μακρά Τείχη της Αθήνας κατασκευάστη�
 msgid ""
 "The player gains the ability to order spear-armed troops into Phalanx "
 "formation, providing greater attack and armor."
-msgstr "Ο παίχτης κερδίζει την ικανότητα να διατάζει τους οπλισμένους με δόρυ στρατιώτες του να δημιουργήσουν φάλαγγα, παρέχοντας καλύτερη επίθεση και θωράκιση."
+msgstr "Ο παίχτης αποκτάει την ικανότητα να διατάζει τους οπλισμένους με δόρυ στρατιώτες του να δημιουργήσουν Φάλαγγα, παρέχοντας καλύτερη επίθεση και θωράκιση."
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[2].Name
 #: simulation/data/civs/spart.jsonCivBonuses[0].Name
@@ -204,13 +208,14 @@ msgstr "Ο κλασσικός σχηματισμός φάλαγγας αναπτ
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].History
 msgid ""
-"The general whom persuaded the Athenians to invest their income from silver "
+"The general who persuaded the Athenians to invest their income from silver "
 "mines in a war navy of 200 Triremes. A key figure during the Persian Wars, "
 "he commanded the victorious Athenian navy at the decisive battle of Salamis "
 "in 479 B.C. Later, he pursued an active policy against the Persians in the "
-"Aegean, thereby laying the foundations of future Athenian power. Ostracised "
-"by the Athenians, he was forced to flee to the protection of the Persians."
-msgstr "Ο στρατηγός που έπεισε τους Αθηναίους να επενδύσουν τα εισοδήματα τους από τα ορυχεία ασημιού σε 200 τριήρεις του πολεμικού ναυτικού. Μια σημαντική φιγούρα κατά τη διάρκεια των Περισκών Πολέμων, οδήγησε στη νίκη το Αθηναϊκό ναυτικό κατά τη ναυμαχία της Σαλαμίνας το 479 Π.Χ. Αργότερα, επιδίωξε μια πιο επιθετική τακτική στο Αιγαίο απέναντι στους Πέρσες, βάζοντας τα θεμέλια της μετέπειτα Αθηναϊκής ηγεμονίας. Στο τέλος, Εξωστακισμένος από τους Αθηναίους, αναγκάστηκε να ζητήσει βοήθεια από τους Πέρσες. "
+"Aegean, thereby laying the foundations of future Athenian power. However, he"
+" was eventually ostracised by the Athenians and forced to flee to the "
+"protection of the Persians."
+msgstr "Ο στρατηγός που έπεισε τους Αθηναίους να επενδύσουν τα εισοδήματα τους από τα ορυχεία ασημιού σε 200 τριήρεις του πολεμικού ναυτικού. Μια σημαντική φιγούρα κατά τη διάρκεια των Περσικών Πολέμων, οδήγησε στη νίκη το Αθηναϊκό ναυτικό κατά τη ναυμαχία της Σαλαμίνας το 479 Π.Χ. Αργότερα, επιδίωξε μια πιο επιθετική τακτική στο Αιγαίο απέναντι στους Πέρσες, βάζοντας τα θεμέλια της μετέπειτα Αθηναϊκής ηγεμονίας. Στο τέλος, Εξωστρακισμένος από τους Αθηναίους, αναγκάστηκε να ζητήσει βοήθεια από τους Πέρσες."
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[1].History
 msgid "Pericles was the foremost Athenian politician of the 5th Century B.C."
@@ -244,7 +249,7 @@ msgstr "Θέατρον"
 msgid ""
 "The Hellenization civ bonus. Building a Theatron increases the territory "
 "effect of all buildings by 25%."
-msgstr "Ελληνιστικός πολιτισμός μπόνους.Χτίζοντας ένα θέατρο αυξάνεται η επίδραση περιοχής όλων των κτηρίων κατα 25%."
+msgstr "Όφελος Ελληνιστικού πολιτισμού. Χτίζοντας ένα θέατρο αυξάνεται η επίδραση περιοχής όλων των κτηρίων κατά 25%."
 
 #: simulation/data/civs/athen.jsonStructures[0].History
 #: simulation/data/civs/mace.jsonStructures[0].History
@@ -253,7 +258,7 @@ msgid ""
 "Greek theatres were places where the immortal tragedies of Aeschylus, "
 "Sophocles and many other talented dramatists were staged to the delight of "
 "the populace. They were instrumental in enriching Hellenic culture."
-msgstr "Τα Ελλανικά θέατρα ήταν τα μέρη όπου οι αιώνιες τραγωδίες του Αισχύλου, του Σοφοκλή και πολλών άλλων ταλαντούχων τραγικών παρουσιάζονταν προς τέρψην του κοινού. Ήταν τα όργανα του εμπλουτισμού της Ελληνικής κουλτούρας. "
+msgstr "Τα Ελληνικά θέατρα ήταν τα μέρη όπου οι αιώνιες τραγωδίες του Αισχύλου, του Σοφοκλή και πολλών άλλων ταλαντούχων τραγικών παρουσιάζονταν προς την ευχαρίστηση του κοινού. Ήταν τα όργανα του εμπλουτισμού της Ελληνικής κουλτούρας. "
 
 #: simulation/data/civs/athen.jsonStructures[1].Name
 msgid "Gymnasion"
@@ -268,7 +273,7 @@ msgstr "Εκπαιδεύστε πρωταθλητές και ανακαλύψτ�
 msgid ""
 "The Gymnasion was a vital place in Hellenic cities, where physical exercises"
 " were performed and social contacts established."
-msgstr "Το Γυμνάσιο ήταν ένα ζωτικό μέρος των Ελληνικών πόλεων, όπου εκτός από τη σωματική άσκηση εδραιώνονταν και κοινονικές επαφές."
+msgstr "Το Γυμνάσιο ήταν ένα ζωτικό μέρος των Ελληνικών πόλεων, όπου εκτός από τη σωματική άσκηση εδραιώνονταν και κοινωνικές επαφές."
 
 #: simulation/data/civs/athen.jsonStructures[2].Name
 msgid "Prytaneion"
@@ -282,7 +287,7 @@ msgstr "Εκπαιδεύστε ήρωες και ανακαλύψτε τεχνο
 msgid ""
 "The Prytaneion is the meeting place for the city elders to dine and to make "
 "swift decisions."
-msgstr "Η Πρυτανεία είναι το μέρος όπου οι πρεσβύτεροι συγκεντρώνονται για να δειπνίσουν και να λάβουν σημαντικές αποφάσεις."
+msgstr "Το Πρυτανείον είναι το μέρος όπου οι πρεσβύτεροι συγκεντρώνονται για να δειπνίσουν και να λάβουν σημαντικές αποφάσεις."
 
 #: simulation/data/civs/athen.jsonHistory
 msgid ""
@@ -290,7 +295,7 @@ msgid ""
 "Athens was famed as a center for the arts, learning and philosophy. The "
 "Athenians were also powerful warriors, particularly at sea. At its peak, "
 "Athens dominated a large part of the Hellenic world for several decades."
-msgstr "Εκτός από λίκνο του Δυτικού πολιτισμού και γενέτειρα της δημοκρατίας, η Αθήνα ήταν ξακουστή σαν κέντρο τεχνών, μάθησης και φιλοσοφίας. Επίσης οι Αθηναίοι ήταν ισχυροί πολεμιστές, ειδικά στη θάλασσα. Στη ακμή της, η Αθήνα κυριάρχησε σε ένα μεγάλο κομμάτι του Ελληνικού κόσμου για αρκετές δεκαετίες."
+msgstr "Ως το λίκνο του Δυτικού πολιτισμού και γενέτειρα της δημοκρατίας, η Αθήνα ήταν ξακουστή σαν κέντρο τεχνών, μάθησης και φιλοσοφίας. Επίσης οι Αθηναίοι ήταν ισχυροί πολεμιστές, ειδικά στη θάλασσα. Στη ακμή της, η Αθήνα κυριάρχησε σε ένα μεγάλο κομμάτι του Ελληνικού κόσμου για αρκετές δεκαετίες."
 
 #: simulation/data/civs/brit.jsonName
 #: simulation/data/civs/brit.jsonFactions[0].Name
@@ -325,24 +330,21 @@ msgstr "Η Θεά των Κελτών"
 #: simulation/data/civs/brit.jsonCivBonuses[1].History
 #: simulation/data/civs/gaul.jsonCivBonuses[1].History
 msgid "Celtic religion and druidry inspired their warlike mindset. "
-msgstr "Η Κέλτικη θρησκεία και Δρυιδισμός ενέπνευσε την πολεμοχαρή νοοτροπία τους."
+msgstr "Η Κέλτικη θρησκεία και ο Δρυιδισμός ενέπνευσε την πολεμοχαρή νοοτροπία τους."
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Description
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
-msgid "Bonus to tech speed."
-msgstr "Bonus στην ταχύτητα ανακάλυψης τεχνολογιών."
+msgid "-20% resources cost for allies healers."
+msgstr "-20% στο κόστος των πόρων για τους θεραπευτές των συμμάχων."
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Name
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
-msgid "Druides"
+msgid "Druids"
 msgstr "Δρυίδες"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].History
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
 msgid ""
 "The Druids of the Celts maintained an organized religion that advanced the "
 "technology of their people even during wartime."
-msgstr "Οι Κέλτες και Δρύιδες διατηρούσαν μια οργανωμένη θρησκεία η οποία επέτρεπε την ανάπτυξη της τεχνολογίας ακόμα και κατα τη περίοδο πολέμου."
+msgstr "Οι Δρύιδες των Κελτών διατήρησαν μια οργανωμένη θρησκεία η οποία επέτρεψε την ανάπτυξη της τεχνολογίας ακόμα και κατά τη περίοδο πολέμου."
 
 #: simulation/data/civs/brit.jsonAINames[0]
 #: simulation/data/civs/brit.jsonFactions[0].Heroes[0].Name
@@ -361,7 +363,7 @@ msgstr "Βοαδίκεια"
 
 #: simulation/data/civs/brit.jsonAINames[3]
 msgid "Prasutagus"
-msgstr ""
+msgstr "Πρασουτάγος"
 
 #: simulation/data/civs/brit.jsonAINames[4]
 msgid "Venutius"
@@ -385,7 +387,7 @@ msgstr "Αντμίνιας"
 
 #: simulation/data/civs/brit.jsonAINames[9]
 msgid "Dubnovellaunus"
-msgstr ""
+msgstr "Ντουμπνοβέλαυνος"
 
 #: simulation/data/civs/brit.jsonAINames[10]
 msgid "Vosenius"
@@ -473,7 +475,7 @@ msgid ""
 "their British allies, and Kunobelinos was held up by the post-Roman Britons "
 "as one of their great heroes; a conqueror and uniter of petty kingdoms, "
 "something the post-Roman Britons or Romano-British sorely needed."
-msgstr ""
+msgstr "Ο Κυνοβελλίνος (ίσως περισσότερο γνωστός από τα λατινικά ως Cunobelin) ήταν ένα ισχυρός ηγεμόνας της Καταβηλλαυνίας. Αναφέρεται από τους Ρωμαίους ως ο βασιλιάς των Βρετανών. Οι κτήσεις του εκτείνονταν γύρω από την πόλη της Καμουλόντουνομ (γνωστή ως Καμουλόντουνουμ), η σύγχρονη Κόλτσεστερ. Η ρωμαϊκή ήττα στη μάχη του Τευτοβούργιου Δρυμού (Γερμανία) επέτρεψε στον Κυνοβελλίνο να κατακτήσει μια γειτονική φυλή, τους Τρινοβάντες, που ήταν σύμμαχοι με τους Ρωμαίους και δεν μπορούσαν να λάβουν Ρωμαϊκή βοήθεια. Ο Κυνοβελλίνος φαίνεται να αδιαφορεί για τους Ρωμαίους. Εμπορεύεται μαζί τους ελεύθερα, αλλά δεν είχε ενδοιασμούς να υποτάξει γνωστούς συμμάχους των Ρωμαίων, ακόμη και να στείλει το νεότερο γιο του Αντμίνιο ως ανατρεφόμενο να εκπαιδευτεί στη ρωμαϊκή Γαλατία. Αυτό αντιπροσώπευε τις φιλίες του Αντμίνιο με τους Ρωμαίους. Στον Αντμίνιο δόθηκε η διακυβέρνηση του Καντακίου στο οποίο κατοικούσαν οι Κεντ, από τον πατέρα του. Η περιοχή αυτή ήταν η βασική περιοχή της ρωμαϊκής επιρροής και του εμπορίου στη Βρετανία, και ο Κυνοβελλίνος παρατήρησε έξυπνα ότι η φιλία του νεότερου γιου του με ισχυρούς Ρωμαίους και Γάλλο-Ρωμαίους πολιτικούς και έμπορους θα ήταν χρήσιμη για τη διαχείριση της περιοχής. Οι άλλοι γιοι του όμως δεν είχαν καμία αγάπη για τους Ρωμαίους. Όταν ο Κυνοβελλίνος πέθανε από ασθένεια, τον διαδέχθηκε ο γιος του Τογδούμνος, ο οποίος συνέλαβε, εκτέλεσε, ή εκδίωξε πολλούς συμπαθούν τες των Ρωμαίων. Συμπεριλαμβανομένου του αδελφού του Αντμίνιου, και του έκπτωτου βασιλιά των Ατρεβάτιων, Βέρικα, ο οποίος έκανε έκκληση με τις διασυνδέσεις του στη Ρωμαϊκή Αυτοκρατορία για βοήθεια στην ανάκτηση των εδαφών τους. Ο Τογδούμνος έχασε τη ζωή τους στη μάχη με τους Ρωμαίους, και στη συνέχεια αντικαταστάθηκε από τον αδελφό του, Καρατάκος. Είναι ειρωνεία που ήταν ο τρίτος γιος του, που προκάλεσε αρχικά τα ρωμαϊκά αντίποινα. Ο Κυνοβελλίνος υπήρξε, ενδεχομένως, ένας από τους μεγαλύτερους των Βρετανών βασιλιάδων. Κατέκτησε σχεδόν όλο το νότιο ήμισυ της Βρετανίας (κέρματα του είχαν κοπεί μέχρι τα σύνορα με την Ουαλία). Ξεκίνησε ως ηγέτης τεσσάρων ήσσονος σημασίας φυλών στη συνομοσπονδία των Καταβηλλαυνών, και κατέληξε να αναγνωριστεί ως βασιλιάς της Βρετανίας. Αυτή η αναγνώριση ήταν τόσο μεγάλη που ακόμη και οι φυλές από την Κάμβρια ήρθαν για να βοηθήσουν τους γιους του εναντίον των Ρωμαίων και των Βρετανών συμμάχους τους, έτσι ο Κυνοβελλίνος έγινε ένας από τους μεγάλους ήρωες των  μετά-Ρωμαίων Βρετανών: ένας κατακτητής που ένωσε τα μικροαστικά βασίλεια, κάτι που για του μετά-Ρωμαίους Βρετανούς ή Ρωμανό-Βρετανούς ήταν απολύτως απαραίτητο."
 
 #: simulation/data/civs/brit.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -492,7 +494,7 @@ msgid ""
 "agreed upon a will with his wife and subordinates; his daughters would "
 "inherit the physical running of the territory, under Boudicca's stewardship "
 "until they were adults, and the Emperor of Rome would have overlordship, "
-"collecting taxes and being allowed to request military aide. Much the same "
+"collecting taxes and being allowed to request military aid. Much the same "
 "situation as he already held. The problem lay in that the Romans did not "
 "recognize female heirs, and thus asserted, upon Prasutagus's death, that "
 "only the Emperor's claim to the kingdom of Icenia was valid. They further "
@@ -516,7 +518,7 @@ msgid ""
 "slaughtered as they could not withdraw to safety. Boudicca herself escaped, "
 "and then slew her daughters, and then herself, to avoid further shame at "
 "Roman hands."
-msgstr ""
+msgstr "Ο Αμμιανός Μαρκελλίνος περιγράφει πόσο δύσκολο ήταν για μια ομάδα ξένων να αντιμετωπίσει ένα Κέλτη αν καλούσε σε βοήθεια τη σύζυγό του. Γιατί εκείνη ήταν ισχυρότερη από ό, τι ήταν αυτός και εξαπέλυε βροχή από μπουνιές και κλωτσιές στους αντιπάλους της ίσα σε την ισχύ του κτυπήματος ενός καταπέλτη. Η Βοαδίκεια, βασίλισσα της Ικετών, ειπώθηκε πως ήταν \"πολύ ψηλή και τρομακτική\" στην εμφάνιση, η φωνή της ήταν πολύ σκληρή και ένας μεγάλος όγκος από κόκκινα μαλλιά έπεφτε πάνω στους ώμους της. Φορούσε χιτώνα από πολλά χρώματα πάνω από τον οποίο ένα παχύ μανδύα στερεώνοντάς τον με μια καρφίτσα. Η Βοαδίκεια πράγματι στην αρχή ήταν μία σύμμαχος των Ρωμαίων, μαζί με τον σύζυγό της, Πρασουτάγο, βασιλιά της Ικετίας. Ο Πρασουτάγος ήταν στενός σύμμαχος των Ρωμαίων μέχρι μια σύντομη εξέγερση, θεωρήθηκε ως επιπόλαια ακόμη και από τους πρώην εχθρούς του, ως σύμμαχος με τους Ρωμαίους, ήταν τώρα ελεύθερος να κυριαρχήσει στο βασίλειό του όπως υπαγόρευε η μητρική τους παράδοση, εκτός από μία περίπτωση. Ο Πρασουτάγος, συνειδητοποιώντας ότι επρόκειτο να πεθάνει, όρισε μια διαθήκη με τη σύζυγό του και τους υφισταμένους του, ότι οι κόρες του θα κληρονομήσουν τη φυσική διαχείριση του εδάφους, υπό τη εποπτεία της Βοαδίκειας μέχρι να ενηλικιωθούν, και ο αυτοκράτορας της Ρώμης θα έχει την επικυριαρχία, την είσπραξη των φόρων και να του επιτρέπετε να ζητήσει στρατιωτική βοήθεια. Το πρόβλημα έγκειται στο ότι οι Ρωμαίοι δεν αναγνώριζαν θηλυκούς κληρονόμους, και επομένως, υποστήριξαν, μετά το θάνατό του Πρασουτάγου, ότι μόνο το αίτημα του αυτοκράτορα στο βασίλειο της Ικετίας ήταν έγκυρο. Περαιτέρω σημειώνεται ότι ήταν σύνηθες ρωμαϊκή πρακτική να επιτρέπουν μόνο σε ένα υποτελές βασίλειο να είναι ανεξάρτητο για τη διάρκεια ζωής του αρχικού βασιλιά, όπως είχε συμβεί στη Γαλατία. Η Αυτοκρατορία που προσάρτησε επίσημα το βασίλειο, ξεκίνησε την σκληρή φορολόγηση αμέσως, αναφέροντας ότι ο Πρασουτάγος ήταν χρεωμένες στους Ρωμαίους, έχοντας λάβει διάφορα δάνεια κατά τη διάρκεια της ζωής του και ότι είχε αποτύχει να τα εξοφλήσει. Όταν η Βοαδίκεια παραπονέθηκε σχετικά με αυτή τη τακτική και την περιφρόνηση της θέλησης του αποθανόντος συζύγου της απαντήθηκε με βιαιότητα, Οι Ρωμαίοι στρατιώτες την μαστίγωσαν, και τις κόρες της, τα μοναδικά της παιδιά, βιάστηκαν. Η Βοαδίκεια και οι υπήκοοί της εξαγριώθηκαν  με την προσβολή που έγινε στη βασίλισσά τους και τα παιδιά της. Με τον Ρωμαίο κυβερνήτη της Βρετανίας να απασχολείται με τους Δρυίδες στη Καβρία, σημερινή Ουαλία, η Βοαδίκεια ήταν σε θέση να προσελκύσει περισσότερους οπαδούς εκτός της Ικετίας, καθώς ήταν σχεδόν η μόνη βρετανική φυλή που η απογοήτευσή τους για τους Ρωμαίους αυξάνονταν με ταχείς ρυθμούς. Η Βοαδίκεια και ο στρατό της που είχαν λεηλατήσει τρεις πόλεις, συναντήθηκαν με μια ρωμαϊκή λεγεώνα, θυμίζοντας τον Αρμίνιο, έναν Γερμανό που είχε εκδιώξει τους Ρωμαίους από τα εδάφη του, και το δικοί του πρόγονοι είχαν εκδιωχθεί από τον Καίσαρα λιγότερο από έναν αιώνα νωρίτερα. Η Βοαδίκεια νικήθηκε από ένα μεγάλο τακτικό λάθος στη Μάχη της Οδού Βάτλινγκ, όπου οδήγησε σε σφαγή ένα μεγάλο μέρος της δύναμης της, δεδομένου ότι δεν θα μπορούσε να αποσυρθεί κάπου με ασφάλεια. Η Βοαδίκεια διέφυγε, και στη συνέχεια σκότωσε τις κόρες της, και έπειτα αυτοκτόνησε, για να αποφύγει τον περαιτέρω εξευτελισμό της στα ρωμαϊκά χέρια."
 
 #: simulation/data/civs/brit.jsonFactions[0].Description
 msgid "The Celts of the British Isles."
@@ -533,10 +535,10 @@ msgstr "Οι Βρετανοί ήταν γνωστοί για την εκτροφ
 #: simulation/data/civs/brit.jsonHistory
 msgid ""
 "The Britons were the Celtic tribes of the British Isles. Using chariots, "
-"longswordsmen and powerful melee soldiers, they staged fearesome revolts "
+"longswordsmen and powerful melee soldiers, they staged fearsome revolts "
 "against Rome to protect their customs and interests. Also, they built "
 "thousands of unique structures such as hill forts, crannogs and brochs."
-msgstr "Οι Βρετανοί ήταν οι κελτικές φυλές των Βρετανικών Νήσων. Χρησιμοποιώντας άρματα, ξιφομάχους και δυνατούς σώμα με σώμα στρατιώτες, οργάνωσαν τρομακτικές εξεγέρσεις εναντίον της Ρώμης για την προστασία των δασμών και των συμφερόντων τους. Επίσης, έχτισαν χιλιάδες μοναδικά κτήρια όπως φρούρια λόφου, \"crannogs\" και \"brochs\"."
+msgstr "Οι Βρετανοί ήταν οι κελτικές φυλές των Βρετανικών Νήσων. Χρησιμοποιώντας άρματα, ξιφομάχους και δυνατούς σώμα με σώμα στρατιώτες, οργάνωσαν τρομακτικές εξεγέρσεις εναντίον της Ρώμης για την προστασία των δασμών και των συμφερόντων τους. Επίσης, έχτισαν χιλιάδες μοναδικά κτήρια όπως φρούρια λόφου, Κρενάγκ και Μπροξ."
 
 #: simulation/data/civs/cart.jsonName
 msgid "Carthaginians"
@@ -566,7 +568,7 @@ msgstr "Το κόστος σε πόρους που απαιτεί η εκπαί�
 #: simulation/data/civs/cart.jsonCivBonuses[1].Name
 #: simulation/data/civs/ptol.jsonCivBonuses[2].Name
 msgid "Roundup"
-msgstr "Ανασκόπηση"
+msgstr "Μάνδρισμα"
 
 #: simulation/data/civs/cart.jsonCivBonuses[1].History
 msgid ""
@@ -576,8 +578,8 @@ msgid ""
 msgstr "Σε αντίθεση με την Ιβηρική Χερσόνησο, η Βόρεια Αφρική ήταν γνωστή ως η χώρα των αλόγων, ικανή να παράγει μέχρι και 100.000 νέους ιππείς κάθε χρόνο. Ήταν επίσης το σπίτι των των Βόρειο-Αφρικανικών ελεφάντων του δάσους."
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Description
-msgid "+33% trade profit international routes."
-msgstr "+33% εμπορικό κέρδος στις διεθνείς διαδρομές."
+msgid "10% bonus of trade profit for allies' international routes."
+msgstr "10% επιπλέον εμπορικό κέρδος στις συμμαχικές διεθνείς διαδρομές."
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Name
 msgid "Trademasters"
@@ -692,7 +694,7 @@ msgid ""
 "B.C. While he ultimately lost the Second Punic War his victories at Trebia, "
 "Lake Trasimene, and Cannae, and the feat of crossing the Alps have secured "
 "his position as among the best tacticians and strategists in history."
-msgstr ""
+msgstr "Ο πιο διάσημος γιο της Καρχηδόνας. Ο Αννίβας Μπάρκα ήταν ο πρωτότοκος γιος του Αμίλκα Μπάρκα και αποδείχθηκε ακόμα μεγαλύτερος διοικητής από τον πατέρα του. Έζησε το 247-182 π.Χ. Ενώ τελικά έχασε το δεύτερο Καρχηδόνιο πόλεμος οι  νίκες του στη Τρεβία, στη Τρασιμένη λίμνη, και των Καννών, και το κατόρθωμά του να διασχίσει τις Άλπεις έχουν εξασφαλίσει τη θέση του ως ένα από του καλύτερους ειδικούς στη τακτική και στρατηγούς στην ιστορία."
 
 #: simulation/data/civs/cart.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -701,7 +703,7 @@ msgid ""
 "B.C. While overshadowed by his sons, Hamilcar was great general in his own "
 "right, earning the nickname Baraq or Barca for the lightning speed of his "
 "advance."
-msgstr ""
+msgstr "Ο πατέρας του Αννίβα και πραγματικός στρατιωτικός δικτάτορας. Ο Αμίλκας Μπάρκας ήταν ένας στρατιωτικός και πολιτικός που διακρίθηκε σε ολόκληρη τη καριέρας του. Έζησε το 275-228 π.Χ. Ενώ επισκιάστηκε από τον γιο του, ο Αμίλκας ήταν, δικαιωματικά, μεγάλος στρατηγός, κερδίζοντας το παρατσούκλι Μπάρακ ή Μπάρκα για την αστραπιαία ταχύτητα της προέλασής του."
 
 #: simulation/data/civs/cart.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -711,7 +713,7 @@ msgid ""
 "significant contributions to the winning of many other battles during the "
 "2nd Punic War. He is known for having said, after the battle of Cannae, "
 "'Hannibal, you know how to win the victory; just not what to do with it.'"
-msgstr ""
+msgstr "Ο Μαχάρβαλος ήταν \"ο νέος παράτολμος διοικητής του ιππικού\" του Αννίβα Μπάρκα κατά τη διάρκεια του 2ου Καρχηδονιακού Πολέμου. Ο ίδιος πιστώνεται με την περιστροφή της πτέρυγας των λεγεώνων στους Καννούς με αποτέλεσμα την ήττα τους στην οποία χάθηκαν 30.000 από τους 50.000 Ρωμαίους, καθώς και τη σημαντική συμβολή στην νίκη πολλών άλλων μαχών κατά τη διάρκεια του 2ου Καρχηδονιακού Πολέμου. Είναι γνωστός για το ότι είπε, μετά τη μάχη των Καννών, \"Ο Αννίβας, ξέρεις πώς να πετυχαίνει τη νίκη, απλά δεν ξέρει τι να κάνει με αυτή.\""
 
 #: simulation/data/civs/cart.jsonStructures[0].Name
 msgid "Naval Shipyard"
@@ -719,13 +721,13 @@ msgstr "Ναυπηγείο Ναυτικού"
 
 #: simulation/data/civs/cart.jsonStructures[0].Special
 msgid "Construct the powerful warships of the Carthaginian navy."
-msgstr ""
+msgstr "Ναυπήγησε ισχυρά πολεμικά πλοία για τον στόλο των Καρχηδονίων."
 
 #: simulation/data/civs/cart.jsonStructures[0].History
 msgid ""
 "The structure is based upon the center island of the inner harbour "
 "constructed to house the war fleet of the Carthaginian navy at Carthage."
-msgstr ""
+msgstr "Η κατασκευή βασίζεται στο κεντρικό νησί στο εσωτερικό του λιμανιού, κατασκευάστηκε για να στεγάσει τα πολεμικά πλοία του Καρθαγινικού ναυτικού στην Καρχηδόνα."
 
 #: simulation/data/civs/cart.jsonStructures[1].Name
 msgid "Celtic Embassy"
@@ -775,35 +777,49 @@ msgid ""
 "among the fiercest contenders on the high seas, and masters of naval trade. "
 "They deployed towered War Elephants on the battlefield to fearsome effect, "
 "and had defensive walls so strong, they were never breached."
-msgstr ""
+msgstr "Η Καρχηδόνα, ήταν μια πόλη-κράτος στη σύγχρονη Τυνησία, ήταν μια τρομερή δύναμη στη δυτική Μεσόγειο, τελικά κατέλαβε μεγάλο μέρος της Βόρειας Αφρικής και της σύγχρονης Ισπανίας στο τρίτο π.Χ. αιώνα. Οι ναυτικοί της Καρχηδόνας ήταν μεταξύ των πιο δύσκολων αντιπάλων στην ανοικτή θάλασσα και αυθεντία στο εμπορικό ναυτικό. Παράτασσαν Πολεμικούς Ελέφαντες με πυργίσκους στο πεδίο της μάχης κάνοντας τρομακτική εντύπωση και είχαν αμυντικά τείχη τόσο ισχυρά, που ποτέ δεν είχαν παραβιαστεί."
 
 #: simulation/data/civs/gaul.jsonName
 #: simulation/data/civs/gaul.jsonFactions[0].Name
 msgid "Gauls"
 msgstr "Γαλάτες"
 
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
+msgid "-10% research time for technologies of allies."
+msgstr "-10% στο χρόνο έρευνας στις τεχνολογίες των συμμάχων."
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
+msgid "Druidic Wisdom"
+msgstr "Σοφία του Δρυίδη"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
+msgid ""
+"The Druids of the Gauls maintained an organized religion that advanced the "
+"technology of their people even during wartime."
+msgstr "Οι Γαλάτες Δρυίδες διατηρούσαν μια οργανωμένη θρησκεία η οποία επέτρεπε την ανάπτυξη της τεχνολογίας ακόμα και κατά τη περίοδο πολέμου."
+
 #: simulation/data/civs/gaul.jsonAINames[0]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].Name
-msgid "Britomartos"
-msgstr "Βριτόμαρτις"
+msgid "Viridomarus"
+msgstr "Βιριδομάρος"
 
 #: simulation/data/civs/gaul.jsonAINames[1]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].Name
-msgid "Brennos"
+msgid "Brennus"
 msgstr "Βρέννος"
 
 #: simulation/data/civs/gaul.jsonAINames[2]
 msgid "Cativolcus"
-msgstr ""
+msgstr "Κατίβολκος"
 
 #: simulation/data/civs/gaul.jsonAINames[3]
 msgid "Cingetorix"
-msgstr ""
+msgstr "Κινγκετόριγας"
 
 #: simulation/data/civs/gaul.jsonAINames[4]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].Name
-msgid "Uerkingetorix"
-msgstr "Βερκινγκετόριξ"
+msgid "Vercingetorix"
+msgstr "Βερκιγκετόριξ"
 
 #: simulation/data/civs/gaul.jsonAINames[5]
 msgid "Divico"
@@ -818,12 +834,12 @@ msgid "Liscus"
 msgstr "Λίσκος"
 
 #: simulation/data/civs/gaul.jsonAINames[8]
-msgid "Valetiacos"
-msgstr "Βαλετιάκος"
+msgid "Valetiacus"
+msgstr "Βαλετιακός"
 
 #: simulation/data/civs/gaul.jsonAINames[9]
 msgid "Viridovix"
-msgstr ""
+msgstr "Βιριδόβιγας"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Description
 msgid ""
@@ -831,14 +847,17 @@ msgid ""
 msgstr "Ένα συγκεκριμένο ποσό μετάλλου και φαγητού για κάθε κατασκευή που καταστρέφεις ή αιχμαλωτίζεις."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Name
-msgid "Uae Uictos"
-msgstr "Uae Uictos: Ουαί τοίς ηττημένοις!"
+msgid "Vae Victis"
+msgstr "Αλίμονο στους ηττημένους"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].History
 msgid ""
-"Means Woe to the Defeated. It was the words that the Gallic Leader, Brennos,"
-" spoke at the Capitol at Rome after they took their plunder."
-msgstr "Σημαίνει Αλίμονο στον Ηττημένο. Ήταν τα λόγια που είπε ο Γαλατης ηγέτης  Brennos, στο Καπιτώλιο της Ρώμης αφότου πήραν τα λάφυρα τους."
+"Woe to the Defeated! The Gallic chieftain Brennus seized Rome (with the "
+"exception of a garrison on Capitoline Hill). When Camillus besieged him with"
+" a relief force from Veii, he negotiated his surrender for 1000 pounds of "
+"gold, and adding the weight of his sword on the scale when the Romans "
+"complained that he used false weights he uttered those famous words."
+msgstr "\"Αλίμονο στους Ηττημένους!\" - Βρέννος, ο οπλαρχηγός του Γαλατών ο οποίος είχε καταλάβει τη Ρώμη (με εξαίρεση μια φρουρά στον λόφο Καπιτολίνα). Όταν ο Καμίλιος έφτασε από τους Βήιους και τον πολιόρκησε, διαπραγματεύτηκε την απόσυρσή του για 1000 λίβρες χρυσού, αλλά όχι χωρίς να χρησιμοποιήσει κάλπικα βάρη και προσθέτοντας το βάρος του σπαθιού του στην ζυγαριά όταν οι Ρωμαίοι τον κατήγγειλαν (Πολύβιος, \"Ιστορίαι\", ΙΙ. 18)"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[1].Description
 msgid "Gallic druids gain a small melee attack."
@@ -857,21 +876,21 @@ msgstr "Οι Καρνούτες (Καρνούται ή Καρνουτῖνοι) 
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].History
 msgid ""
-"When celt armies met the enemy, before the battle would start, the celt "
+"When Celtic armies met the enemy, before the battle would start, the Celtic "
 "leader would go to the first line and challenge the bravest of the enemy "
 "warriors to a single combat. The story of how Marcus Claudius Marcellus "
 "killed a Gallic leader at Clastidium (222 B.C.) is typical of such "
-"encounters. Advancing with a smallish army, Marcellus met a combined force "
-"of Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with"
-" the usual rush and terrifying cries, and their king, Britomartos, picking "
+"encounters. Advancing with a small army, Marcellus met a combined force of "
+"Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with "
+"the usual rush and terrifying cries, and their king, Viridomarus, picking "
 "out Marcellus by means of his badges of rank, made for him, shouting a "
-"challenge and brandishing his spear. Britomartos was an outstanding figure "
+"challenge and brandishing his spear. Viridomarus was an outstanding figure "
 "not only for his size but also for his adornments; for he was resplendent in"
 " bright colors and his armor shone with gold and silver. This armor, thought"
 " Marcellus, would be a fitting offering to the gods. He charged the Gaul, "
 "pierced his bright breastplate and cast him to the ground. It was an easy "
-"task to kill Britomartos and strip him of his armor."
-msgstr ""
+"task to kill Viridomarus and strip him of his armor."
+msgstr "Όταν στρατοί των Κελτών συναντηθούν με τον εχθρό, πριν να αρχίσει η μάχη, ο ηγέτης των Κελτών θα πάει στην πρώτη γραμμή και θα προκαλέσει τον πιο γενναίο από τους πολεμιστές του εχθρού σε μια μόνο μονομαχία. Η ιστορία για το πώς ο Μάρκος Κλαύδιος Μάρκελλος σκότωσε έναν Γαλάτη ηγέτη στο Καστέτζιο (222 π.Χ.), είναι χαρακτηριστικό των εν λόγω αναμετρήσεων. Προχωρώντας με ένα μικρούλη στρατό, ο Μάρκελλος συνάντησε μια συνδυασμένη δύναμη των Ιβηριανών Γαλατών και Γαισαταίων στο Καστέτζιο. Ο γαλατικός στρατός προχωρούσε με τη συνήθη βιασύνη και αλαλάζοντας, ο βασιλιάς τους, ο Βριτόμαρτις, διάλεξε τον Μάρκελλο εξαιτίας των διακριτικών του βαθμού του, γι 'αυτόν, φωνάζοντας προκλητικά και κραδαίνοντας το δόρυ του. Ο Βριτόμαρτις είχε εξαιρετικό παρουσιαστικό, όχι μόνο για το μέγεθός του, αλλά και για τα στολίδια του, περιλουζόταν μέσα σε λαμπερά χρώματα και η πανοπλία του έλαμπε από χρυσό και ασήμι. Αυτή η πανοπλία, σκέφτηκε ο Μάρκελλος, θα ήταν μια αρμόζουσα προσφορά προς τους θεούς. Εφόρμησε στον Γαλάτη, διέτρισε το φωτεινό θώρακά του και τον πέταξε στο έδαφος. Ήταν εύκολο να σκοτώσει τον Βριτόμαρτι και να του αφαιρέσει την πανοπλία του."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -882,19 +901,19 @@ msgid ""
 "that Britons had conquered Rome, the greatest civilization in the world, "
 "long before Rome conquered the Britons. We know from many ancient sources "
 "which predate Geoffrey that Rome was indeed sacked, but in 387 not 390, and "
-"that the raid was led by a man named Brennos (which was latinized to "
-"Brennus), but he and his invading horde were Gallic Senones, not British. In"
-" this episode several features of Geoffrey's editing method can be seen: he "
-"modified the historical Brennus/Brennos, created the brother Belinus, "
-"borrowed the Gallic invasion, but omitted the parts where the Celts seemed "
-"weak or foolish. His technique is both additive and subtractive. Like the "
-"tale of Trojan origin, the story of the sack of Rome is not pure "
-"fabrication; it is a creative rearrangement of the available facts, with "
-"details added as necessary. By virtue of their historical association, Beli "
-"and Bran are often muddled with the earlier brothers Belinus and Brennus "
-"(the sons of Dunvallo Molmutius) who contended for power in northern Britain"
-" in around 390 B.C., and were regarded as gods in old Celtic tradition."
-msgstr ""
+"that the raid was led by a man named Brennus, but he and his invading horde "
+"were Gallic Senones, not British. In this episode several features of "
+"Geoffrey's editing method can be seen: he modified the historical Brennus, "
+"created the brother Belinus, borrowed the Gallic invasion, but omitted the "
+"parts where the Celts seemed weak or foolish. His technique is both additive"
+" and subtractive. Like the tale of Trojan origin, the story of the sack of "
+"Rome is not pure fabrication; it is a creative rearrangement of the "
+"available facts, with details added as necessary. By virtue of their "
+"historical association, Beli and Bran are often muddled with the earlier "
+"brothers Belinus and Brennus (the sons of Dunvallo Molmutius) who contended "
+"for power in northern Britain in around 390 B.C., and were regarded as gods "
+"in old Celtic tradition."
+msgstr "Βρέννος είναι το όνομα που οι Ρωμαίοι ιστορικοί δίνουν στο διάσημο ηγέτη των Γαλατών που κατέλαβε τη Ρώμη την εποχή του Κάμιλλου. Σύμφωνα με τον Τζέφρεϊ του Μονμάουθ, τον κληρικό ο οποίος έγραψε το \"Ιστορία των Βασιλέων της Βρετανίας\", ο Βρέννος και ο αδελφός του Βελίνος εισέβαλαν από τη Γαλατία και λεηλάτησαν τη Ρώμη το 390 π.Χ., «αποδεικνύοντας» ότι οι Βρετανοί είχαν κατακτήσει τη Ρώμη, το μεγαλύτερο πολιτισμού στον κόσμο, καιρό πριν από ότι η Ρώμη κατέκτησε τους Βρετανούς. Γνωρίζουμε από πολλές αρχαίες πηγές που χρονολογούνται πριν από τον Τζέφρεϋ ότι η Ρώμη πράγματι κατακτήθηκε, αλλά το 387 και όχι το 390, και ότι η επιδρομή οδηγήθηκε από ενός άνδρα που ονομαζόταν Βρέννος (στα Λατινικά Brennus), αλλά και εισβολείς ήταν Σίνονες Γαλάτες, όχι Βρετανοί. Σε αυτό το ιστορικό επεισόδιο αρκετά στοιχεία της μεθόδου επεξεργασίας του Τζέφρεϋ μπορεί να δει κανείς: αυτός τροποποίησε τον ιστορικό Βρέννο, δημιούργησε τον αδελφό του Βέλινο, δανείστηκε τη γαλατική εισβολή, αλλά παραλείπονται τα μέρη όπου οι Κέλτες φαινόταν αδύναμοι ή ανόητοι. Η τεχνική του ήταν να προσθαφαιρεί στοιχεία. Όπως και στην ιστορία του αυθεντικού Τρωικού πολέμου, η ιστορία της λεηλασία της Ρώμης δεν είναι καθαρά κατασκευασμένη, είναι μια δημιουργική αναδιάταξη των διαθέσιμων στοιχείων, με στοιχεία να προστίθενται όπου απαιτείται. Βάσει της ιστορικής σύνδεσής τους, ο Μπέλι και ο Μπραν συχνά συγχέονται με τους προηγούμενους αδελφούς Βέλινο και Βρέννο (οι γιοι του Ντάνβαλο Μολμίτιου), ο οποίος υποστηρίχθηκε για την εξουσία της βόρεια Βρετανία γύρω στο 390 π.Χ., και θεωρούνται ως θεοί στην παλιά Κέλτικη παράδοση."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -907,7 +926,7 @@ msgid ""
 "was. Because we only know of him from Roman sources we don't know much about"
 " Vercingetorix as a child or young man, except that perhaps he was probably "
 "very high spirited and probably gained some renown in deeds."
-msgstr ""
+msgstr "Ο Βερσεζεντόριξ (στα γαλατικά: Βερ-Ριξ Κινγετός) ήταν ο οπλαρχηγός της φυλής των Αβέρνιων στη Γαλατία (σύγχρονη Γαλλία). Ξεκινώντας από το 52 π.Χ. οδήγησε μια εξέγερση ενάντια στην εισβολή των Ρωμαίων υπό τον Ιούλιο Καίσαρα, τον θυμόμαστε αυτή τη μέρα από τις ενέργειές του κατά τη διάρκεια της εξέγερσης. Ο Βερσεζεντόριξ πιθανότατα γεννήθηκε κοντά στη πρωτεύουσα των φυλών του (Γεργοβία). Από τις λίγες πληροφορίες που έχουμε για τον Βερσεζεντόριξ γεννήθηκε πιθανών το 72 π.Χ., ο πατέρας του ήταν ο Κέλτιος και δεν ξέρουμε ποια ήταν η μητέρα του. Επειδή γνωρίζουμε γι 'αυτόν μόνο από τις Ρωμαϊκές πηγές δεν γνωρίζουμε πολλά για τον Βερσεζεντόριξ όπως πως ήταν ως παιδί ή νεαρός άνδρας, εκτός από το ότι ίσως είχε πιθανότατα πολύ υψηλό πνεύμα και είχε αποκτήσει κάποια φήμη από τις πράξεις του."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Description
 msgid "The Celts of mainland Europe."
@@ -928,7 +947,7 @@ msgid ""
 "metalworking, agriculture, trade and even road engineering. With heavy "
 "infantry and cavalry, Gallic warriors valiantly resisted Caesar's campaign "
 "of conquest and Rome's authoritarian rule."
-msgstr ""
+msgstr "Οι Γαλάτες ήταν τα Κελτικά φύλα της ηπειρωτικής Ευρώπης. Διοικούνταν από μια ιερατική τάξη τους Δρυίδες, ήταν ένας πλήρης εξελιγμένος πολιτισμός με προηγμένη  μεταλλουργία, γεωργία, εμπόριο ακόμη και οδοποιία. Με βαρύ πεζικό και ιππικό, οι Γαλάτες πολεμιστές αντιστάθηκαν γενναία στην κατακτητική εκστρατεία του Καίσαρα και την αυταρχική διακυβέρνηση της Ρώμης."
 
 #: simulation/data/civs/iber.jsonName
 msgid "Iberians"
@@ -947,13 +966,13 @@ msgid ""
 "With exception to alluvial plains and river valleys, stone is abundant in "
 "the Iberian Peninsula and was greatly used in construction of structures of "
 "all types."
-msgstr ""
+msgstr "Με εξαίρεση τις προσχωσιγενείς πεδιάδες και τις κοιλάδες ποταμών, η πέτρα αφθονεί στην Ιβηρική Χερσόνησο και χρησιμοποιήθηκε σε μεγάλο βαθμό στην οικοδόμηση των κατασκευών όλων των τύπων."
 
 #: simulation/data/civs/iber.jsonCivBonuses[1].Description
 msgid ""
 "The resource cost of training horse-mounted units (cavalry) is reduced by 5%"
 " per animal corralled."
-msgstr ""
+msgstr "Το κόστος σε πόρους που απαιτεί η εκπαίδευση των μονάδων με άλογα (ιππικό) μειώνεται κατά 5% ανά μαντρωμένο ζώο."
 
 #: simulation/data/civs/iber.jsonCivBonuses[1].Name
 msgid "Zaldi Saldoa"
@@ -963,13 +982,13 @@ msgstr "Ιππική Χώρα"
 msgid ""
 "Not unlike Numidia in North Africa, the Iberian Peninsula was known as "
 "'horse country', capable of producing up to 100,000 new mounts each year."
-msgstr ""
+msgstr "Σε αντίθεση με την Νουμιδία στη Βόρεια Αφρική η Ιβηρική Χερσόνησος ήταν γνωστή ως η χώρα των αλόγων, ικανή να παράγει μέχρι και 100.000 νέους ιππείς κάθε χρόνο."
 
 #: simulation/data/civs/iber.jsonTeamBonuses[0].Description
 msgid ""
 "Citizen-soldier infantry skirmishers and cavalry skirmishers -20% cost for "
 "allies."
-msgstr ""
+msgstr "Οι πολίτες-οπλίτες πεζικάριοι ακροβολιστές και οι ιππείς ακροβολιστές στοιχίζουν -20% για τους συμμάχους."
 
 #: simulation/data/civs/iber.jsonTeamBonuses[0].Name
 msgid "Saripeko"
@@ -981,7 +1000,7 @@ msgid ""
 "to serve as auxiliaries to their armies in foreign wars. Carthage is the "
 "most well known example, and we have evidence of them serving in such a "
 "capacity in Aquitania."
-msgstr ""
+msgstr "Οι Ίβηρες ήταν από καιρό γνωστοί για την παροχή μισθοφόρων σε άλλα έθνη και τα στρατεύματά τους χρησίμευαν ως βοηθητικά σε ξένους πολέμους. Η Καρχηδόνα είναι το πιο γνωστό παράδειγμα και έχουμε αποδείξεις από αυτούς που υπηρέτησαν σε μια τέτοια θέση στην Ακουιτανία."
 
 #: simulation/data/civs/iber.jsonAINames[0]
 #: simulation/data/civs/iber.jsonAINames[1]
@@ -1001,15 +1020,15 @@ msgstr "Ανδοβάλης"
 
 #: simulation/data/civs/iber.jsonAINames[4]
 msgid "Audax"
-msgstr ""
+msgstr "Αουντάξ"
 
 #: simulation/data/civs/iber.jsonAINames[5]
 msgid "Ditalcus"
-msgstr ""
+msgstr "Δίταλκος"
 
 #: simulation/data/civs/iber.jsonAINames[6]
 msgid "Minurus"
-msgstr ""
+msgstr "Μίνουρος"
 
 #: simulation/data/civs/iber.jsonAINames[7]
 msgid "Tautalus"
@@ -1019,7 +1038,7 @@ msgstr "Ταύταλος"
 msgid ""
 "Causes targets struck to become inflamed and lose hitpoints at a constant "
 "rate until and if either healed or repaired, as appropriate."
-msgstr ""
+msgstr "Σκοπός είναι να χτυπήσετε στόχους για να πυρποληθούν και να χάνουν βαθμούς υγείας με σταθερό ρυθμό μέχρι είτε να θεραπευτούν είτε να επισκευαστούν, ανάλογα με την περίπτωση."
 
 #: simulation/data/civs/iber.jsonFactions[0].Technologies[0].Name
 msgid "Suzko Txabalina"
@@ -1030,7 +1049,7 @@ msgid ""
 "Iberian tribesmen were noted for wrapping bundles of grass about the shafts "
 "of their throwing spears, soaking that in some sort of flammable pitch, then"
 " setting it afire just before throwing."
-msgstr ""
+msgstr "Οι Ιβηρικές φυλές είχαν επισημανθεί για την περιτύλιξη δεσμίδων χόρτου στις αιχμές των δοράτων τους, εμποτίζοντας τες με κάποιο είδος εύφλεκτης πίσσας, στη συνέχεια, άναβαν φωτιά λίγο πριν από τη ρίψη."
 
 #: simulation/data/civs/iber.jsonFactions[0].Technologies[1].Description
 msgid "Metal costs for units and technologies reduced by 50%."
@@ -1044,7 +1063,7 @@ msgstr "Αυθεντία Αριστουργηματός Σιδήρου"
 msgid ""
 "The Iberians were known to produce the finest iron and steel implements and "
 "weapons of the age. The famous 'Toledo Steel.'"
-msgstr ""
+msgstr "Οι Ίβηρες ήταν γνωστό ότι παρήγαγαν τα καλύτερα εργαλεία και όπλα σιδήρου και χάλυβα της εποχής. Το περίφημο «Ατσάλι του Τολέδου»."
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -1061,7 +1080,7 @@ msgid ""
 "losses in some requiring retreat). He succumbed instead to another treachery"
 " arranged by a later Roman commander, Q. Servilius Caepio, to have him "
 "assassinated by three comrades that were close to him."
-msgstr ""
+msgstr "Ο Βιρίαθος, όπως και ο Βερσεζεντόριξ μεταξύ των Γαλατών, ήταν οι πιο διάσημοι από τους ηγέτες των φυλών του Ιβηρικού πολέμου, έχοντας διεξάγει τουλάχιστον 7 εκστρατείες εναντίον των Ρωμαίων στο νότιο μισό της χερσονήσου κατά τη διάρκεια του «Πύρινου Πολέμου» 147-139 π.Χ. Ο ίδιος κατάφερε να επιζήσει της προδοτικής σφαγής των 9.000 ανδρών και την πώληση στη σκλαβιά 21.000 ηλικιωμένων, γυναικών και παιδιών της Λουσιτανίας. Είχαν υπογράψει συνθήκη ειρήνης με τους Ρωμαίους, που διενεργήθηκε υπό τον Σέρβιο Σουλπίκιο Γάλβα, κυβερνήτης της Ταρρακωνικής στην Ισπανία, ως «τελική λύση» στο πρόβλημα της Λουσιτανίας. Προερχόμενος από ταπεινό στρώματα το 151 π.Χ. κατάφερε να γίνει αρχηγός της Λουσιτανίας. Ήταν έξυπνος και πολύ καλός οργανωτής, ποτέ δεν νικήθηκε σε καμία συμπλοκή (αν και υπέστη απώλειες που τον ανάγκασαν σε υποχώρηση). Υπέκυψε σε μια άλλη προδοσία που διοργανώθηκε από έναν μεταγενέστερο Ρωμαίο διοικητή, τον Καέπιο Σερβίλιος τον πέμπτο, δολοφονημένος από τρεις κοντινούς του συντρόφους."
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -1077,11 +1096,11 @@ msgid ""
 " a battle on the 23rd of August. Karos was wounded in an after battle small "
 "cavalry action the same evening and soon died thereafter, but he had carried"
 " off one of the most humiliating defeats that Rome ever suffered."
-msgstr ""
+msgstr "Ο Καρός ήταν αρχηγός της φυλής των Μπελί που βρίσκεται ακριβώς ανατολικά του Κελτιβέριου (στο κέντρο της Νομανδίας). Οδηγώντας τις συνασπισμένες φυλές στη κεντρική Μεσέτς (κεντρική πεδιάδα των ορεινών) απέκρυψε 20.000 πεζικάριους και 5.000 ιππείς κατά μήκος μιας πυκνής δασωμένης λωρίδας. Ο Φάλβιος Νοβίλιος ο Πέμπτος παραμέλησε να κάνει σωστή αναγνώριση και οδήγησε τον στρατό του στην παγίδα σε μια μακριά σειρά. Περίπου 10.000 από τους 15.000 Ρωμαίους λεγεωνάριους έπεσαν στη μαζική ενέδρα που είχε ξεπηδήσει επάνω τους. Η ημερομηνία ήταν 23 Αυγούστου του 153 π.Χ., την ημέρα αυτή η Ρώμη γιόρταζε τη γιορτή του Ηφαίστου. Αργότερα με συγκλητικό διάταγμα έγινε γνωστή ως μαύρη μέρα, μία «σκοτεινή μέρα», και η Ρώμη ποτέ ξανά δεν διεξήγαγε μάχη στις 23 Αυγούστου. Ο Καρός τραυματίστηκε σε μια αψιμαχία με μερικούς ιππείς μετά τη μάχη το ίδιο βράδυ και σύντομα πέθανε στη συνέχεια, αλλά είχε πραγματοποιηθεί μία από τις πιο ταπεινωτικές ήττες που υπέστη ποτέ η Ρώμη."
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[2].History
 msgid ""
-"Indibil was king of the Ilegetes, a large federation ranged principally "
+"Indibil was king of the Ilergetes, a large federation ranged principally "
 "along the Ebro River in the northwest of the Iberian Peninsula. During the "
 "Barcid expansion, from 212 B.C. he had initially been talked into allying "
 "himself with the Carthaginians who had taken control of a lot of territory "
@@ -1097,25 +1116,25 @@ msgid ""
 "were again defeated, Indibil losing his life in the final battle and "
 "Mandonio being captured then later put to death. From that date onward the "
 "Ilergetes remained a pacified tribe under Roman rule."
-msgstr ""
+msgstr "Ο Ανδοβάλης ήταν βασιλιάς των Ιλεργετών, μια μεγάλη ομοσπονδία που επεκτεινόταν κυρίως κατά μήκος του ποταμού Έβρου στα βορειοδυτικά της Ιβηρικής Χερσονήσου. Κατά τη διάρκεια της επέκτασης των Βαρσίδων, από το 212 π.Χ. είχαν αρχικά συμφωνήσει να συμμαχήσουν με τους Καρχηδόνιους οι οποίοι είχαν πάρει τον έλεγχο ενός μεγάλου εδάφους προς τα νότια και δυτικά, ωστόσο, μετά την απώλεια και τη σύλληψή του σε μια μεγάλη μάχη πείστηκε, κάποιοι λένε ξεγέλασε, για να μεταβεί στη ρωμαϊκή πλευρά του Σκιπίωνα του Αφρικανού. Αλλά αυτή η συμμαχία δεν κράτησε πολύ, καθώς οι Ρωμαϊκές υποσχέσεις ήταν κενές και οι Ρωμαίοι ενήργησαν περισσότερο σαν κατακτητές παρά σαν σύμμαχοι. Έτσι, ενώ οι Ρωμαίοι και οι σύμμαχοί τους είχαν τελειώσει με τους Καρχηδόνιους μετέβησαν στην «Ισπανία» το 206 π.Χ., ο Ανδοβάλης και ενός άλλος πρίγκιπας με το όνομα του Μανδόνιος, ο οποίος μπορεί να ήταν ο αδελφός του, οργάνωσαν εξέγερση εναντίον των Ρωμαίων. Νικήθηκαν στη μάχη, αλλά ξεσηκώθηκαν πάλι στη 2η μεγαλύτερη εξέγερση που είχε ενώσει όλους τους Ιλεργέτες και πάλι στο 205 π.Χ. Λιγότεροι και παροπλισμένοι νικήθηκαν και πάλι, ο Ανδοβάλης  έχασε τη ζωή του στην τελική μάχη και Μανδόνιος συνελήφθη αργότερα και θανατώθηκε. Από την ημερομηνία αυτή και μετά οι Ιλεργέτες παρέμειναν ειρηνευτική φυλή υπό ρωμαϊκή κυριαρχία."
 
 #: simulation/data/civs/iber.jsonStructures[0].Name
 msgid "Gur Oroigarri"
-msgstr "Gur Oroigarri"
+msgstr "Μνημείο Γκουρ"
 
 #: simulation/data/civs/iber.jsonStructures[0].Special
 msgid ""
 "Defensive Aura - Gives all Iberian units and buildings within vision range "
 "of the monument a 10-15% attack boost. Build Limit: Only 5 may be built per "
 "map."
-msgstr ""
+msgstr "Αμυντικά Αύρα - Δίνει σε όλες τις Ιβηρικές μονάδες και τα κτίρια εντός της οπτικής εμβέλειας του μνημείου 10-15% ενίσχυση στην επίθεση. Όριο Κατασκευών: Μόνο 5 μπορούν να κατασκευαστούν ανά χάρτη.  "
 
 #: simulation/data/civs/iber.jsonStructures[0].History
 msgid ""
 "'Revered Monument' The Iberians were a religious people who built small "
 "monuments to their various gods. These monuments could also serve as family "
 "tombs."
-msgstr ""
+msgstr "\"Μνημείο Τιμής\" Οι Ίβηρες ήταν ένα θρησκευτικός λαός που έχτιζαν μικρά μνημεία σε διάφορους θεούς τους. Τα μνημεία αυτά μπορούσαν επίσης να χρησιμεύουν και ως οικογενειακοί τάφοι."
 
 #: simulation/data/civs/iber.jsonHistory
 msgid ""
@@ -1125,7 +1144,7 @@ msgid ""
 "proved tenacious when Rome sought to take their land and freedom from them, "
 "and employed pioneering guerrilla tactics and flaming javelins as they "
 "fought back."
-msgstr ""
+msgstr "Οι Ίβηρες ήταν ένας λαός με μυστήρια καταγωγή και γλώσσα, με ισχυρή παράδοση στην ιππασία και τη μεταλλουργία. Με σχετικά ειρηνική κουλτούρα, που συνήθως πολέμησαν στις μάχες των άλλων μόνο ως μισθοφόροι. Ωστόσο, αποδείχθηκαν σκληροτράχηλοι όταν η Ρώμη προσπάθησε να πάρει τη γη και την ελευθερία από αυτούς, και χρησιμοποίησαν πρωτοποριακές τακτικές ανταρτοπόλεμου και φλεγόμενα ακόντια, καθώς αμυνόντουσαν."
 
 #: simulation/data/civs/mace.jsonName
 #: simulation/data/civs/mace.jsonFactions[0].Name
@@ -1171,11 +1190,11 @@ msgid ""
 "The Greeks were highly successful in Hellenizing various foreigners. During "
 "the Hellenistic Age, Greek was the lingua franca of the Ancient World, "
 "spoken widely from Spain to India."
-msgstr ""
+msgstr "Οι Έλληνες ήταν επιτυχείς στον Εξελληνισμό διαφόρων ξένων. Κατά τη διάρκεια της Ελληνιστικής περιόδου, τα Ελληνικά ήταν η Κοινή Γλώσσα -\"lingua franca\"- του Αρχαίου Κόσμου, ευρέως ομιλούμενη από την Ισπανία ως την Ινδία."
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Description
-msgid "+15% tribute and trade bonus on metal."
-msgstr "+15% φόρο και πλεονέκτημα εμπορίου στο μέταλλο."
+msgid "+20% sell prices at market."
+msgstr "+20% στις τιμές πώλησης στην αγορά."
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Name
 msgid "Standardized Currency"
@@ -1187,7 +1206,7 @@ msgid ""
 " currency the Diadochi in particular frequently depicted themselves as the "
 "rightful successor to Alexander the Great, attempting to legitimize their "
 "rule."
-msgstr ""
+msgstr "Οι Μακεδόνες και οι Διάδοχοι έκοψαν νομίσματα πολύ υψηλής ποιότητας. Στα νομίσματα ιδίως των Διαδόχων που απεικόνιζαν συχνά τους εαυτούς τους ως το νόμιμο διάδοχο του Μεγάλου Αλεξάνδρου, προσπαθώντας να νομιμοποιήσουν την κυριαρχία τους."
 
 #: simulation/data/civs/mace.jsonAINames[0]
 #: simulation/data/civs/mace.jsonFactions[0].Heroes[1].Name
@@ -1249,7 +1268,7 @@ msgid ""
 "military units. This also applies to the Barracks of allied players (they "
 "receive 5 free units of their own culture for each new Barracks "
 "constructed)."
-msgstr ""
+msgstr "Για κάθε επόμενο Στρατώνα που κατασκευάζετε λαμβάνετε και 5 δωρεάν (τυχαίες) Μακεδονικές στρατιωτικές μονάδες. Αυτό ισχύει και για τους Στρατώνες των συμμαχικών παικτών (που λαμβάνουν 5 δωρεάν μονάδες του δικού τους πολιτισμού, για κάθε νέο Στρατώνα που κατασκευάζουν)."
 
 #: simulation/data/civs/mace.jsonFactions[0].Technologies[0].Name
 #: simulation/data/civs/sele.jsonCivBonuses[1].Name
@@ -1262,7 +1281,7 @@ msgid ""
 " of the Macedonian army. His reforms created a powerful cavalry arm to his "
 "army that would prove useful to both himself and his son Alexander's "
 "conquests."
-msgstr ""
+msgstr "Όταν ο Φίλιππος Β ήρθε στο μακεδονικό θρόνο άρχισε μια συνολική αναδιοργάνωση του μακεδονικού στρατού. Με τις μεταρρυθμίσεις του δημιούργησε ισχυρό βραχίονα ιππικού για να τον στρατό του, που θα αποδειχθεί χρήσιμο τόσο για τον εαυτό του όσο και τις κατακτήσεις του γιου του Αλέξανδρου."
 
 #: simulation/data/civs/mace.jsonFactions[0].Technologies[1].Description
 msgid ""
@@ -1300,7 +1319,7 @@ msgid ""
 "Beginning with Alexander, the Hellenistic monarchs founded many cities "
 "throughout their empires, where Greek culture and art blended with local "
 "customs to create the motley Hellenistic civilization."
-msgstr ""
+msgstr "Ξεκινώντας με τον Αλέξανδρο, οι Ελληνιστικοί μονάρχες ίδρυσαν πολλές πόλεις σε όλη την αυτοκρατορίας τους, όπου η Ελληνική κουλτούρα και η τέχνη αναμειγνύονταν με τα τοπικά έθιμα για να δημιουργηθεί ένας ετερόκλητος Ελληνιστικός πολιτισμός."
 
 #: simulation/data/civs/mace.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -1309,7 +1328,7 @@ msgid ""
 " Greek world. Greatly enlarged the size of Macedonia by conquering much of "
 "Thrace and subduing the Greeks. Murdered in Aegae while planning a campaign "
 "against Persia."
-msgstr ""
+msgstr "Ο βασιλιάς της Μακεδονίας (359-336 π.Χ.), που πραγματοποίησε μεγάλες νομισματικές και στρατιωτικές μεταρρυθμίσεις προκειμένου να καταστεί το βασίλειό του η πιο ισχυρή δύναμη στον ελληνικό κόσμο. Σε μεγάλο βαθμό διεύρυνε το μέγεθος της Μακεδονίας κατακτώντας μεγάλο μέρος της Θράκης και να καθυποτάσοντας τους Έλληνες. Δολοφονήθηκε στις Αιγές, ενώ σχεδιάζει μια εκστρατεία κατά των Περσών."
 
 #: simulation/data/civs/mace.jsonFactions[0].Heroes[0].Name
 msgid "Philip II of Macedon"
@@ -1325,7 +1344,7 @@ msgid ""
 "India, he defeated king Porus at Hydaspes (326 B.C.), but his weary troops "
 "made him halt. Died in Babylon at the age of 33 while planning a campaign "
 "against Arabia."
-msgstr ""
+msgstr "Ο πιο ισχυρό ήρωας από όλους - ο γιος του Φιλίππου Β', βασιλιά της Μακεδονίας (336-323 π.Χ.). Μετά την κατάκτηση του υπολοίπου των Θρακών και την καταστολή των εξεγέρσεων των Ελλήνων, ο Αλέξανδρος ξεκίνησε μια πορεία παγκόσμιας κατάκτησης. Νικώντας τις περσικές δυνάμεις στο Γρανικό (334 π.Χ.), στον Ισσό (333 π.Χ.) και στα Γαυγάμηλα (331 π.Χ.), έγινε ο κυρίαρχος της Περσικής Αυτοκρατορίας. Μπαίνοντας στην Ινδία, νίκησε των Πώρο στην Υδάσπη (326 π.Χ.), αλλά τα κουρασμένα στρατεύματά του τον έκαναν να σταματήσει. Πέθανε στη Βαβυλώνα στην ηλικία των 33, ενώ σχεδίαζε μια εκστρατεία κατά της Αραβίας."
 
 #: simulation/data/civs/mace.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -1336,7 +1355,7 @@ msgid ""
 "his Asian possessions after the battle of Ipsos, he later won the Macedonian"
 " throne. Fearing lest they should be overpowered by Demetrios, the other "
 "Diadochi united against him and defeated him."
-msgstr ""
+msgstr "Ένας από τους Διαδόχους, ο βασιλιάς της Μακεδονίας (294-288 π.Χ.), ο Δημήτριος ήταν γνωστός ως ένας από τους γενναιότερους και πιο ικανούς διαδόχους του Μεγάλου Αλεξάνδρου. Όπως ο γιος του Αντίγονος ο Μονόφθαλμος, πάλεψε και κέρδισε πολλές σημαντικές μάχες από νωρίς και ανακηρύχθηκε βασιλιάς, μαζί με τον πατέρα του, το 306 π.Χ. Χάνοντας τις Ασιατικές κτήσεις του μετά τη μάχη της Ίψου, κέρδισε αργότερα το μακεδονικό θρόνο. Φοβούμενοι μήπως εξουδετερωθούν από τον Δημήτριο, ο άλλοι Διάδοχοι ενώθηκαν εναντίον του και τον νίκησαν."
 
 #: simulation/data/civs/mace.jsonFactions[0].Heroes[2].Name
 msgid "Demetrios the Besieger"
@@ -1350,7 +1369,7 @@ msgstr "Ενα Ελληνιστικό βασίλειο συνορευόμενο 
 msgid ""
 "The Hellenization civ bonus. Building a Theatron increases the territory "
 "effect of all buildings by 25%. Build limit: 1."
-msgstr ""
+msgstr "Ελληνιστικός πολιτισμός μπόνους. Χτίζοντας ένα θέατρο αυξάνεται η επίδραση περιοχής όλων των κτηρίων κατά 25%. Όριο κτιρίων: 1."
 
 #: simulation/data/civs/mace.jsonStructures[1].Name
 #: simulation/data/civs/ptol.jsonStructures[0].Name
@@ -1362,7 +1381,7 @@ msgstr "Βιβλιοθήκη"
 msgid ""
 "All Special Technologies are researched here. Building one reduces the cost "
 "of all other remaining technologies by 10%. Build limit: 1."
-msgstr ""
+msgstr "Όλες οι Ειδικές Τεχνολογίες ερευνώνται εδώ. Κατασκεύασε ένα για να μειώσεις το κόστος των εναπομείναντων τεχνολογιών κατά 10%. Όριο κατασκευών: 1."
 
 #: simulation/data/civs/mace.jsonStructures[1].History
 #: simulation/data/civs/ptol.jsonStructures[0].History
@@ -1396,13 +1415,13 @@ msgstr "H Μακεδονία ήταν ένα αρχαίο ελληνικό βα�
 
 #: simulation/data/civs/maur.jsonName
 msgid "Mauryans"
-msgstr "Μαυριτανοί"
+msgstr "Μαουρύα"
 
 #: simulation/data/civs/maur.jsonCivBonuses[0].Description
 msgid ""
 "Mauryans have a +10% population cap bonus (i.e., 330 pop cap instead of the "
 "usual 300)."
-msgstr ""
+msgstr "Οι Μαουρύα έχουν ένα +10% επιπλέων στο ανώτατο όριο του πληθυσμού. (π.χ. 330 όριο πληθυσμού αντί για το συνηθισμένο 300)."
 
 #: simulation/data/civs/maur.jsonCivBonuses[0].Name
 msgid "Emperor of Emperors."
@@ -1416,15 +1435,15 @@ msgid ""
 "commanded a standing army of 600,000 infantry, 9000 elephants, 8000 "
 "chariots, and 30,000 cavalry, making it arguably the largest army of its "
 "time."
-msgstr ""
+msgstr "Η Αυτοκρατορία των Μαουρύα περιελάμβανε δεκάδες πρώην ανεξάρτητα βασίλεια σε μια έκταση 5 εκατομμυρίων τετραγωνικών χιλιομέτρων, με πληθυσμό κοντά στα 60 εκατομμύρια ανθρώπους. Οι Μαουρύα αντιβασιλείς κράτησαν τον τίτλο του Αυτοκράτορα των Αυτοκρατόρων και διοικούσαν έναν μόνιμο στρατό από 600.000 πεζικό, 9.000 ελέφαντες, 8.000 άρματα και 30.000 ιππικό, καθιστώντας αναμφισβήτητα το μεγαλύτερο στρατό της εποχής του."
 
 #: simulation/data/civs/maur.jsonCivBonuses[1].Description
 msgid "The Mauryans enjoy access to 4 champions."
-msgstr "Οι  Μαυριτανοί χαίρουν πρόσβαση σε 4 πρωταθλητές"
+msgstr "Οι Μαουρύα χαίρουν πρόσβαση σε 4 πρωταθλητές"
 
 #: simulation/data/civs/maur.jsonCivBonuses[1].Name
 msgid "Kṣhatriya Warrior Caste."
-msgstr ""
+msgstr "Πολεμική Κάστα Κασατρίγα"
 
 #: simulation/data/civs/maur.jsonCivBonuses[1].History
 msgid ""
@@ -1432,46 +1451,46 @@ msgid ""
 "orders) in Hinduism. Traditionally Kshatriya constitute the military and "
 "ruling elite of the Vedic-Hindu social system outlined by the Vedas and the "
 "Laws of Manu."
-msgstr ""
+msgstr "Η Κασατρίγα ή Καστριγα, που σημαίνει πολεμιστής, είναι μία από τις τέσσερις Βάρνας (κοινωνικές τάξεις) στον Ινδουισμό. Παραδοσιακά οι Κασατρίγα απαρτούσαν το στρατό και την άρχουσα ελίτ του Βεδικού-Ινδουιστικού κοινωνικού συστήματος που περιγράφεται από τις Βέδες και τους Νόμους του Μανού."
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Description
-msgid "Allied Temple techs -50% cost and research time."
-msgstr ""
+msgid "Allied temples and temple technologies -50% cost and research time."
+msgstr "Οι συμμαχικοί ναοί και οι τεχνολογίες ναών στοιχίζουν -50% σε κόστος και χρόνο έρευνας."
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Name
-msgid "Evangelism."
-msgstr "Ευαγγελισμός."
+msgid "Ashoka's Religious Support"
+msgstr "Θρησκευτικές Υποστηρίξεις του Ασόκα"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].History
 msgid ""
 "Ashoka the Great sent embassies West to spread knowledge of the Buddha."
-msgstr ""
+msgstr "Ο Ασόκα ο Μέγας έστειλε πρεσβείες στη Δύση για τη διάδοση των γνώσεων του Βούδα."
 
 #: simulation/data/civs/maur.jsonAINames[0]
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[0].Name
 msgid "Chandragupta Maurya"
-msgstr ""
+msgstr "Τσαντραγκούπτα Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[1]
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[1].Name
 msgid "Ashoka the Great"
-msgstr "ο Μέγας Ασόκας"
+msgstr " Ασόκα ο Μέγας"
 
 #: simulation/data/civs/maur.jsonAINames[2]
 msgid "Ashokavardhan Maurya"
-msgstr ""
+msgstr "Ασοκαβαρδχάν Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[3]
 msgid "Acharya Bhadrabahu"
-msgstr ""
+msgstr "Αχαρία Μπαδραμπαχού"
 
 #: simulation/data/civs/maur.jsonAINames[4]
 msgid "Bindusara Maurya"
-msgstr ""
+msgstr "Μπιντουσάρα Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[5]
 msgid "Dasaratha Maurya"
-msgstr ""
+msgstr "Ντασαράτθα Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[6]
 msgid "Samprati Maurya"
@@ -1479,7 +1498,7 @@ msgstr "Σαμπράτι Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[7]
 msgid "Salisuka Maurya"
-msgstr ""
+msgstr "Σαλισούκα Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[8]
 msgid "Devavarman Maurya"
@@ -1487,7 +1506,7 @@ msgstr "Ντεβαβάρμαν Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[9]
 msgid "Satadhanvan Maurya"
-msgstr ""
+msgstr "Σαταντανβαν Μαουρύα"
 
 #: simulation/data/civs/maur.jsonAINames[10]
 msgid "Brihadratha Maurya"
@@ -1501,11 +1520,11 @@ msgstr "Πιάσε μέχρι 5 ελέφαντες Γαίας και οχύρω�
 
 #: simulation/data/civs/maur.jsonFactions[0].Technologies[0].Name
 msgid "Elephant Roundup"
-msgstr "Ανασκόπηση Ελέφαντα"
+msgstr "Μάνδρισμα Ελέφαντα"
 
 #: simulation/data/civs/maur.jsonFactions[0].Technologies[1].Description
 msgid "Greater range and faster train time for Mauryan infantry archers."
-msgstr "Μεγαλύτερο εύρος και γηγορότερη εκπαίδευση για τους Μαυριτανούς τοξότες"
+msgstr "Μεγαλύτερο εύρος και γρηγορότερη εκπαίδευση για τους Μαουρύα τοξότες."
 
 #: simulation/data/civs/maur.jsonFactions[0].Technologies[1].Name
 msgid "Archery Tradition"
@@ -1515,11 +1534,11 @@ msgstr "Παράδοση στην τοξοβολία"
 msgid ""
 "India was a land of archery. The bulk of any Indian army was made up of "
 "highly skilled archers, armed with bamboo longbows."
-msgstr ""
+msgstr "Η Ινδία ήταν μια χώρα της τοξοβολίας. Το μεγαλύτερο μέρος του κάθε ινδικού στρατού απαρτιζόταν από εξειδικευμένους τοξότες, οπλισμένους με μεγάλα τόξα από μπαμπού."
 
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[0].History
 msgid "Founder of the Mauryan Empire."
-msgstr ""
+msgstr "Ιδρυτής της Αυτοκρατορίας των Μαουρύα."
 
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[1].History
 msgid "Last great emperor of the Mauryan dynasty."
@@ -1527,11 +1546,11 @@ msgstr "Ο τελευταίος μεγάλος αυτοκράτορας της �
 
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[2].History
 msgid "Great teacher and advisor to Chandragupta Maurya."
-msgstr ""
+msgstr "Μεγάλος δάσκαλος και σύμβουλος του Τσαντραγκούπτα Μαουρύα."
 
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[2].Name
 msgid "Acharya Chāṇakya"
-msgstr ""
+msgstr "Αχαρία Τσανάκια"
 
 #: simulation/data/civs/maur.jsonFactions[0].Name
 msgid "Mauryan Indians"
@@ -1545,18 +1564,18 @@ msgstr "Στάβλοι Ελεφάντων"
 msgid ""
 "Trains Elephant Archer and Worker Elephant at Town Phase, then adds the "
 "champion War Elephant at the City phase."
-msgstr ""
+msgstr "Εκπαιδεύει Τοξότες Ελέφαντες και Εργάτες Ελέφαντες στη Φάση της Κωμόπολης και προστίθενται οι πρωταθλητές Πολεμικοί Ελέφαντες στη Φάση της Πόλης."
 
 #: simulation/data/civs/maur.jsonStructures[1].Name
 msgid "Edict Pillar of Ashoka"
-msgstr "Πυλώνας διατάγματος του Ashoka"
+msgstr "Πυλώνας διατάγματος του Ασόκα"
 
 #: simulation/data/civs/maur.jsonStructures[1].Special
 msgid ""
 "Contentment: +10% Health and +10% resource gathering rates for all citizens "
 "and allied citizens within its range. Can be built anywhere except in enemy "
 "territory. Max Built: 10."
-msgstr ""
+msgstr "Ικανοποίηση: +10% Υγεία και +10% στο ποσοστό συγκέντρωσης πόρων για όλους τους πολίτες και τους συμμαχικούς πολίτες εντός της εμβέλειάς του. Μπορεί να κατασκευαστεί σε οποιοδήποτε σημείο εκτός του εχθρικού εδάφους. Μέγιστο Χτισμένα: 10."
 
 #: simulation/data/civs/maur.jsonHistory
 msgid ""
@@ -1568,7 +1587,7 @@ msgid ""
 "Acharya Chanakya, contributed to such varied fields such as economics, "
 "religion, diplomacy, warfare, and good governance. Under the rule of Ashoka "
 "the Great, the empire saw 40 years of peace, harmony, and prosperity."
-msgstr ""
+msgstr "Ιδρύθηκε το 322 π.Χ. από τον Τσαντραγκούπτα Μαουρύα, η Αυτοκρατορία των Μαυριτανών ήταν η πρώτη που κυριάρχησε στο μεγαλύτερο μέρος της ινδικής υποηπείρου, και ήταν μία από τις μεγαλύτερες και πιο πυκνοκατοικημένες αυτοκρατορίες της αρχαιότητας. Στρατιωτικό της χαρακτηριστικό ήταν οι τοξότες που χρησιμοποιούσαν τα μεγάλης εμβέλειας από μπαμπού τόξα, οι άγριες θηλυκές πολεμίστριες, τα άρματα και οι χιλιάδες τεθωρακισμένοι πολεμικοί ελέφαντες. Οι φιλόσοφοί της, ιδιαίτερα ο περίφημος Ατσάρια Τσανάκυα, συνείσφεραν σε ποικίλα πεδία όπως η οικονομία, η θρησκεία, η διπλωματία, ο πόλεμος και η χρηστή διακυβέρνηση. Κάτω από την κυριαρχία του Μεγάλου Ασόκα, η αυτοκρατορία είδε 40 χρόνια ειρήνης, αρμονίας και ευημερίας."
 
 #: simulation/data/civs/pers.jsonName
 msgid "Persians"
@@ -1578,11 +1597,11 @@ msgstr "Πέρσες"
 msgid ""
 "The resource cost of training camel-mounted (trader) or horse-mounted units "
 "(cavalry) is reduced by 5% per animal (as appropriate) corralled."
-msgstr ""
+msgstr "Το κόστος σε πόρους που απαιτεί η εκπαίδευση μίας σελωμένης καμήλας (έμπορας) ή των μονάδων με άλογα (ιππικό) μειώνεται κατά 5% ανά μαντρωμένο ζώο (ανάλογα με την περίπτωση)."
 
 #: simulation/data/civs/pers.jsonCivBonuses[0].Name
 msgid "Corral Camels and Horses"
-msgstr "Μαντρί Καμήλες και Άλογα"
+msgstr "Μαντρί για Καμήλες και Άλογα"
 
 #: simulation/data/civs/pers.jsonCivBonuses[0].History
 msgid ""
@@ -1590,13 +1609,13 @@ msgid ""
 "accompanied by great success (most notably during the battle of Sardis in "
 "546 B.C.) The satrapy of Bactria was a rich source of 'two-hump' camels, "
 "while Northern Arabia supplied 'one-hump' camels."
-msgstr ""
+msgstr "Ενώ οι Πέρσες χρησιμοποιούσαν τις καμήλες μόνο σε λίγες περιπτώσεις, η χρήση τους συνοδευόταν πάντα από μεγάλη επιτυχία (και κυρίως κατά τη διάρκεια της μάχης των Σάρδεων το 546 π.Χ.). Η σατραπεία της Βακτρίας ήταν μια πλούσια πηγή των καμήλων με «δύο-καμπούρες», ενώ η Βόρεια Αραβία παρείχε καμήλες με «μία-καμπούρα»."
 
 #: simulation/data/civs/pers.jsonCivBonuses[1].Description
 msgid ""
 "Persians have a +10% population cap bonus (e.g. 330 pop cap instead of the "
 "usual 300)."
-msgstr ""
+msgstr "Οι Πέρσες έχουν ένα +10% επιπλέων στο ανώτατο όριο του πληθυσμού. (π.χ. 330 όριο πληθυσμού αντί για το συνηθισμένο 300)."
 
 #: simulation/data/civs/pers.jsonCivBonuses[1].Name
 msgid "Great King's Levy"
@@ -1610,11 +1629,11 @@ msgid ""
 "great tenacity. However while this was true the infantry were poor hand-to-"
 "hand, close combat fighters. Also, with the exception of the elite "
 "regiments, the Persian infantry was not a standing professional force."
-msgstr ""
+msgstr "Οι Πέρσες μπορούσαν και είχαν συγκεντρώσει έναν μεγάλο αριθμό πεζικού κατά τη διάρκεια του πολέμου, λόγω του μεγάλου μεγέθους της αυτοκρατορία των Αχαιμενιδών και τον τρόπο με τον οποίο ήταν οργανωμένη. Σε γενικές γραμμές το περσικό πεζικό ήταν καλά εκπαιδευμένο και πολεμούσαν με μεγάλη επιμονή. Ωστόσο, η αλήθεια ήταν ότι το πεζικό ήταν φτωχοί πολεμιστές για μάχες σώμα με σώμα. Επίσης, με εξαίρεση τα επίλεκτα συντάγματα, το περσικό πεζικό δεν ήταν μια μόνιμη επαγγελματική δύναμη."
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Description
-msgid "+25% trade profit land routes."
-msgstr "+25% στα κέρδη του εμπορίου από χερσαίους δρόμους."
+msgid "Higher income (+15%) from land trade routes for ally's traders."
+msgstr "Υψηλότερες απολαβές (+15%) από τους χερσαίους εμπορικούς δρόμους για τους εμπόρους των συμμάχων."
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Name
 msgid "Royal Road"
@@ -1626,7 +1645,7 @@ msgid ""
 " common until the Persian period. Darius the Great standardized coined money"
 " and his golden coins (known as 'darics') became commonplace not only "
 "throughout his empire, but as far to the west as Central Europe."
-msgstr ""
+msgstr "Η Νομισματοκοπία εφευρέθηκε από τους Λυδούς τον 7ο αιώνα π.Χ., αλλά δεν ήταν πολύ κοινή μέχρι την Περσική περίοδο. Ο Δαρείος ο Μέγας επινόησε τα τυποποιημένα χρήματα και τα χρυσά νομίσματά του (γνωστά ως «δαρεικούς») έγιναν γνωστά, όχι μόνο σε όλη την αυτοκρατορία του, αλλά όσον αφορά στη δύση ως την Κεντρική Ευρώπη."
 
 #: simulation/data/civs/pers.jsonAINames[0]
 msgid "Kurush II the Great"
@@ -1643,7 +1662,7 @@ msgstr "Καμβύσης Β'"
 
 #: simulation/data/civs/pers.jsonAINames[3]
 msgid "Bardiya"
-msgstr ""
+msgstr "Σμέρδις"
 
 #: simulation/data/civs/pers.jsonAINames[4]
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[2].Name
@@ -1695,13 +1714,13 @@ msgid ""
 "example, a canal was built in Egypt and a Persian navy was sent exploring "
 "the Indus river. According to Herodotus, some 300 ships in the Persian navy "
 "were retrofitted to carry horses and their riders."
-msgstr ""
+msgstr "Οι πρώτοι κυβερνήτες των Αχαιμενιδών έδρασαν προς την κατεύθυνση να κάνουν την Περσία την πρώτη μεγάλη ασιατική αυτοκρατορία που ελέγχει τις θάλασσες. Ο Μεγάλος Βασιλιάς συμπεριφέρθηκε ευνοϊκά προς διάφορου θαλάσσιους λαούς, προκειμένου να εξασφαλίσει τις υπηρεσίες τους, αλλά και πραγματοποίησε διάφορες θαλάσσιες πρωτοβουλίες. Κατά τη διάρκεια της βασιλείας του Δαρείου του Μεγάλου, για παράδειγμα, ένα κανάλι χτίστηκε στην Αίγυπτο και ένα Περσικό ναυτικό στάλθηκε για την εξερεύνηση του ποταμού Ινδού. Σύμφωνα με τον Ηρόδοτο, περίπου 300 πλοία του Περσικού ναυτικού είχαν κατασκευαστεί για να μεταφέρουν τα άλογα και τους αναβάτες τους."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].Description
 msgid ""
 "Increases hitpoints of all structures, but build time increased "
 "appropriately."
-msgstr ""
+msgstr "Αυξάνει τους βαθμούς αντοχής για όλες τις κατασκευές, άλλα επίσης αυξάνεται και ο χρόνος κατασκευής."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].Name
 msgid "Persian Architecture"
@@ -1709,15 +1728,15 @@ msgstr "Περσική Αρχιτεκτονική"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].History
 msgid ""
-"The Persians built the wonderful 1677 mile-long Royal Highway from Sardis to"
-" Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
-"Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
-"Elamite capital of Susa."
-msgstr ""
+"The Persians built the wonderful 2700 kilometer-long Royal Highway from "
+"Sardis to Susa; Darius the Great and Xerxes also built the magnificent "
+"Persepolis; Cyrus the Great greatly improved Ecbatana and virtually "
+"'rebuilt' the old Elamite capital of Susa."
+msgstr "Οι Πέρσες έχτισαν την υπέροχη Βασιλική Εθνική Οδό μήκους  2.700 χιλιόμετρα από τις Σάρδεις στα Σούσα, Ο Δαρείος ο Μέγας και ο Ξέρξης έκτισαν την υπέροχη Περσέπολη, Ο Κύρος ο Μέγας βελτίωσε σημαντικά την Εκβάτανα και ουσιαστικά \"ξαναχτίστηκε\" η παλιά Ελαμιτική πρωτεύουσα της Σούσας."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Description
 msgid "Reduces train time for Anusiya champion infantry by half."
-msgstr ""
+msgstr "Μειώνει το χρόνο εκπαίδευσης για τον Ανούσιγα πρωταθλητή πεζικάριο στο μισό."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Name
 msgid "Immortals"
@@ -1737,7 +1756,7 @@ msgstr "Πολεμικά άλογα από την Νίσαια"
 msgid ""
 "The beautiful and powerful breed of Nisean horses increases health for "
 "Persian cavalry."
-msgstr ""
+msgstr "Η όμορφη και δυνατή φυλή των αλόγων της Νίσαιας αυξάνει την υγεία του Περσικού ιππικού."
 
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -1747,7 +1766,7 @@ msgid ""
 "Empire. He was also renown as a benevolent conqueror. (OP - Kurush). "
 "Technically the second ruler of the Persians by that name, and so appears as"
 " Kurush II on his documents and coins. Kurush I was his grandfather."
-msgstr ""
+msgstr "Ο Κύρος (κυβέρνησε το 559-530 π.Χ.). Ο γιος ενός Μήδιου πρίγκιπα και ο κυβερνήτης του Ανσάν, δίκαια αποκαλείται «ο πατέρας της Αυτοκρατορίας», ο Κύρος ο Μέγας κατέλαβε την Μηδία, τη Λυδία, τη Βαβυλωνία και τη Βακτριανή, ιδρύοντας έτσι την Περσική Αυτοκρατορία. Είχε επίσης τη φήμη του καλοπροαίρετου κατακτητή. (Σημείωση - Κούρους). Τεχνικώς ο δεύτερος ηγεμόνας των Περσών με αυτό το όνομα, έτσι εμφανίζεται σαν Κούρους II στα έγγραφα και τα κέρματά του. Ο Κούρους ήταν ο παππούς του."
 
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[0].Name
 msgid "Kurush II"
@@ -1759,7 +1778,7 @@ msgid ""
 "Parthia and Hyrcania; a great administrator as well as a decent general, "
 "Darius introduced the division of the empire into satrapies and conquered NW"
 " India, Thrace and Macedonia. He was called the 'Merchant of the Empire'."
-msgstr ""
+msgstr "Ο Δαρείος (κυβέρνησε το 522-486 π.Χ.) Ο γιος του Βιστάσπα (Υστάσπη), του σατράπη της Παρθία και της Υρκανίας, ένας πολύ καλός διαχειριστής καθώς και ένας αξιοπρεπής στρατηγός, ο Δαρείος εισήγαγε τη διαίρεση της αυτοκρατορίας σε σατραπείες και κατέκτησε τη ΒΔ Ινδία, τη Θράκη και τη Μακεδονία. Ονομάστηκε ο «Έμπορος της αυτοκρατορίας»."
 
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -1768,7 +1787,7 @@ msgid ""
 "extended Imperial rule into Chorasmia. Apart from his failed invasion of "
 "Greece, he was famous for his extensive building programme, especially at "
 "Persepolis."
-msgstr ""
+msgstr "Ο Ξέρξης (κυβέρνησε το 485-465 π.Χ.) Ο γιος του Δαρείου του Μεγάλου και της Ατόσα, μια κόρη του Κύρου του Μεγάλου, ο Ξέρξης ήταν ένας ικανός διοικητής, ο οποίος επέκτεινε επίσης την αυτοκρατορική του κυριαρχία στη Χορεσμία. Εκτός από την αποτυχημένη εισβολή του στην Ελλάδα, ήταν διάσημος για το εκτεταμένο οικοδομικό πρόγραμμα του, ειδικά στην Περσέπολη."
 
 #: simulation/data/civs/pers.jsonStructures[0].Name
 #: simulation/data/civs/sele.jsonStructures[1].Name
@@ -1800,7 +1819,7 @@ msgid ""
 "Persepolis. Functioning as the empire's central audience hall, the palace is"
 " famous for the reliefs of the tribute-bearers and of the army, including "
 "the Immortals."
-msgstr ""
+msgstr "Ο όρος Απάδανα χαρακτηρίζει ένα μεγάλο υποστυλωμένο παλάτι που βρέθηκε στην Περσία. Το πιο γνωστό παράδειγμα, και μακράν το μεγαλύτερο, ήταν η μεγάλη Απαδάνα στην Περσέπολη. Λειτουργούσε ως αίθουσα που ήταν το κέντρο των ακροάσεων της αυτοκρατορίας, το παλάτι είναι διάσημο για τα ανάγλυφα αφιερώματά του και τον στρατό, συμπεριλαμβανομένων των Αθανάτων."
 
 #: simulation/data/civs/pers.jsonHistory
 msgid ""
@@ -1811,7 +1830,7 @@ msgid ""
 "rule over various peoples with different customs, laws, religions and "
 "languages, and building a cosmopolitan army made up of contingents from each"
 " of these nations."
-msgstr ""
+msgstr "Η Περσική Αυτοκρατορία, κατά τη διακυβέρνηση της δυναστεία των Αχαιμενιδών, ήταν μία από τις μεγαλύτερες αυτοκρατορίες της αρχαιότητας, που εκτεινόταν στο ζενίθ της από την Κοιλάδα του Ινδού στα ανατολικά προς την Ελλάδα στα δυτικά. Οι Πέρσες ήταν οι πρωτοπόροι στην δημιουργία-αυτοκρατορίας στον αρχαίο κόσμο, επιβάλλοντας με επιτυχία μια κεντρική διακυβέρνηση πάνω σε διάφορους λαούς με διαφορετικά ήθη και έθιμα, νόμους, θρησκείες και γλώσσες, επίσης δημιούργησαν ένα πολυεθνικό στρατό που απαρτιζόταν από αγήματα από κάθε ένα από αυτά τα έθνη."
 
 #: simulation/data/civs/ptol.jsonName
 msgid "Ptolemies"
@@ -1828,17 +1847,16 @@ msgid "Mercenary Army"
 msgstr "Μισθοφορικό Στρατό"
 
 #: simulation/data/civs/ptol.jsonCivBonuses[0].History
-#: simulation/data/civs/ptol.jsonStructures[1].History
 msgid ""
 "The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
 "foreign mercenaries for the bulk of its military force, mainly because the "
 "loyalty of native Egyptian units was often suspect. Indeed, during one "
 "native uprising, Upper Egypt was lost to the Ptolemies for decades. "
-"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"Mercenaries were often battle-hardened and their loyalty could be bought, "
 "sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
 " under the Ptolemies was so prosperous as to be the richest of Alexander's "
 "successor states."
-msgstr ""
+msgstr "Η Ελληνική δυναστεία των Πτολεμαίων στηρίχθηκε σε μεγάλο αριθμό Ελλήνων και ξένων μισθοφόρων για το μεγαλύτερο μέρος της στρατιωτικής της δύναμης, κυρίως επειδή η πίστη των ντόπιων αιγυπτιακών μονάδων ήταν συχνά ύποπτη. Πράγματι, κατά τη διάρκεια μιας γηγενείς εξέγερσης, η Άνω Αίγυπτος χάθηκε από τους Πτολεμαίους για δεκαετίες. Των μισθοφόρων συχνά η μαχητικότητα και η πίστη τους, μπορούσαν να αγοραστούν, μερικές φορές φθηνά, μερικές φορές καθόλου φτηνά. Αυτό δεν είχε καμία σημασία, δεδομένου ότι η Αίγυπτος υπό τους Πτολεμαίους ήταν τόσο ευημερούσα ώστε να είναι η πλουσιότερη περιοχή των διαδόχων του Αλεξάνδρου."
 
 #: simulation/data/civs/ptol.jsonCivBonuses[1].Description
 msgid "The Ptolemaic Egyptians receive 3 additional farming technologies."
@@ -1927,7 +1945,7 @@ msgstr "Κλεοπάτρα Τρύφαινα"
 
 #: simulation/data/civs/ptol.jsonAINames[13]
 msgid "Berenice Epiphaneia"
-msgstr "Βερενίκη Επιφάνεια"
+msgstr "Βερενίκη η Επιφανής"
 
 #: simulation/data/civs/ptol.jsonAINames[14]
 msgid "Cleopatra Philopater"
@@ -1943,11 +1961,11 @@ msgstr "Κλεοπάτρα Β' Φιλομήτωρα  Σωτήρα"
 
 #: simulation/data/civs/ptol.jsonAINames[17]
 msgid "Arsinoe IV"
-msgstr ""
+msgstr "Αρσινόη Δ΄"
 
 #: simulation/data/civs/ptol.jsonAINames[18]
 msgid "Arsinoe II"
-msgstr ""
+msgstr "Αρσινόη Β΄"
 
 #: simulation/data/civs/ptol.jsonFactions[0].Technologies[1].Description
 msgid "Hero aura range boosted by 50%."
@@ -1969,13 +1987,13 @@ msgid ""
 "The Ptolemaic Egyptians receive 3 additional farming technologies above and "
 "beyond the maximum number of farming technologies usually available to a "
 "faction."
-msgstr ""
+msgstr "Οι Πτολεμαίοι Αιγύπτιοι λαμβάνουν 3 επιπλέον τεχνολογίες καλλιέργειας πάνω και πέρα από το μέγιστο αριθμό των τεχνολογιών καλλιέργειας που συνήθως διατίθενται σε μια φατρία."
 
 #: simulation/data/civs/ptol.jsonFactions[0].Technologies[2].History
 msgid ""
 "The Nile Delta had rich soil for farming, due to centuries of seasonal "
 "floods from the Nile depositing rich silt across the landscape."
-msgstr ""
+msgstr "Το Δέλτα του Νείλου έχει πλούσιο χώμα για καλλιέργεια, εξαιτίας των αιώνιων εποχιακών πλημμυρών του Νείλου κατακάθεται πλούσια λάσπη σε όλη την περιοχή."
 
 #: simulation/data/civs/ptol.jsonFactions[0].Heroes[0].Name
 msgid "Ptolemaios A' Soter"
@@ -2003,7 +2021,7 @@ msgid ""
 "Maximum of 1 built. All Special Technologies and some regular city-phase "
 "technologies are researched here. Building one reduces the cost of all other"
 " remaining technologies by 10%."
-msgstr ""
+msgstr "Μέγιστο κατασκευών 1 κτίριο. Όλες οι Ειδικές Τεχνολογίες και μερικές συνηθισμένες της φάσης-πόλη ερευνώνται εδώ. Κατασκεύασε ένα για να μειώσεις το κόστος των εναπομείναντων τεχνολογιών κατά 10%."
 
 #: simulation/data/civs/ptol.jsonStructures[1].Name
 msgid "Stratópedo Misthophóron"
@@ -2013,7 +2031,19 @@ msgstr "Στρατόπεδο Μισθοφόρων"
 msgid ""
 "Must be constructed in neutral territory. Has no territory radius effect. "
 "Trains all 'mercenary' units."
-msgstr ""
+msgstr "Πρέπει να κατασκευαστεί σε ουδέτερο έδαφος. Δεν επιδρά στην επέκταση του εδάφους. Εκπαιδεύει όλες της 'μισθοφορικές' μονάδες."
+
+#: simulation/data/civs/ptol.jsonStructures[1].History
+msgid ""
+"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
+"foreign mercenaries for the bulk of its military force, mainly because the "
+"loyalty of native Egyptian units was often suspect. Indeed, during one "
+"native uprising, Upper Egypt was lost to the Ptolemies for decades. "
+"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
+" under the Ptolemies was so prosperous as to be the richest of Alexander's "
+"successor states."
+msgstr "Η Ελληνο-Μακεδονική δυναστεία των Πτολεμαίων στηρίχθηκε σε μεγάλο αριθμό Ελλήνων και ξένων μισθοφόρων για το μεγαλύτερο μέρος της στρατιωτικής της δύναμης, κυρίως επειδή η πίστη των ντόπιων αιγυπτιακών μονάδων ήταν συχνά ύποπτη. Πράγματι, κατά τη διάρκεια μιας γηγενείς εξέγερσης, η Άνω Αίγυπτος χάθηκε από τους Πτολεμαίους για δεκαετίες. Των μισθοφόρων συχνά η μαχητικότητα και η πίστη τους, μπορούσαν να αγοραστούν, μερικές φορές φθηνά, μερικές φορές καθόλου φτηνά. Αυτό δεν είχε καμία σημασία, δεδομένου ότι η Αίγυπτος υπό τους Πτολεμαίους ήταν τόσο ευημερούσα ώστε να είναι η πλουσιότερη περιοχή των διαδόχων του Αλεξάνδρου."
 
 #: simulation/data/civs/ptol.jsonStructures[2].Name
 msgid "Lighthouse"
@@ -2023,7 +2053,7 @@ msgstr "Φάρος"
 msgid ""
 "When built along the shoreline, removes shroud of darkness over all the "
 "water, revealing all the coast lines on the map. Limit: 1."
-msgstr ""
+msgstr "Όταν κατασκευαστεί κατά μήκος της ακτογραμμής, αφαιρεί το σκοτεινό κάλυμμα πάνω από όλο το νερό, αποκαλύπτοντας όλες τις ακτογραμμές στο χάρτη. Όριο κατασκευών: 1."
 
 #: simulation/data/civs/ptol.jsonStructures[2].History
 msgid ""
@@ -2031,7 +2061,7 @@ msgid ""
 "Alexandria near the harbor mouth of that Nile Delta city. This structure "
 "could be seen for many kilometers out to sea and was one of the Seven "
 "Wonders of the World."
-msgstr ""
+msgstr "Η δυναστεία των Πτολεμαίων στην Αίγυπτο οικοδόμησε τον υπέροχο Φάρος της Αλεξάνδρειας κοντά στην είσοδο του λιμανιού της πόλης του Δέλτα του Νείλου. Η κατασκευή αυτή ήταν ορατή από πολλά χιλιόμετρα στη θάλασσα και ήταν ένα από τα Επτά Θαύματα του Κόσμου."
 
 #: simulation/data/civs/ptol.jsonHistory
 msgid ""
@@ -2058,7 +2088,7 @@ msgid ""
 "The Romans commonly used the Testudo or 'turtle' formation for defense: "
 "Legionaries were formed into hollow squares with twelve men on each side, "
 "standing so close together that their shields overlapped like fish scales."
-msgstr ""
+msgstr "Οι Ρωμαίοι συχνά χρησιμοποιούσαν το Τεστούντο ή το σχηματισμό «χελώνας» για την άμυνα: οι Λεγεωνάριοι σχημάτισαν κοίλο τετράγωνο με δώδεκα άνδρες σε κάθε πλευρά, στέκονταν τόσο κοντά μεταξύ τους που οι ασπίδες τους επικαλύπτονται σαν λέπια ψαριού."
 
 #: simulation/data/civs/rome.jsonCivBonuses[1].Description
 msgid ""
@@ -2077,20 +2107,26 @@ msgid ""
 "peoples. It is said that harming a Roman citizen was akin to harming Rome "
 "herself, and would cause the entire might of Rome to fall upon the "
 "perpetrator."
-msgstr ""
+msgstr "Η Ιδιότητα του Ρωμαίου πολίτη είχε ιδιαίτερη αξία στον αρχαίο κόσμο. Βασικά δικαιώματα και προνόμια που κατείχαν οι Ρωμαίοι πολίτες στερήθηκαν στους άλλους κατακτημένους λαούς. Λέγεται ότι βλάπτοντας ένα Ρωμαίο πολίτη ήταν σαν να βλάπτετε η ίδια η Ρώμη, και μπορούσε να προκαλέσει το σύνολο της δύναμη της Ρώμης να πέσει πάνω στον δράστη."
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Description
-msgid "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-msgstr "Οι σύμμαχοι πολίτες-στρατιώτες κερδίζουν +15% στην επίθεση όταν είναι σε Ρωμαϊκή περιοχή."
+msgid "-20% training time for allied infantry."
+msgstr "-20% στο χρόνο εκπαίδευσης για το πεζικό των συμμάχων."
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Name
-msgid "Socii"
-msgstr "Έταιροι"
+msgid "Conscription"
+msgstr "Στρατολόγηση"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].History
 msgid ""
-"Being allied with Rome came with great benefits (as well as great peril)."
-msgstr "Η συμμαχία με τη Ρώμη συνοδευόταν από μεγάλα οφέλη (καθώς και μεγάλους κινδύνους)."
+"Many Roman soldiers were conscripted into service. While volunteers were "
+"preferred, the Roman state did maintain an annual military draft. During an "
+"emergency the draft and the terms of service were enlarged. The importance "
+"of military service in Republican Rome was so great it was a prerequisite "
+"for a political career. Members of the Senate were called Conscript Fathers "
+"because of this, reflected in how the ordo equester was said to have been "
+"\"conscripted\" into the Senate."
+msgstr "Πολλοί Ρωμαίοι στρατιώτες επιστρατεύτηκαν σε υπηρεσία. Ενώ οι εθελοντές προτιμούνταν, το Ρωμαϊκό κράτος διατηρούσε ένα ετήσιο σχέδιο στρατολογίας. Κατά τη διάρκεια έκτακτης ανάγκης το σχέδιο και οι όροι υπηρεσίας διευρύνονταν. Η σημασία της στρατιωτικής θητείας στη Ρεπουμπλικανική Ρώμη ήταν τόσο μεγάλη που αποτελούσε προϋπόθεση για μια πολιτική καριέρα. Μέλη της Γερουσίας ονομάζονταν Στρατολογημένοι Πατέρες εξαιτίας αυτού, που αντανακλά στο πώς η Ιππάς έλεγαν ότι ήταν «καταταγμένοι» στη Γερουσία."
 
 #: simulation/data/civs/rome.jsonAINames[0]
 msgid "Lucius Junius Brutus"
@@ -2098,31 +2134,31 @@ msgstr "Λεύκιος Ιούνιος Βρούτος"
 
 #: simulation/data/civs/rome.jsonAINames[1]
 msgid "Lucius Tarquinius Collatinus"
-msgstr ""
+msgstr "Λούκιος Ταρκήνιος Κολλατίνος"
 
 #: simulation/data/civs/rome.jsonAINames[2]
 msgid "Gaius Julius Caesar Octavianus"
-msgstr ""
+msgstr "Γάιος Ιούλιος Καίσαρας Οκταβιανός"
 
 #: simulation/data/civs/rome.jsonAINames[3]
 msgid "Marcus Vipsanius Agrippa"
-msgstr ""
+msgstr "Μάρκος Βιψάνιος Αγρίππας"
 
 #: simulation/data/civs/rome.jsonAINames[4]
 msgid "Gaius Iulius Iullus"
-msgstr ""
+msgstr "Ιούλιος, Γάιος Ίουλος"
 
 #: simulation/data/civs/rome.jsonAINames[5]
 msgid "Gaius Servilius Structus Ahala"
-msgstr ""
+msgstr "Γάιος Σερβίλιος Στρούκτιος Αχάλας"
 
 #: simulation/data/civs/rome.jsonAINames[6]
 msgid "Publius Cornelius Rufinus"
-msgstr ""
+msgstr "Πούμπλιος Κορνήλιος ο Ρουφίνος"
 
 #: simulation/data/civs/rome.jsonAINames[7]
 msgid "Lucius Papirius Cursor"
-msgstr ""
+msgstr "Λεύκιος Παπίριος Κούρσωρ"
 
 #: simulation/data/civs/rome.jsonAINames[8]
 msgid "Aulus Manlius Capitolinus"
@@ -2130,23 +2166,23 @@ msgstr "Αύλος Μάνλιος Καπιτωλίνος"
 
 #: simulation/data/civs/rome.jsonAINames[9]
 msgid "Publius Cornelius Scipio Africanus"
-msgstr ""
+msgstr "Πούμπλιος Κορνήλιος Σκιπίων ο Αφρικανός"
 
 #: simulation/data/civs/rome.jsonAINames[10]
 msgid "Publius Sempronius Tuditanus"
-msgstr ""
+msgstr "Πούμπλιος Σεμπρόνιος Τουδιτανός"
 
 #: simulation/data/civs/rome.jsonAINames[11]
 msgid "Marcus Cornelius Cethegus"
-msgstr ""
+msgstr "Μάρκος Κορνήλιος Κέθηγος"
 
 #: simulation/data/civs/rome.jsonAINames[12]
 msgid "Quintus Caecilius Metellus Pius"
-msgstr ""
+msgstr "Κόιντος Καικίλιο Μέτελλο ο Ευσεβής"
 
 #: simulation/data/civs/rome.jsonAINames[13]
 msgid "Marcus Licinius Crassus"
-msgstr ""
+msgstr "Μάρκος Λικίνιος Κράσσος"
 
 #: simulation/data/civs/rome.jsonFactions[0].Technologies[0].Description
 msgid "Roman heroes can convert enemy units with great cost."
@@ -2162,18 +2198,18 @@ msgid ""
 "throughout its long history. The Romans lured enemies or neutral factions to"
 " their side by offering them certain privileges. In due period of time, "
 "friends as well as foes were subjugated."
-msgstr ""
+msgstr "'Διαίρει και βασίλευε' ήταν η βασική αρχή της ρωμαϊκής εξωτερικής πολιτικής σε όλη τη μακρά ιστορία της. Οι Ρωμαία δελέαζαν εχθρούς ή ουδέτερα κράτη στο πλευρό τους, προσφέροντάς συγκεκριμένα προνόμια. Σε εύθετο χρονικό διάστημα, φίλοι αλλά και εχθροί τους υποτάχθηκαν."
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[0].History
 msgid ""
 "Dictator for six months during the Second Punic War. Instead of attacking "
 "the most powerful Hannibal, he started a very effective war of attrition "
 "against him."
-msgstr ""
+msgstr "Δικτάτορας για έξι μήνες κατά τη διάρκεια του Δεύτερου Καρχηδονιακού Πολέμου. Αντί να επιτεθεί στον πιο ισχυρό Αννίβα, ξεκίνησε ένα ιδιαίτερα αποτελεσματικό πόλεμο φθοράς εναντίον του."
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[0].Name
 msgid "Quintus Fabius Maximus"
-msgstr ""
+msgstr "Φάβιος Μάξιμος ο πέμπτος "
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -2186,7 +2222,7 @@ msgid ""
 "Greek culture and arts, which he enthusiastically promoted in Rome. He met "
 "his demise when his men were ambushed near Venusia. In honor of the respect "
 "the people held for him, Marcellus was granted the title of 'Sword of Rome.'"
-msgstr ""
+msgstr "Ένας στρατιώτης του πρώτου πολέμου με την Καρχηδόνα, ήρωας του Β' Καρχηδόνιου Πολέμου, και νικητής κατά τη διάρκεια των Γαλατών στο Καστέτζιο. Ο Πλούταρχος τον περιγράφει ως έναν άνθρωπο του πολέμου, ισχυρό στο σώμα και συγκροτημένο, με μια σιδερένια θέληση για να αγωνιστεί. Ως στρατηγός ήταν πάρα πολύ ικανός, βρισκόταν στο πλευρό του Σκιπίωνα του Αφρικανού και του Κλαύδιου Νέρωνα ως τον πιο αποτελεσματικό στο σύνολο των Ρωμαίων στρατηγών του Β' Καρχηδόνιου Πολέμου. Εκτός από τις στρατιωτικές επιτυχίες του ο Μαρκέλλος ήταν οπαδός του ελληνικού πολιτισμού και των τεχνών, οι οποίες με ενθουσιασμό προωθούνταν στη Ρώμη. Συναντήθηκε με το θάνατό του, όταν οι άνδρες του είχαν στήσει ενέδρα κοντά στην Αφροδισία. Προς την τιμήν και το σεβασμού που οι άνθρωποι είχαν γι' αυτόν, στο Μαρκέλλο απονεμήθηκε ο τίτλος «Ξίφος της Ρώμης»."
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[1].Name
 msgid "Marcus Claudius Marcellus"
@@ -2198,7 +2234,7 @@ msgid ""
 "His campaigns in Spain and Africa helped to bring Carthage to its knees "
 "during the Second Punic War. He defeated Hannibal at the Battle of Zama in "
 "202 B.C."
-msgstr ""
+msgstr "Ήταν ο πρώτος πραγματικά νικηφόρος Ρωμαίος στρατηγός κατά των Καρχηδονίων. Οι εκστρατείες του στην Ισπανία και την Αφρική βοήθησαν στην ταπείνωση της Καρχηδώνας στον Δεύτερο Καρχιδονιακό Πόλεμο. Νίκησε τον Αννίβα στην Μάχη της Ζάμας το 202 π.Χ.."
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[2].Name
 msgid "Scipio Africanus"
@@ -2224,7 +2260,7 @@ msgid ""
 "execution. It has a turf wall, and it's surrounded by a canal filled with "
 "water whenever possible for extra defense. Many towns started up as bigger "
 "military camps to evolve to more complicated cities."
-msgstr ""
+msgstr "Μερικές φορές ήταν ένα προσωρινό στρατόπεδο κατασκευασμένο να ανακόψει τη πορεία μέσω της οποίας ο στρατός βάδιζε, άλλες φορές ήταν μια αμυντική ή επιθετική (για πολιορκίες) κατασκευή. Εντός της Πραιτοριανής πύλης, η οποία θα πρέπει να έχει πρόσοψη είτε με την ανατολή είτε με τον εχθρό, οι σκηνές τους πρώτους αιώνες ή οι κοορτές ήταν επικλινείς, και ο Δράκος (διακριτικό των κοορτών) και άλλα διακριτικά φυτεύονταν. Η Δεκουμιανή πύλη βρίσκεται ακριβώς απέναντι από την Πραιτοριανή στο πίσω μέρος του στρατοπέδου, και μέσα από αυτή διέρχονταν οι στρατιώτες στον τόπο που ορίζεται για την τιμωρία ή την εκτέλεσή τους. Έχει έναν τοίχο από χλοοτάπητα, και είναι περιτριγυρισμένη από ένα κανάλι γεμάτο με νερό όποτε είναι δυνατόν για επιπλέον άμυνα. Πολλές πόλεις ξεκίνησαν ως μεγάλα στρατόπεδα για να εξελιχθούν σε πιο περίπλοκες πόλεις."
 
 #: simulation/data/civs/rome.jsonStructures[1].Name
 msgid "Murus Latericius"
@@ -2247,7 +2283,7 @@ msgid ""
 "nations on earth for almost 800 years. The Romans were the supreme builders "
 "of the ancient world, excelled at siege warfare and had an exquisite "
 "infantry and navy."
-msgstr ""
+msgstr "Οι Ρωμαίοι που έλεγχαν μία από τις μεγαλύτερες αυτοκρατορίες του αρχαίου κόσμου, που εκτεινόταν στο αποκορύφωμά της από τη νότια Σκωτία μέχρι την έρημο της Σαχάρας, και περιείχε ανάμεσα σε 60 με 80 εκατομμύρια κατοίκους, το ένα τέταρτο του πληθυσμού της Γης εκείνη την εποχή. Η Ρώμη παρέμεινε επίσης ένα από τα ισχυρότερα έθνη στη γη για σχεδόν 800 χρόνια. Οι Ρωμαίοι ήταν οι υπέρτατοι οικοδόμοι του αρχαίου κόσμου, διακρίθηκαν σε πολιορκητικούς πολέμους και είχαν ένα εξαιρετικό πεζικό και ναυτικό."
 
 #: simulation/data/civs/sele.jsonName
 #: simulation/data/civs/sele.jsonFactions[0].Name
@@ -2269,7 +2305,7 @@ msgstr "Κληρουχία"
 msgid ""
 "Choose between Traditional Army and Reform Army technologies that unlock "
 "different Champions."
-msgstr ""
+msgstr "Επέλεξε μεταξύ τεχνολογιών παραδοσιακού στρατού και στρατιωτικών μεταρρυθμίσεων για το ξεκλείδωμα διαφορετικών πρωταθλητών."
 
 #: simulation/data/civs/sele.jsonCivBonuses[1].History
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[1].History
@@ -2281,7 +2317,7 @@ msgid ""
 " the cavalry arm. War with the Romans from the West and invasions from the "
 "Galatians also forced the Seleucids to reform their infantry regiments to be"
 " more flexible."
-msgstr ""
+msgstr "Οι Σελευκίδες εξελίχθηκαν και μάλιστα στο πόλεμο των Διάδοχων κατά τη διάρκεια του 3ου και 2ου αιώνα. Συνόρευαν Ανατολικά με ανερχόμενες δυνάμεις όπως οι Πάρθοι και είχαν διαρκείς επαναστάσεις στις περιφερειακές σατραπείες, όπως η Βακτριανή ανάγκασαν τους Σελευκίδες να μεταρρυθμίσουν το στρατό τους και να αλλάξουν την τακτική τους, ειδικά στο ιππικό βραχίονα. Ο πόλεμος με τους Ρωμαίους από τη Δύση και οι εισβολές από τους Γαλάτες ανάγκασαν επίσης τους Σελευκίδες να μεταρρυθμίσουν τα συντάγματα πεζικού ώστε να είναι πιο ευέλικτα."
 
 #: simulation/data/civs/sele.jsonTeamBonuses[0].Description
 msgid "Allied Civic Centers are 20% cheaper."
@@ -2295,7 +2331,7 @@ msgstr "Σύρια Τετράπολις"
 msgid ""
 "The political core of the Seleucid Empire consisted of four 'sister' cities:"
 " Antioch (the capital), Seleucia Pieria, Apamea, and Laodicea."
-msgstr ""
+msgstr "Ο πολιτικός πυρήνα της Αυτοκρατορία των Σελευκιδών αποτελούνταν από τέσσερις «αδελφές» πόλεις: Αντιόχεια (η πρωτεύουσα), Σελεύκεια Πιερία, Απάμεια, και Λαοδίκεια."
 
 #: simulation/data/civs/sele.jsonAINames[0]
 msgid "Seleucus I Nicator"
@@ -2352,7 +2388,7 @@ msgstr "Αντίοχος ΣΤ' ο Διόνυσος"
 
 #: simulation/data/civs/sele.jsonAINames[13]
 msgid "Diodotus Tryphon"
-msgstr ""
+msgstr "Διόδοτος Τρύφων"
 
 #: simulation/data/civs/sele.jsonAINames[14]
 msgid "Antiochus VII Sidetes"
@@ -2360,65 +2396,65 @@ msgstr "Αντίοχος Ζ' ο Σιδήτης"
 
 #: simulation/data/civs/sele.jsonAINames[16]
 msgid "Alexander II Zabinas"
-msgstr ""
+msgstr "Αλέξανδρος Β΄ Ζαβίνας"
 
 #: simulation/data/civs/sele.jsonAINames[17]
 msgid "Cleopatra Thea"
-msgstr ""
+msgstr "Κλεοπάτρα Θεά"
 
 #: simulation/data/civs/sele.jsonAINames[18]
 msgid "Seleucus V Philometor"
-msgstr ""
+msgstr "Σέλευκος Ε' Φιλομήτωρ"
 
 #: simulation/data/civs/sele.jsonAINames[19]
 msgid "Antiochus VIII Grypus"
-msgstr ""
+msgstr "Αντίοχος Ζ' Γρύπας"
 
 #: simulation/data/civs/sele.jsonAINames[20]
 msgid "Antiochus IX Cyzicenus"
-msgstr ""
+msgstr "Αντίοχος Θ' Κυζικηνός"
 
 #: simulation/data/civs/sele.jsonAINames[21]
 msgid "Seleucus VI Epiphanes"
-msgstr ""
+msgstr "Σέλευκος Στ' Επιφανής"
 
 #: simulation/data/civs/sele.jsonAINames[22]
 msgid "Antiochus X Eusebes"
-msgstr ""
+msgstr "Αντίοχος Ι' Ευσεβής"
 
 #: simulation/data/civs/sele.jsonAINames[23]
 msgid "Demetrius III Eucaerus"
-msgstr ""
+msgstr "Δημήτριος Γ' Εύκαιρος"
 
 #: simulation/data/civs/sele.jsonAINames[24]
 msgid "Antiochus XI Epiphanes"
-msgstr ""
+msgstr "Αντίοχος Ια' Επιφανής"
 
 #: simulation/data/civs/sele.jsonAINames[25]
 msgid "Philip I Philadelphus"
-msgstr ""
+msgstr "Φίλιππος Α' Φιλάδελφος"
 
 #: simulation/data/civs/sele.jsonAINames[26]
 msgid "Antiochus XII Dionysus"
-msgstr ""
+msgstr "Αντίοχος ΙΒ' ο Διόνυσος"
 
 #: simulation/data/civs/sele.jsonAINames[27]
 msgid "Seleucus VII Kybiosaktes"
-msgstr ""
+msgstr "Σέλευκος Ζ΄ ο Κυβιοσάκτης"
 
 #: simulation/data/civs/sele.jsonAINames[28]
 msgid "Antiochus XIII Asiaticus"
-msgstr ""
+msgstr "Αντίοχος ΙΓ' ο Ασιάτης"
 
 #: simulation/data/civs/sele.jsonAINames[29]
 msgid "Philip II Philoromaeus"
-msgstr ""
+msgstr "Φίλιππος Β΄ Φιλορωμαίος"
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[1].Description
 msgid ""
 "Traditional Army unlocks Silver Shields and Scythed Chariots, Reform Army "
 "unlocks Romanized Heavy Swordsmen and Cataphracts."
-msgstr ""
+msgstr "Ο Παραδοσιακός Στρατός ξεκλειδώνει τις Ασημένιες Ασπίδες και τα Δρεπανηφόρα Άρματα, η Μεταρρύθμιση του Στρατού ξεκλειδώνει τους Εκρωμαϊσθέντες Βαριούς Ξιφομάχους και τους Κατάφρακτους."
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[1].Name
 msgid "Traditional Army vs. Reform Army"
@@ -2427,7 +2463,7 @@ msgstr "Παραδοσιακός Στρατός εναντίον Μεταρρυ�
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[2].Description
 msgid ""
 "A one-time purchase of 20 Indian War Elephants from the Mauryan Empire."
-msgstr ""
+msgstr "Μία φορά αγορά 20 Ινδικών Πολεμικών Ελεφάντων από την Αυτοκρατορία των Μαουρύα."
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[2].Name
 msgid "Marriage Alliance"
@@ -2443,13 +2479,13 @@ msgid ""
 "alliance, he married his daughter to Chandragupta. In return, Chandragupta "
 "gifted Seleucus a corps of 500 war elephants, which would prove a decisive "
 "military asset for Seleucus as he fought the rest of Alexander's successors."
-msgstr ""
+msgstr "Ο Σέλευκος Α' ο Νικάτωρ εισέβαλε στην περιοχή Παντζάμπ της Ινδίας το 305 π.Χ., αντιμετωπίζοντας των Τσαντραγκούπτα Μαουρύα (Σανδροκόττο), ιδρυτής της αυτοκρατορίας των Μαουρύα. Λέγεται ότι ο Τσαντραγκούπτα τοποθέτησε έναν στρατό από 600.000 άνδρες και 9.000 πολεμικούς ελέφαντες (Πλίνιος, Φυσική Ιστορία VI, 22,4). Ο Σέλευκος δεν είχε καμία επιτυχία και για την αποκατάσταση της ειρήνης μεταξύ των δύο μεγάλων δυνάμεων επισημοποιώντας τη συμμαχία τους, παντρεύτηκε την κόρη του Τσαντραγκούπτα. Σε αντάλλαγμα, ο Τσαντραγκούπτα προίκισε τον Σέλευκος με ένα σώμα από 500 πολεμικούς ελέφαντες, το οποίο θα αποδειχθεί αποφασιστικό στρατιωτικό περιουσιακό στοιχείο για τον Σέλευκο αντιμαχόμενος με τους υπόλοιπους διαδόχους του Αλεξάνδρου."
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[3].History
 msgid ""
 "The beautiful and powerful breed of Nisean horses increases health for "
 "Seleucid cavalry."
-msgstr ""
+msgstr "Η όμορφη και δυνατή φυλή των αλόγων της Νίσαιας αυξάνει την υγεία του Ιππικού των Σελευκιδών."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -2461,7 +2497,7 @@ msgid ""
 "were the most extensive in Asia after that of Alexander. The whole region "
 "from Phrygia to the Indus was subject to Seleucus. — Appian, 'The Syrian "
 "Wars'."
-msgstr ""
+msgstr "Πάντα βρισκόταν σε αναμονή για τα γειτονικά έθνη, ισχυρός στα όπλα και πειστικός στο Συμβούλιο, ο ίδιος (ο Σέλευκος) απέκτησε τη Μεσοποταμία, την Αρμενία, τη  Καππαδοκία των 'Σελευκιδών', τη Περσία, τη Παρθία, τη Βακτρία, την Αραβία, τη Ταπουρία, τη Σογδιανή, την Αραχωσία, την Υρκανία, και τους άλλους γειτονικούς λαούς που είχαν κατακτηθεί από τον Αλέξανδρο, όσον αφορά τον Ινδό ποταμό, έτσι ώστε τα σύνορα της αυτοκρατορίας του ήταν τα πιο εκτεταμένα στην Ασία, μετά από αυτά του Αλεξάνδρου. Ολόκληρη η περιοχή από τη Φρυγία έως τον Ινδό υπόκεινται στο Σέλευκο. — Αππιανός, «Οι Συριακοί Πόλεμοι»."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[0].Name
 msgid "Seleukos A' Nikator"
@@ -2471,14 +2507,14 @@ msgstr "Σέλευκος Α' Νικάτωρ"
 msgid ""
 "Antiochus inherited a troubled kingdom upon the beginning of his reign. From"
 " the verge of collapse he managed to weld back together the empire Seleukus "
-"I so hard to found. The rebellious eastern satraps of Bactria and Parthia "
-"were brought to heel , temporarily securing his eastern borders. He then "
-"turned his attention to mother Greece, attempting to fulfill the dreams of "
-"his fathers by invading Greece under the pretext of liberation. The Achaean "
-"League and the Kingdom of Pergamon banded together with the Romans to defeat"
-" him at the Battle of Magnesia, forever burying the dream of reuniting "
-"Alexander's empire."
-msgstr ""
+"I fought so hard to found. The rebellious eastern satraps of Bactria and "
+"Parthia were brought to heel , temporarily securing his eastern borders. He "
+"then turned his attention to mother Greece, attempting to fulfill the dreams"
+" of his fathers by invading Greece under the pretext of liberation. The "
+"Achaean League and the Kingdom of Pergamon banded together with the Romans "
+"to defeat him at the Battle of Magnesia, forever burying the dream of "
+"reuniting Alexander's empire."
+msgstr "Ο Αντίοχος κληρονόμησε ένα ταραγμένο βασίλειο από την αρχή της βασιλείας του. Από τα πρόθυρα της κατάρρευσης κατάφερε να αναστηλώσει την αυτοκρατορία του Σέλευκου κάτι που ήταν δύσκολο να γίνει. Τις επαναστατημένες ανατολικές σατραπείες της Βακτριανής και της Παρθία κατάφερε να τις υποτάξει, εξασφαλίζοντας προσωρινά τα ανατολικά του σύνορα. Στη συνέχεια έστρεψε την προσοχή του στη μητέρα Ελλάδα, προσπαθώντας να εκπληρώσει τα όνειρα των πατέρων του με την εισβολή στην Ελλάδα υπό το πρόσχημα της απελευθέρωσης. Η Αχαϊκή Συμμαχία και το Βασίλειο της Περγάμου ενώθηκαν με τους Ρωμαίους για να τον νικήσουν στη μάχη της Μαγνησίας, θάβοντας για πάντα το όνειρο της επανένωσης της αυτοκρατορίας του Αλεξάνδρου."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[1].Name
 msgid "Antiokhos G' Megas"
@@ -2493,7 +2529,7 @@ msgid ""
 "conquest of Egypt (twice), which was halted by the threat of Roman "
 "intervention, and the beginning of the Jewish revolt of the Maccabees. He "
 "died of sudden illness while fighting off a Parthian invasion from the East."
-msgstr ""
+msgstr "Ο Αντίοχος Δ ο Επιφανής ήταν γιος του Αντιόχου Γ του Μέγα και ο αδελφός του Σέλευκου Δ του Φιλοπάτορα. Αρχικά ονομαζόταν Μιθριδάτης, έλαβε το όνομα Αντίοχος, είτε κατά την προσχώρηση του στο θρόνο ή μετά το θάνατο του μεγαλύτερου αδελφού του Αντίοχου. Αξιοσημείωτα γεγονότα κατά τη διάρκεια της βασιλείας του είναι η σχεδόν κατάκτηση της Αιγύπτου (δύο φορές), η οποία διακόπηκε από την απειλή της ρωμαϊκής εισβολής και το ξεκίνημα της εβραϊκής εξέγερσης των Μακκαβαίων. Πέθανε από ξαφνική ασθένεια, ενώ αγωνίζονται για να αποκρούσει μια εισβολή των Πάρθων από την Ανατολή."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[2].Name
 msgid "Antiokhos D' Epiphanes"
@@ -2532,7 +2568,7 @@ msgid ""
 "manpower for the imperial Seleucid army. A side effect of this system was "
 "that it drained the Greek homeland of military-aged men, a contributing "
 "factor to Greece's eventual conquest by Rome."
-msgstr ""
+msgstr "Οι Σελευκίδες βασιλείς καλούνται οι Έλληνες, οι Μακεδόνες, οι Γαλάτες, οι Κρήτες, οι Θράκες και όσοι εγκαταστάθηκαν εντός των απέραντων εδαφών της αυτοκρατορίας. Εγκαταστάθηκαν σε στρατιωτικές αποικίες που ονομάζονταν κληρουχίες. Με τη ρύθμιση αυτή, στους έποικους δόθηκε ένα οικόπεδο ή ένα κλήρος και σε αντάλλαγμα ήταν υποχρεωμένοι να υπηρετούν στο στρατό του μεγάλου βασιλιά, όταν τους καλούσε το καθήκον. Αυτό δημιούργησε μια ανώτερη μεσαία τάξη των στρατιωτικών εποίκων που όφειλαν τα προς το ζην και τις περιουσίες τους στους Σύριους βασιλείς και βοηθούσαν να αυξηθεί το διαθέσιμο ανθρώπινο δυναμικό για τον αυτοκρατορικό στρατό των Σελευκιδών. Μια παρενέργεια αυτού του συστήματος ήταν ότι αποστραγγιζόταν η Ελληνική πατρίδα από άνδρες της στρατιωτικής ηλικίας, ένας παράγοντας που συνέβαλε στην ενδεχόμενη κατάκτηση της Ελλάδας από τη Ρώμη."
 
 #: simulation/data/civs/sele.jsonHistory
 msgid ""
@@ -2555,12 +2591,12 @@ msgid ""
 "and run away before a single shield clashed. 'Othismos' refers to the point "
 "in a phalanx battle where both sides try to shove each other out of "
 "formation, attempting to breaking up the enemy lines and routing them."
-msgstr ""
+msgstr "Οι Σπαρτιάτες ήταν αδιαμφισβήτητα αυθεντίες της στρατιωτικής φάλαγγας. Οι Σπαρτιάτες ήταν τόσο φοβεροί για την πειθαρχία τους, που ο στρατός του εχθρού μερικές φορές διασκορπιζόταν και να έτρεχε μακριά πριν συγκρουστούν με την Σπαρτιατική φάλαγγα. Ο «Ωθισμός» αναφέρεται στο σημείο της μάχης με φάλαγγα όπου και οι δύο πλευρές προσπαθούν να διασπάσουν το σχηματισμό ο ένας του άλλου, προσπαθώντας να σπάσουν τις γραμμές του εχθρού και να ανακόψουν την πορεία του."
 
 #: simulation/data/civs/spart.jsonCivBonuses[1].Description
 msgid ""
 "The Spartan rank upgrades at the Barracks cost no resources, except time."
-msgstr ""
+msgstr "Οι αναβαθμίσεις του βαθμού των Σπαρτιατών στους Στρατώνες δεν στοιχίζουν σε πόρους, μόνο σε χρόνο."
 
 #: simulation/data/civs/spart.jsonCivBonuses[1].Name
 msgid "Laws of Lycurgus"
@@ -2574,8 +2610,10 @@ msgid ""
 msgstr "Υπό το Σύνταγμα που γράφτηκε από τον μυθικό νομοθέτη Λυκούργο, εγκαθιδρύθηκε το καθεστώς της Αγωγής, όπου οι Σπαρτιάτες εκπαιδεύονταν από 6 χρονών για να γίνουν ανώτεροι πολεμιστές για την άμυνα της Σπάρτης. "
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Description
-msgid "Allies can train Spartiates."
-msgstr "Οι σύμμαχοι μπορούν να εκπαιδεύσουν Σπαρτιάτες."
+msgid ""
+"Increases the health for citizen-soldier infantry spearmen by 10% for allies"
+" of Spartan players."
+msgstr "Αυξάνει την υγεία τον πολιτών-στρατιωτών πεζικάριων λογχοφόρων κατά 10% για τους συμμάχους των Σπαρτιατών."
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Name
 msgid "Peloponnesian League"
@@ -2587,7 +2625,7 @@ msgid ""
 "loose confederation, with Sparta as its leader, was later dubbed the "
 "Peloponnesian League by historians, but in ancient times was called 'The "
 "Lacedaemonians and their allies.'"
-msgstr ""
+msgstr "Μεγάλο μέρος της Πελοποννήσου υπόκειται στη Σπάρτη με τον ένα ή τον άλλο τρόπο. Αυτή η χαλαρή συνομοσπονδία, με τη Σπάρτη ως ηγέτη τους, αργότερα ονομάστηκε Πελοποννησιακή Συμμαχία από τους ιστορικούς, αλλά στην αρχαιότητα ονομαζόταν «Οι Λακεδαιμόνιοι και οι σύμμαχοί τους»."
 
 #: simulation/data/civs/spart.jsonAINames[0]
 msgid "Leonidas"
@@ -2639,7 +2677,7 @@ msgid ""
 "Spartan female citizens cannot be captured and will doggedly fight back "
 "against any attackers. They are also capable of constructing defense towers "
 "and palisades."
-msgstr ""
+msgstr "Οι Σπαρτιάτισσες πολίτες δεν μπορούν να συλληφθούν και θα αγωνιστούν πεισματικά για να απωθήσουν τυχόν εισβολείς. Επίσης, είναι σε θέση να κατασκευάζουν αμυντικούς πύργους και περιφράγματα."
 
 #: simulation/data/civs/spart.jsonFactions[0].Technologies[0].Name
 msgid "Feminine Mystique"
@@ -2654,7 +2692,7 @@ msgid ""
 "lost battle against Pyrrhus of Epirus they overnight built an earthen "
 "rampart to protect the city while their men slept in preparation for the "
 "next day's siege."
-msgstr ""
+msgstr "Οι Σπαρτιάτισσες ήταν μερικές από τις πιο ελεύθερες γυναίκες στον αρχαίο κόσμο. Μπορούσαν να κατέχουν γη και δούλους, ακόμα και να αθλούνται γυμνές όπως οι Σπαρτιάτες άνδρες. Λέγεται ότι μόνο ότι οι Σπαρτιάτισσες γυναίκες γέννησαν πραγματικούς άνδρες. Τέτοιες σκληρές-όπως-καρφιά γυναίκες, περισσότερο από μία φορά βοήθησαν στο να σωθεί η πόλη τους από την καταστροφή, για παράδειγμα, όταν μετά από μια χαμένη μάχη ενάντια του Πύρρο της Ηπείρου, εν μία νυκτί δημιούργησαν ένα χωμάτινο προμαχώνα για την προστασία της πόλης, ενώ οι άνδρες τους κοιμόντουσαν στο πλαίσιο της προετοιμασίας για την πολιορκία της επόμενης ημέρας."
 
 #: simulation/data/civs/spart.jsonFactions[0].Technologies[1].Description
 msgid "Units in phalanx formation move faster."
@@ -2683,7 +2721,7 @@ msgstr "Η Αγωγή"
 msgid ""
 "Spartans were housed and trained from a young age to be superlative warriors"
 " and to endure any hardship a military life can give them."
-msgstr ""
+msgstr "Οι Σπαρτιάτες στρατολογούνταν και εκπαιδεύονταν από νεαρή ηλικία ώστε να είναι εξαιρετικοί πολεμιστές και να υπομείνουν κάθε δυσκολία που μια στρατιωτική ζωή μπορεί να τους δώσει."
 
 #: simulation/data/civs/spart.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -2693,7 +2731,7 @@ msgid ""
 "unobstructed path. Finding the enemy at his rear, Leonidas sent home most of"
 " his troops, choosing to stay behind with 300 hand-picked hoplites and win "
 "time for the others to withdraw."
-msgstr ""
+msgstr "Ο βασιλιάς της Σπάρτης για τον οποίο πολέμησαν και πέθαναν στο πεδίο των Θερμοπυλών το 480 π.Χ.. Εκείνος επιτυχημένα έκλεισε τον δρόμο του τεράστιου Περσικού στρατού στο στενό πέρασμα με τους 7000 άνδρες, μέχρι ο Ξέρξης να αντιληφθεί ένα μυστικό πέρασμα. Περικυκλωνοντας τον αντίπαλο από πίσω, ο Λεωνίδας έστειλε σπίτι τους περισσότερους στρατιώτες, επιλέγοντας να μείνει μαζί με 300 προσωπικά επίλεκτους οπλίτες για να κερδίσει χρόνο ώστε οι υπόλοιποι να αποσυρθούν."
 
 #: simulation/data/civs/spart.jsonFactions[0].Heroes[0].Name
 msgid "Leonidas I"
@@ -2704,7 +2742,7 @@ msgid ""
 "Because Brasidas has sponsored their citizenship in return for service, "
 "Helot Skirmishers fight longer and harder for Sparta while within range of "
 "him."
-msgstr ""
+msgstr "Επειδή ο Βρασίδας έχει εγγυηθεί την υπηκοότητά τους σε αντάλλαγμα για τις υπηρεσίες τους, οι Είλωτες Ακροβολιστές μάχονταν περισσότερο και σκληρότερα για τη Σπάρτη, εντός της περιφέρειάς της."
 
 #: simulation/data/civs/spart.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -2717,7 +2755,7 @@ msgid ""
 " the Battle of Megalopolis, the Macedonians prevailed in a long and bloody "
 "battle. Much like Leonidas 150 years earlier, instead of surrendering, Agis "
 "made a heroic final stand in order to buy time for his troops to retreat."
-msgstr ""
+msgstr "Ο Άγης Γ ήταν ο 20ος Σπαρτιάτης βασιλιάς της γενεαλογίας των Ευρυποντιδών. Ο Άγης συγκρότησε μαζί με τις πολιτείες της Νότιας Ελλάδος μια συμμαχία για να αντιταχθούν στη μακεδονική ηγεμονία, ενώ ο Μέγας Αλέξανδρος ήταν μακριά στην Ασία σε πορεία για την κατάκτησή της. Μετά την εξασφάλιση της Κρήτης ως Σπαρτιατική υποτέλεια, ο Άγης στη συνέχεια κινήθηκε για να πολιορκήσει την πόλη της Μεγαλόπολης στην Πελοπόννησο, η οποία ήταν σύμμαχος των Μακεδόνων. Ο Αντίπατρος, ο Μακεδόνας αντιβασιλέας, οδήγησε έναν στρατό για να σταματήσει αυτή τη νέα εξέγερση. Στη μάχη της Μεγαλόπολης, οι Μακεδόνες επικράτησαν σε μια μακρά και αιματηρή μάχη. Μοιάζει πολύ με τον Λεωνίδα 150 χρόνια νωρίτερα, αντί να παραδοθεί, ο Άγης έκανε μια ηρωική τελική στάση για να εξασφαλίσει χρόνο στα στρατεύματά του να υποχωρήσουν."
 
 #: simulation/data/civs/spart.jsonFactions[0].Heroes[2].Name
 msgid "Agis III"
@@ -2735,7 +2773,7 @@ msgstr "Εκπαίδευσε ήρωες και Σπαρτιάτες και αν�
 msgid ""
 "The Syssition was the Mess Hall for full-blooded Spartiates. Every Spartan "
 "peer, even kings, belonged to one."
-msgstr ""
+msgstr "Το Συσσίτιον ήταν η Αίθουσα Συνεστιάσεων για τους αρρενωπούς Σπαρτιάτες. Κάθε Σπαρτιάτης ήταν ομότιμος με τους άλλους, ακόμη και οι βασιλιάδες."
 
 #: simulation/data/civs/spart.jsonHistory
 msgid ""
@@ -2745,4 +2783,4 @@ msgid ""
 " at age seven. Thanks to its military might, Sparta led a coalition of Greek"
 " forces during the Greco-Persian Wars, and won over Athens in the "
 "Peloponnesian Wars, though at great cost."
-msgstr ""
+msgstr "Η Σπάρτη ήταν μια εξέχουσα πόλη-κράτος στην αρχαία Ελλάδα και κυρίαρχη στρατιωτική δύναμη στη περιοχή της από το 650 π.Χ περίπου. Ο Σπαρτιατικός πολιτισμός είχε εμμονή με τη στρατιωτική εκπαίδευση και την αριστεία, η αυστηρή εκπαίδευση για τα αγόρια άρχιζε στην ηλικία των επτά. Χάρη στη στρατιωτική της δύναμη, η Σπάρτη οδήγησε μια συμμαχία των ελληνικών δυνάμεων στη διάρκεια των Περσικών πολέμων και κέρδισε από την Αθήνα τον Πελοποννησιακό Πόλεμο, αν και με μεγάλο κόστος."

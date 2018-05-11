@@ -18,7 +18,6 @@
   </Footprint>
   <Health>
     <Max op="mul">0.25</Max>
-    <SpawnEntityOnDeath>rubble/rubble_1x1pal</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>gaia</Civ>
@@ -29,6 +28,10 @@
     <Icon>gaia/special_palisade.png</Icon>
     <RequiredTechnology>phase_village</RequiredTechnology>
   </Identity>
+  <Loot>
+    <wood>10</wood>
+    <stone>0</stone>
+  </Loot>
   <Obstruction>
     <Static width="4.0" depth="4.0"/>
     <ControlPersist/>

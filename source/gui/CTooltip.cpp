@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -97,9 +97,7 @@ void CTooltip::SetupText()
 	GUI<CPos>::GetSetting(this, "offset", offset);
 	GUI<EVAlign>::GetSetting(this, "anchor", anchor);
 
-	// TODO: Calculate the actual width of the wrapped text and use that.
-	// (m_Size.cx is >max_width if the text wraps, which is not helpful)
-	float textwidth = std::min(m_GeneratedTexts[0]->m_Size.cx, (float)max_width);
+	float textwidth = m_GeneratedTexts[0]->m_Size.cx;
 	float textheight = m_GeneratedTexts[0]->m_Size.cy;
 
 	CClientArea size;
@@ -127,7 +125,9 @@ void CTooltip::SetupText()
 	// Reposition the tooltip if it's falling off the screen:
 
 	extern int g_xres, g_yres;
-	float screenw = (float)g_xres, screenh = (float)g_yres;
+	extern float g_GuiScale;
+	float screenw = g_xres / g_GuiScale;
+	float screenh = g_yres / g_GuiScale;
 
 	if (size.pixel.top < 0.f)
 		size.pixel.bottom -= size.pixel.top, size.pixel.top = 0.f;

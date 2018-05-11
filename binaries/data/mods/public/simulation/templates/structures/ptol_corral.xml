@@ -7,25 +7,22 @@
     </Resources>
   </Cost>
   <Footprint>
-    <Square width="15.0" depth="23.0"/>
-    <Height>5.0</Height>
+    <Square width="14.0" depth="22.0"/>
   </Footprint>
   <Health>
     <Max>400</Max>
-    <SpawnEntityOnDeath>rubble/rubble_3x3</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>ptol</Civ>
     <SpecificName>h-n-ssmt.w</SpecificName>
-    <History>A place for a farmer to pen his animals. Garrison a sheep, goat, or cow here to gain a trickle of the food resource. Garrisoning an animal here also "fattens" them so that they may be slaughtered and gathered for a quick burst of food.</History>
   </Identity>
   <Obstruction>
     <Static width="12.0" depth="20.0"/>
   </Obstruction>
   <ProductionQueue>
     <Entities datatype="tokens">
-      -gaia/fauna_sheep
-      gaia/fauna_goat
+      -gaia/fauna_sheep_trainable
+      gaia/fauna_goat_trainable
     </Entities>
   </ProductionQueue>
   <VisualActor>

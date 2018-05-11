@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_unit_hero_infantry">
   <Armour>
-    <Hack>17</Hack>
-    <Pierce>17</Pierce>
-    <Crush>25</Crush>
+    <Hack op="add">9</Hack>
+    <Pierce op="add">9</Pierce>
   </Armour>
   <Attack>
     <Melee>
-      <Hack>2.0</Hack>
-      <Pierce>10.0</Pierce>
+      <Hack>4.0</Hack>
+      <Pierce>20.0</Pierce>
       <Crush>0.0</Crush>
-      <MaxRange>8.0</MaxRange>
-      <RepeatTime>1000</RepeatTime>
+      <MaxRange>7</MaxRange>
+      <PrepareTime>1000</PrepareTime>
+      <RepeatTime>2000</RepeatTime>
       <Bonuses>
         <BonusCavMelee>
           <Classes>Cavalry</Classes>
           <Multiplier>3.0</Multiplier>
         </BonusCavMelee>
       </Bonuses>
+      <PreferredClasses datatype="tokens">Human</PreferredClasses>
     </Melee>
   </Attack>
   <Identity>
@@ -25,18 +26,13 @@
     <GenericName>Hero Pikeman</GenericName>
     <Tooltip>Counters: 3x vs. Cavalry.</Tooltip>
     <Formations datatype="tokens">
-      formations/phalanx
-      formations/testudo
+      special/formations/testudo
     </Formations>
   </Identity>
-  <Loot>
-    <wood>10</wood>
-    <metal>10</metal>
-  </Loot>
   <UnitMotion>
-    <WalkSpeed>8.5</WalkSpeed>
+    <WalkSpeed op="mul">0.95</WalkSpeed>
     <Run>
-      <Speed>17.5</Speed>
+      <Speed op="mul">0.95</Speed>
     </Run>
   </UnitMotion>
 </Entity>

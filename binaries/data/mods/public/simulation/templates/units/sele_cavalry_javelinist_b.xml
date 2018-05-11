@@ -4,15 +4,14 @@
     <Civ>sele</Civ>
     <Lang>greek</Lang>
     <SelectionGroupName>units/sele_cavalry_javelinist_b</SelectionGroupName>
-    <GenericName>Median Light Cavalry</GenericName>
-    <SpecificName>Hippeus Medikos</SpecificName>
-    <Icon>units/pers_cavalry_javelinist.png</Icon>
-    <RequiredTechnology>phase_village</RequiredTechnology>
+    <GenericName>Militia Cavalry</GenericName>
+    <SpecificName>Hippakontistès Politès</SpecificName>
+    <Icon>units/sele_cavalry_javelinist.png</Icon>
   </Identity>
   <Promotion>
     <Entity>units/sele_cavalry_javelinist_a</Entity>
   </Promotion>
   <VisualActor>
-    <Actor>units/persians/cavalry_javelinist_b.xml</Actor>
+    <Actor>units/athenians/cavalry_javelinist_b_m.xml</Actor>
   </VisualActor>
 </Entity>

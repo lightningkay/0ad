@@ -1,4 +1,4 @@
-/* Copyright (C) 2011 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ void CVertexBufferManager::Shutdown()
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Allocate: try to allocate a buffer of given number of vertices (each of 
-// given size), with the given type, and using the given texture - return null 
+// Allocate: try to allocate a buffer of given number of vertices (each of
+// given size), with the given type, and using the given texture - return null
 // if no free chunks available
 CVertexBuffer::VBChunk* CVertexBufferManager::Allocate(size_t vertexSize, size_t numVertices, GLenum usage, GLenum target, void* backingStore)
 {
@@ -63,7 +63,7 @@ CVertexBuffer::VBChunk* CVertexBufferManager::Allocate(size_t vertexSize, size_t
 	typedef std::list<CVertexBuffer*>::iterator Iter;
 
 #if DUMP_VB_STATS
-	debug_printf("\n============================\n# allocate vsize=%d nverts=%d\n\n", vertexSize, numVertices);
+	debug_printf("\n============================\n# allocate vsize=%zu nverts=%zu\n\n", vertexSize, numVertices);
 	for (Iter iter = m_Buffers.begin(); iter != m_Buffers.end(); ++iter) {
 		CVertexBuffer* buffer = *iter;
 		if (buffer->CompatibleVertexType(vertexSize, usage, target))
@@ -74,7 +74,7 @@ CVertexBuffer::VBChunk* CVertexBufferManager::Allocate(size_t vertexSize, size_t
 	}
 #endif
 
-	// iterate through all existing buffers testing for one that'll 
+	// iterate through all existing buffers testing for one that'll
 	// satisfy the allocation
 	for (Iter iter = m_Buffers.begin(); iter != m_Buffers.end(); ++iter) {
 		CVertexBuffer* buffer = *iter;
@@ -87,10 +87,10 @@ CVertexBuffer::VBChunk* CVertexBufferManager::Allocate(size_t vertexSize, size_t
 	CVertexBuffer* buffer = new CVertexBuffer(vertexSize, usage, target);
 	m_Buffers.push_front(buffer);
 	result = buffer->Allocate(vertexSize, numVertices, usage, target, backingStore);
-	
+
 	if (!result)
 	{
-		LOGERROR("Failed to create VBOs (%lu*%lu)", (unsigned long)vertexSize, (unsigned long)numVertices);
+		LOGERROR("Failed to create VBOs (%zu*%zu)", vertexSize, numVertices);
 	}
 
 	return result;
@@ -102,7 +102,7 @@ void CVertexBufferManager::Release(CVertexBuffer::VBChunk* chunk)
 {
 	ENSURE(chunk);
 #if DUMP_VB_STATS
-	debug_printf("\n============================\n# release %p nverts=%d\n\n", chunk, chunk->m_Count);
+	debug_printf("\n============================\n# release %p nverts=%zu\n\n", chunk, chunk->m_Count);
 #endif
 	chunk->m_Owner->Release(chunk);
 }

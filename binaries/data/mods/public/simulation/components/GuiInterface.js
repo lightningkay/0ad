@@ -33,6 +33,8 @@ GuiInterface.prototype.Init = function()
 	this.timeNotifications = [];
 	this.entsRallyPointsDisplayed = [];
 	this.entsWithAuraAndStatusBars = new Set();
+	this.enabledVisualRangeOverlayTypes = {};
+	this.templateModified = {};
 };
 
 /*
@@ -54,18 +56,15 @@ GuiInterface.prototype.GetSimulationState = function()
 		"players": []
 	};
 
-	let cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);
-	let numPlayers = cmpPlayerManager.GetNumPlayers();
-
+	let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
 	for (let i = 0; i < numPlayers; ++i)
 	{
-		let playerEnt = cmpPlayerManager.GetPlayerByID(i);
-		let cmpPlayerEntityLimits = Engine.QueryInterface(playerEnt, IID_EntityLimits);
-		let cmpPlayer = Engine.QueryInterface(playerEnt, IID_Player);
+		let cmpPlayer = QueryPlayerIDInterface(i);
+		let cmpPlayerEntityLimits = QueryPlayerIDInterface(i, IID_EntityLimits);
 
 		// Work out what phase we are in
 		let phase = "";
-		let cmpTechnologyManager = Engine.QueryInterface(playerEnt, IID_TechnologyManager);
+		let cmpTechnologyManager = QueryPlayerIDInterface(i, IID_TechnologyManager);
 		if (cmpTechnologyManager)
 		{
 			if (cmpTechnologyManager.IsTechnologyResearched("phase_city"))
@@ -98,7 +97,7 @@ GuiInterface.prototype.GetSimulationState = function()
 			"popCount": cmpPlayer.GetPopulationCount(),
 			"popLimit": cmpPlayer.GetPopulationLimit(),
 			"popMax": cmpPlayer.GetMaxPopulation(),
-			"heroes": cmpPlayer.GetHeroes(),
+			"panelEntities": cmpPlayer.GetPanelEntities(),
 			"resourceCounts": cmpPlayer.GetResourceCounts(),
 			"trainingBlocked": cmpPlayer.IsTrainingBlocked(),
 			"state": cmpPlayer.GetState(),
@@ -106,8 +105,10 @@ GuiInterface.prototype.GetSimulationState = function()
 			"teamsLocked": cmpPlayer.GetLockTeams(),
 			"cheatsEnabled": cmpPlayer.GetCheatsEnabled(),
 			"disabledTemplates": cmpPlayer.GetDisabledTemplates(),
+			"disabledTechnologies": cmpPlayer.GetDisabledTechnologies(),
 			"hasSharedDropsites": cmpPlayer.HasSharedDropsites(),
 			"hasSharedLos": cmpPlayer.HasSharedLos(),
+			"spyCostMultiplier": cmpPlayer.GetSpyCostMultiplier(),
 			"phase": phase,
 			"isAlly": allies,
 			"isMutualAlly": mutualAllies,
@@ -117,10 +118,12 @@ GuiInterface.prototype.GetSimulationState = function()
 			"entityCounts": cmpPlayerEntityLimits ? cmpPlayerEntityLimits.GetCounts() : null,
 			"entityLimitChangers": cmpPlayerEntityLimits ? cmpPlayerEntityLimits.GetLimitChangers() : null,
 			"researchQueued": cmpTechnologyManager ? cmpTechnologyManager.GetQueuedResearch() : null,
-			"researchStarted": cmpTechnologyManager ? cmpTechnologyManager.GetStartedResearch() : null,
+			"researchStarted": cmpTechnologyManager ? cmpTechnologyManager.GetStartedTechs() : null,
 			"researchedTechs": cmpTechnologyManager ? cmpTechnologyManager.GetResearchedTechs() : null,
 			"classCounts": cmpTechnologyManager ? cmpTechnologyManager.GetClassCounts() : null,
-			"typeCountsByClass": cmpTechnologyManager ? cmpTechnologyManager.GetTypeCountsByClass() : null
+			"typeCountsByClass": cmpTechnologyManager ? cmpTechnologyManager.GetTypeCountsByClass() : null,
+			"canBarter": Engine.QueryInterface(SYSTEM_ENTITY, IID_Barter).PlayerHasMarket(i),
+			"barterPrices": Engine.QueryInterface(SYSTEM_ENTITY, IID_Barter).GetPrices(i)
 		});
 	}
 
@@ -130,7 +133,7 @@ GuiInterface.prototype.GetSimulationState = function()
 
 	let cmpTerrain = Engine.QueryInterface(SYSTEM_ENTITY, IID_Terrain);
 	if (cmpTerrain)
-		ret.mapSize = 4 * cmpTerrain.GetTilesPerSide();
+		ret.mapSize = cmpTerrain.GetMapSize();
 
 	// Add timeElapsed
 	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
@@ -144,19 +147,20 @@ GuiInterface.prototype.GetSimulationState = function()
 		ret.ceasefireTimeRemaining = ret.ceasefireActive ? cmpCeasefireManager.GetCeasefireStartedTime() + cmpCeasefireManager.GetCeasefireTime() - ret.timeElapsed : 0;
 	}
 
-	// Add the game type
-	let cmpEndGameManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_EndGameManager);
-	ret.gameType = cmpEndGameManager.GetGameType();
+	// Add cinema path info
+	let cmpCinemaManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_CinemaManager);
+	if (cmpCinemaManager)
+		ret.cinemaPlaying = cmpCinemaManager.IsPlaying();
 
-	// Add bartering prices
-	let cmpBarter = Engine.QueryInterface(SYSTEM_ENTITY, IID_Barter);
-	ret.barterPrices = cmpBarter.GetPrices();
+	// Add the game type and allied victory
+	let cmpEndGameManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_EndGameManager);
+	ret.victoryConditions = cmpEndGameManager.GetVictoryConditions();
+	ret.alliedVictory = cmpEndGameManager.GetAlliedVictory();
 
 	// Add basic statistics to each player
 	for (let i = 0; i < numPlayers; ++i)
 	{
-		let playerEnt = cmpPlayerManager.GetPlayerByID(i);
-		let cmpPlayerStatisticsTracker = Engine.QueryInterface(playerEnt, IID_StatisticsTracker);
+		let cmpPlayerStatisticsTracker = QueryPlayerIDInterface(i, IID_StatisticsTracker);
 		if (cmpPlayerStatisticsTracker)
 			ret.players[i].statistics = cmpPlayerStatisticsTracker.GetBasicStatistics();
 	}
@@ -176,14 +180,12 @@ GuiInterface.prototype.GetExtendedSimulationState = function()
 	let ret = this.GetSimulationState();
 
 	// Add statistics to each player
-	let cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);
-	let n = cmpPlayerManager.GetNumPlayers();
-	for (let i = 0; i < n; ++i)
+	let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
+	for (let i = 0; i < numPlayers; ++i)
 	{
-		let playerEnt = cmpPlayerManager.GetPlayerByID(i);
-		let cmpPlayerStatisticsTracker = Engine.QueryInterface(playerEnt, IID_StatisticsTracker);
+		let cmpPlayerStatisticsTracker = QueryPlayerIDInterface(i, IID_StatisticsTracker);
 		if (cmpPlayerStatisticsTracker)
-			ret.players[i].statistics = cmpPlayerStatisticsTracker.GetStatistics();
+			ret.players[i].sequences = cmpPlayerStatisticsTracker.GetSequences();
 	}
 
 	return ret;
@@ -193,8 +195,8 @@ GuiInterface.prototype.GetRenamedEntities = function(player)
 {
 	if (this.miragedEntities[player])
 		return this.renamedEntities.concat(this.miragedEntities[player]);
-	else
-		return this.renamedEntities;
+
+	return this.renamedEntities;
 };
 
 GuiInterface.prototype.ClearRenamedEntities = function()
@@ -225,29 +227,8 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 
 	let ret = {
 		"id": ent,
-		"template": template,
-
-		"alertRaiser": null,
-		"builder": null,
-		"identity": null,
-		"fogging": null,
-		"foundation": null,
-		"garrisonHolder": null,
-		"gate": null,
-		"guard": null,
-		"market": null,
-		"mirage": null,
-		"pack": null,
-		"upgrade" : null,
-		"player": -1,
-		"position": null,
-		"production": null,
-		"rallyPoint": null,
-		"resourceCarrying": null,
-		"rotation": null,
-		"trader": null,
-		"unitAI": null,
-		"visibility": null,
+		"player": INVALID_PLAYER,
+		"template": template
 	};
 
 	let cmpMirage = Engine.QueryInterface(ent, IID_Mirage);
@@ -260,15 +241,13 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 			"rank": cmpIdentity.GetRank(),
 			"classes": cmpIdentity.GetClassesList(),
 			"visibleClasses": cmpIdentity.GetVisibleClassesList(),
-			"selectionGroupName": cmpIdentity.GetSelectionGroupName()
+			"selectionGroupName": cmpIdentity.GetSelectionGroupName(),
+			"canDelete": !cmpIdentity.IsUndeletable()
 		};
 
 	let cmpPosition = Engine.QueryInterface(ent, IID_Position);
 	if (cmpPosition && cmpPosition.IsInWorld())
-	{
 		ret.position = cmpPosition.GetPosition();
-		ret.rotation = cmpPosition.GetRotation();
-	}
 
 	let cmpHealth = QueryMiragedInterface(ent, IID_Health);
 	if (cmpHealth)
@@ -277,7 +256,6 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 		ret.maxHitpoints = cmpHealth.GetMaxHitpoints();
 		ret.needsRepair = cmpHealth.IsRepairable() && cmpHealth.GetHitpoints() < cmpHealth.GetMaxHitpoints();
 		ret.needsHeal = !cmpHealth.IsUnhealable();
-		ret.canDelete = !cmpHealth.IsUndeletable();
 	}
 
 	let cmpCapturable = QueryMiragedInterface(ent, IID_Capturable);
@@ -308,7 +286,7 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 	var cmpUpgrade = Engine.QueryInterface(ent, IID_Upgrade);
 	if (cmpUpgrade)
 		ret.upgrade = {
-			"upgrades" : cmpUpgrade.GetUpgrades(),
+			"upgrades": cmpUpgrade.GetUpgrades(),
 			"progress": cmpUpgrade.GetProgress(),
 			"template": cmpUpgrade.GetUpgradingTo()
 		};
@@ -328,22 +306,19 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 			"goods": cmpTrader.GetGoods()
 		};
 
-	let cmpFogging = Engine.QueryInterface(ent, IID_Fogging);
-	if (cmpFogging)
-		ret.fogging = {
-			"mirage": cmpFogging.IsMiraged(player) ? cmpFogging.GetMirage(player) : null
-		};
-
 	let cmpFoundation = QueryMiragedInterface(ent, IID_Foundation);
 	if (cmpFoundation)
 		ret.foundation = {
-			"progress": cmpFoundation.GetBuildPercentage(),
-			"numBuilders": cmpFoundation.GetNumBuilders()
+			"numBuilders": cmpFoundation.GetNumBuilders(),
+			"buildTime": cmpFoundation.GetBuildTime()
 		};
 
 	let cmpRepairable = QueryMiragedInterface(ent, IID_Repairable);
 	if (cmpRepairable)
-		ret.repairable = { "numBuilders": cmpRepairable.GetNumBuilders() };
+		ret.repairable = {
+			"numBuilders": cmpRepairable.GetNumBuilders(),
+			"buildTime": cmpRepairable.GetBuildTime()
+		};
 
 	let cmpOwnership = Engine.QueryInterface(ent, IID_Ownership);
 	if (cmpOwnership)
@@ -363,22 +338,20 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 			"garrisonedEntitiesCount": cmpGarrisonHolder.GetGarrisonedEntitiesCount()
 		};
 
+	ret.canGarrison = !!Engine.QueryInterface(ent, IID_Garrisonable);
+
 	let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 	if (cmpUnitAI)
-	{
 		ret.unitAI = {
 			"state": cmpUnitAI.GetCurrentState(),
 			"orders": cmpUnitAI.GetOrders(),
 			"hasWorkOrders": cmpUnitAI.HasWorkOrders(),
 			"canGuard": cmpUnitAI.CanGuard(),
 			"isGuarding": cmpUnitAI.IsGuardOf(),
-			"possibleStances": cmpUnitAI.GetPossibleStances(),
-			"isIdle":cmpUnitAI.IsIdle(),
+			"canPatrol": cmpUnitAI.CanPatrol(),
+			"selectableStances": cmpUnitAI.GetSelectableStances(),
+			"isIdle": cmpUnitAI.IsIdle(),
 		};
-		// Add some information needed for ungarrisoning
-		if (cmpUnitAI.IsGarrisoned() && ret.player !== undefined)
-			ret.template = "p" + ret.player + "&" + ret.template;
-	}
 
 	let cmpGuard = Engine.QueryInterface(ent, IID_Guard);
 	if (cmpGuard)
@@ -388,7 +361,10 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 
 	let cmpResourceGatherer = Engine.QueryInterface(ent, IID_ResourceGatherer);
 	if (cmpResourceGatherer)
+	{
 		ret.resourceCarrying = cmpResourceGatherer.GetCarryingStatus();
+		ret.resourceGatherRates = cmpResourceGatherer.GetGatherRates();
+	}
 
 	let cmpGate = Engine.QueryInterface(ent, IID_Gate);
 	if (cmpGate)
@@ -398,41 +374,10 @@ GuiInterface.prototype.GetEntityState = function(player, ent)
 
 	let cmpAlertRaiser = Engine.QueryInterface(ent, IID_AlertRaiser);
 	if (cmpAlertRaiser)
-		ret.alertRaiser = {
-			"level": cmpAlertRaiser.GetLevel(),
-			"canIncreaseLevel": cmpAlertRaiser.CanIncreaseLevel(),
-			"hasRaisedAlert": cmpAlertRaiser.HasRaisedAlert(),
-		};
+		ret.alertRaiser = true;
 
 	let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
 	ret.visibility = cmpRangeManager.GetLosVisibility(ent, player);
-
-	return ret;
-};
-
-/**
- * Get additionnal entity info, rarely used in the gui
- */
-GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
-{
-	let ret = {
-		"armour": null,
-		"attack": null,
-		"barterMarket": null,
-		"buildingAI": null,
-		"heal": null,
-		"obstruction": null,
-		"turretParent":null,
-		"promotion": null,
-		"repairRate": null,
-		"buildRate": null,
-		"resourceDropsite": null,
-		"resourceGatherRates": null,
-		"resourceSupply": null,
-		"speed": null,
-	};
-
-	let cmpIdentity = Engine.QueryInterface(ent, IID_Identity);
 
 	let cmpAttack = Engine.QueryInterface(ent, IID_Attack);
 	if (cmpAttack)
@@ -440,6 +385,7 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 		let types = cmpAttack.GetAttackTypes();
 		if (types.length)
 			ret.attack = {};
+
 		for (let type of types)
 		{
 			ret.attack[type] = cmpAttack.GetAttackStrengths(type);
@@ -463,10 +409,6 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 
 			ret.attack[type].elevationBonus = range.elevationBonus;
 
-			let cmpPosition = Engine.QueryInterface(ent, IID_Position);
-			let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
-			let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
-
 			if (cmpUnitAI && cmpPosition && cmpPosition.IsInWorld())
 			{
 				// For units, take the range in front of it, no spread. So angle = 0
@@ -489,37 +431,18 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 	if (cmpArmour)
 		ret.armour = cmpArmour.GetArmourStrengths();
 
-	let cmpAuras = Engine.QueryInterface(ent, IID_Auras);
-	if (cmpAuras)
-		ret.auras = cmpAuras.GetDescriptions();
-
 	let cmpBuildingAI = Engine.QueryInterface(ent, IID_BuildingAI);
 	if (cmpBuildingAI)
 		ret.buildingAI = {
 			"defaultArrowCount": cmpBuildingAI.GetDefaultArrowCount(),
+			"maxArrowCount": cmpBuildingAI.GetMaxArrowCount(),
 			"garrisonArrowMultiplier": cmpBuildingAI.GetGarrisonArrowMultiplier(),
 			"garrisonArrowClasses": cmpBuildingAI.GetGarrisonArrowClasses(),
 			"arrowCount": cmpBuildingAI.GetArrowCount()
 		};
 
-	let cmpObstruction = Engine.QueryInterface(ent, IID_Obstruction);
-	if (cmpObstruction)
-		ret.obstruction = {
-			"controlGroup": cmpObstruction.GetControlGroup(),
-			"controlGroup2": cmpObstruction.GetControlGroup2(),
-		};
-
-	let cmpPosition = Engine.QueryInterface(ent, IID_Position);
 	if (cmpPosition && cmpPosition.GetTurretParent() != INVALID_ENTITY)
 		ret.turretParent = cmpPosition.GetTurretParent();
-
-	let cmpRepairable = Engine.QueryInterface(ent, IID_Repairable);
-	if (cmpRepairable)
-		ret.repairRate = cmpRepairable.GetRepairRate();
-
-	let cmpFoundation = Engine.QueryInterface(ent, IID_Foundation);
-	if (cmpFoundation)
-		ret.buildRate = cmpFoundation.GetBuildRate();
 
 	let cmpResourceSupply = QueryMiragedInterface(ent, IID_ResourceSupply);
 	if (cmpResourceSupply)
@@ -532,10 +455,6 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 			"maxGatherers": cmpResourceSupply.GetMaxGatherers(),
 			"numGatherers": cmpResourceSupply.GetNumGatherers()
 		};
-
-	let cmpResourceGatherer = Engine.QueryInterface(ent, IID_ResourceGatherer);
-	if (cmpResourceGatherer)
-		ret.resourceGatherRates = cmpResourceGatherer.GetGatherRates();
 
 	let cmpResourceDropsite = Engine.QueryInterface(ent, IID_ResourceDropsite);
 	if (cmpResourceDropsite)
@@ -553,10 +472,7 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 		};
 
 	if (!cmpFoundation && cmpIdentity && cmpIdentity.HasClass("BarterMarket"))
-	{
-		let cmpBarter = Engine.QueryInterface(SYSTEM_ENTITY, IID_Barter);
-		ret.barterMarket = { "prices": cmpBarter.GetPrices() };
-	}
+		ret.isBarterMarket = true;
 
 	let cmpHeal = Engine.QueryInterface(ent, IID_Heal);
 	if (cmpHeal)
@@ -568,6 +484,20 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 			"healableClasses": cmpHeal.GetHealableClasses(),
 		};
 
+	let cmpLoot = Engine.QueryInterface(ent, IID_Loot);
+	if (cmpLoot)
+	{
+		ret.loot = cmpLoot.GetResources();
+		ret.loot.xp = cmpLoot.GetXp();
+	}
+
+	let cmpResourceTrickle = Engine.QueryInterface(ent, IID_ResourceTrickle);
+	if (cmpResourceTrickle)
+		ret.resourceTrickle = {
+			"interval": cmpResourceTrickle.GetTimer(),
+			"rates": cmpResourceTrickle.GetRates()
+		};
+
 	let cmpUnitMotion = Engine.QueryInterface(ent, IID_UnitMotion);
 	if (cmpUnitMotion)
 		ret.speed = {
@@ -576,6 +506,11 @@ GuiInterface.prototype.GetExtendedEntityState = function(player, ent)
 		};
 
 	return ret;
+};
+
+GuiInterface.prototype.GetMultipleEntityStates = function(player, ents)
+{
+	return ents.map(ent => ({ "entId": ent, "state": this.GetEntityState(player, ent) }));
 };
 
 GuiInterface.prototype.GetAverageRangeForBuildings = function(player, cmd)
@@ -596,15 +531,10 @@ GuiInterface.prototype.GetAverageRangeForBuildings = function(player, cmd)
 	return cmpRangeManager.GetElevationAdaptedRange(pos, rot, range, elevationBonus, 2*Math.PI);
 };
 
-GuiInterface.prototype.GetTemplateData = function(player, extendedName)
+GuiInterface.prototype.GetTemplateData = function(player, templateName)
 {
-	let name = extendedName;
-	// Special case for garrisoned units which have a extended template
-	if (extendedName.indexOf("&") != -1)
-		name = extendedName.slice(extendedName.indexOf("&")+1);
-
 	let cmpTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
-	let template = cmpTemplateManager.GetTemplate(name);
+	let template = cmpTemplateManager.GetTemplate(templateName);
 
 	if (!template)
 		return null;
@@ -612,40 +542,14 @@ GuiInterface.prototype.GetTemplateData = function(player, extendedName)
 	let aurasTemplate = {};
 
 	if (!template.Auras)
-		return GetTemplateDataHelper(template, player, aurasTemplate);
+		return GetTemplateDataHelper(template, player, aurasTemplate, Resources, DamageTypes);
 
-	// Add aura name and description loaded from JSON file
 	let auraNames = template.Auras._string.split(/\s+/);
-	let cmpDataTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_DataTemplateManager);
+
 	for (let name of auraNames)
-	{
-		let auraTemplate = cmpDataTemplateManager.GetAuraTemplate(name);
-		if (!auraTemplate)
-		{
-			// The following warning is perhaps useless since it's yet done in DataTemplateManager
-			warn("Tried to get data for invalid aura: " + name);
-			continue;
-		}
-		aurasTemplate[name] = {};
-		aurasTemplate[name].auraName = auraTemplate.auraName || null;
-		aurasTemplate[name].auraDescription = auraTemplate.auraDescription || null;
-	}
-	return GetTemplateDataHelper(template, player, aurasTemplate);
-};
+		aurasTemplate[name] = AuraTemplates.Get(name);
 
-GuiInterface.prototype.GetTechnologyData = function(player, name)
-{
-	let cmpDataTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_DataTemplateManager);
-	let template = cmpDataTemplateManager.GetTechnologyTemplate(name);
-
-	if (!template)
-	{
-		warn("Tried to get data for invalid technology: " + name);
-		return null;
-	}
-
-	let cmpPlayer = QueryPlayerIDInterface(player, IID_Player);
-	return GetTechnologyDataHelper(template, cmpPlayer.GetCiv());
+	return GetTemplateDataHelper(template, player, aurasTemplate, Resources, DamageTypes);
 };
 
 GuiInterface.prototype.IsTechnologyResearched = function(player, data)
@@ -681,14 +585,20 @@ GuiInterface.prototype.GetStartedResearch = function(player)
 		return {};
 
 	let ret = {};
-	for (let tech in cmpTechnologyManager.GetTechsStarted())
+	for (let tech of cmpTechnologyManager.GetStartedTechs())
 	{
 		ret[tech] = { "researcher": cmpTechnologyManager.GetResearcher(tech) };
 		let cmpProductionQueue = Engine.QueryInterface(ret[tech].researcher, IID_ProductionQueue);
 		if (cmpProductionQueue)
+		{
 			ret[tech].progress = cmpProductionQueue.GetQueue()[0].progress;
+			ret[tech].timeRemaining = cmpProductionQueue.GetQueue()[0].timeRemaining;
+		}
 		else
+		{
 			ret[tech].progress = 0;
+			ret[tech].timeRemaining = 0;
+		}
 	}
 	return ret;
 };
@@ -717,6 +627,25 @@ GuiInterface.prototype.GetNeededResources = function(player, data)
 };
 
 /**
+ * State of the templateData (player dependent): true when some template values have been modified
+ * and need to be reloaded by the gui.
+ */
+GuiInterface.prototype.OnTemplateModification = function(msg)
+{
+	this.templateModified[msg.player] = true;
+};
+
+GuiInterface.prototype.IsTemplateModified = function(player)
+{
+	return this.templateModified[player] || false;
+};
+
+GuiInterface.prototype.ResetTemplateModified = function()
+{
+	this.templateModified = {};
+};
+
+/**
  * Add a timed notification.
  * Warning: timed notifacations are serialised
  * (to also display them on saved games or after a rejoin)
@@ -729,14 +658,12 @@ GuiInterface.prototype.AddTimeNotification = function(notification, duration = 1
 	notification.id = ++this.timeNotificationID;
 
 	// Let all players and observers receive the notification by default
-	if (notification.players == undefined)
+	if (!notification.players)
 	{
-		let cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);
-		let numPlayers = cmpPlayerManager.GetNumPlayers();
-		notification.players = [-1];
-		for (let i = 1; i < numPlayers; ++i)
-			notification.players.push(i);
+		notification.players = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetAllPlayers();
+		notification.players[0] = -1;
 	}
+
 	this.timeNotifications.push(notification);
 	this.timeNotifications.sort((n1, n2) => n2.endTime - n1.endTime);
 
@@ -804,20 +731,15 @@ GuiInterface.prototype.GetFormationInfoFromTemplate = function(player, data)
 
 GuiInterface.prototype.IsFormationSelected = function(player, data)
 {
-	for each (let ent in data.ents)
-	{
+	return data.ents.some(ent => {
 		let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
-		// GetLastFormationName is named in a strange way as it (also) is
-		// the value of the current formation (see Formation.js LoadFormation)
-		if (cmpUnitAI && cmpUnitAI.GetLastFormationTemplate() == data.formationTemplate)
-			return true;
-	}
-	return false;
+		return cmpUnitAI && cmpUnitAI.GetFormationTemplate() == data.formationTemplate;
+	});
 };
 
 GuiInterface.prototype.IsStanceSelected = function(player, data)
 {
-	for each (let ent in data.ents)
+	for (let ent of data.ents)
 	{
 		let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 		if (cmpUnitAI && cmpUnitAI.GetStanceName() == data.stance)
@@ -829,7 +751,7 @@ GuiInterface.prototype.IsStanceSelected = function(player, data)
 GuiInterface.prototype.GetAllBuildableEntities = function(player, cmd)
 {
 	let buildableEnts = [];
-	for each (let ent in cmd.entities)
+	for (let ent of cmd.entities)
 	{
 		let cmpBuilder = Engine.QueryInterface(ent, IID_Builder);
 		if (!cmpBuilder)
@@ -842,18 +764,51 @@ GuiInterface.prototype.GetAllBuildableEntities = function(player, cmd)
 	return buildableEnts;
 };
 
+GuiInterface.prototype.UpdateDisplayedPlayerColors = function(player, data)
+{
+	let updateEntityColor = (iids, entities) => {
+		for (let ent of entities)
+			for (let iid of iids)
+			{
+				let cmp = Engine.QueryInterface(ent, iid);
+				if (cmp)
+					cmp.UpdateColor();
+			}
+	};
+
+	let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
+	let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
+	for (let i = 1; i < numPlayers; ++i)
+	{
+		let cmpPlayer = QueryPlayerIDInterface(i, IID_Player);
+		if (!cmpPlayer)
+			continue;
+
+		cmpPlayer.SetDisplayDiplomacyColor(data.displayDiplomacyColors);
+		if (data.displayDiplomacyColors)
+			cmpPlayer.SetDiplomacyColor(data.displayedPlayerColors[i]);
+
+		updateEntityColor(data.showAllStatusBars && (i == player || player == -1) ?
+			[IID_Minimap, IID_RangeOverlayRenderer, IID_RallyPointRenderer, IID_StatusBars] :
+			[IID_Minimap, IID_RangeOverlayRenderer, IID_RallyPointRenderer],
+			cmpRangeManager.GetEntitiesByPlayer(i));
+	}
+	updateEntityColor([IID_Selectable, IID_StatusBars], data.selected);
+	Engine.QueryInterface(SYSTEM_ENTITY, IID_TerritoryManager).UpdateColors();
+};
+
 GuiInterface.prototype.SetSelectionHighlight = function(player, cmd)
 {
 	let playerColors = {}; // cache of owner -> color map
 
-	for each (let ent in cmd.entities)
+	for (let ent of cmd.entities)
 	{
 		let cmpSelectable = Engine.QueryInterface(ent, IID_Selectable);
 		if (!cmpSelectable)
 			continue;
 
 		// Find the entity's owner's color:
-		let owner = -1;
+		let owner = INVALID_PLAYER;
 		let cmpOwnership = Engine.QueryInterface(ent, IID_Ownership);
 		if (cmpOwnership)
 			owner = cmpOwnership.GetOwner();
@@ -861,20 +816,31 @@ GuiInterface.prototype.SetSelectionHighlight = function(player, cmd)
 		let color = playerColors[owner];
 		if (!color)
 		{
-			color = { "r":1, "g":1, "b":1 };
+			color = { "r": 1, "g": 1, "b": 1 };
 			let cmpPlayer = QueryPlayerIDInterface(owner);
 			if (cmpPlayer)
-				color = cmpPlayer.GetColor();
+				color = cmpPlayer.GetDisplayedColor();
 			playerColors[owner] = color;
 		}
 
 		cmpSelectable.SetSelectionHighlight({ "r": color.r, "g": color.g, "b": color.b, "a": cmd.alpha }, cmd.selected);
+
+		let cmpRangeOverlayManager = Engine.QueryInterface(ent, IID_RangeOverlayManager);
+		if (!cmpRangeOverlayManager || player != owner && player != INVALID_PLAYER)
+			continue;
+
+		cmpRangeOverlayManager.SetEnabled(cmd.selected, this.enabledVisualRangeOverlayTypes, false);
 	}
+};
+
+GuiInterface.prototype.EnableVisualRangeOverlayType = function(player, data)
+{
+	this.enabledVisualRangeOverlayTypes[data.type] = data.enabled;
 };
 
 GuiInterface.prototype.GetEntitiesWithStatusBars = function()
 {
-	return [...this.entsWithAuraAndStatusBars];
+	return Array.from(this.entsWithAuraAndStatusBars);
 };
 
 GuiInterface.prototype.SetStatusBars = function(player, cmd)
@@ -885,7 +851,7 @@ GuiInterface.prototype.SetStatusBars = function(player, cmd)
 		let cmpStatusBars = Engine.QueryInterface(ent, IID_StatusBars);
 		if (!cmpStatusBars)
 			continue;
-		cmpStatusBars.SetEnabled(cmd.enabled);
+		cmpStatusBars.SetEnabled(cmd.enabled, cmd.showRank);
 
 		let cmpAuras = Engine.QueryInterface(ent, IID_Auras);
 		if (!cmpAuras)
@@ -912,6 +878,16 @@ GuiInterface.prototype.SetStatusBars = function(player, cmd)
 	}
 };
 
+GuiInterface.prototype.SetRangeOverlays = function(player, cmd)
+{
+	for (let ent of cmd.entities)
+	{
+		let cmpRangeOverlayManager = Engine.QueryInterface(ent, IID_RangeOverlayManager);
+		if (cmpRangeOverlayManager)
+			cmpRangeOverlayManager.SetEnabled(cmd.enabled, this.enabledVisualRangeOverlayTypes, true);
+	}
+};
+
 GuiInterface.prototype.GetPlayerEntities = function(player)
 {
 	return Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager).GetEntitiesByPlayer(player);
@@ -919,7 +895,7 @@ GuiInterface.prototype.GetPlayerEntities = function(player)
 
 GuiInterface.prototype.GetNonGaiaEntities = function()
 {
-    return Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager).GetNonGaiaEntities();
+	return Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager).GetNonGaiaEntities();
 };
 
 /**
@@ -936,7 +912,7 @@ GuiInterface.prototype.DisplayRallyPoint = function(player, cmd)
 	let cmpPlayer = QueryPlayerIDInterface(player);
 
 	// If there are some rally points already displayed, first hide them
-	for each (let ent in this.entsRallyPointsDisplayed)
+	for (let ent of this.entsRallyPointsDisplayed)
 	{
 		let cmpRallyPointRenderer = Engine.QueryInterface(ent, IID_RallyPointRenderer);
 		if (cmpRallyPointRenderer)
@@ -946,7 +922,7 @@ GuiInterface.prototype.DisplayRallyPoint = function(player, cmd)
 	this.entsRallyPointsDisplayed = [];
 
 	// Show the rally points for the passed entities
-	for each (let ent in cmd.entities)
+	for (let ent of cmd.entities)
 	{
 		let cmpRallyPointRenderer = Engine.QueryInterface(ent, IID_RallyPointRenderer);
 		if (!cmpRallyPointRenderer)
@@ -983,7 +959,7 @@ GuiInterface.prototype.DisplayRallyPoint = function(player, cmd)
 
 			// rebuild the renderer when not set (when reading saved game or in case of building update)
 			else if (!cmpRallyPointRenderer.IsSet())
-				for each (let posi in cmpRallyPoint.GetPositions())
+				for (let posi of cmpRallyPoint.GetPositions())
 					cmpRallyPointRenderer.AddPosition({ 'x': posi.x, 'y': posi.z });
 
 			cmpRallyPointRenderer.SetDisplayed(true);
@@ -992,6 +968,16 @@ GuiInterface.prototype.DisplayRallyPoint = function(player, cmd)
 			this.entsRallyPointsDisplayed.push(ent);
 		}
 	}
+};
+
+GuiInterface.prototype.AddTargetMarker = function(player, cmd)
+{
+	let ent = Engine.AddLocalEntity(cmd.template);
+	if (!ent)
+		return;
+
+	let cmpPosition = Engine.QueryInterface(ent, IID_Position);
+	cmpPosition.JumpTo(cmd.x, cmd.z);
 };
 
 /**
@@ -1055,6 +1041,10 @@ GuiInterface.prototype.SetBuildingPlacementPreview = function(player, cmd)
 			error("cmpBuildRestrictions not defined");
 		else
 			result = cmpBuildRestrictions.CheckPlacement();
+
+		let cmpRangeOverlayManager = Engine.QueryInterface(ent, IID_RangeOverlayManager);
+		if (cmpRangeOverlayManager)
+			cmpRangeOverlayManager.SetEnabled(true, this.enabledVisualRangeOverlayTypes);
 
 		// Set it to a red shade if this is an invalid location
 		let cmpVisual = Engine.QueryInterface(ent, IID_Visual);
@@ -1163,7 +1153,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 		// we're clearing the preview, clear the entity cache and bail
 		for (let tpl in this.placementWallEntities)
 		{
-			for each (let ent in this.placementWallEntities[tpl].entities)
+			for (let ent of this.placementWallEntities[tpl].entities)
 				Engine.DestroyEntity(ent);
 
 			this.placementWallEntities[tpl].numUsed = 0;
@@ -1173,38 +1163,40 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 
 		return false;
 	}
-	else
-	{
-		// Move all existing cached entities outside of the world and reset their use count
-		for (let tpl in this.placementWallEntities)
-		{
-			for each (let ent in this.placementWallEntities[tpl].entities)
-			{
-				let pos = Engine.QueryInterface(ent, IID_Position);
-				if (pos)
-					pos.MoveOutOfWorld();
-			}
 
-			this.placementWallEntities[tpl].numUsed = 0;
+	// Move all existing cached entities outside of the world and reset their use count
+	for (let tpl in this.placementWallEntities)
+	{
+		for (let ent of this.placementWallEntities[tpl].entities)
+		{
+			let pos = Engine.QueryInterface(ent, IID_Position);
+			if (pos)
+				pos.MoveOutOfWorld();
 		}
 
-		// Create cache entries for templates we haven't seen before
-		for each (let tpl in wallSet.templates)
-		{
-			if (!(tpl in this.placementWallEntities))
-			{
-				this.placementWallEntities[tpl] = {
-					"numUsed": 0,
-					"entities": [],
-					"templateData": this.GetTemplateData(player, tpl),
-				};
+		this.placementWallEntities[tpl].numUsed = 0;
+	}
 
-				// ensure that the loaded template data contains a wallPiece component
-				if (!this.placementWallEntities[tpl].templateData.wallPiece)
-				{
-					error("[SetWallPlacementPreview] No WallPiece component found for wall set template '" + tpl + "'");
-					return false;
-				}
+	// Create cache entries for templates we haven't seen before
+	for (let type in wallSet.templates)
+	{
+		if (type == "curves")
+			continue;
+
+		let tpl = wallSet.templates[type];
+		if (!(tpl in this.placementWallEntities))
+		{
+			this.placementWallEntities[tpl] = {
+				"numUsed": 0,
+				"entities": [],
+				"templateData": this.GetTemplateData(player, tpl),
+			};
+
+			// ensure that the loaded template data contains a wallPiece component
+			if (!this.placementWallEntities[tpl].templateData.wallPiece)
+			{
+				error("[SetWallPlacementPreview] No WallPiece component found for wall set template '" + tpl + "'");
+				return false;
 			}
 		}
 	}
@@ -1269,8 +1261,10 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 
 	let result = {
 		"pieces": [],
-		"cost": { "food": 0, "wood": 0, "stone": 0, "metal": 0, "population": 0, "populationBonus": 0, "time": 0 },
+		"cost": { "population": 0, "populationBonus": 0, "time": 0 },
 	};
+	for (let res of Resources.GetCodes())
+		result.cost[res] = 0;
 
 	let previewEntities = [];
 	if (end.pos)
@@ -1310,7 +1304,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 					"template": wallSet.templates.tower,
 					"pos": start.pos,
 					"angle": cmpPosition.GetRotation().y,
-					"controlGroups": [(startEntObstruction ? startEntObstruction.GetControlGroup() : undefined)],
+					"controlGroups": [startEntObstruction ? startEntObstruction.GetControlGroup() : undefined],
 					"excludeFromResult": true, // preview only, must not appear in the result
 				});
 		}
@@ -1335,7 +1329,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 		previewEntities.unshift({
 			"template": wallSet.templates.tower,
 			"pos": start.pos,
-			"angle": (previewEntities.length > 0 ? previewEntities[0].angle : this.placementWallLastAngle)
+			"angle": previewEntities.length > 0 ? previewEntities[0].angle : this.placementWallLastAngle
 		});
 	}
 
@@ -1353,7 +1347,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 			// '.controlGroup' property. Note that this array can only ever have 0, 1 or 2 elements (checked at a later time).
 			if (previewEntities.length > 0 && endEntObstruction)
 			{
-				previewEntities[previewEntities.length-1].controlGroups = (previewEntities[previewEntities.length-1].controlGroups || []);
+				previewEntities[previewEntities.length-1].controlGroups = previewEntities[previewEntities.length-1].controlGroups || [];
 				previewEntities[previewEntities.length-1].controlGroups.push(endEntObstruction.GetControlGroup());
 			}
 
@@ -1367,7 +1361,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 						"template": wallSet.templates.tower,
 						"pos": end.pos,
 						"angle": cmpPosition.GetRotation().y,
-						"controlGroups": [(endEntObstruction ? endEntObstruction.GetControlGroup() : undefined)],
+						"controlGroups": [endEntObstruction ? endEntObstruction.GetControlGroup() : undefined],
 						"excludeFromResult": true
 					});
 			}
@@ -1376,7 +1370,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 			previewEntities.push({
 				"template": wallSet.templates.tower,
 				"pos": end.pos,
-				"angle": (previewEntities.length > 0 ? previewEntities[previewEntities.length-1].angle : this.placementWallLastAngle)
+				"angle": previewEntities.length > 0 ? previewEntities[previewEntities.length-1].angle : this.placementWallLastAngle
 			});
 	}
 
@@ -1498,7 +1492,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 
 		// Check whether it's in a visible or fogged region
 		// TODO: should definitely reuse SetBuildingPlacementPreview, this is just straight up copy/pasta
-		let visible = (cmpRangeManager.GetLosVisibility(ent, player) != "hidden");
+		let visible = cmpRangeManager.GetLosVisibility(ent, player) != "hidden";
 		if (visible)
 		{
 			let cmpBuildRestrictions = Engine.QueryInterface(ent, IID_BuildRestrictions);
@@ -1509,7 +1503,7 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 			}
 
 			// TODO: Handle results of CheckPlacement
-			validPlacement = (cmpBuildRestrictions && cmpBuildRestrictions.CheckPlacement().success);
+			validPlacement = cmpBuildRestrictions && cmpBuildRestrictions.CheckPlacement().success;
 
 			// If a wall piece has two control groups, it's likely a segment that spans
 			// between two existing towers. To avoid placing a duplicate wall segment,
@@ -1545,13 +1539,8 @@ GuiInterface.prototype.SetWallPlacementPreview = function(player, cmd)
 			// copied over, so we need to fetch it from the template instead).
 			// TODO: we should really use a Cost object or at least some utility functions for this, this is mindless
 			// boilerplate that's probably duplicated in tons of places.
-			result.cost.food += tplData.cost.food;
-			result.cost.wood += tplData.cost.wood;
-			result.cost.stone += tplData.cost.stone;
-			result.cost.metal += tplData.cost.metal;
-			result.cost.population += tplData.cost.population;
-			result.cost.populationBonus += tplData.cost.populationBonus;
-			result.cost.time += tplData.cost.time;
+			for (let res of Resources.GetCodes().concat(["population", "populationBonus", "time"]))
+				result.cost[res] += tplData.cost[res];
 		}
 
 		let canAfford = true;
@@ -1620,7 +1609,7 @@ GuiInterface.prototype.GetFoundationSnapData = function(player, data)
 		let minDistEntitySnapData = null;
 		let radius2 = data.snapRadius * data.snapRadius;
 
-		for each (let ent in data.snapEntities)
+		for (let ent of data.snapEntities)
 		{
 			let cmpPosition = Engine.QueryInterface(ent, IID_Position);
 			if (!cmpPosition || !cmpPosition.IsInWorld())
@@ -1647,7 +1636,7 @@ GuiInterface.prototype.GetFoundationSnapData = function(player, data)
 			return minDistEntitySnapData;
 	}
 
-	if (template.BuildRestrictions.Category == "Dock")
+	if (template.BuildRestrictions.PlacementType == "shore")
 	{
 		let angle = GetDockAngle(template, data.x, data.z);
 		if (angle !== undefined)
@@ -1749,7 +1738,7 @@ GuiInterface.prototype.IdleUnitFilter = function(unit, idleClasses, excludeUnits
 	if(!cmpIdentity)
 		return { "idle": false };
 
-	let bucket = idleClasses.findIndex(elem => cmpIdentity.HasClass(elem));
+	let bucket = idleClasses.findIndex(elem => MatchesClassList(cmpIdentity.GetClassesList(), elem));
 	if (bucket == -1 || excludeUnits.indexOf(unit) > -1)
 		return { "idle": false };
 
@@ -1808,37 +1797,10 @@ GuiInterface.prototype.GetTradingDetails = function(player, data)
 	return result;
 };
 
-GuiInterface.prototype.CanCapture = function(player, data)
-{
-	let cmpAttack = Engine.QueryInterface(data.entity, IID_Attack);
-	if (!cmpAttack)
-		return false;
-
-	let owner = QueryOwnerInterface(data.entity).GetPlayerID();
-
-	let cmpCapturable = QueryMiragedInterface(data.target, IID_Capturable);
-	if (cmpCapturable && cmpCapturable.CanCapture(owner) && cmpAttack.GetAttackTypes().indexOf("Capture") != -1)
-		return cmpAttack.CanAttack(data.target);
-
-	return false;
-};
-
 GuiInterface.prototype.CanAttack = function(player, data)
 {
 	let cmpAttack = Engine.QueryInterface(data.entity, IID_Attack);
-	if (!cmpAttack)
-		return false;
-
-	let cmpEntityPlayer = QueryOwnerInterface(data.entity, IID_Player);
-	let cmpTargetPlayer = QueryOwnerInterface(data.target, IID_Player);
-	if (!cmpEntityPlayer || !cmpTargetPlayer)
-		return false;
-
-	// if the owner is an enemy, it's up to the attack component to decide
-	if (cmpEntityPlayer.IsEnemy(cmpTargetPlayer.GetPlayerID()))
-		return cmpAttack.CanAttack(data.target);
-
-	return false;
+	return cmpAttack && cmpAttack.CanAttack(data.target, data.types || undefined);
 };
 
 /*
@@ -1875,7 +1837,7 @@ GuiInterface.prototype.SetObstructionDebugOverlay = function(player, enabled)
 
 GuiInterface.prototype.SetMotionDebugOverlay = function(player, data)
 {
-	for each (let ent in data.entities)
+	for (let ent of data.entities)
 	{
 		let cmpUnitMotion = Engine.QueryInterface(ent, IID_UnitMotion);
 		if (cmpUnitMotion)
@@ -1896,7 +1858,7 @@ GuiInterface.prototype.GetTraderNumber = function(player)
 	let landTrader = { "total": 0, "trading": 0, "garrisoned": 0 };
 	let shipTrader = { "total": 0, "trading": 0 };
 
-	for each (let ent in traders)
+	for (let ent of traders)
 	{
 		let cmpIdentity = Engine.QueryInterface(ent, IID_Identity);
 		let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
@@ -1949,10 +1911,9 @@ let exposedFunctions = {
 	"GetRenamedEntities": 1,
 	"ClearRenamedEntities": 1,
 	"GetEntityState": 1,
-	"GetExtendedEntityState": 1,
+	"GetMultipleEntityStates": 1,
 	"GetAverageRangeForBuildings": 1,
 	"GetTemplateData": 1,
-	"GetTechnologyData": 1,
 	"IsTechnologyResearched": 1,
 	"CheckTechnologyRequirements": 1,
 	"GetStartedResearch": 1,
@@ -1969,12 +1930,14 @@ let exposedFunctions = {
 	"GetFormationInfoFromTemplate": 1,
 	"IsStanceSelected": 1,
 
+	"UpdateDisplayedPlayerColors": 1,
 	"SetSelectionHighlight": 1,
 	"GetAllBuildableEntities": 1,
 	"SetStatusBars": 1,
 	"GetPlayerEntities": 1,
 	"GetNonGaiaEntities": 1,
 	"DisplayRallyPoint": 1,
+	"AddTargetMarker": 1,
 	"SetBuildingPlacementPreview": 1,
 	"SetWallPlacementPreview": 1,
 	"GetFoundationSnapData": 1,
@@ -1983,7 +1946,6 @@ let exposedFunctions = {
 	"HasIdleUnits": 1,
 	"GetTradingRouteGain": 1,
 	"GetTradingDetails": 1,
-	"CanCapture": 1,
 	"CanAttack": 1,
 	"GetBatchTime": 1,
 
@@ -1993,17 +1955,21 @@ let exposedFunctions = {
 	"SetObstructionDebugOverlay": 1,
 	"SetMotionDebugOverlay": 1,
 	"SetRangeDebugOverlay": 1,
+	"EnableVisualRangeOverlayType": 1,
+	"SetRangeOverlays": 1,
 
 	"GetTraderNumber": 1,
 	"GetTradingGoods": 1,
+	"IsTemplateModified": 1,
+	"ResetTemplateModified": 1
 };
 
 GuiInterface.prototype.ScriptCall = function(player, name, args)
 {
 	if (exposedFunctions[name])
 		return this[name](player, args);
-	else
-		throw new Error("Invalid GuiInterface Call name \""+name+"\"");
+
+	throw new Error("Invalid GuiInterface Call name \""+name+"\"");
 };
 
 Engine.RegisterSystemComponentType(IID_GuiInterface, "GuiInterface", GuiInterface);

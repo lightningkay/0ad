@@ -1,48 +1,48 @@
-var g_PanelNames = ["special", "programming", "art", "translators", "misc", "donators"];
-var g_ButtonNames = {};
-var g_PanelTexts = {};
-var g_ActivePanel = -1;
+/**
+ * Order in which the tabs should show up.
+ */
+var g_OrderTabNames = ["special", "programming", "art", "translators", "misc", "donators"];
+
+/**
+ * Array of Objects containg all relevant data per tab.
+ */
+var g_PanelData = [];
+
+/**
+ * Vertical size of a tab button.
+ */
+var g_TabButtonHeight = 30;
+
+/**
+ * Vertical space between two tab buttons.
+ */
+var g_TabButtonDist = 5;
 
 function init()
 {
 	// Load credits list from the disk and parse them
-	for (let name of g_PanelNames)
+	for (let category of g_OrderTabNames)
 	{
-		let json = Engine.ReadJSONFile("gui/credits/texts/" + name + ".json");
+		let json = Engine.ReadJSONFile("gui/credits/texts/" + category + ".json");
 		if (!json || !json.Content)
 		{
-			error("Could not load credits for " + name + "!");
+			error("Could not load credits for " + category + "!");
 			continue;
 		}
-		g_ButtonNames[name] = json.Title || name;
-		g_PanelTexts[name] = parseHelper(json.Content);
+		g_PanelData.push({
+			"label": json.Title || category,
+			"content": parseHelper(json.Content)
+		});
 	}
 
-	placeButtons();
-	selectPanel(0);
-}
-
-function placeButtons()
-{
-
-	for (let i = 0; i < g_PanelNames.length; ++i)
-	{
-		let button = Engine.GetGUIObjectByName("creditsPanelButton[" + i + "]");
-		if (!button)
-		{
-			warn("Could not display some credits.");
-			break;
-		}
-		button.hidden = false;
-		let size = button.size;
-		size.top = i * 35;
-		size.bottom = size.top + 30;
-		button.size = size;
-
-		button.onPress = (i => function() {selectPanel(i);})(i);
-		let buttonText = Engine.GetGUIObjectByName("creditsPanelButtonText[" + i + "]");
-		buttonText.caption = translate(g_ButtonNames[g_PanelNames[i]]);
-	}
+	placeTabButtons(
+		g_PanelData,
+		g_TabButtonHeight,
+		g_TabButtonDist,
+		selectPanel,
+		category => {
+			Engine.GetGUIObjectByName("creditsText").caption = g_PanelData[category].content;
+		});
 }
 
 // Run through a "Content" list and parse elements for formatting and translation
@@ -72,6 +72,7 @@ function parseHelper(list)
 				else if (element.name)
 					result += "[font=\"sans-14\"]" + element.name + "\n";
 			}
+
 			result += "\n";
 		}
 
@@ -80,17 +81,4 @@ function parseHelper(list)
 	}
 
 	return result;
-}
-
-function selectPanel(i)
-{
-	if (g_ActivePanel != -1)
-	{
-		let oldPanelButton = Engine.GetGUIObjectByName("creditsPanelButton[" + g_ActivePanel+ "]");
-		oldPanelButton.sprite = "BackgroundBox";
-	}
-
-	g_ActivePanel = i;
-	Engine.GetGUIObjectByName("creditsPanelButton[" + i + "]").sprite = "ForegroundBox";
-	Engine.GetGUIObjectByName("creditsText").caption = g_PanelTexts[g_PanelNames[i]];
 }

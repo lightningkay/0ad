@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_structure_defense_wall_long">
   <Auras disable=""/>
+  <!-- We don't disable the Cost component, although gates cannot be built directly, as Cost/BuildTime is required to prevent instantaneous repair -->
   <GarrisonHolder disable=""/>
   <Gate>
     <PassRange>20</PassRange>
   </Gate>
+  <Health>
+    <Max op="mul">0.85</Max>
+  </Health>
   <Identity>
-    <GenericName>City Gate</GenericName>
-    <Tooltip>Allow units access through a city wall. Can be locked to prevent access.</Tooltip>
     <Classes datatype="tokens">Gates</Classes>
+    <GenericName>City Gate</GenericName>
     <Icon>structures/gate.png</Icon>
-    <RequiredTechnology>phase_town</RequiredTechnology>
+    <Tooltip>Allow units access through a city wall. Can be locked to prevent access.</Tooltip>
   </Identity>
-  <Loot>
-    <xp>100</xp>
-    <food>0</food>
-    <wood>20</wood>
-    <stone>20</stone>
-    <metal>0</metal>
-  </Loot>
   <Obstruction>
     <Static disable=""/>
     <Obstructions>
@@ -27,6 +23,10 @@
       <Door width="20.0" depth="6.5" x="0" z="0"/>
     </Obstructions>
   </Obstruction>
+  <RallyPoint disable=""/>
+  <Repairable>
+    <RepairTimeRatio op="mul">0.85</RepairTimeRatio>
+  </Repairable>
   <Sound>
     <SoundGroups>
       <select>interface/select/building/sel_gate.xml</select>
@@ -39,4 +39,7 @@
     </SoundGroups>
   </Sound>
   <Upgrade disable=""/>
+  <VisualActor>
+    <FoundationActor>structures/fndn_wall_long.xml</FoundationActor>
+  </VisualActor>
 </Entity>

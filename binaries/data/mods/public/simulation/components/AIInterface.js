@@ -20,7 +20,10 @@ AIInterface.prototype.EventNames = [
 	"TerritoriesChanged",
 	"TerritoryDecayChanged",
 	"TributeExchanged",
-	"AttackRequest"
+	"AttackRequest",
+	"CeasefireEnded",
+	"DiplomacyRequest",
+	"TributeRequest"
 ];
 
 AIInterface.prototype.Init = function()
@@ -89,8 +92,8 @@ AIInterface.prototype.GetNonEntityRepresentation = function()
 	let cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 
 	// Return the same game state as the GUI uses
-	let state = cmpGuiInterface.GetSimulationState(-1);
-	
+	let state = cmpGuiInterface.GetSimulationState();
+
 	// Add some extra AI-specific data
 	// add custom events and reset them for the next turn
 	state.events = {};
@@ -131,7 +134,7 @@ AIInterface.prototype.GetRepresentation = function()
  * Intended to be called first, during the map initialization: no caching
  */
 AIInterface.prototype.GetFullRepresentation = function(flushEvents)
-{	
+{
 	let state = this.GetNonEntityRepresentation();
 
 	if (flushEvents)
@@ -145,7 +148,7 @@ AIInterface.prototype.GetFullRepresentation = function(flushEvents)
 	for (let id of Engine.GetEntitiesWithInterface(IID_AIProxy))
 		state.entities[id] = Engine.QueryInterface(id, IID_AIProxy).GetFullRepresentation();
 	Engine.ProfileStop();
-	
+
 	state.changedTemplateInfo = this.changedTemplateInfo;
 	this.changedTemplateInfo = {};
 	state.changedEntityTemplateInfo = this.changedEntityTemplateInfo;
@@ -197,6 +200,11 @@ AIInterface.prototype.OnTerritoriesChanged = function(msg)
 	this.events.TerritoriesChanged.push(msg);
 };
 
+AIInterface.prototype.OnCeasefireEnded = function(msg)
+{
+	this.events.CeasefireEnded.push(msg);
+};
+
 /**
  * When a new technology is researched, check which templates it affects,
  * and send the updated values to the AI.
@@ -208,18 +216,17 @@ AIInterface.prototype.OnTemplateModification = function(msg)
 	let cmpTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
 	if (!this.templates)
 	{
-		this.templates = cmpTemplateManager.FindAllTemplates(false);
-		for (let i = 0; i < this.templates.length; ++i)
+		this.templates = [];
+		for (let templateName of cmpTemplateManager.FindAllTemplates(false))
 		{
-			// remove templates that we obviously don't care about.
-			if (this.templates[i].startsWith("skirmish/"))
-				this.templates.splice(i--,1);
-			else
-			{
-				let template = cmpTemplateManager.GetTemplateWithoutValidation(this.templates[i]);
-				if (!template || !template.Identity || !template.Identity.Civ)
-					this.templates.splice(i--,1);
-			}
+			// Remove templates that we obviously don't care about.
+			if (templateName.startsWith("campaigns/") || templateName.startsWith("rubble/") ||
+			    templateName.startsWith("skirmish/"))
+				continue;
+			let template = cmpTemplateManager.GetTemplateWithoutValidation(templateName);
+			if (!template || !template.Identity || !template.Identity.Civ)
+				continue;
+			this.templates.push(templateName);
 		}
 	}
 

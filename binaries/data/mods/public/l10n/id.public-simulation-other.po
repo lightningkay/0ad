@@ -5,15 +5,16 @@
 # Translators:
 # azayrahmad <azayrahmad@gmail.com>, 2014-2015
 # Muhammad Furqon Abrori <furqonklondigizoid@gmail.com>, 2016
-# Joshua Christo Randiny <jrandiny2@gmail.com>, 2015-2016
-# Joshua Christo Randiny <jrandiny2@gmail.com>, 2014
-# Samuel Christo Randiny <srandiny@gmail.com>, 2016
-# Tirtayasa <eggar4tirtayasa@gmail.com>, 2014
+# Joshua Randiny <jrandiny2@gmail.com>, 2015-2016
+# Joshua Randiny <jrandiny2@gmail.com>, 2014
+# Samuel <srandiny@gmail.com>, 2016
+# Samuel <srandiny@gmail.com>, 2017
+# Eggar Tirtayasa <eggar4tirtayasa@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-07-22 09:01+0200\n"
-"PO-Revision-Date: 2016-07-22 09:55+0000\n"
+"POT-Creation-Date: 2018-04-04 14:47+0200\n"
+"PO-Revision-Date: 2018-04-04 16:12+0000\n"
 "Last-Translator: Adrián Chaves Fernández <adriyetichaves@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/wildfire-games/0ad/language/id/)\n"
 "MIME-Version: 1.0\n"
@@ -22,540 +23,342 @@ msgstr ""
 "Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:203
-msgctxt "withinSentence"
-msgid "Food"
-msgstr "Makanan"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:205
-msgctxt "withinSentence"
-msgid "Wood"
-msgstr "Kayu"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:207
-msgctxt "withinSentence"
-msgid "Metal"
-msgstr "Logam"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:209
-msgctxt "withinSentence"
-msgid "Stone"
-msgstr "Batu"
-
-#: simulation/ai/petra/chatHelper.js:9
+#: simulation/ai/petra/chatHelper.js:6
 #, javascript-format
 msgid ""
 "I am starting a massive military campaign against %(_player_)s, come and "
 "join me."
 msgstr "Saya memulai operasi militer besar-besaran melawan %(_player_)s, ayo ikut saya."
 
-#: simulation/ai/petra/chatHelper.js:11
+#: simulation/ai/petra/chatHelper.js:7
+#, javascript-format
+msgid ""
+"I have set up a huge army to crush %(_player_)s. Join me and you will have "
+"your share of the loot."
+msgstr "Saya telah membuat pasukan besar untuk menghancurkan %(_player_)s. Ikut saya dan Anda akan mendapat bagian dari jarahannya."
+
+#: simulation/ai/petra/chatHelper.js:10
 #, javascript-format
 msgid "I am launching an attack against %(_player_)s."
-msgstr "Saya melancarkan serangan kepada %(_player_)s."
+msgstr "Saya meluncurkan serangan kepada %(_player_)s."
 
-#: simulation/ai/petra/chatHelper.js:13
+#: simulation/ai/petra/chatHelper.js:11
 #, javascript-format
 msgid "I have just sent an army against %(_player_)s."
 msgstr "Saya baru saja mengirim pasukan kepada %(_player_)s."
 
+#: simulation/ai/petra/chatHelper.js:17
+#, javascript-format
+msgid "Let me regroup my army and I will then join you against %(_player_)s."
+msgstr "Biarkan saya mengumpulkan pasukan untuk membantu Anda melawan %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:18
+#, javascript-format
+msgid "I am finishing preparations to attack %(_player_)s."
+msgstr "Saya sedang menyelesaikan persiapan terakhir untuk melawan %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:21
+#, javascript-format
+msgid ""
+"Sorry, I do not have enough soldiers currently; but my next attack will "
+"target %(_player_)s."
+msgstr "Maafkan saya, saya tidak punya cukup prajurit sekarang; tapi target serangan saya selanjutnya adalah %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:22
+#, javascript-format
+msgid ""
+"Sorry, I still need to strengthen my army. However, I will attack "
+"%(_player_)s next."
+msgstr "Maafkan saya, saya masih harus memperkuat pasukan. Tetapi, saya akan menyerang %(_player_)s berikutnya."
+
+#: simulation/ai/petra/chatHelper.js:25
+#, javascript-format
+msgid ""
+"I cannot help you against %(_player_)s for the time being, I am planning to "
+"attack %(_player_2)s first."
+msgstr "Saya tidak bisa membantu Anda melawan %(_player_)s sekarang, saya sedang berencana untuk menyerang %(_player_2)s dulu."
+
+#: simulation/ai/petra/chatHelper.js:30
+#, javascript-format
+msgid "Here is a gift for you, %(_player_)s. Make good use of it."
+msgstr "Ini hadiah untuk Anda, %(_player_)s. Gunakanlah dengan baik."
+
 #: simulation/ai/petra/chatHelper.js:31
 #, javascript-format
-msgid "Let me regroup my army and I am with you against %(_player_)s."
-msgstr "Biarkan saya mengumpulkan pasukan untuk membantumu melawan %(_player_)s."
+msgid "I see you are in a bad situation, %(_player_)s. I hope this helps."
+msgstr "Saya melihat Anda dalam keadaan yang buruk, %(_player_)s. Harap ini membantu."
 
-#: simulation/ai/petra/chatHelper.js:33
-#, javascript-format
-msgid "I am doing the final preparation and I will attack %(_player_)s."
-msgstr "Saya sedang ada dalam persiapan terakhir untuk melawan %(_player_)s."
-
-#: simulation/ai/petra/chatHelper.js:38
+#: simulation/ai/petra/chatHelper.js:32
 #, javascript-format
 msgid ""
-"I cannot help you against %(_player_)s for the time being, as I have another"
-" attack foreseen against %(_player_2)s."
-msgstr "Saya tak dapat membantumu melawan %(_player_)s sekarang karena saya sedang merencanakan serangan terhadap %(_player_2)s."
+"I can help you this time, %(_player_)s, but you should manage your resources"
+" more carefully in the future."
+msgstr "Saya bisa membantu Anda kali ini, %(_player_)s, tapi Anda harus dapat mengelola sumber daya lebih hati-hati di lain waktu."
 
-#: simulation/ai/petra/chatHelper.js:40
-#, javascript-format
-msgid ""
-"Sorry, I do not have enough soldiers currently, but my next attack will "
-"target %(_player_)s."
-msgstr "Maaf, saat ini saya sedang tidak punya cukup tentara, tapi saya akan menyerang %(_player_)s selanjutanya."
-
-#: simulation/ai/petra/chatHelper.js:63
-#, javascript-format
-msgid "Here is a gift for %(_player_)s, make a good use of it."
-msgstr "Ini hadiah untuk %(_player_)s, pergunakan dengan baik."
-
-#: simulation/ai/petra/chatHelper.js:65
-#, javascript-format
-msgid "I see you are in a bad situation %(_player_)s, I hope this will help."
-msgstr "Sepertinya kamu ada dalam situasi yang buruk %(_player_)s, saya harap ini bisa membantu."
-
-#: simulation/ai/petra/chatHelper.js:67
-#, javascript-format
-msgid ""
-"I can help you this time %(_player_)s, but try to assemble more resources in"
-" the future."
-msgstr "Saya bisa membantu kamu kali ini %(_player_)s, tapi berusahalah untuk mendapatakan lebih banyak sumber daya lain kali."
-
-#: simulation/ai/petra/chatHelper.js:83
+#: simulation/ai/petra/chatHelper.js:36
 #, javascript-format
 msgid "I am in need of %(resource)s, can you help? I will make it up to you."
-msgstr "Saya sedang butuh %(resource)s, bisa tolong saya?  Saya akan menggantinya."
+msgstr "Saya sedang mebutuhkan %(resource)s, bisa tolong saya?  Saya akan menggantinya."
 
-#: simulation/ai/petra/chatHelper.js:85
+#: simulation/ai/petra/chatHelper.js:37
 #, javascript-format
 msgid ""
 "I would participate more efficiently in our common war effort if you could "
 "provide me some %(resource)s."
-msgstr "Saya akan berpartisipasi dengan lebih efisien dalam perang kita jika kamu membantu saya dengan memberi sedikit %(resource)s."
+msgstr "Saya akan berpartisipasi dengan lebih efisien dalam perang kita jika Anda membantu saya dengan memberi beberapa %(resource)s."
 
-#: simulation/ai/petra/chatHelper.js:87
+#: simulation/ai/petra/chatHelper.js:38
 #, javascript-format
 msgid ""
-"If you have some %(resource)s excess, that would help me strengthen my army."
-msgstr "Jika kamu kelebihan %(resource)s, itu akan membantu memperkuatkan tentara saya."
+"If you can spare me some %(resource)s, I will be able to strengthen my army."
+msgstr "Jika Anda dapat menyisakan saya beberapa %(resource)s, saya dapat memperkuat pasukanku."
 
-#: simulation/ai/petra/chatHelper.js:103
+#: simulation/ai/petra/chatHelper.js:42
 #, javascript-format
 msgid ""
 "I have set up a new route with %(_player_)s. Trading will be profitable for "
 "all of us."
 msgstr "Saya sudah mengatur jalur dagang baru dengan %(_player_)s. Perdagangan ini akan menguntungkan kita semua."
 
-#: simulation/ai/petra/chatHelper.js:105
+#: simulation/ai/petra/chatHelper.js:43
 #, javascript-format
 msgid ""
 "A new trade route is set up with %(_player_)s. Take your share of the "
-"profits"
-msgstr "Jalur dagang baru telah diatur dengan %(_player_)s. Ambil bagianmu dari keuntungannya"
+"profits."
+msgstr "Sebuah jalur dagang baru telah dibuat dengan %(_player_)s. Ambillah bagian Anda dari penghasilannya."
 
-#: simulation/ai/petra/chatHelper.js:120
+#: simulation/ai/petra/chatHelper.js:48
 #, javascript-format
-msgid "I am advancing to the %(phase)s."
-msgstr "Saya sedang dalam proses ke %(phase)s."
+msgid "%(_player_)s and I are now allies."
+msgstr "%(_player_)s dan saya sekarang bersekutu."
+
+#: simulation/ai/petra/chatHelper.js:51
+#, javascript-format
+msgid "%(_player_)s and I are now neutral."
+msgstr "%(_player_)s dan saya sekarang saling netral."
+
+#: simulation/ai/petra/chatHelper.js:54
+#, javascript-format
+msgid "%(_player_)s and I are now enemies."
+msgstr "%(_player_)s dan saya sekarang bermusuhan."
+
+#: simulation/ai/petra/chatHelper.js:61
+#, javascript-format
+msgid "I cannot accept your offer to become allies, %(_player_)s."
+msgstr "Saya tidak bisa menerima pemberian Anda untuk menjadi sekutu, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:64
+#, javascript-format
+msgid ""
+"I will not be your ally, %(_player_)s. However, I will consider a neutrality"
+" pact."
+msgstr "Saya tidak ingin menjadi sekutu Anda, %(_player_)s. Tapi, saya akan mempertimbangkan pakta netralitas."
+
+#: simulation/ai/petra/chatHelper.js:65
+#, javascript-format
+msgid ""
+"I reject your request for alliance, %(_player_)s, but we could become "
+"neutral."
+msgstr "Saya menolak permintaan Anda untuk membentuk aliansi, %(_player_)s, tapi kita bisa saling netral saja."
+
+#: simulation/ai/petra/chatHelper.js:66
+#, javascript-format
+msgid "%(_player_)s, only a neutrality agreement is conceivable to me."
+msgstr "%(_player_)s, hanya perjanjian netral yang mungkin terlaksana bagi saya."
+
+#: simulation/ai/petra/chatHelper.js:69
+#, javascript-format
+msgid ""
+"Our previous alliance did not work out, %(_player_)s. I must decline your "
+"offer."
+msgstr "Aliansi kita sebelumnya tidak bekerja dengan baik, %(_player_)s. Saya harus menolak tawaran Anda."
+
+#: simulation/ai/petra/chatHelper.js:70
+#, javascript-format
+msgid "I won’t ally you again, %(_player_)s!"
+msgstr "Saya tidak mau menjadi sekutumu lagi, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:71
+#, javascript-format
+msgid "No more alliances between us, %(_player_)s!"
+msgstr "Tidak ada aliansi lagi di antara kita, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:72
+#, javascript-format
+msgid "Your request for peace means nothing to me anymore, %(_player_)s!"
+msgstr "Permintaan damaimu tidak berarti lagi bagiku, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:73
+#, javascript-format
+msgid ""
+"My answer to your repeated peace proposal will remain war, %(_player_)s!"
+msgstr "Jawabanku untuk tawaran damaimu yang diulang-ulang itu adalah tetap perang, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:76
+#, javascript-format
+msgid ""
+"I will accept your offer to become allies, %(_player_)s. We will both "
+"benefit from this partnership."
+msgstr "Saya akan menerima tawaran Anda untuk menjadi sekutu, %(_player_)s. Kita berdua akan diuntungkan dari kerja sama ini."
+
+#: simulation/ai/petra/chatHelper.js:77
+#, javascript-format
+msgid "An alliance between us is a good idea, %(_player_)s."
+msgstr "Aliansi di antara kita adalah ide yang bagus, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:78
+#, javascript-format
+msgid ""
+"Let both of our people prosper from a peaceful association, %(_player_)s."
+msgstr "Biarkan rakyat kita berdua makmur dari sebuah asosiasi damai, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:79
+#, javascript-format
+msgid "We have found common ground, %(_player_)s. I accept the alliance."
+msgstr "Kita berhasil mendapatkan kesepakatan bersama, %(_player_)s. Saya menerima aliansi Anda."
+
+#: simulation/ai/petra/chatHelper.js:80
+#, javascript-format
+msgid "%(_player_)s, consider us allies from now on."
+msgstr "%(_player_)s, memandang kita sebagai sekutu mulai dari sekarang."
+
+#: simulation/ai/petra/chatHelper.js:83
+#, javascript-format
+msgid ""
+"I will ally with you, %(_player_)s, but only if you send me a tribute of "
+"%(_amount_)s %(_resource_)s."
+msgstr "Saya akan menjadi sekutu Anda, %(_player_)s, hanya jika Anda memberikan saya upeti sebesar %(_amount_)s %(_resource_)s."
+
+#: simulation/ai/petra/chatHelper.js:84
+#, javascript-format
+msgid ""
+"%(_player_)s, you must send me a tribute of %(_amount_)s %(_resource_)s "
+"before I accept an alliance with you."
+msgstr "%(_player_)s, Anda harus mengirimkan upeti kepadaku sebesar %(_amount_)s %(_resource_)s sebelum saya menerima aliansi dengan Anda."
+
+#: simulation/ai/petra/chatHelper.js:85
+#, javascript-format
+msgid ""
+"Unless you send me %(_amount_)s %(_resource_)s, an alliance won’t be formed,"
+" %(_player_)s,"
+msgstr "Kecuali Anda mengirim saya %(_amount_)s %(_resource_)s, maka sebuah aliansi tidak akan terbentuk, %(_player_)s,"
+
+#: simulation/ai/petra/chatHelper.js:88
+#, javascript-format
+msgid ""
+"%(_player_)s, my offer still stands. I will ally with you only if you send "
+"me a tribute of %(_amount_)s %(_resource_)s."
+msgstr "%(_player_)s, permintaan saya masih ada. Saya akan menjadi sekutu Anda jika Anda mengirimkan upeti sebesar %(_amount_)s %(_resource_)s kepadaku."
+
+#: simulation/ai/petra/chatHelper.js:89
+#, javascript-format
+msgid ""
+"I’m still waiting for %(_amount_)s %(_resource_)s before accepting your "
+"alliance, %(_player_)s."
+msgstr "Saya masih menunggu %(_amount_)s %(_resource_)sku sebelum menerima aliansi Anda, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:90 simulation/ai/petra/chatHelper.js:111
+#, javascript-format
+msgid ""
+"%(_player_)s, if you do not send me part of the %(_amount_)s %(_resource_)s "
+"tribute soon, I will break off our negotiations."
+msgstr "%(_player_)s, jika Anda tidak segera mengirimkan upetinya sebanyak %(_amount_)s %(_resource_)s, saya akan membatalkan negosiasi Anda."
+
+#: simulation/ai/petra/chatHelper.js:95
+#, javascript-format
+msgid "I will not become neutral with you, %(_player_)s."
+msgstr "Saya tidak akan menjadi netral dengan Anda, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:96
+#, javascript-format
+msgid "%(_player_)s, I must decline your request for a neutrality pact."
+msgstr "%(_player_)s, saya harus menolak tawaran Anda untuk pakta netralitas."
+
+#: simulation/ai/petra/chatHelper.js:99
+#, javascript-format
+msgid ""
+"Our previous neutrality agreement ended in failure, %(_player_)s; I will not"
+" consider another one."
+msgstr "Pakta netralitas kita sebelumnya berakhir dengan kegagalan, %(_player_)s; saya tidak akan mempertimbangkan satu lagi."
+
+#: simulation/ai/petra/chatHelper.js:102
+#, javascript-format
+msgid ""
+"I welcome your request for peace between our civilizations, %(_player_)s. I "
+"will accept."
+msgstr "Saya menerima tawaran Anda untuk perdamaian di antara peradaban kita, %(_player_)s. Saya akan menerimanya."
+
+#: simulation/ai/petra/chatHelper.js:103
+#, javascript-format
+msgid ""
+"%(_player_)s, I will accept your neutrality request. May both our "
+"civilizations benefit."
+msgstr "%(_player_)s, saya akan menerima tawaran netralitas Anda. Semoga kedua peradaban kita diuntungkan."
+
+#: simulation/ai/petra/chatHelper.js:106
+#, javascript-format
+msgid ""
+"If you send me a tribute of %(_amount_)s %(_resource_)s, I will accept your "
+"neutrality request, %(_player_)s."
+msgstr "Jika Anda mengirimkan saya upeti sebanyak %(_amount_)s %(_resource_)s, saya akan menerima tawara netralitas Anda, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:107
+#, javascript-format
+msgid ""
+"%(_player_)s, if you send me %(_amount_)s %(_resource_)s, I will accept a "
+"neutrality pact."
+msgstr "%(_player_)s, Jika Anda mengirimkan saya %(_amount_)s %(_resource_)s, saya akan menerima sebuah pakta netralitas."
+
+#: simulation/ai/petra/chatHelper.js:110
+#, javascript-format
+msgid ""
+"%(_player_)s, I will not accept your neutrality request unless you tribute "
+"me %(_amount_)s %(_resource_)s soon."
+msgstr "%(_player_)s, saya tidak akan menerima tawaran netralitas kecuali Anda segera mengirimkan saya upeti sebanyak %(_amount_)s %(_resource_)s."
+
+#: simulation/ai/petra/chatHelper.js:119
+#, javascript-format
+msgid ""
+"%(_player_)s, it would help both of our civilizations if we formed an "
+"alliance. If you become allies with me, I will respond in kind."
+msgstr "%(_player_)s, peradaban kita berdua akan terbantu jika kita membentuk sebuah aliansi. Jika Anda menjadi sekutuku, saya akan menerimanya dengan baik."
 
 #: simulation/ai/petra/chatHelper.js:122
 #, javascript-format
-msgid "I have reached the %(phase)s."
-msgstr "Saya telah mencapai %(phase)s."
+msgid "%(_player_)s, my offer for an alliance has expired."
+msgstr "%(_player_)s, tawaran saya untuk membentuk aliansi telah berakhir."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:3
+#: simulation/ai/petra/chatHelper.js:123
+#, javascript-format
 msgid ""
-"Warning: This is an advanced tutorial and goes quite fast. If you don't keep"
-" up just restart and try again. Practise makes perfect!"
-msgstr "Peringatan: Ini adalah tutorial lanjutan dan berlangsung cukup cepat. Jika anda tidak dapat mengikuti cukup mulai ulang dan coba lagi. Alah bisa karena biasa!"
+"%(_player_)s, I have rescinded my previous offer for an alliance between us."
+msgstr "%(_player_)s, saya telah membatalkan tawaran saya sebelumnya untuk membentuk aliansi bersama."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:8
+#: simulation/ai/petra/chatHelper.js:128
+#, javascript-format
 msgid ""
-"Lets get started, first train a batch (shift click) of 5 female citizens "
-"from the CC (Civil Center)."
-msgstr "Mari kita mulai, pertama latih majemuk (shift klik) 5 rakyat wanita dari BK (Balai Kota)."
+"%(_player_)s, I would like to request a neutrality pact between our "
+"civilizations. If you become neutral with me, I will respond in kind."
+msgstr "%(_player_)s, saya ingin menawarkan pakta netralitas di antara peradaban kita. Jika Anda menjadi netral dengan saya, saya akan menerimanya dengan baik."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:13
+#: simulation/ai/petra/chatHelper.js:129
+#, javascript-format
 msgid ""
-"Now, assign your female citizens to gather berries, your cavalryman to hunt "
-"the chickens and the citizen soldiers to gather wood."
-msgstr "Sekarang, tugaskan rakyat wanita anda memetik beri, penunggang kuda anda untuk berburu ayam dan prajurit rakyat mengumpulkan kayu."
+"%(_player_)s, it would be both to our benefit if we negotiated a neutrality "
+"pact. I will become neutral with you if you do the same."
+msgstr "%(_player_)s, kita berdua akan diuntungkan bila membentuk pakta netralitas. Saya akan menjadi netral dengan Anda jika Anda melakukan hal yang sama."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:18
-msgid "Now set the rally point of your civil center on the berries."
-msgstr "Sekarang atur titik kumpul balai kota anda pada beri."
+#: simulation/ai/petra/chatHelper.js:132
+#, javascript-format
+msgid "%(_player_)s, I have decided to revoke my offer for a neutrality pact."
+msgstr "%(_player_)s, saya telah memilih untuk menarik tawaranku untuk pakta netralitas."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:23
+#: simulation/ai/petra/chatHelper.js:133
+#, javascript-format
 msgid ""
-"Queue some slingers to train after the female citizens, you won't have "
-"enough resources for a batch."
-msgstr "Antrikan beberapa pengumban untuk dilatih setelah rakyat wanita, anda tidak akan punya cukup sumberdaya untuk majemuk."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:28
-msgid ""
-"When your female citizens have finished training, use 4 to build a house "
-"nearby."
-msgstr "Ketika rakyat wanita anda selesai dilatih, gunakan 4 untuk membangun rumah di dekatnya."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:33
-msgid ""
-"Set the CC's rally point on the nearby trees, queue more slingers, you want "
-"to train 6 right now."
-msgstr "Atur titik kumpul BK pada pohon terdekat, antrikan pengumban lagi, anda perlu melatih 6 sekarang."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:38
-msgid "Queue a batch of 5 female citizens."
-msgstr "Antrikan sekumpulan 5 rakyat wanita."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:43
-msgid "Use shift-click to queue another house for the 4 builders."
-msgstr "Gunakan shift-klik untuk mengantrikan satu rumah lagi untuk 4 pembangun."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:48
-msgid ""
-"Set the rally point back to the berries once all of the citizen soldiers "
-"have finished training."
-msgstr "Atur titik kumpul kembali ke beri setelah semua prajurit rakyat selesai dilatih."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:53
-msgid ""
-"Send one citizen soldier to gather stone, send 2 others to build a "
-"storehouse near the southern trees."
-msgstr "Kirim satu prajurit rakyat mengumpulkan batu, kirim 2 lainnya untuk membangun gudang dekat pepohonan selatan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:58
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:78
-msgid "Queue another 5 female citizens."
-msgstr "Antrikan 5 rakyat wanita lagi."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:63
-msgid "Use a female citizen to construct a field next to your CC."
-msgstr "Gunakan satu rakyat wanita untuk membangun ladang di sebelah BK."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:68
-msgid ""
-"Your cavalryman has probably run out of chickens by now, there are some "
-"goats to the left of your base."
-msgstr "Penunggang kuda anda mungkin telah kehabisan ayam sekarang, ada beberapa kambing di kiri markas anda."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:73
-msgid "Use 2-3 more female citizens to construct the field."
-msgstr "Gunakan 2-3 lagi rakyat wanita untuk membangun ladang."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:83
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:128
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:138
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:163
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:188
-msgid "Queue another house."
-msgstr "Antrikan satu rumah lagi."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:88
-msgid ""
-"The berry bushes are getting crowded, send some female citizens to work the "
-"field, set the rally point there."
-msgstr "Semak beri menjadi ramai, kirim beberapa rakyat wanita untuk mengerjakan ladang, atur titik kumpul di sana."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:93
-msgid "Queue another 5 female citizens, these should gather stone."
-msgstr "Antrikan 5 rakyat wanita lagi, mereka harus mengumpulkan batu."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:98
-msgid ""
-"Move your woodcutters to the trees near the storehouse so they don’t have to"
-" walk as far."
-msgstr "Pindahkan penebang kayu anda ke pohon di dekat gudang sehingga mereka tidak perlu berjalan jauh"
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:103
-msgid ""
-"Make sure the workers from the berry bushes are used to gather from the "
-"field rather than standing idle when they run out."
-msgstr "Pastikan pekerja dari semak beri digunakan untuk berladang dan tidak diam ketika habis."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:108
-msgid "Queue another house to be built."
-msgstr "Antrikan satu rumah lagi."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:113
-msgid "Queue 5 more female citizens. These will gather wood."
-msgstr "Antrikan 5 rakyat wanita lagi. Mereka akan mengumpulkan kayu."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:118
-msgid ""
-"Build another field, this decreases the amount of walking for your female "
-"citizens."
-msgstr "Bangun satu ladang lagi, ini mengurangi perjalanan rakyat wanita anda."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:123
-msgid ""
-"Train some more slingers, send them to gather stone. Train about 5, you may "
-"not have enough resources for a batch right now."
-msgstr "Latih pengumban lagi, kirim mereka untuk mengumpulkan batu. Latih 5, mungkin anda tidak punya cukup sumberdaya untuk sekumpulan sekarang."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:133
-msgid "Queue another batch of 5 female citizens. These will gather wood."
-msgstr "Latih 5 rakyat wanita untuk mengumpulkan kayu."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:143
-msgid "Queue a batch of spearmen."
-msgstr "Antrikan sekumpulan penombak."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:148
-msgid "Research the stone mining technology from the storehouse."
-msgstr "Teliti teknologi penambangan batu dari gudang."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:153
-msgid "Queue a batch of slingers."
-msgstr "Antrikan sekumpulan pengumban."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:158
-msgid ""
-"Move 3 women from wood and 3 from stone to farming. Women are cheap to train"
-" initially but later in the game it is best to maximize efficiency as you "
-"are able to train more citizen soldiers."
-msgstr "Pindahkan 3 wanita dari kayu dan 3 dari batu untuk berladang. Wanita murah pelatihannya namun nantinya lebih baik memaksimalkan efisiensi karena anda sudah bisa melatih lebih banyak prajurit rakyat."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:168
-msgid ""
-"The slingers that you queued earlier should gather stone once they are "
-"trained."
-msgstr "Pengumban yang diantrikan tadi harus mengumpulkan batu setelah dilatih."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:173
-msgid "Queue a batch of spearmen, they should gather wood."
-msgstr "Antrikan sekumpulan penombak, mereka sebaiknya mengumpulkan kayu."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:178
-msgid "Next queue a batch of slingers."
-msgstr "Berikutnya antrikan sekumpulan pengumban."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:183
-msgid ""
-"Send some of the stone miners to mine metal, getting ready for the next age."
-msgstr "Kirimkan beberapa penambang batu untuk menambang logam, bersiap untuk fase selanjutnya."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:193
-msgid "Start researching Phase 2."
-msgstr "Mulai meneliti Fase 2."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:198
-msgid "Queue some slingers."
-msgstr "Antrikan beberapa pengumban."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:203
-msgid ""
-"When you have advanced, use a single citizen soldier to place a barracks "
-"foundation. Then use the rest of the non food or house building female "
-"citizens to construct it."
-msgstr "Ketika anda telah maju, gunakan seorang prajurit rakyat untuk meletakkan pondasi barak. Lalu gunakan rakyat wanita yang tidak mengumpulkan makanan atau membangun rumah untuk membangunnya."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:208
-msgid "Queue 5 more females for construction work."
-msgstr "Antrikan 5 rakyat wanita lagi untuk pembangunan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:213
-msgid ""
-"Queue a batch of slingers to gather the trees on the north side of your "
-"base."
-msgstr "Antrikan sekumpulan pengumban untuk mengumpulkan pohon di sisi utara markas anda."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:218
-msgid ""
-"This is the end of the walkthrough. This should give you a good idea of how "
-"to build up a nice economy rapidly."
-msgstr "Inilah akhir tutorial. Ini memberikan anda pedoman bagaimana membangun ekonomi bagus secara cepat."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:223
-msgid ""
-"At this point you should be able to fully use both training facilities, keep"
-" putting units into economic work, to keep growing faster and faster."
-msgstr "Pada tahap ini anda sudah bisa menggunakan kedua fasilitas pelatihan secara penuh, terus tugaskan unit pada pekerjaan ekonomis untuk tetap tumbuh lebih cepat."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:228
-msgid ""
-"From this point you have a good base to build an army and wipe out the "
-"opposition."
-msgstr "Dari tahap ini anda sudah punya markas yang bagus untuk membangun pasukan dan membinasakan lawan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:233
-msgid "The key points to remember are:"
-msgstr "Kunci yang harus diingat adalah:"
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:238
-msgid ""
-" - Don't have any idle units. Shift click queuing and rally points are very "
-"useful."
-msgstr "- Jangan ada unit menganggur. Antri shift klik dan titik kumpul sangat berguna."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:243
-msgid ""
-" - Use all of your resources, stockpiled resources are waste, having too "
-"much of a resource is waste."
-msgstr "- Gunakan seluruh sumberdaya anda, sumberdaya tertimbun adalah pemborosan, terlalu banyak sumberdaya adalah pemborosan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:248
-msgid ""
-" - Use the right units for the right task, female citizens gather food, "
-"cavalry hunt, citizen soldiers do the rest."
-msgstr "- Gunakan unit yang tepat untuk tugas yang tepat, rakyat wanita mengumpulkan makanan, kavaleri berburu, prajurit rakyat melakukan sisanya."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:253
-msgid ""
-" - Don't be afraid to swap units from one resource to another, see point 2. "
-"Make sure they deposit what they are carrying first though."
-msgstr "- Jangan takut menukar unit dari satu sumberdaya ke sumberdaya lain, lihat poin 2. Pastikan mereka menyimpan apa yang mereka bawa dahulu."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:258
-msgid ""
-" - Build enough houses, your CC should be kept busy as much as possible."
-msgstr " - Bangan cukup rumah, PP anda harus terus dibuat sibuk."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:263
-msgid ""
-" - Female citizens are cheap, so you can build more of them and gather more "
-"resources."
-msgstr "- Rakyat wanita murah, jadi anda dapat melatih mereka lebih banyak dan mengumpulkan sumberdaya lebih banyak."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:268
-msgid ""
-" - Don't get carried away on the last point or you will get raided and have "
-"no defense."
-msgstr "- Jangan lalai pada masa akhir atau anda akan diserang dan tidak punya pertahanan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:273
-msgid ""
-"Each map is different, so you will need to play slightly differently on "
-"each. This should give an outline for a high resource map."
-msgstr "Setiap peta berbeda, jadi anda harus bermain sedikit berbeda pada tiap peta. Ini adalah contoh peta dengan sumberdaya tinggi."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:4
-msgid ""
-"Welcome to the 0 A.D. tutorial. First left-click on a female citizen, then "
-"Right-click on a berry bush nearby to make the unit collect food. Female "
-"citizens gather food faster than other units."
-msgstr "Selamat datang di tutorial 0 A.D. Pertama klik seorang rakyat wanita, lalu klik kanan pada semak beri di dekatnya untuk menugaskan unit mengumpulkan makanan. Rakyat wanita mengumpulkan makanan lebih cepat dari unit lainnya."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:7
-msgid ""
-"Select the citizen-soldier, right-click on a tree near the Civil Center to "
-"begin collecting wood. Citizen-soldiers gather wood faster than female "
-"citizens."
-msgstr "Seleksi prajurit rakyat, klik kanan pada pohon di dekat Balai Kota untuk mulai mengumpulkan kayu. Prajurit rakyat mengumpulkan kayu lebih cepat dari rakyat wanita."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:11
-msgid ""
-"Select the Civil Center building, and shift-click on the Hoplite icon (2nd "
-"in the row) once to begin training 5 Hoplites."
-msgstr "Pilih bangunan Balai Kota dan shift klik pada ikon Hoplites (ke-2 dari kiri) sekali untuk mulai melatih 5 Hoplites."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:15
-msgid ""
-"Select the two idle female citizens and build a house nearby by selecting "
-"the house icon. Place the house by left-clicking on a piece of land."
-msgstr "Pilih dua rakyat wanita menganggur dan bangun rumah di dekatnya dengan memilih ikon rumah. Letakkan rumah dengan klik kiri di lahan."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:21
-msgid ""
-"Select the newly trained Hoplites and assign them to build a storehouse "
-"beside some nearby trees. They will begin to gather wood when it's "
-"constructed."
-msgstr "Pilih Hoplites yang baru dilatih dan tugaskan mereka untuk membangun gudang di dekat pepohonan terdekat. Mereka akan mulai mengumpulkan kayu setelah selesai dibangun."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:27
-msgid ""
-"Build a set of 5 skirmishers by shift-clicking on the skirmisher icon (3rd "
-"in the row) in the Civil Center."
-msgstr "Latih 5 penskirmis dengan shift klik pada ikon penskirmis (ke-3 dari kiri) di Balai Kota."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:33
-msgid ""
-"Build a farmstead in an open space beside the Civil Center using any idle "
-"builders."
-msgstr "Bangun persawahan di lahan terbuka sebelah Balai Kota menggunakan pembangun yang menganggur."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:39
-msgid ""
-"Once the farmstead is constructed, its builders will automatically begin "
-"gathering food if there is any nearby. Select the builders and instead make "
-"them construct a field beside the farmstead."
-msgstr "Setelah persawahan dibangun, pembangunnya akan otomatis mulai mengumpulkan makanan jika ada di sekitarnya. Pilih pembangun dan suruh mereka membangun ladang di sebelah persawahan."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:45
-msgid ""
-"The field's builders will now automatically begin collecting food from the "
-"field. Using the newly created group of skirmishers, get them to build "
-"another house nearby."
-msgstr "Pembangun ladang akan sekarang otomatis mulai mengumpulkan makanan dari ladang. Gunakan kumpulan penskirmis yang baru dilatih untuk membangun satu rumah lagi di dekatnya."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:51
-msgid ""
-"Train 5 Hoplites from the Civil Center. Select the Civil Center and with it "
-"selected right click on a tree nearby. Units from the Civil Center will now "
-"automatically gather wood."
-msgstr "Latih 5 Hoplites dari Balai Kota. Pilih Balai Kota dan klik kanan pada pohon terdekat. Unit dari Balai Kota akan sekarang otomatis mengumpulkan kayu."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:57
-msgid ""
-"Order the idle Skirmishers to build an outpost to the north east at the edge"
-" of your territory.  This will be the fifth Village Phase structure that you"
-" have built, allowing you to advance to the Town Phase."
-msgstr "Perintahkan Penskirmis menganggur untuk membangun Pos Pengawas di pojok timur laut wilayah anda. Ini akan menjadi bangunan Fase Desa kelima yang anda bangun, sehingga anda dapat maju ke Fase Kota Kecil."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:63
-msgid ""
-"Select the Civil Center again and advance to Town Phase by clicking on the "
-"'II' icon. This will allow Town Phase buildings to be constructed."
-msgstr "Pilih Balai Kota lagi dan maju ke Fase Kota Kecil dengan mengklik ikon 'II.' Ini memperbolehkan bangunan Fase Kota Kecil dibangun."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:69
-msgid ""
-"Start building 5 female citizens in the Civil Center and set its rally point"
-" to the farm (right click on it)."
-msgstr "Mulai melatih 5 rakyat wanita di Balai Kota dan tetapkan titik kumpulnya di ladang (klik kanan di tempat itu)."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:74
-msgid ""
-"Build a Barracks nearby. Whenever your population limit is reached, build an"
-" extra house using any available builder units."
-msgstr "Bangun Barak di dekatnya. Kapanpun batas populasi anda dicapai, bangun rumah tambahan menggunakan unit pembangun yang tersedia."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:80
-msgid ""
-"Prepare for an attack by an enemy player. Build more soldiers using the "
-"Barracks, and get idle soldiers to build a Defense Tower near your Outpost."
-msgstr "Bersiaplah untuk serangan dari pemain musuh. Latih prajurit lagi menggunakan Barak, dan tugaskan prajurit menganggur membangun Menara Pertahanan di dekat Pos Pengawas anda."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:86
-msgid ""
-"Build a Blacksmith and research the Infantry Training technology (sword "
-"icon) to improve infantry hack attack."
-msgstr "Bangun Pandai Besi dan teliti teknologi Latihan Infanteri (ikon pedang) untuk meningkatkan serangan tebas infanteri."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:92
-msgid "The enemy is coming. Build more soldiers to fight off the enemies."
-msgstr "Musuh datang. Latih prajurit lagi untuk melawan musuh."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:99
-msgid ""
-"The enemy's attack has been defeated. Now build a market and temple while "
-"assigning new units to gather any required resources."
-msgstr "Serangan musuh telah dikalahkan. Sekarang bangun pasar dan kuil sambil menyuruh unit baru mengumpulkan sumberdaya yang dibutuhkan."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:104
-msgid ""
-"Now that City Phase requirements have been reached, select your Civil Center"
-" and advance to City Phase."
-msgstr "Setelah syarat Fase Kota Besar terpenuhi, pilih Balai Kota anda dan maju ke Fase Kota Besar."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:110
-msgid ""
-"Now that you are in City Phase, build a fortress nearby and use it to build "
-"2 Battering Rams."
-msgstr "Setelah anda di Fase Kota Besar, bangun benteng di sekitar dan gunakan untuk membangun 2 Pelantak Tubruk."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:115
-msgid ""
-"Stop all your soldiers gathering resources and instead task small groups to "
-"find the enemy Civil Center on the map. Female citizens should continue to "
-"gather resources."
-msgstr "Hentikan semua tentara mendapatkan sumberdaya dan bukan tugas kelompok kecil untuk menemukan kelompok musuh ditengah peta. warga perempuan bisa melanjutkan untuk mendapat sumberdaya"
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:122
-msgid ""
-"The enemy's base has been spotted, send your siege weapons and all remaining"
-" soldiers to destroy it."
-msgstr "markas musuh telah ditemukan. kirim senjata pengenpung dan semua sisa tentara untuk mengancurkan nya."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:126
-msgid "The enemy has been defeated. All tutorial tasks are now completed…"
-msgstr "Seluruh musuh telah dikalahkan. Semua tugas tutorial telah selesai..."
+"%(_player_)s, as you have failed to respond to my request for peace between "
+"us, I have abrogated my offer."
+msgstr "%(_player_)s, karena Anda telah gagal untuk menanggapi tawaran perdamaian di antara kita, saya telah membatalkan tawaranku."
 
 #: simulation/components/BuildRestrictions.js:87
 #, javascript-format
@@ -626,12 +429,12 @@ msgid ""
 "%(validTerritories)s"
 msgstr "%(name)s tak dapat dibangun di wilayah %(territoryType)s. Wilayah sah: %(validTerritories)s"
 
-#: simulation/components/BuildRestrictions.js:253
+#: simulation/components/BuildRestrictions.js:228
 #, javascript-format
 msgid "%(name)s must be built on a valid shoreline"
 msgstr "%(name)s harus dibangun pada garis pantai yang sah"
 
-#: simulation/components/BuildRestrictions.js:277
+#: simulation/components/BuildRestrictions.js:256
 #, javascript-format
 msgid ""
 "%(name)s too close to a %(category)s, must be at least %(distance)s meter "
@@ -641,7 +444,7 @@ msgid_plural ""
 "away"
 msgstr[0] "%(name)s terlalu dekat dengan %(category)s, harus berjarak setidaknya %(distance)s meter"
 
-#: simulation/components/BuildRestrictions.js:299
+#: simulation/components/BuildRestrictions.js:277
 #, javascript-format
 msgid ""
 "%(name)s too far from a %(category)s, must be within %(distance)s meter"
@@ -651,96 +454,86 @@ msgstr[0] "%(name)s terlalu jauh dari %(category)s, harus berada dalam jarak %(d
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:339
+#: simulation/components/BuildRestrictions.js:317
 msgctxt "Territory type list"
 msgid "own"
 msgstr "sendiri"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:341
+#: simulation/components/BuildRestrictions.js:319
 msgctxt "Territory type list"
 msgid "ally"
 msgstr "sekutu"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:343
+#: simulation/components/BuildRestrictions.js:321
 msgctxt "Territory type list"
 msgid "neutral"
 msgstr "netral"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:345
+#: simulation/components/BuildRestrictions.js:323
 msgctxt "Territory type list"
 msgid "enemy"
 msgstr "musuh"
 
-#: simulation/components/CeasefireManager.js:100
+#: simulation/components/CeasefireManager.js:99
 #, javascript-format
 msgid "You can attack in %(time)s"
 msgstr "Anda bisa menyerang dalam %(time)s"
 
-#: simulation/components/CeasefireManager.js:113
+#: simulation/components/CeasefireManager.js:112
 msgid "You can attack now!"
 msgstr "Anda bisa menyerang sekarang!"
 
-#: simulation/components/EndGameManager.js:114
-msgid "Last remaining player wins."
-msgstr ""
+#: simulation/components/EndGameManager.js:171
+#, javascript-format
+msgid "%(lastPlayer)s has won (last player alive)."
+msgid_plural "%(players)s and %(lastPlayer)s have won (last players alive)."
+msgstr[0] ""
 
-#: simulation/components/EntityLimits.js:166
+#: simulation/components/EndGameManager.js:179
+msgid "Last remaining player wins."
+msgstr "Pemain terakhir bertahan menang."
+
+#: simulation/components/EntityLimits.js:165
 #, javascript-format
 msgid "%(category)s build limit of %(limit)s reached"
 msgstr "Batas pembangunan %(category)s sebanyak %(limit)s dicapai"
 
-#: simulation/components/EntityLimits.js:168
+#: simulation/components/EntityLimits.js:167
 #, javascript-format
 msgid "%(category)s training limit of %(limit)s reached"
 msgstr "Batas pelatihan %(category)s sebanyak %(limit)s dicapai"
 
-#: simulation/components/EntityLimits.js:172
+#: simulation/components/EntityLimits.js:171
 #, javascript-format
 msgid "%(category)s limit of %(limit)s reached"
 msgstr "Batas %(category)s sebanyak %(limit)s dicapai"
 
-#: simulation/components/Player.js:48
-msgid "Food"
-msgstr "Makanan"
-
-#: simulation/components/Player.js:49
-msgid "Wood"
-msgstr "Kayu"
-
-#: simulation/components/Player.js:50
-msgid "Metal"
-msgstr "Logam"
-
-#: simulation/components/Player.js:51
-msgid "Stone"
-msgstr "Batu"
-
-#: simulation/components/Player.js:271
+#: simulation/components/Player.js:352
 #, javascript-format
 msgid "Insufficient resources - %(resourceAmount1)s %(resourceType1)s"
 msgstr "Sumberdaya kurang - %(resourceAmount1)s %(resourceType1)s"
 
-#: simulation/components/Player.js:273
+#: simulation/components/Player.js:354
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
 "%(resourceAmount2)s %(resourceType2)s"
 msgstr "Sumberdaya kurang - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s"
 
-#: simulation/components/Player.js:275
+#: simulation/components/Player.js:356
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
 "%(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s"
 msgstr "Sumberdaya kurang - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s"
 
-#: simulation/components/Player.js:277
+#: simulation/components/Player.js:358
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
@@ -748,7 +541,7 @@ msgid ""
 "%(resourceType3)s, %(resourceAmount4)s %(resourceType4)s"
 msgstr "Sumberdaya kurang - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s, %(resourceAmount4)s %(resourceType4)s"
 
-#: simulation/components/ProductionQueue.js:391
+#: simulation/components/ProductionQueue.js:394
 msgid "The production queue is full."
 msgstr "Antrian produksi penuh."
 
@@ -756,42 +549,60 @@ msgstr "Antrian produksi penuh."
 msgid "Can't find free space to spawn trained units"
 msgstr "Tidak dapat menemukan area kosong untuk tempat unit yang dilatih"
 
+#: simulation/helpers/Cheat.js:53
+#, javascript-format
+msgid "%(player)s has been defeated (cheat)."
+msgstr ""
+
 #: simulation/helpers/Cheat.js:62
 msgid "You need to select a building that trains units."
 msgstr "Anda perlu memilih bangunan untuk melatih unit."
 
-#: simulation/helpers/Commands.js:128
+#: simulation/helpers/Commands.js:124
 msgid "(Cheat - control all units)"
 msgstr "(Cheat - kontrol seluruh unit)"
 
-#: simulation/helpers/Commands.js:568
+#: simulation/helpers/Commands.js:139
+msgid "(Cheat - reveal map)"
+msgstr "(Cheat - ungkapkan peta)"
+
+#: simulation/helpers/Commands.js:466
+#, javascript-format
+msgid "%(player)s has resigned."
+msgstr ""
+
+#: simulation/helpers/Commands.js:608
 msgid "(Cheat - promoted units)"
 msgstr "(Cheat - unit yang telah dipromosikan)"
 
-#: simulation/helpers/Commands.js:678
+#: simulation/helpers/Commands.js:722
 msgid ""
 "Cannot upgrade as distance requirements are not verified or terrain is "
 "obstructed."
 msgstr ""
 
-#: simulation/helpers/Commands.js:688
+#: simulation/helpers/Commands.js:732
 msgid "Cannot upgrade a garrisoned entity."
 msgstr ""
 
-#: simulation/helpers/Commands.js:734
+#: simulation/helpers/Commands.js:775
 #, javascript-format
 msgid "Attack against %(_player_)s requested."
 msgstr "Penyerangan melawan %(_player_)s diminta."
 
-#: simulation/helpers/Commands.js:771
+#: simulation/helpers/Commands.js:814
+msgid "There are no bribable units"
+msgstr "Tidak ada unit yang bisa disogok"
+
+#: simulation/helpers/Commands.js:860
 msgid "Unable to ungarrison unit(s)"
 msgstr "Tidak dapat mengeluarkan unit(-unit)"
 
-#: simulation/helpers/Commands.js:785
+#: simulation/helpers/Commands.js:874
 msgid "Some unit(s) can't go back to work"
 msgstr "Beberapa unit tidak bisa kembali bekerja"
 
-#: simulation/helpers/Commands.js:1041
+#: simulation/helpers/Commands.js:1114
 msgid "The building's technology requirements are not met."
 msgstr "Kebutuhan teknologi bangunan ini belum terpenuhi."
 
@@ -875,41 +686,56 @@ msgstr "Percepat (10x)"
 msgid "Fast Forward (20x)"
 msgstr "Percepat (20x)"
 
+#: simulation/data/settings/victory_conditions/capture_the_relic.jsonData.Description
+msgid ""
+"Capture all relics spread across the map and keep them for a certain time to"
+" win the game."
+msgstr "Dapatkan semua relikui yang tersebar di seluruh peta dan simpanlah mereka dalam sebuah jangka waktu untuk memenangkan permainan."
+
+#: simulation/data/settings/victory_conditions/capture_the_relic.jsonData.Title
+msgid "Capture the Relic"
+msgstr ""
+
 #: simulation/data/settings/victory_conditions/conquest.jsonData.Description
-msgid "Defeat all opponents"
-msgstr "Kalahkan seluruh musuh"
+msgid ""
+"Defeat opponents by killing all their units and destroying all their "
+"structures."
+msgstr ""
 
 #: simulation/data/settings/victory_conditions/conquest.jsonData.Title
 msgid "Conquest"
 msgstr "Menguasai"
 
 #: simulation/data/settings/victory_conditions/conquest_structures.jsonData.Description
-msgid "Destroy all structures of enemies"
-msgstr "Hancurkan semua struktur musuh"
+msgid "Defeat opponents by destroying all their structures."
+msgstr ""
 
 #: simulation/data/settings/victory_conditions/conquest_structures.jsonData.Title
 msgid "Conquest Structures"
 msgstr "Menguasai Struktur"
 
 #: simulation/data/settings/victory_conditions/conquest_units.jsonData.Description
-msgid "Kill all enemy units"
-msgstr "Bunuh semua unit musuh"
+msgid "Defeat opponents by killing all their units."
+msgstr ""
 
 #: simulation/data/settings/victory_conditions/conquest_units.jsonData.Title
 msgid "Conquest Units"
 msgstr "Menguasai Unit"
 
 #: simulation/data/settings/victory_conditions/regicide.jsonData.Description
-msgid "Defeat opponents by killing their hero"
-msgstr ""
+msgid "Defeat opponents by killing their hero."
+msgstr "Kalahkan musuh dengan membunuh pahlawannya."
 
 #: simulation/data/settings/victory_conditions/regicide.jsonData.Title
 msgid "Regicide"
-msgstr ""
+msgstr "Bunuh Raja"
 
 #: simulation/data/settings/victory_conditions/wonder.jsonData.Description
-msgid "Build and protect a wonder to win"
-msgstr "Bangun dan lindungi bangunan keajaiban untuk menang"
+msgid ""
+"Be the first to build or capture a Wonder and keep it for a certain time to "
+"win the game. The timer will be reset when the Wonder is destroyed or "
+"captured or in allied victory when the owners alliances change."
+msgstr ""
 
 #: simulation/data/settings/victory_conditions/wonder.jsonData.Title
 msgid "Wonder"
@@ -945,53 +771,104 @@ msgctxt "startingResources"
 msgid "Deathmatch"
 msgstr "Peperangan Habis-habisan"
 
+#: simulation/data/settings/trigger_difficulties.jsonData[0].Tooltip
+msgid "Choose this difficulty if you are discovering 0 A.D."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[0].Title
+msgid "Very Easy"
+msgstr "Sangat Mudah"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[1].Tooltip
+msgid "Choose this difficulty if you do not like being knocked down."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[1].Title
+msgid "Easy"
+msgstr "Mudah"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[2].Tooltip
+msgid ""
+"Choose this difficulty if you have already a good experience with 0 A.D."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[2].Title
+#: simulation/data/settings/map_sizes.jsonData[2].Name
+msgid "Medium"
+msgstr "Sedang"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[3].Tooltip
+msgid "Choose this difficulty if you want to be really challenged."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[3].Title
+msgid "Hard"
+msgstr "Susah"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[4].Tooltip
+msgid "Choose this difficulty if you do not mind being swept out."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[4].Title
+msgid "Very Hard"
+msgstr "Sangat Susah"
+
 #: simulation/data/settings/map_sizes.jsonData[0].Name
-#: simulation/data/settings/map_sizes.jsonData[0].LongName
 msgid "Tiny"
 msgstr "Mungil"
+
+#: simulation/data/settings/map_sizes.jsonData[0].Tooltip
+msgid "This map size has barely any room for even the most basic resources."
+msgstr "Ukuran peta ini hampir tidak punya ruang bahkan untuk kebanyakan sumber daya dasar."
 
 #: simulation/data/settings/map_sizes.jsonData[1].Name
 msgid "Small"
 msgstr "Kecil"
 
-#: simulation/data/settings/map_sizes.jsonData[1].LongName
-msgid "Small (2 players)"
-msgstr "Kecil (2 Pemain)"
+#: simulation/data/settings/map_sizes.jsonData[1].Tooltip
+msgid ""
+"Small maps are suitable for 1v1 matches, as players can reach the enemy "
+"quickly while still having some room to expand."
+msgstr "Peta kecil cocok untuk pertarungan 1v1, karena pemain dapat mencapai musuh dengan cepat sementara masih punya beberapa ruang untuk ekspansi."
 
-#: simulation/data/settings/map_sizes.jsonData[2].Name
-msgid "Medium"
-msgstr "Sedang"
-
-#: simulation/data/settings/map_sizes.jsonData[2].LongName
-msgid "Medium (3 players)"
-msgstr "Sedang (3 pemain)"
+#: simulation/data/settings/map_sizes.jsonData[2].Tooltip
+msgid ""
+"Medium-sized maps provide plenty of space for two players, but even eight "
+"players fit."
+msgstr "Peta berukuran sedang menyediakan ruang yang cukup banyak untuk dua pemain, bahkan delapan pemain juga muat."
 
 #: simulation/data/settings/map_sizes.jsonData[3].Name
 msgid "Normal"
 msgstr "Normal"
 
-#: simulation/data/settings/map_sizes.jsonData[3].LongName
-msgid "Normal (4 players)"
-msgstr "Normal (4 pemain)"
+#: simulation/data/settings/map_sizes.jsonData[3].Tooltip
+msgid ""
+"This is the ideal mapsize for 4 to 8 players, because there is plenty of "
+"space to expand while the neighbors are quickly reachable."
+msgstr "Ini adalah ukuran peta yang ideal untuk 4 sampai 8 pemain, karena masih ada cukup banyak tempat untuk ekspansi sementara tetangga dapat dicapai dengan cepat."
 
 #: simulation/data/settings/map_sizes.jsonData[4].Name
 msgid "Large"
 msgstr "Besar"
 
-#: simulation/data/settings/map_sizes.jsonData[4].LongName
-msgid "Large (6 players)"
-msgstr "Besar(6 Pemain)"
+#: simulation/data/settings/map_sizes.jsonData[4].Tooltip
+msgid ""
+"The large mapsize is recommended when great portions of the map are covered "
+"with water or inaccessible mountains."
+msgstr "Ukuran peta besar disarankan jika sebagian besar peta ditutupi oleh air atau gunung yang tidak bisa dilewati."
 
 #: simulation/data/settings/map_sizes.jsonData[5].Name
 msgid "Very Large"
 msgstr "Sangat Besar"
 
-#: simulation/data/settings/map_sizes.jsonData[5].LongName
-msgid "Very Large (8 players)"
-msgstr "Sangat Besar (8 Pemain)"
+#: simulation/data/settings/map_sizes.jsonData[5].Tooltip
+#: simulation/data/settings/map_sizes.jsonData[6].Tooltip
+msgid ""
+"Very large maps are not recommended as it takes very long to reach the enemy"
+" and the game performance can be reduced."
+msgstr "Peta sangat besar tidak disarankan karena membutuhkan waktu yang sangat lama untuk mencapai musuh dan performa permainan dapat berkurang."
 
 #: simulation/data/settings/map_sizes.jsonData[6].Name
-#: simulation/data/settings/map_sizes.jsonData[6].LongName
 msgid "Giant"
 msgstr "Raksasa"
 
@@ -1003,15 +880,5 @@ msgstr "Petra Bot"
 msgid ""
 "Petra is the default 0 A.D. AI bot. Please report issues to Wildfire Games (see the link in the main menu).\n"
 "\n"
-"The AI has a bonus/penalty on resource stockpiling (either gathering rate or trade gain) varying from 0.5 for Sandbox to 1.6 for Very Hard (Medium = 1.0). In addition, the Sandbox level does not expand nor attack."
-msgstr "Petra adalah musuh komputer standar di 0AD. Tolong melaporkan masalah yang ada ke Wildfire Games (lihat tautan di menu utama).\n\nKomputer ini memiliki bonus dalam pengumpulan sumber daya (baik melalui pengumpulan atau perdagangan) yang bervariasi antara 0.5 untuk sandbox hingga 1.6 untuk sangat susah (sedang = 1.0). Ditambah lagi, di tingkat kesulitan sandbox komputer ini tidak melakukan ekspansi atau penyerangan."
-
-#: simulation/ai/tutorial-ai/data.jsonname
-msgid "Tutorial AI"
-msgstr "Tutorial AI"
-
-#: simulation/ai/tutorial-ai/data.jsondescription
-msgid ""
-"The Tutorial AI should only be used on the \"Introductory Tutorial\" "
-"scenario."
-msgstr "Tutorial AI hanya digunakan pada skenario \"Tutorial Perkenalan\""
+"The AI has a bonus/penalty on resource stockpiling (either gathering rate or trade gain) varying from -60% for Sandbox to +60% for Very Hard (Medium 0%) and the easiest levels have a slower production and building rate. In addition, the Sandbox level does not expand nor attack."
+msgstr ""

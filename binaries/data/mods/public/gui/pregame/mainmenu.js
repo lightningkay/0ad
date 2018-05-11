@@ -1,21 +1,25 @@
-var userReportEnabledText; // contains the original version with "$status" placeholder
 var currentSubmenuType; // contains submenu type
-const MARGIN = 4; // menu border size
-var g_BackgroundCode; // Background type.
-
+var MARGIN = 4; // menu border size
 var g_ShowSplashScreens;
+
+/**
+ * Available backdrops
+ */
 var g_BackgroundLayerData = [];
 
-var g_T0 = +(new Date());
-var g_LastTickTime = new Date();
+/**
+ * Chosen backdrop
+ */
+var g_BackgroundLayerset;
+
+var g_T0 = Date.now();
+var g_LastTickTime = Date.now();
 
 function init(initData, hotloadData)
 {
 	initMusic();
 
 	global.music.setState(global.music.states.MENU);
-
-	userReportEnabledText = Engine.GetGUIObjectByName("userReportEnabledText").caption;
 
 	// Initialize currentSubmenuType with placeholder to avoid null when switching
 	currentSubmenuType = "submenuSinglePlayer";
@@ -26,15 +30,23 @@ function init(initData, hotloadData)
 	g_ShowSplashScreens = hotloadData ? hotloadData.showSplashScreens : initData && initData.isStartup;
 
 	// Pick a random background and initialise it
-	g_BackgroundCode = Math.floor(Math.random() * g_BackgroundLayerData.length);
-	var layerset = g_BackgroundLayerData[g_BackgroundCode];
-	for (var i = 0; i < layerset.length; ++i)
+	g_BackgroundLayerset = pickRandom(g_BackgroundLayerData);
+	for (let i = 0; i < g_BackgroundLayerset.length; ++i)
 	{
-		var guiObj = Engine.GetGUIObjectByName("background["+i+"]");
+		let guiObj = Engine.GetGUIObjectByName("background[" + i + "]");
 		guiObj.hidden = false;
-		guiObj.sprite = layerset[i].sprite;
+		guiObj.sprite = g_BackgroundLayerset[i].sprite;
 		guiObj.z = i;
 	}
+	Engine.GetGUIObjectByName("structreeButton").tooltip = colorizeHotkey(
+		translate("%(hotkey)s: View the structure tree of civilizations featured in 0 A.D."),
+		"structree");
+	Engine.GetGUIObjectByName("civInfoButton").tooltip = colorizeHotkey(
+		translate("%(hotkey)s: Learn about the many civilizations featured in 0 A.D."),
+		"civinfo");
+	Engine.GetGUIObjectByName("lobbyButton").tooltip = colorizeHotkey(
+		translate("%(hotkey)s: Launch the multiplayer lobby to join and host publicly visible games and chat with other players."),
+		"lobby");
 }
 
 function getHotloadData()
@@ -44,22 +56,20 @@ function getHotloadData()
 
 function scrollBackgrounds()
 {
-	var layerset = g_BackgroundLayerData[g_BackgroundCode];
-	for (var i = 0; i < layerset.length; ++i)
+	for (let i = 0; i < g_BackgroundLayerset.length; ++i)
 	{
-		var layer = layerset[i];
-		var guiObj = Engine.GetGUIObjectByName("background["+i+"]");
+		let guiObj = Engine.GetGUIObjectByName("background[" + i + "]");
 
-		var screen = guiObj.parent.getComputedSize();
-		var h = screen.bottom - screen.top;
-		var w = h * 16/9;
-		var iw = h * 2;
+		let screen = guiObj.parent.getComputedSize();
+		let h = screen.bottom - screen.top;
+		let w = h * 16/9;
+		let iw = h * 2;
 
-		var time = (new Date() - g_T0) / 1000;
-		var offset = layer.offset(time, w);
-		if (layer.tiling)
+		let offset = g_BackgroundLayerset[i].offset((Date.now() - g_T0) / 1000, w);
+
+		if (g_BackgroundLayerset[i].tiling)
 		{
-			var left = offset % iw;
+			let left = offset % iw;
 			if (left >= 0)
 				left -= iw;
 			guiObj.size = new GUISize(left, screen.top, screen.right, screen.bottom);
@@ -71,16 +81,15 @@ function scrollBackgrounds()
 
 function submitUserReportMessage()
 {
-	var input = Engine.GetGUIObjectByName("userReportMessageInput");
-	var msg = input.caption;
-	if (msg.length)
-		Engine.SubmitUserReport("message", 1, msg);
+	let input = Engine.GetGUIObjectByName("userReportMessageInput");
+	if (input.caption.length)
+		Engine.SubmitUserReport("message", 1, input.caption);
 	input.caption = "";
 }
 
 function formatUserReportStatus(status)
 {
-	var d = status.split(/:/, 3);
+	let d = status.split(/:/, 3);
 
 	if (d[0] == "disabled")
 		return translate("disabled");
@@ -93,11 +102,10 @@ function formatUserReportStatus(status)
 
 	if (d[0] == "completed")
 	{
-		var httpCode = d[1];
+		let httpCode = d[1];
 		if (httpCode == 200)
 			return translate("upload succeeded");
-		else
-			return sprintf(translate("upload failed (%(errorCode)s)"), { "errorCode": httpCode });
+		return sprintf(translate("upload failed (%(errorCode)s)"), { "errorCode": httpCode });
 	}
 
 	if (d[0] == "failed")
@@ -108,8 +116,8 @@ function formatUserReportStatus(status)
 
 function onTick()
 {
-	var now = new Date();
-	var tickLength = new Date() - g_LastTickTime;
+	let now = Date.now();
+	let tickLength = Date.now() - g_LastTickTime;
 	g_LastTickTime = now;
 
 	scrollBackgrounds();
@@ -117,20 +125,21 @@ function onTick()
 	updateMenuPosition(tickLength);
 
 	if (Engine.IsUserReportEnabled())
-	{
 		Engine.GetGUIObjectByName("userReportEnabledText").caption =
-			userReportEnabledText.replace(/\$status/,
-				formatUserReportStatus(Engine.GetUserReportStatus()));
-	}
+			'[font="sans-bold-16"]' + translate("Thank you for helping improve 0 A.D.!") + "[/font]\n\n" +
+			translate("Anonymous feedback is currently enabled.") + "\n" +
+			sprintf(translate("Status: %(status)s."), {
+				"status": formatUserReportStatus(Engine.GetUserReportStatus())
+			});
 
 	// Show splash screens here, so we don't interfere with main menu hotloading
 	if (g_ShowSplashScreens)
 	{
 		g_ShowSplashScreens = false;
 
-		if (Engine.ConfigDB_GetValue("user", "splashscreendisable") !== "true" &&
-		    Engine.ConfigDB_GetValue("user", "splashscreenversion") < Engine.GetFileMTime("gui/splashscreen/splashscreen.txt"))
-			Engine.PushGuiPage("page_splashscreen.xml", { "page": "splashscreen", callback : "SplashScreenClosedCallback" } );
+		if (Engine.ConfigDB_GetValue("user", "gui.splashscreen.enable") === "true" ||
+		    Engine.ConfigDB_GetValue("user", "gui.splashscreen.version") < Engine.GetFileMTime("gui/splashscreen/splashscreen.txt"))
+			Engine.PushGuiPage("page_splashscreen.xml", { "page": "splashscreen", "callback": "SplashScreenClosedCallback" });
 		else
 			ShowRenderPathMessage();
 	}
@@ -143,9 +152,8 @@ function ShowRenderPathMessage()
 		messageBox(
 			600, 300,
 			"[font=\"sans-bold-16\"]" +
-			sprintf(translate("%(startWarning)sWarning:%(endWarning)s You appear to be using non-shader (fixed function) graphics. This option will be removed in a future 0 A.D. release, to allow for more advanced graphics features. We advise upgrading your graphics card to a more recent, shader-compatible model."), {
-				"startWarning": "[color=\"200 20 20\"]",
-				"endWarning": "[/color]"
+			sprintf(translate("%(warning)s You appear to be using non-shader (fixed function) graphics. This option will be removed in a future 0 A.D. release, to allow for more advanced graphics features. We advise upgrading your graphics card to a more recent, shader-compatible model."), {
+				"warning": coloredText("Warning:", "200 20 20")
 			}) +
 			"\n\n" +
 			// Translation: This is the second paragraph of a warning. The
@@ -176,18 +184,18 @@ function EnableUserReport(Enabled)
  */
 function updateMenuPosition(dt)
 {
-	var submenu = Engine.GetGUIObjectByName("submenu");
+	let submenu = Engine.GetGUIObjectByName("submenu");
 
 	if (submenu.hidden == false)
 	{
 		// Number of pixels per millisecond to move
-		const SPEED = 1.2;
+		let SPEED = 1.2;
 
-		var maxOffset = Engine.GetGUIObjectByName("mainMenu").size.right - submenu.size.left;
+		let maxOffset = Engine.GetGUIObjectByName("mainMenu").size.right - submenu.size.left;
 		if (maxOffset > 0)
 		{
-			var offset = Math.min(SPEED * dt, maxOffset);
-			var size = submenu.size;
+			let offset = Math.min(SPEED * dt, maxOffset);
+			let size = submenu.size;
 			size.left += offset;
 			size.right += offset;
 			submenu.size = size;
@@ -203,22 +211,22 @@ function openMenu(newSubmenu, position, buttonHeight, numButtons)
 	currentSubmenuType = newSubmenu;
 	Engine.GetGUIObjectByName(currentSubmenuType).hidden = false;
 
-	var submenu = Engine.GetGUIObjectByName("submenu");
-	var top = position - MARGIN;
-	var bottom = position + ((buttonHeight + MARGIN) * numButtons);
-	submenu.size = submenu.size.left + " " + top + " " + submenu.size.right + " " + bottom;
+	let submenu = Engine.GetGUIObjectByName("submenu");
+	let top = position - MARGIN;
+	let bottom = position + ((buttonHeight + MARGIN) * numButtons);
+	submenu.size = new GUISize(submenu.size.left, top, submenu.size.right, bottom);
 
 	// Blend in right border of main menu into the left border of the submenu
 	blendSubmenuIntoMain(top, bottom);
 
-	Engine.GetGUIObjectByName("submenu").hidden = false;
+	submenu.hidden = false;
 }
 
 function closeMenu()
 {
 	Engine.GetGUIObjectByName(currentSubmenuType).hidden = true;
 
-	var submenu = Engine.GetGUIObjectByName("submenu");
+	let submenu = Engine.GetGUIObjectByName("submenu");
 	submenu.hidden = true;
 	submenu.size = Engine.GetGUIObjectByName("mainMenu").size;
 
@@ -230,11 +238,8 @@ function closeMenu()
  */
 function blendSubmenuIntoMain(topPosition, bottomPosition)
 {
-	var topSprite = Engine.GetGUIObjectByName("MainMenuPanelRightBorderTop");
-	topSprite.size = "100%-2 0 100% " + (topPosition + MARGIN);
-
-	var bottomSprite = Engine.GetGUIObjectByName("MainMenuPanelRightBorderBottom");
-	bottomSprite.size = "100%-2 " + (bottomPosition) + " 100% 100%";
+	Engine.GetGUIObjectByName("MainMenuPanelRightBorderTop").size = "100%-2 0 100% " + (topPosition + MARGIN);
+	Engine.GetGUIObjectByName("MainMenuPanelRightBorderBottom").size = "100%-2 " + (bottomPosition) + " 100% 100%";
 }
 
 function getBuildString()
@@ -263,7 +268,13 @@ function pressedScenarioEditorButton()
 	closeMenu();
 
 	if (Engine.AtlasIsAvailable())
-		Engine.RestartInAtlas();
+		messageBox(
+			400, 200,
+			translate("Are you sure you want to quit 0 A.D. and open the Scenario Editor?"),
+			translate("Confirmation"),
+			[translate("No"), translate("Yes")],
+			[null, Engine.RestartInAtlas]
+		);
 	else
 		messageBox(
 			400, 200,
@@ -274,7 +285,7 @@ function pressedScenarioEditorButton()
 
 function getLobbyDisabledByBuild()
 {
-	return translate("Launch the multiplayer lobby. \\[DISABLED BY BUILD]");
+	return translate("Launch the multiplayer lobby to join and host publicly visible games and chat with other players. \\[DISABLED BY BUILD]");
 }
 
 function getTechnicalDetails()

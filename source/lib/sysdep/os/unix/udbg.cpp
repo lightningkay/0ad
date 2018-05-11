@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Wildfire Games
+/* Copyright (C) 2010 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -68,7 +68,7 @@ void udbg_launch_debugger()
 		// Child Process: exec() gdb (Debugger), set to attach to old fork
 		char buf[16];
 		snprintf(buf, 16, DEBUGGER_ARG_FORMAT, orgpid);
-		
+
 		int ret=execlp(DEBUGGER_CMD, DEBUGGER_CMD, buf, NULL);
 		// In case of success, we should never get here anyway, though...
 		if (ret != 0)

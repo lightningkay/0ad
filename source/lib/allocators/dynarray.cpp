@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Wildfire Games
+/* Copyright (C) 2018 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -45,7 +45,7 @@ static Status validate_da(DynArray* da)
 //		WARN_RETURN(ERR::_1);
 	// note: don't check if base is page-aligned -
 	// might not be true for 'wrapped' mem regions.
-	if(!IsAligned(max_size_pa, pageSize))
+	if(!IsAligned(max_size_pa, g_PageSize))
 		WARN_RETURN(ERR::_3);
 	if(cur_size > max_size_pa)
 		WARN_RETURN(ERR::_4);
@@ -61,7 +61,7 @@ static Status validate_da(DynArray* da)
 Status da_alloc(DynArray* da, size_t max_size)
 {
 	ENSURE(max_size != 0);
-	const size_t max_size_pa = Align<pageSize>(max_size);
+	const size_t max_size_pa = Align<g_PageSize>(max_size);
 
 	u8* p = (u8*)vm::ReserveAddressSpace(max_size_pa);
 	if(!p)
@@ -95,8 +95,8 @@ Status da_set_size(DynArray* da, size_t new_size)
 	CHECK_DA(da);
 
 	// determine how much to add/remove
-	const size_t cur_size_pa = Align<pageSize>(da->cur_size);
-	const size_t new_size_pa = Align<pageSize>(new_size);
+	const size_t cur_size_pa = Align<g_PageSize>(da->cur_size);
+	const size_t new_size_pa = Align<g_PageSize>(new_size);
 	const ssize_t size_delta_pa = (ssize_t)new_size_pa - (ssize_t)cur_size_pa;
 
 	// not enough memory to satisfy this expand request: abort.

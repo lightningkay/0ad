@@ -7,18 +7,21 @@
       <Crush>100.0</Crush>
       <MaxRange>72.0</MaxRange>
       <MinRange>10.0</MinRange>
-      <ProjectileSpeed>28.0</ProjectileSpeed>
+      <ProjectileSpeed>37.5</ProjectileSpeed>
+      <Gravity>9.81</Gravity>
       <PrepareTime>2000</PrepareTime>
       <RepeatTime>5000</RepeatTime>
-      <Spread>6.0</Spread>
+      <Spread>4.0</Spread>
+      <Delay>0</Delay>
       <Splash>
         <Shape>Circular</Shape>
         <Range>10</Range>
-        <FriendlyFire>true</FriendlyFire>
+        <FriendlyFire>false</FriendlyFire>
         <Hack>0.0</Hack>
         <Pierce>15.0</Pierce>
         <Crush>35.0</Crush>
       </Splash>
+      <PreferredClasses datatype="tokens">Ship Structure</PreferredClasses>
     </Ranged>
   </Attack>
   <BuildingAI>
@@ -43,9 +46,9 @@
   <GarrisonHolder>
     <Max>50</Max>
     <EjectHealth>0</EjectHealth>
-    <EjectClassesOnDestroy datatype="tokens">Female Infantry Dog</EjectClassesOnDestroy>
+    <EjectClassesOnDestroy datatype="tokens">FemaleCitizen Infantry Healer Dog</EjectClassesOnDestroy>
     <List datatype="tokens">Support Infantry Cavalry Dog Siege Elephant</List>
-    <BuffHeal>1</BuffHeal>
+    <BuffHeal>0</BuffHeal>
     <LoadingRange>10</LoadingRange>
     <Pickup>true</Pickup>
   </GarrisonHolder>
@@ -58,10 +61,15 @@
     <VisibleClasses datatype="tokens">Ranged Warship</VisibleClasses>
     <RequiredTechnology>phase_city</RequiredTechnology>
   </Identity>
+  <Loot>
+    <xp>150</xp>
+    <wood>40</wood>
+    <metal>30</metal>
+  </Loot>
   <ResourceGatherer disable=""/>
   <Sound>
     <SoundGroups>
-      <attack>attack/siege/ballist_attack.xml</attack>
+      <attack_ranged>attack/siege/ballist_attack.xml</attack_ranged>
     </SoundGroups>
   </Sound>
   <StatusBars>
@@ -70,9 +78,9 @@
     <HeightOffset>6.0</HeightOffset>
   </StatusBars>
   <UnitMotion>
-    <WalkSpeed>16</WalkSpeed>
+    <WalkSpeed op="mul">1.8</WalkSpeed>
     <Run>
-      <Speed>20</Speed>
+      <Speed op="mul">1.8</Speed>
     </Run>
   </UnitMotion>
   <Vision>

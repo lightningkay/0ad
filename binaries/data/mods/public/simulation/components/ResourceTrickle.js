@@ -1,30 +1,9 @@
 function ResourceTrickle() {}
 
-ResourceTrickle.prototype.Schema = 
+ResourceTrickle.prototype.Schema =
 	"<a:help>Controls the resource trickle ability of the unit.</a:help>" +
 	"<element name='Rates' a:help='Trickle Rates'>" +
-		"<interleave>" +
-			"<optional>" +
-				"<element name='food' a:help='Food given to the player every interval'>" +
-					"<ref name='nonNegativeDecimal'/>" +
-				"</element>" +
-			"</optional>" +
-			"<optional>" +
-				"<element name='wood' a:help='Wood given to the player every interval'>" +
-					"<ref name='nonNegativeDecimal'/>" +
-				"</element>" +
-			"</optional>" +
-			"<optional>" +
-				"<element name='stone' a:help='Stone given to the player every interval'>" +
-					"<ref name='nonNegativeDecimal'/>" +
-				"</element>" +
-			"</optional>" +
-			"<optional>" +
-				"<element name='metal' a:help='Metal given to the player every interval'>" +
-					"<ref name='nonNegativeDecimal'/>" +
-				"</element>" +
-			"</optional>" +
-		"</interleave>" +
+		Resources.BuildSchema("nonNegativeDecimal") +
 	"</element>" +
 	"<element name='Interval' a:help='Number of miliseconds must pass for the player to gain the next trickle.'>" +
 		"<ref name='nonNegativeDecimal'/>" +
@@ -32,36 +11,45 @@ ResourceTrickle.prototype.Schema =
 
 ResourceTrickle.prototype.Init = function()
 {
-	// Call the timer
-	var cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
+	this.ComputeRates();
+
+	let cmpTimer = Engine.QueryInterface(SYSTEM_ENTITY, IID_Timer);
  	cmpTimer.SetInterval(this.entity, IID_ResourceTrickle, "Trickle", this.GetTimer(), this.GetTimer(), undefined);
 };
 
 ResourceTrickle.prototype.GetTimer = function()
 {
-	var interval = +this.template.Interval;
-	return interval;
+	return +this.template.Interval;
 };
 
 ResourceTrickle.prototype.GetRates = function()
 {
-	var rates = {};
-	for (var resource in this.template.Rates)
-		rates[resource] = ApplyValueModificationsToEntity("ResourceTrickle/Rates/"+resource, +this.template.Rates[resource], this.entity);
-
-	return rates;
+	return this.rates;
 };
 
-// Do the actual work here
+ResourceTrickle.prototype.ComputeRates = function()
+{
+	this.rates = {};
+	for (let resource in this.template.Rates)
+		this.rates[resource] = ApplyValueModificationsToEntity("ResourceTrickle/Rates/"+resource, +this.template.Rates[resource], this.entity);
+};
+
 ResourceTrickle.prototype.Trickle = function(data, lateness)
 {
-	var cmpPlayer = QueryOwnerInterface(this.entity);
+	// The player entity may also have a ResourceTrickle component
+	let cmpPlayer = QueryOwnerInterface(this.entity) || Engine.QueryInterface(this.entity, IID_Player);
 	if (!cmpPlayer)
 		return;
 
-	var rates = this.GetRates();
-	for (var resource in rates)
-		cmpPlayer.AddResource(resource, rates[resource]);
+	cmpPlayer.AddResources(this.rates);
+};
+
+ResourceTrickle.prototype.OnValueModification = function(msg)
+{
+	if (msg.component != "ResourceTrickle")
+		return;
+
+	this.ComputeRates();
 };
 
 Engine.RegisterComponentType(IID_ResourceTrickle, "ResourceTrickle", ResourceTrickle);

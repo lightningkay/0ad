@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Wildfire Games
+/* Copyright (C) 2017 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -705,7 +705,7 @@ size_t Tex::img_size() const
 size_t tex_hdr_size(const VfsPath& filename)
 {
 	const ITexCodec* c;
-	
+
 	const OsPath extension = filename.Extension();
 	WARN_RETURN_STATUS_IF_ERR(tex_codec_for_filename(extension, &c));
 	return c->hdr_size(0);
@@ -733,7 +733,7 @@ Status Tex::decode(const shared_ptr<u8>& Data, size_t DataSize)
 	m_DataSize = DataSize;
 	m_Ofs = hdr_size;
 
-	RETURN_STATUS_IF_ERR(c->decode((rpU8)Data.get(), DataSize, this));
+	RETURN_STATUS_IF_ERR(c->decode(Data.get(), DataSize, this));
 
 	// sanity checks
 	if(!m_Width || !m_Height || m_Bpp > 32)

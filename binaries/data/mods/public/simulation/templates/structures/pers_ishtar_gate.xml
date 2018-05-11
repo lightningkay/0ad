@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_structure_special">
-  <Auras datatype="tokens">loyalty_regen</Auras>
+  <Auras datatype="tokens">
+    structures/loyalty_regen
+  </Auras>
   <BuildRestrictions>
     <Category>UniqueBuilding</Category>
   </BuildRestrictions>
@@ -17,6 +19,9 @@
     <Square width="40.0" depth="17.0"/>
     <Height>8.0</Height>
   </Footprint>
+  <GarrisonHolder>
+    <Max>10</Max>
+  </GarrisonHolder>
   <Health>
     <Max>2000</Max>
   </Health>
@@ -25,8 +30,13 @@
     <GenericName>Persian Special Building</GenericName>
     <SpecificName>Ishtar Gate of Babylon</SpecificName>
     <Tooltip>Increases the loyalty regeneration of nearby structures, making them harder to capture.</Tooltip>
-    <Icon>structures/gate.png</Icon>
+    <Icon>structures/pers_gate.png</Icon>
   </Identity>
+  <Loot>
+    <wood>0</wood>
+    <stone>50</stone>
+    <metal>125</metal>
+  </Loot>
   <Obstruction>
     <Static disable=""/>
     <Obstructions>
@@ -41,6 +51,6 @@
   </TerritoryInfluence>
   <VisualActor>
     <Actor>special/pers_ishtar_gate.xml</Actor>
-    <FoundationActor>structures/fndn_wall.xml</FoundationActor>
+    <FoundationActor>structures/fndn_wall_long.xml</FoundationActor>
   </VisualActor>
 </Entity>

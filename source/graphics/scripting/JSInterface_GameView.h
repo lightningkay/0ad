@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -15,12 +15,13 @@
  * along with 0 A.D.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef INCLUDED_JSINTERFACE_GAMEVIEW
 #define INCLUDED_JSINTERFACE_GAMEVIEW
 
-#include "ps/CStr.h"
+#include "maths/FixedVector3D.h"
 #include "scriptinterface/ScriptInterface.h"
+#include "simulation2/helpers/Position.h"
+#include "simulation2/system/Entity.h"
 
 #define DECLARE_BOOLEAN_SCRIPT_SETTING(NAME) \
 	bool Get##NAME##Enabled(ScriptInterface::CxPrivate* pCxPrivate); \
@@ -28,14 +29,24 @@
 
 namespace JSI_GameView
 {
-	void RegisterScriptFunctions(ScriptInterface& ScriptInterface);
-	
+	void RegisterScriptFunctions(const ScriptInterface& ScriptInterface);
+	void RegisterScriptFunctions_Settings(const ScriptInterface& scriptInterface);
+
 	DECLARE_BOOLEAN_SCRIPT_SETTING(Culling);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(LockCullCamera);
 	DECLARE_BOOLEAN_SCRIPT_SETTING(ConstrainCamera);
+
+	float CameraGetX(ScriptInterface::CxPrivate* pCxPrivate);
+	float CameraGetZ(ScriptInterface::CxPrivate* pCxPrivate);
+	void CameraMoveTo(ScriptInterface::CxPrivate* pCxPrivate, entity_pos_t x, entity_pos_t z);
+	void SetCameraTarget(ScriptInterface::CxPrivate* pCxPrivate, float x, float y, float z);
+	void SetCameraData(ScriptInterface::CxPrivate* pCxPrivate, entity_pos_t x, entity_pos_t y, entity_pos_t z, entity_pos_t rotx, entity_pos_t roty, entity_pos_t zoom);
+	void CameraFollow(ScriptInterface::CxPrivate* pCxPrivate, entity_id_t entityid);
+	void CameraFollowFPS(ScriptInterface::CxPrivate* pCxPrivate, entity_id_t entityid);
+	entity_id_t GetFollowedEntity(ScriptInterface::CxPrivate* pCxPrivate);
+	CFixedVector3D GetTerrainAtScreenPoint(ScriptInterface::CxPrivate* pCxPrivate, int x, int y);
 }
 
 #undef DECLARE_BOOLEAN_SCRIPT_SETTING
 
-#endif
-
+#endif // INCLUDED_JSINTERFACE_GAMEVIEW

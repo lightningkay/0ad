@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -56,9 +56,11 @@ MESSAGE(PathResult)
 MESSAGE(ValueModification)
 MESSAGE(TemplateModification)
 MESSAGE(VisionRangeChanged)
+MESSAGE(VisionSharingChanged)
 MESSAGE(MinimapPing)
 MESSAGE(CinemaPathEnded)
 MESSAGE(CinemaQueueEnded)
+MESSAGE(PlayerColorChanged)
 
 // TemplateManager must come before all other (non-test) components,
 // so that it is the first to be (de)serialized
@@ -91,7 +93,7 @@ COMPONENT(FoggingScripted)
 
 // Note: The VisualActor component relies on this component being initialized before itself, in order to support using
 // an entity's footprint shape for the selection boxes. This dependency is not strictly necessary, but it does avoid
-// some extra plumbing code to set up on-demand initialization. If you find yourself forced to break this dependency, 
+// some extra plumbing code to set up on-demand initialization. If you find yourself forced to break this dependency,
 // see VisualActor's Init method for a description of how you can avoid it.
 INTERFACE(Footprint)
 COMPONENT(Footprint)
@@ -142,11 +144,17 @@ COMPONENT(Position) // must be before VisualActor
 INTERFACE(ProjectileManager)
 COMPONENT(ProjectileManager)
 
+INTERFACE(RallyPoint)
+COMPONENT(RallyPointScripted)
+
 INTERFACE(RallyPointRenderer)
 COMPONENT(RallyPointRenderer)
 
 INTERFACE(RangeManager)
 COMPONENT(RangeManager)
+
+INTERFACE(RangeOverlayRenderer)
+COMPONENT(RangeOverlayRenderer)
 
 INTERFACE(Selectable)
 COMPONENT(Selectable)
@@ -154,17 +162,20 @@ COMPONENT(Selectable)
 INTERFACE(Settlement)
 COMPONENT(SettlementScripted)
 
+INTERFACE(Sound)
+COMPONENT(SoundScripted)
+
 INTERFACE(SoundManager)
 COMPONENT(SoundManager)
 
 INTERFACE(ValueModificationManager)
 COMPONENT(ValueModificationManagerScripted)
 
-INTERFACE(DataTemplateManager)
-COMPONENT(DataTemplateManagerScripted)
-
 INTERFACE(Terrain)
 COMPONENT(Terrain)
+
+INTERFACE(TerritoryDecayManager)
+COMPONENT(TerritoryDecayManagerScripted)
 
 INTERFACE(TerritoryInfluence)
 COMPONENT(TerritoryInfluence)

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -31,13 +31,15 @@ CDropDown::CDropDown()
 	AddSetting(GUIST_float,					"button_width");
 	AddSetting(GUIST_float,					"dropdown_size");
 	AddSetting(GUIST_float,					"dropdown_buffer");
+	AddSetting(GUIST_uint,					"minimum_visible_items");
 //	AddSetting(GUIST_CStrW,					"font");
 	AddSetting(GUIST_CStrW,					"sound_closed");
 	AddSetting(GUIST_CStrW,					"sound_disabled");
 	AddSetting(GUIST_CStrW,					"sound_enter");
 	AddSetting(GUIST_CStrW,					"sound_leave");
 	AddSetting(GUIST_CStrW,					"sound_opened");
-//	AddSetting(GUIST_CGUISpriteInstance,	"sprite");				// Background that sits around the size
+	AddSetting(GUIST_CGUISpriteInstance,	"sprite");				// Background that sits around the size
+	AddSetting(GUIST_CGUISpriteInstance,	"sprite_disabled");
 	AddSetting(GUIST_CGUISpriteInstance,	"sprite_list");			// Background of the drop down list
 	AddSetting(GUIST_CGUISpriteInstance,	"sprite2");				// Button that sits to the right
 	AddSetting(GUIST_CGUISpriteInstance,	"sprite2_over");
@@ -48,7 +50,8 @@ CDropDown::CDropDown()
 	// Add these in CList! And implement TODO
 	//AddSetting(GUIST_CColor,				"textcolor_over");
 	//AddSetting(GUIST_CColor,				"textcolor_pressed");
-	//AddSetting(GUIST_CColor,				"textcolor_disabled");
+	AddSetting(GUIST_CColor,				"textcolor_selected");
+	AddSetting(GUIST_CColor,				"textcolor_disabled");
 
 	// Scrollbar is forced to be true.
 	GUI<bool>::SetSetting(this, "scrollbar", true);
@@ -61,8 +64,13 @@ CDropDown::~CDropDown()
 void CDropDown::SetupText()
 {
 	SetupListRect();
-
 	CList::SetupText();
+}
+
+void CDropDown::UpdateCachedSize()
+{
+	CList::UpdateCachedSize();
+	SetupText();
 }
 
 void CDropDown::HandleMessage(SGUIMessage& Message)
@@ -78,6 +86,7 @@ void CDropDown::HandleMessage(SGUIMessage& Message)
 			Message.value == "absolute" ||
 			Message.value == "dropdown_size" ||
 			Message.value == "dropdown_buffer" ||
+			Message.value == "minimum_visible_items" ||
 			Message.value == "scrollbar_style" ||
 			Message.value == "button_width")
 		{
@@ -345,7 +354,7 @@ InReaction CDropDown::ManuallyHandleEvent(const SDL_Event_* ev)
 					int diff = 0;
 					for (size_t j = 0; j < m_InputBuffer.length(); ++j)
 					{
-						diff = abs(pList->m_Items[i].GetOriginalString().LowerCase()[j] - (int)m_InputBuffer[j]);
+						diff = std::abs((int)(pList->m_Items[i].GetRawString().LowerCase()[j]) - (int)m_InputBuffer[j]);
 						if (diff == 0)
 							indexOfDifference = j+1;
 						else
@@ -382,25 +391,63 @@ InReaction CDropDown::ManuallyHandleEvent(const SDL_Event_* ev)
 
 void CDropDown::SetupListRect()
 {
-	float size, buffer, button_width;
+	extern int g_yres;
+	extern float g_GuiScale;
+	float size, buffer, yres;
+	yres = g_yres / g_GuiScale;
+	u32 minimumVisibleItems;
 	GUI<float>::GetSetting(this, "dropdown_size", size);
 	GUI<float>::GetSetting(this, "dropdown_buffer", buffer);
-	GUI<float>::GetSetting(this, "button_width", button_width);
+	GUI<u32>::GetSetting(this, "minimum_visible_items", minimumVisibleItems);
 
-	if (m_ItemsYPositions.empty() || m_ItemsYPositions.back() >= size)
+	if (m_ItemsYPositions.empty())
 	{
-		m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom+buffer,
-								m_CachedActualSize.right, m_CachedActualSize.bottom+buffer + size);
+		m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom + buffer,
+		                         m_CachedActualSize.right, m_CachedActualSize.bottom + buffer + size);
+		m_HideScrollBar = false;
+	}
+	// Too many items so use a scrollbar
+	else if (m_ItemsYPositions.back() > size)
+	{
+		// Place items below if at least some items can be placed below
+		if (m_CachedActualSize.bottom + buffer + size <= yres)
+			m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom + buffer,
+			                         m_CachedActualSize.right, m_CachedActualSize.bottom + buffer + size);
+		else if ((m_ItemsYPositions.size() > minimumVisibleItems && yres - m_CachedActualSize.bottom - buffer >= m_ItemsYPositions[minimumVisibleItems]) ||
+		         m_CachedActualSize.top < yres - m_CachedActualSize.bottom)
+			m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom + buffer,
+			                         m_CachedActualSize.right, yres);
+		// Not enough space below, thus place items above
+		else
+			m_CachedListRect = CRect(m_CachedActualSize.left, std::max(0.f, m_CachedActualSize.top - buffer - size),
+			                         m_CachedActualSize.right, m_CachedActualSize.top - buffer);
 
 		m_HideScrollBar = false;
 	}
 	else
 	{
-		m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom+buffer,
-								 m_CachedActualSize.right - GetScrollBar(0).GetStyle()->m_Width, m_CachedActualSize.bottom+buffer + m_ItemsYPositions.back());
-
-		// We also need to hide the scrollbar
-		m_HideScrollBar = true;
+		// Enough space below, no scrollbar needed
+		if (m_CachedActualSize.bottom + buffer + m_ItemsYPositions.back() <= yres)
+		{
+			m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom + buffer,
+			                         m_CachedActualSize.right, m_CachedActualSize.bottom + buffer + m_ItemsYPositions.back());
+			m_HideScrollBar = true;
+		}
+		// Enough space below for some items, but not all, so place items below and use a scrollbar
+		else if ((m_ItemsYPositions.size() > minimumVisibleItems && yres - m_CachedActualSize.bottom - buffer >= m_ItemsYPositions[minimumVisibleItems]) ||
+		         m_CachedActualSize.top < yres - m_CachedActualSize.bottom)
+		{
+			m_CachedListRect = CRect(m_CachedActualSize.left, m_CachedActualSize.bottom + buffer,
+			                         m_CachedActualSize.right, yres);
+			m_HideScrollBar = false;
+		}
+		// Not enough space below, thus place items above. Hide the scrollbar accordingly
+		else
+		{
+			m_CachedListRect = CRect(m_CachedActualSize.left, std::max(0.f, m_CachedActualSize.top - buffer - m_ItemsYPositions.back()),
+			                         m_CachedActualSize.right, m_CachedActualSize.top - buffer);
+			m_HideScrollBar = m_CachedActualSize.top > m_ItemsYPositions.back() + buffer;
+		}
 	}
 }
 
@@ -416,9 +463,8 @@ bool CDropDown::MouseOver()
 
 	if (m_Open)
 	{
-		CRect rect(m_CachedActualSize.left, m_CachedActualSize.top,
-				   m_CachedActualSize.right, GetListRect().bottom);
-
+		CRect rect(m_CachedActualSize.left, std::min(m_CachedActualSize.top, GetListRect().top),
+		           m_CachedActualSize.right, std::max(m_CachedActualSize.bottom, GetListRect().bottom));
 		return rect.PointInside(GetMousePos());
 	}
 	else
@@ -442,16 +488,15 @@ void CDropDown::Draw()
 	int cell_id, selected = 0;
 	CColor color;
 
-	GUI<CGUISpriteInstance>::GetSettingPointer(this, "sprite", sprite);
-	GUI<CGUISpriteInstance>::GetSettingPointer(this, "sprite2", sprite2);
-	GUI<int>::GetSetting(this, "cell_id", cell_id);
-	GUI<int>::GetSetting(this, "selected", selected);
-	GUI<CColor>::GetSetting(this, "textcolor", color);
-
-
 	bool enabled;
 	GUI<bool>::GetSetting(this, "enabled", enabled);
 
+	GUI<CGUISpriteInstance>::GetSettingPointer(this, "sprite2", sprite2);
+	GUI<int>::GetSetting(this, "cell_id", cell_id);
+	GUI<int>::GetSetting(this, "selected", selected);
+	GUI<CColor>::GetSetting(this, enabled ? "textcolor_selected" : "textcolor_disabled", color);
+
+	GUI<CGUISpriteInstance>::GetSettingPointer(this, enabled ? "sprite" : "sprite_disabled", sprite);
 	GetGUI()->DrawSprite(*sprite, cell_id, bz, m_CachedActualSize);
 
 	if (button_width > 0.f)

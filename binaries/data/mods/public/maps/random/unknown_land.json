@@ -2,10 +2,9 @@
 	"settings" : {
 		"Name" : "Unknown Land",
 		"Script" : "unknown_land.js",
-		"Description" : "The unknown...",
-		"BaseTerrain" : ["medit_sand_wet"],
-		"BaseHeight" : -5,
+		"Description" : "The unknown.",
 		"Preview" : "unknown.png",
+		"SupportedBiomes": "generic/",
 		"CircularMap" : true
 	}
 }

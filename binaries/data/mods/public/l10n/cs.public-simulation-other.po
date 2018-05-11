@@ -3,16 +3,22 @@
 # This file is distributed under the same license as the 0 A.D. — Empires Ascendant project.
 # 
 # Translators:
+# lynx121 <adam.ostruszka@seznam.cz>, 2016
 # Jaroslav Lichtblau <dragonlord@seznam.cz>, 2016
-# fri, 2014-2016
+# J D <jonas.dyba@gmail.com>, 2016
+# fri, 2014-2018
 # Pavel Šindelář <pavelsin123@gmail.com>, 2015
-# Robin Kriebel <kriebel.robin@gmail.com>, 2016
+# Petr Hála <halapetr@selfnet.cz>, 2016-2017
+# Radek Mašek <warrriog@gmail.com>, 2018
+# Robin Kriebel <kriebel.robin@gmail.com>, 2016-2017
+# Tomáš Matýs <thommathys@gmail.com>, 2018
+# Vojtěch Valigura <Encounter@seznam.cz>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-07-22 09:01+0200\n"
-"PO-Revision-Date: 2016-07-22 14:14+0000\n"
-"Last-Translator: Jaroslav Lichtblau <dragonlord@seznam.cz>\n"
+"POT-Creation-Date: 2018-04-04 14:47+0200\n"
+"PO-Revision-Date: 2018-04-28 20:31+0000\n"
+"Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/wildfire-games/0ad/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,540 +26,342 @@ msgstr ""
 "Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:203
-msgctxt "withinSentence"
-msgid "Food"
-msgstr "Jídlo"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:205
-msgctxt "withinSentence"
-msgid "Wood"
-msgstr "Dřevo"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:207
-msgctxt "withinSentence"
-msgid "Metal"
-msgstr "Kov"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:209
-msgctxt "withinSentence"
-msgid "Stone"
-msgstr "Kámen"
-
-#: simulation/ai/petra/chatHelper.js:9
+#: simulation/ai/petra/chatHelper.js:6
 #, javascript-format
 msgid ""
 "I am starting a massive military campaign against %(_player_)s, come and "
 "join me."
 msgstr "Začínám obrovské vojenské tažení proti %(_player_)s, přijď a přidej se ke mně."
 
-#: simulation/ai/petra/chatHelper.js:11
+#: simulation/ai/petra/chatHelper.js:7
+#, javascript-format
+msgid ""
+"I have set up a huge army to crush %(_player_)s. Join me and you will have "
+"your share of the loot."
+msgstr "Připravil jsem armádu na rozdrcení %(_player_)s. Připoj se ke mně a rozdělíme si kořist!"
+
+#: simulation/ai/petra/chatHelper.js:10
 #, javascript-format
 msgid "I am launching an attack against %(_player_)s."
 msgstr "Zahajuji útok proti %(_player_)s."
 
-#: simulation/ai/petra/chatHelper.js:13
+#: simulation/ai/petra/chatHelper.js:11
 #, javascript-format
 msgid "I have just sent an army against %(_player_)s."
 msgstr "Právě jsem poslal vojsko proti %(_player_)s."
 
+#: simulation/ai/petra/chatHelper.js:17
+#, javascript-format
+msgid "Let me regroup my army and I will then join you against %(_player_)s."
+msgstr "Nech mě přeskupit moje vojsko a půjdu s tebou proti %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:18
+#, javascript-format
+msgid "I am finishing preparations to attack %(_player_)s."
+msgstr "Dokončuji přípravy k útoku na %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:21
+#, javascript-format
+msgid ""
+"Sorry, I do not have enough soldiers currently; but my next attack will "
+"target %(_player_)s."
+msgstr "Omlouvám se, ale teď nemám dost vojáků. Cílem mého příštího útoku však bude %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:22
+#, javascript-format
+msgid ""
+"Sorry, I still need to strengthen my army. However, I will attack "
+"%(_player_)s next."
+msgstr "Promiňte, ale pořád ještě potřebuji posílit své vojsko. Nicméně, na %(_player_)s zaútočím příště."
+
+#: simulation/ai/petra/chatHelper.js:25
+#, javascript-format
+msgid ""
+"I cannot help you against %(_player_)s for the time being, I am planning to "
+"attack %(_player_2)s first."
+msgstr "Nemůžu ti prozatím pomoci proti %(_player_)s, protože mám v plánu nejprve zaútočit proti %(_player_2)s."
+
+#: simulation/ai/petra/chatHelper.js:30
+#, javascript-format
+msgid "Here is a gift for you, %(_player_)s. Make good use of it."
+msgstr "Tady je dar pro tebe, %(_player_)s. Dobře si jej užij."
+
 #: simulation/ai/petra/chatHelper.js:31
 #, javascript-format
-msgid "Let me regroup my army and I am with you against %(_player_)s."
-msgstr "Nech mě přeskupit moje vojsko a jdu s tebou proti %(_player_)s."
+msgid "I see you are in a bad situation, %(_player_)s. I hope this helps."
+msgstr "Vidím, že jsi ve špatné situaci %(_player_)s. Doufám, že tohle pomůže."
 
-#: simulation/ai/petra/chatHelper.js:33
-#, javascript-format
-msgid "I am doing the final preparation and I will attack %(_player_)s."
-msgstr "Udělám konečné přípravy a zaútočím na %(_player_)s."
-
-#: simulation/ai/petra/chatHelper.js:38
+#: simulation/ai/petra/chatHelper.js:32
 #, javascript-format
 msgid ""
-"I cannot help you against %(_player_)s for the time being, as I have another"
-" attack foreseen against %(_player_2)s."
-msgstr "Nemůžu ti zatím pomoci proti %(_player_)s, protože jsem předvídal další útok proti %(_player_2)s."
+"I can help you this time, %(_player_)s, but you should manage your resources"
+" more carefully in the future."
+msgstr "Tentokrát ti mohu pomoci %(_player_)s, ale zkus se v budoucnu lépe starat o správu svých zdrojů."
 
-#: simulation/ai/petra/chatHelper.js:40
-#, javascript-format
-msgid ""
-"Sorry, I do not have enough soldiers currently, but my next attack will "
-"target %(_player_)s."
-msgstr "Omlouvám se, ale teď nemám dost vojáků, ale cílem mého příštího útoku bude %(_player_)s."
-
-#: simulation/ai/petra/chatHelper.js:63
-#, javascript-format
-msgid "Here is a gift for %(_player_)s, make a good use of it."
-msgstr "Tady je dar pro %(_player_)s, dobře si jej užij."
-
-#: simulation/ai/petra/chatHelper.js:65
-#, javascript-format
-msgid "I see you are in a bad situation %(_player_)s, I hope this will help."
-msgstr "Vidím, že jsi na tom špatně %(_player_)s, toto by mělo pomoci."
-
-#: simulation/ai/petra/chatHelper.js:67
-#, javascript-format
-msgid ""
-"I can help you this time %(_player_)s, but try to assemble more resources in"
-" the future."
-msgstr "Tentokrát ti mohu pomoci %(_player_)s, ale zkus v budoucnu nahromadit více zdrojů."
-
-#: simulation/ai/petra/chatHelper.js:83
+#: simulation/ai/petra/chatHelper.js:36
 #, javascript-format
 msgid "I am in need of %(resource)s, can you help? I will make it up to you."
 msgstr "Potřebuji %(resource)s, můžeš pomoci? Oplatím ti to."
 
-#: simulation/ai/petra/chatHelper.js:85
+#: simulation/ai/petra/chatHelper.js:37
 #, javascript-format
 msgid ""
 "I would participate more efficiently in our common war effort if you could "
 "provide me some %(resource)s."
 msgstr "Účastnil bych se účinněji na tvém běžném válečném úsilí, pokud bys mi poskytl %(resource)s."
 
-#: simulation/ai/petra/chatHelper.js:87
+#: simulation/ai/petra/chatHelper.js:38
 #, javascript-format
 msgid ""
-"If you have some %(resource)s excess, that would help me strengthen my army."
-msgstr "Pokud máte přebytek %(resource)s, pomohlo by to posílit moji armádu."
+"If you can spare me some %(resource)s, I will be able to strengthen my army."
+msgstr "Pokud byste mi mohl uvolnit %(resource)s, mohl bych posílit svoji armádu."
 
-#: simulation/ai/petra/chatHelper.js:103
+#: simulation/ai/petra/chatHelper.js:42
 #, javascript-format
 msgid ""
 "I have set up a new route with %(_player_)s. Trading will be profitable for "
 "all of us."
 msgstr "Mám zřízenu novou cestu s %(_player_)s. Obchod nám všem bude přinášet zisk."
 
-#: simulation/ai/petra/chatHelper.js:105
+#: simulation/ai/petra/chatHelper.js:43
 #, javascript-format
 msgid ""
 "A new trade route is set up with %(_player_)s. Take your share of the "
-"profits"
-msgstr "Nová obchodní cesta je zřízena s %(_player_)s. Zajistěte si svůj podíl na zisku"
+"profits."
+msgstr "Nová obchodní cesta je zřízena s %(_player_)s. Zajistěte si svůj podíl na zisku."
 
-#: simulation/ai/petra/chatHelper.js:120
+#: simulation/ai/petra/chatHelper.js:48
 #, javascript-format
-msgid "I am advancing to the %(phase)s."
-msgstr "Postupuji do %(phase)s."
+msgid "%(_player_)s and I are now allies."
+msgstr "%(_player_)s a já jsme nyní spojenci."
+
+#: simulation/ai/petra/chatHelper.js:51
+#, javascript-format
+msgid "%(_player_)s and I are now neutral."
+msgstr "%(_player_)s a já jsme nyní neutrální."
+
+#: simulation/ai/petra/chatHelper.js:54
+#, javascript-format
+msgid "%(_player_)s and I are now enemies."
+msgstr "%(_player_)s a já jsme nyní nepřáteli."
+
+#: simulation/ai/petra/chatHelper.js:61
+#, javascript-format
+msgid "I cannot accept your offer to become allies, %(_player_)s."
+msgstr "Nemohu přijmout tvoji nabídku, abychom byli spojenci %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:64
+#, javascript-format
+msgid ""
+"I will not be your ally, %(_player_)s. However, I will consider a neutrality"
+" pact."
+msgstr "Nespojím se s tebou %(_player_)s,. Nicméně zvážím smlouvu o neutralitě."
+
+#: simulation/ai/petra/chatHelper.js:65
+#, javascript-format
+msgid ""
+"I reject your request for alliance, %(_player_)s, but we could become "
+"neutral."
+msgstr "Odmítám tvoji žádost o uzavření spojenectví, %(_player_)s, ale mohli bychom být navzájem neutrální."
+
+#: simulation/ai/petra/chatHelper.js:66
+#, javascript-format
+msgid "%(_player_)s, only a neutrality agreement is conceivable to me."
+msgstr "%(_player_)s, pro mě je myslitelná pouze dohoda o neutralitě."
+
+#: simulation/ai/petra/chatHelper.js:69
+#, javascript-format
+msgid ""
+"Our previous alliance did not work out, %(_player_)s. I must decline your "
+"offer."
+msgstr "Naše předchozí spojenectví nedopadlo dobře, %(_player_)s. Musím tudíž tvoji nabídku odmítnout."
+
+#: simulation/ai/petra/chatHelper.js:70
+#, javascript-format
+msgid "I won’t ally you again, %(_player_)s!"
+msgstr "Neuzavřu s tebou znovu spojenectví,  %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:71
+#, javascript-format
+msgid "No more alliances between us, %(_player_)s!"
+msgstr "Mezi námi již nadále spojectví nebude, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:72
+#, javascript-format
+msgid "Your request for peace means nothing to me anymore, %(_player_)s!"
+msgstr "Tvoje volání po míru pro mě už nic neznamená, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:73
+#, javascript-format
+msgid ""
+"My answer to your repeated peace proposal will remain war, %(_player_)s!"
+msgstr "Moje odpověd na tvoje opakované nabídky míru je stále stejná. Válka bude pokračovat, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:76
+#, javascript-format
+msgid ""
+"I will accept your offer to become allies, %(_player_)s. We will both "
+"benefit from this partnership."
+msgstr "Přijmu nabídku na spojenectví s tebou, %(_player_)s. Tato spolupráce nám oběma přinese prospěch."
+
+#: simulation/ai/petra/chatHelper.js:77
+#, javascript-format
+msgid "An alliance between us is a good idea, %(_player_)s."
+msgstr "Spojenectví mezi námi je skvělý nápad, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:78
+#, javascript-format
+msgid ""
+"Let both of our people prosper from a peaceful association, %(_player_)s."
+msgstr "Nechť obě naše země vzkvétají z tohoto mírového svazku, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:79
+#, javascript-format
+msgid "We have found common ground, %(_player_)s. I accept the alliance."
+msgstr "Máme společné zájmy,%(_player_)s. Toto spojenectví přijímám."
+
+#: simulation/ai/petra/chatHelper.js:80
+#, javascript-format
+msgid "%(_player_)s, consider us allies from now on."
+msgstr "%(_player_)s, považuj nás nyní za spojence."
+
+#: simulation/ai/petra/chatHelper.js:83
+#, javascript-format
+msgid ""
+"I will ally with you, %(_player_)s, but only if you send me a tribute of "
+"%(_amount_)s %(_resource_)s."
+msgstr "Přistoupím na spojenectví s tebou, %(_player_)s, ale jen když mi projevíš úctu a pošleš  %(_amount_)s %(_resource_)s."
+
+#: simulation/ai/petra/chatHelper.js:84
+#, javascript-format
+msgid ""
+"%(_player_)s, you must send me a tribute of %(_amount_)s %(_resource_)s "
+"before I accept an alliance with you."
+msgstr "%(_player_)s, musíš mi poslat tribut (projev úcty, vlastně vazalskou daň :-) %(_amount_)s %(_resource_)s, předtím než přijmu spojenectví s tebou."
+
+#: simulation/ai/petra/chatHelper.js:85
+#, javascript-format
+msgid ""
+"Unless you send me %(_amount_)s %(_resource_)s, an alliance won’t be formed,"
+" %(_player_)s,"
+msgstr "Dokud mi nepošleš %(_amount_)s %(_resource_)s, tak spojenectví utvořeno nebude, %(_player_)s,"
+
+#: simulation/ai/petra/chatHelper.js:88
+#, javascript-format
+msgid ""
+"%(_player_)s, my offer still stands. I will ally with you only if you send "
+"me a tribute of %(_amount_)s %(_resource_)s."
+msgstr "%(_player_)s, má nabídka stále platí. Přistoupím na spojenectví s tebou, pokud mi pošleš %(_amount_)s %(_resource_)s."
+
+#: simulation/ai/petra/chatHelper.js:89
+#, javascript-format
+msgid ""
+"I’m still waiting for %(_amount_)s %(_resource_)s before accepting your "
+"alliance, %(_player_)s."
+msgstr "Stále čekám na %(_amount_)s %(_resource_)s, než přijmu spojenectví s tebou,  %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:90 simulation/ai/petra/chatHelper.js:111
+#, javascript-format
+msgid ""
+"%(_player_)s, if you do not send me part of the %(_amount_)s %(_resource_)s "
+"tribute soon, I will break off our negotiations."
+msgstr "%(_player_)s, pokud mi brzy nepošleš část poplatku jako projev úcty (daň) %(_amount_)s %(_resource_)s, tak ukončím naše jednání."
+
+#: simulation/ai/petra/chatHelper.js:95
+#, javascript-format
+msgid "I will not become neutral with you, %(_player_)s."
+msgstr "Neuzavřu s vámi neutralitu,  %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:96
+#, javascript-format
+msgid "%(_player_)s, I must decline your request for a neutrality pact."
+msgstr "%(_player_)s, bohužel musím zamítnout tvoji žádost o dohodu o neutralitě."
+
+#: simulation/ai/petra/chatHelper.js:99
+#, javascript-format
+msgid ""
+"Our previous neutrality agreement ended in failure, %(_player_)s; I will not"
+" consider another one."
+msgstr "Naše minulá dohoda o neutralitě skončila smutně, %(_player_)s; Na další tedy nepřistoupím."
+
+#: simulation/ai/petra/chatHelper.js:102
+#, javascript-format
+msgid ""
+"I welcome your request for peace between our civilizations, %(_player_)s. I "
+"will accept."
+msgstr "Vítám tvoji žádost o mír mezi našimi civilizacemi %(_player_)s. S radostí přijímám."
+
+#: simulation/ai/petra/chatHelper.js:103
+#, javascript-format
+msgid ""
+"%(_player_)s, I will accept your neutrality request. May both our "
+"civilizations benefit."
+msgstr "%(_player_)s, přijímám váš požadavek na neutralitu. Obě naše civilizace z toho mohou čerpat."
+
+#: simulation/ai/petra/chatHelper.js:106
+#, javascript-format
+msgid ""
+"If you send me a tribute of %(_amount_)s %(_resource_)s, I will accept your "
+"neutrality request, %(_player_)s."
+msgstr "Pokud mi pošleš poplatek jako projev úcty (daň) %(_amount_)s %(_resource_)s, tak přijmu tvoji žádost o dohodu o neutralitě."
+
+#: simulation/ai/petra/chatHelper.js:107
+#, javascript-format
+msgid ""
+"%(_player_)s, if you send me %(_amount_)s %(_resource_)s, I will accept a "
+"neutrality pact."
+msgstr "%(_player_)s, pokud mi pošleš %(_amount_)s %(_resource_)s, tak přijmu dohodu o neutralitě."
+
+#: simulation/ai/petra/chatHelper.js:110
+#, javascript-format
+msgid ""
+"%(_player_)s, I will not accept your neutrality request unless you tribute "
+"me %(_amount_)s %(_resource_)s soon."
+msgstr "%(_player_)s, nepřijmu dohodu o neutralitě s tebou, pokud mi v brzké době nepošleš %(_amount_)s %(_resource_)s."
+
+#: simulation/ai/petra/chatHelper.js:119
+#, javascript-format
+msgid ""
+"%(_player_)s, it would help both of our civilizations if we formed an "
+"alliance. If you become allies with me, I will respond in kind."
+msgstr "%(_player_)s, pomohlo by oběma našim civilizacím, kdyby vytvořily spojenectví.   Pokud se staneš mým spojencem, odvděčím se štědře."
 
 #: simulation/ai/petra/chatHelper.js:122
 #, javascript-format
-msgid "I have reached the %(phase)s."
-msgstr "Dosáhl jsem %(phase)s."
+msgid "%(_player_)s, my offer for an alliance has expired."
+msgstr "%(_player_)s, moje nabídka spojenectví vypršela."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:3
+#: simulation/ai/petra/chatHelper.js:123
+#, javascript-format
 msgid ""
-"Warning: This is an advanced tutorial and goes quite fast. If you don't keep"
-" up just restart and try again. Practise makes perfect!"
-msgstr "Varování: Toto je pokročilý návod a probíhá poměrně rychle. Pokud nebudete stačit, začněte jednoduše znovu a zkuste to znovu. Cvičení dělá mistra!"
+"%(_player_)s, I have rescinded my previous offer for an alliance between us."
+msgstr "%(_player_)s, odstoupil jsem od nabídky spojenectví mezi námi."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:8
+#: simulation/ai/petra/chatHelper.js:128
+#, javascript-format
 msgid ""
-"Lets get started, first train a batch (shift click) of 5 female citizens "
-"from the CC (Civil Center)."
-msgstr "Začněme. Nejprve vycvičte skupinu (Shift + klepnutí) pěti žen ze správního střediska."
+"%(_player_)s, I would like to request a neutrality pact between our "
+"civilizations. If you become neutral with me, I will respond in kind."
+msgstr "%(_player_)s, chtěl bych požádat o smlouvu o neutralitě mezi našimi civilizacemi. Pokud se staneš neutrálním ke mně, odvděčím se ti štědře."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:13
+#: simulation/ai/petra/chatHelper.js:129
+#, javascript-format
 msgid ""
-"Now, assign your female citizens to gather berries, your cavalryman to hunt "
-"the chickens and the citizen soldiers to gather wood."
-msgstr "Nyní přikažte občankám, aby sbíraly bobule, svým jezdcům, aby lovili kohouty, slepice a kuřata a občanským vojákům, aby sbírali dřevo."
+"%(_player_)s, it would be both to our benefit if we negotiated a neutrality "
+"pact. I will become neutral with you if you do the same."
+msgstr ""
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:18
-msgid "Now set the rally point of your civil center on the berries."
-msgstr "Nyní nastavte shromažďovací bod vašeho správního střediska na bobule."
+#: simulation/ai/petra/chatHelper.js:132
+#, javascript-format
+msgid "%(_player_)s, I have decided to revoke my offer for a neutrality pact."
+msgstr ""
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:23
+#: simulation/ai/petra/chatHelper.js:133
+#, javascript-format
 msgid ""
-"Queue some slingers to train after the female citizens, you won't have "
-"enough resources for a batch."
-msgstr "Zařaďte do výcviku nějaké prakovníky po ženských občanech. Nebudete mít pro skupinu dostatek surovin."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:28
-msgid ""
-"When your female citizens have finished training, use 4 to build a house "
-"nearby."
-msgstr "Když vaši ženští občané dokončili výcvik, použijte čtyři z nich na postavení domu, kterých bude stát poblíž."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:33
-msgid ""
-"Set the CC's rally point on the nearby trees, queue more slingers, you want "
-"to train 6 right now."
-msgstr "Nastavte shromažďovací bod vašeho správního střediska na blízko stojící stromy, a zařaďte do výcviku více prakovníků. Potřebujete dalších šest."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:38
-msgid "Queue a batch of 5 female citizens."
-msgstr "Zařaďte skupinu pěti ženských občanů."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:43
-msgid "Use shift-click to queue another house for the 4 builders."
-msgstr "Stiskněte Shift a klepněte pro zařazení dalšího domu pro čtyři dělníky do výstavby."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:48
-msgid ""
-"Set the rally point back to the berries once all of the citizen soldiers "
-"have finished training."
-msgstr "Nastavte shromažďovací bod zpět na bobule, jakmile všichni občanští vojáci dokončí výcvik."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:53
-msgid ""
-"Send one citizen soldier to gather stone, send 2 others to build a "
-"storehouse near the southern trees."
-msgstr "Pošlete jednoho občanského vojáka, aby sbíral kámen, pošlete dva další, aby postavili skladiště poblíž stromů stojících jižně."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:58
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:78
-msgid "Queue another 5 female citizens."
-msgstr "Zařaďte dalších pět občanek."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:63
-msgid "Use a female citizen to construct a field next to your CC."
-msgstr "Použijte občanky, aby založily pole poblíž vašeho správního střediska."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:68
-msgid ""
-"Your cavalryman has probably run out of chickens by now, there are some "
-"goats to the left of your base."
-msgstr "Vaši jezdci touto dobou nejspíš nenacházejí žádná další kuřata, natož slepice, ale nalevo od vaší základny se pase několik koz."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:73
-msgid "Use 2-3 more female citizens to construct the field."
-msgstr "Použijte další dvě až tři občanky, aby připravily pole."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:83
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:128
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:138
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:163
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:188
-msgid "Queue another house."
-msgstr "Zařaďte další dům."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:88
-msgid ""
-"The berry bushes are getting crowded, send some female citizens to work the "
-"field, set the rally point there."
-msgstr "U křovisek s bobulemi se vytvořila tlačenice. Pošlete nějaké občanky, aby pracovaly na poli. Postavte tam shromažďovací bod."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:93
-msgid "Queue another 5 female citizens, these should gather stone."
-msgstr "Zařaďte dalších pět občanek. Tyto mají sbírat kámen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:98
-msgid ""
-"Move your woodcutters to the trees near the storehouse so they don’t have to"
-" walk as far."
-msgstr "Přesuňte dřevorubce a drvoštěpy ke stromům v blízkosti skladiště, aby nemuseli chodit tak daleko."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:103
-msgid ""
-"Make sure the workers from the berry bushes are used to gather from the "
-"field rather than standing idle when they run out."
-msgstr "Pošlete dělníky od křovisek s bobulemi na pole, aby sklízeli, aby jen tak nepostávali nečinně okolo, když už na keřích není co sklízet."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:108
-msgid "Queue another house to be built."
-msgstr "Přikažte postavit další dům."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:113
-msgid "Queue 5 more female citizens. These will gather wood."
-msgstr "Zařaďte dalších pět občanek. Tyto budou sbírat dřevo."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:118
-msgid ""
-"Build another field, this decreases the amount of walking for your female "
-"citizens."
-msgstr "Založte další pole. Tím se zmenší doba vynakládaná vašimi občankami na chůzi."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:123
-msgid ""
-"Train some more slingers, send them to gather stone. Train about 5, you may "
-"not have enough resources for a batch right now."
-msgstr "Vycvičte další prakovníky a pošlete je sbírat kámen. Vycvičte jich asi pět. Nyní nemusíte mít dostatek surovin na vytvoření skupiny."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:133
-msgid "Queue another batch of 5 female citizens. These will gather wood."
-msgstr "Zařaďte další skupinu pěti občanek. Tyto budou sbírat dřevo."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:143
-msgid "Queue a batch of spearmen."
-msgstr "Zařadit skupinu nosičů oštěpu."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:148
-msgid "Research the stone mining technology from the storehouse."
-msgstr "Vyzkoumejte technologii těžby kamene ze skladiště."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:153
-msgid "Queue a batch of slingers."
-msgstr "Zařaďte skupinu prakovníků."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:158
-msgid ""
-"Move 3 women from wood and 3 from stone to farming. Women are cheap to train"
-" initially but later in the game it is best to maximize efficiency as you "
-"are able to train more citizen soldiers."
-msgstr "Nechte nyní tři sběračky dříví a tři sběračky kamene vykonávat polní práce. Ženy se zpočátku dají levně zaškolit, ale později je ve hře nejlepší, jakmile jste schopen cvičit více občanských vojáků, maximalizovat výkon."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:168
-msgid ""
-"The slingers that you queued earlier should gather stone once they are "
-"trained."
-msgstr "Prakovníci, které jste zařadil dříve, mají, jakmile jsou vycvičeni, sbírat kámen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:173
-msgid "Queue a batch of spearmen, they should gather wood."
-msgstr "Zařadit skupinu nosičů oštěpu. Mají sbírat dřevo."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:178
-msgid "Next queue a batch of slingers."
-msgstr "Jako další zařaďte do výcviku další skupinu prakovníků."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:183
-msgid ""
-"Send some of the stone miners to mine metal, getting ready for the next age."
-msgstr "Pošlete některé z horníků těžících kámen do dolu na kov. Připravte se na další vývojové období."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:193
-msgid "Start researching Phase 2."
-msgstr "Začněte výzkum 2. civilizačního stupně."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:198
-msgid "Queue some slingers."
-msgstr "Zařaďte nějaké prakovníky."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:203
-msgid ""
-"When you have advanced, use a single citizen soldier to place a barracks "
-"foundation. Then use the rest of the non food or house building female "
-"citizens to construct it."
-msgstr "Když jste se vstoupil do městského období, umístěte s jedním vojákem kasárna. Použijte staré nicnedělající ženy k rychlejší výstavbě těchto kasáren."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:208
-msgid "Queue 5 more females for construction work."
-msgstr "Zařaďte 5 dalších žen pro stavební práce."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:213
-msgid ""
-"Queue a batch of slingers to gather the trees on the north side of your "
-"base."
-msgstr "Zařaďte skupinu prakovníků. Přikažte jim, aby severně od vaší základny, těžili stromy."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:218
-msgid ""
-"This is the end of the walkthrough. This should give you a good idea of how "
-"to build up a nice economy rapidly."
-msgstr "Toto je konec úvodu. Nyní máte znát, jak se rychle postaví pevné hospodářství."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:223
-msgid ""
-"At this point you should be able to fully use both training facilities, keep"
-" putting units into economic work, to keep growing faster and faster."
-msgstr "Nyní byste měl být sto používat obě výcviková zařízení. Vycvičte více pracovníků a žen, aby byly suroviny dobývány rychleji a ještě rychleji."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:228
-msgid ""
-"From this point you have a good base to build an army and wipe out the "
-"opposition."
-msgstr "Od tohoto bodu máte dobrou základnu k postavení vojska a vyřazení protivníka."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:233
-msgid "The key points to remember are:"
-msgstr "Klíčovými body k zapamatování jsou tyto:"
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:238
-msgid ""
-" - Don't have any idle units. Shift click queuing and rally points are very "
-"useful."
-msgstr " - Nemějte nečinné jednotky. Zařazení do výcviku přes Shift + klepnutí a shromažďovací body jsou velice užitečné."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:243
-msgid ""
-" - Use all of your resources, stockpiled resources are waste, having too "
-"much of a resource is waste."
-msgstr " - Použijte všechny své zdroje. Nahromaděné suroviny nebo velká zásoba jednoho druhu suroviny znamenají plýtvání."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:248
-msgid ""
-" - Use the right units for the right task, female citizens gather food, "
-"cavalry hunt, citizen soldiers do the rest."
-msgstr " - Používejte správné jednotky k odpovídajícím úkolům. Ženy občanky sbírají jídlo, jezdectvo loví, a občanští vojáci dělají zbytek."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:253
-msgid ""
-" - Don't be afraid to swap units from one resource to another, see point 2. "
-"Make sure they deposit what they are carrying first though."
-msgstr " - Nebojte se převést jednotky z jednoho zdroje k jinému, viz bod 2. Ujistěte se ale, že nejprve uskladní právě nesené suroviny."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:258
-msgid ""
-" - Build enough houses, your CC should be kept busy as much as possible."
-msgstr " - Postavte dostatek domů. Vaše správní středisko by mělo vytvářet tolik jednotek, kolik je možné."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:263
-msgid ""
-" - Female citizens are cheap, so you can build more of them and gather more "
-"resources."
-msgstr " - Ženští občané jsou levní, takže jich můžete nechat udělat víc a sbírat více zdrojů."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:268
-msgid ""
-" - Don't get carried away on the last point or you will get raided and have "
-"no defense."
-msgstr "- S posledním bodem to nepřežeňte - nebo budete napaden, aniž byste se mohl bránit."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:273
-msgid ""
-"Each map is different, so you will need to play slightly differently on "
-"each. This should give an outline for a high resource map."
-msgstr "Každá mapa je jiná, takže budete muset vždy hrát o něco jinak. Toto by vám mělo dát přehled k mapě s mnoha surovinami."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:4
-msgid ""
-"Welcome to the 0 A.D. tutorial. First left-click on a female citizen, then "
-"Right-click on a berry bush nearby to make the unit collect food. Female "
-"citizens gather food faster than other units."
-msgstr "Vítejte ve výukovém návodu k 0 A.D. Nejprve klepněte levým tlačítkem myši na občanku, potom ji pošlete sbírat bobule klepnutím pravým tlačítkem myši na keř s bobulemi rostoucí poblíž. Občanky sbírají jídlo rychleji než ostatní jednotky."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:7
-msgid ""
-"Select the citizen-soldier, right-click on a tree near the Civil Center to "
-"begin collecting wood. Citizen-soldiers gather wood faster than female "
-"citizens."
-msgstr "Vyberte občanského vojáka, klepněte pravým tlačítkem myši na strom u správního střediska, aby začal se shromažďováním dřeva. Občanští vojáci sbírají dřevo rychleji než občanky."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:11
-msgid ""
-"Select the Civil Center building, and shift-click on the Hoplite icon (2nd "
-"in the row) once to begin training 5 Hoplites."
-msgstr "Vyberte budovu správního střediska, podržte klávesu Shift a klepněte na ikonu hoplíty (druhá v řadě), aby se započalo s výcvikem pěti hoplítů."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:15
-msgid ""
-"Select the two idle female citizens and build a house nearby by selecting "
-"the house icon. Place the house by left-clicking on a piece of land."
-msgstr "Vyberte dvě nečinné občanky a postavte dům poblíž tím, že zvolíte ikonu domu. Dům umístěte klepnutím levým tlačítkem myši na kus země."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:21
-msgid ""
-"Select the newly trained Hoplites and assign them to build a storehouse "
-"beside some nearby trees. They will begin to gather wood when it's "
-"constructed."
-msgstr "Vyberte čerstvě vycvičené hoplíty a přiřaďte je ke stavbě skladiště hned vedle nedaleko rostoucích stromů. Až bude sklad postaven, začnou shromažďovat dřevo."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:27
-msgid ""
-"Build a set of 5 skirmishers by shift-clicking on the skirmisher icon (3rd "
-"in the row) in the Civil Center."
-msgstr "Vycvičte skupinu pěti harcovníků, podržte klávesu Shift a klepněte na ikonu harcovníka (třetí v řadě) ve správním středisku."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:33
-msgid ""
-"Build a farmstead in an open space beside the Civil Center using any idle "
-"builders."
-msgstr "Postavte s jedním nezaměstnaným občanem, který by jinak byl bez práce, na volné ploše vedle správního střediska selský dvůr."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:39
-msgid ""
-"Once the farmstead is constructed, its builders will automatically begin "
-"gathering food if there is any nearby. Select the builders and instead make "
-"them construct a field beside the farmstead."
-msgstr "Když je zemědělská usedlost hotova, stavební dělníci, kteří ji postavili, začnou automaticky shromažďovat jídlo, jestliže je nějaké poblíž. Vyberte budovatele a nechte je místo toho založit vedle statku pole."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:45
-msgid ""
-"The field's builders will now automatically begin collecting food from the "
-"field. Using the newly created group of skirmishers, get them to build "
-"another house nearby."
-msgstr "Zakladatelé pole nyní automaticky začnou shromažďovat jídlo z pole. Teď využijte čerstvě vycvičenou skupinu harcovníků, a nakažte jim hned vedle postavit další dům."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:51
-msgid ""
-"Train 5 Hoplites from the Civil Center. Select the Civil Center and with it "
-"selected right click on a tree nearby. Units from the Civil Center will now "
-"automatically gather wood."
-msgstr "Vycvičte ve správním středisku pět hoplítů. Klepněte na správní středisko, a pak klepněte pravým tlačítkem myši na strom stojící poblíž. Jednotky vycvičené ve správním středisku budou nyní automaticky těžit dřevo."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:57
-msgid ""
-"Order the idle Skirmishers to build an outpost to the north east at the edge"
-" of your territory.  This will be the fifth Village Phase structure that you"
-" have built, allowing you to advance to the Town Phase."
-msgstr "Pošlete nečinného harcovníka na severovýchodní hranici vašeho území, aby tam zřídil předsunutou základnu. Toto je pátá budova vesnického období, kterou musíte postavit, což vám umožní dostat se dál do městského období."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:63
-msgid ""
-"Select the Civil Center again and advance to Town Phase by clicking on the "
-"'II' icon. This will allow Town Phase buildings to be constructed."
-msgstr "Vyberte znovu správní středisko a klepněte na symbol \"II\", abyste postoupil do městského období. Poté budete moci stavět i městské budovy."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:69
-msgid ""
-"Start building 5 female citizens in the Civil Center and set its rally point"
-" to the farm (right click on it)."
-msgstr "Začněte ve správním středisku cvičit pět občanek a nastavte jejich shromažďovací bod na zemědělskou usedlost (klepněte na ni pravým tlačítkem myši),"
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:74
-msgid ""
-"Build a Barracks nearby. Whenever your population limit is reached, build an"
-" extra house using any available builder units."
-msgstr "Postavte poblíž kasárna. Vždy, když je dosaženo populační meze velikosti osídlení, postavte novou obytnou budovu. K tomu použijte kteroukoli dostupnou jednotku, která může stavět."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:80
-msgid ""
-"Prepare for an attack by an enemy player. Build more soldiers using the "
-"Barracks, and get idle soldiers to build a Defense Tower near your Outpost."
-msgstr "Připravte se na útok vedený nepřátelským hráčem. Vycvičte v kasárnách více vojáků a nechte vojáky jsoucí bez práce poblíž předsunuté základny postavit obrannou věž."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:86
-msgid ""
-"Build a Blacksmith and research the Infantry Training technology (sword "
-"icon) to improve infantry hack attack."
-msgstr "Vycvičte kováře a vyzkoumejte technologii výcviku pěchoty (ikona meče), čímž dojde ke zlepšení dovednosti vašich pěšáků provádět útok sečnými zbraněmi."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:92
-msgid "The enemy is coming. Build more soldiers to fight off the enemies."
-msgstr "Nepřítel přichází. Postavte více vojáků, abyste jej mohli porazit."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:99
-msgid ""
-"The enemy's attack has been defeated. Now build a market and temple while "
-"assigning new units to gather any required resources."
-msgstr "Nepřátelský útok byl odražen. Nyní postavte tržnici a chrám a nechejte nové jednotky nasbírat potřebné suroviny."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:104
-msgid ""
-"Now that City Phase requirements have been reached, select your Civil Center"
-" and advance to City Phase."
-msgstr "nyní, když bylo dosaženo požadavků na městské období, zvolte si své správní středisko a vkročte do velkoměstského období."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:110
-msgid ""
-"Now that you are in City Phase, build a fortress nearby and use it to build "
-"2 Battering Rams."
-msgstr "Nyní, když jste ve velkoměstském období, postavte poblíž pevnost a použijte ji k postavení dvou beranidel."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:115
-msgid ""
-"Stop all your soldiers gathering resources and instead task small groups to "
-"find the enemy Civil Center on the map. Female citizens should continue to "
-"gather resources."
-msgstr "Utvořte nyní ze všech vojáků, kteří sbírají suroviny, malé skupiny a nakažte jim, aby na mapě hledali protivníkova správní střediska. Obyvatelé ženského pohlaví mají dál sbírat suroviny."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:122
-msgid ""
-"The enemy's base has been spotted, send your siege weapons and all remaining"
-" soldiers to destroy it."
-msgstr "Základna nepřítele byla odhalena. Pošlete své obléhací stroje a všechny zbývající vojáky a zničte ji."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:126
-msgid "The enemy has been defeated. All tutorial tasks are now completed…"
-msgstr "Nepřítel byl poražen. Všechny výukové úkoly jsou nyní hotové..."
+"%(_player_)s, as you have failed to respond to my request for peace between "
+"us, I have abrogated my offer."
+msgstr ""
 
 #: simulation/components/BuildRestrictions.js:87
 #, javascript-format
@@ -624,12 +432,12 @@ msgid ""
 "%(validTerritories)s"
 msgstr "%(name)s nelze postavit na území %(territoryType)s. Platné území: %(validTerritories)s"
 
-#: simulation/components/BuildRestrictions.js:253
+#: simulation/components/BuildRestrictions.js:228
 #, javascript-format
 msgid "%(name)s must be built on a valid shoreline"
 msgstr "%(name)s lze postavit jen na platné pobřežní čáře"
 
-#: simulation/components/BuildRestrictions.js:277
+#: simulation/components/BuildRestrictions.js:256
 #, javascript-format
 msgid ""
 "%(name)s too close to a %(category)s, must be at least %(distance)s meter "
@@ -641,7 +449,7 @@ msgstr[0] "%(name)s je příliš blízko %(category)s, musí být alespoň %(dis
 msgstr[1] "%(name)s je příliš blízko %(category)s, musí být alespoň %(distance)s metry daleko."
 msgstr[2] "%(name)s je příliš blízko %(category)s, musí být alespoň %(distance)s metrů daleko."
 
-#: simulation/components/BuildRestrictions.js:299
+#: simulation/components/BuildRestrictions.js:277
 #, javascript-format
 msgid ""
 "%(name)s too far from a %(category)s, must be within %(distance)s meter"
@@ -653,96 +461,88 @@ msgstr[2] "%(name)s je moc daleko od %(category)s, může být vzdáleno nejvíc
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:339
+#: simulation/components/BuildRestrictions.js:317
 msgctxt "Territory type list"
 msgid "own"
 msgstr "vlastní"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:341
+#: simulation/components/BuildRestrictions.js:319
 msgctxt "Territory type list"
 msgid "ally"
 msgstr "spojenec"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:343
+#: simulation/components/BuildRestrictions.js:321
 msgctxt "Territory type list"
 msgid "neutral"
 msgstr "neutrální"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:345
+#: simulation/components/BuildRestrictions.js:323
 msgctxt "Territory type list"
 msgid "enemy"
 msgstr "nepřátelský"
 
-#: simulation/components/CeasefireManager.js:100
+#: simulation/components/CeasefireManager.js:99
 #, javascript-format
 msgid "You can attack in %(time)s"
 msgstr "Můžete zaútočit za %(time)s"
 
-#: simulation/components/CeasefireManager.js:113
+#: simulation/components/CeasefireManager.js:112
 msgid "You can attack now!"
 msgstr "Můžete zaútočit nyní!"
 
-#: simulation/components/EndGameManager.js:114
+#: simulation/components/EndGameManager.js:171
+#, javascript-format
+msgid "%(lastPlayer)s has won (last player alive)."
+msgid_plural "%(players)s and %(lastPlayer)s have won (last players alive)."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: simulation/components/EndGameManager.js:179
 msgid "Last remaining player wins."
 msgstr "Poslední zbývající hráč vyhrává."
 
-#: simulation/components/EntityLimits.js:166
+#: simulation/components/EntityLimits.js:165
 #, javascript-format
 msgid "%(category)s build limit of %(limit)s reached"
 msgstr "%(category)s stavebního limitu %(limit)s dosaženo"
 
-#: simulation/components/EntityLimits.js:168
+#: simulation/components/EntityLimits.js:167
 #, javascript-format
 msgid "%(category)s training limit of %(limit)s reached"
 msgstr "%(category)s kapacity výcviku %(limit)s dosaženo"
 
-#: simulation/components/EntityLimits.js:172
+#: simulation/components/EntityLimits.js:171
 #, javascript-format
 msgid "%(category)s limit of %(limit)s reached"
 msgstr "%(category)s limitu %(limit)s dosaženo"
 
-#: simulation/components/Player.js:48
-msgid "Food"
-msgstr "Jídlo"
-
-#: simulation/components/Player.js:49
-msgid "Wood"
-msgstr "Dřevo"
-
-#: simulation/components/Player.js:50
-msgid "Metal"
-msgstr "Kov"
-
-#: simulation/components/Player.js:51
-msgid "Stone"
-msgstr "Kámen"
-
-#: simulation/components/Player.js:271
+#: simulation/components/Player.js:352
 #, javascript-format
 msgid "Insufficient resources - %(resourceAmount1)s %(resourceType1)s"
 msgstr "Nedostatek surovin - %(resourceAmount1)s %(resourceType1)s"
 
-#: simulation/components/Player.js:273
+#: simulation/components/Player.js:354
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
 "%(resourceAmount2)s %(resourceType2)s"
 msgstr "Nedostatek surovin - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s"
 
-#: simulation/components/Player.js:275
+#: simulation/components/Player.js:356
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
 "%(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s"
 msgstr "Nedostatek surovin - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s"
 
-#: simulation/components/Player.js:277
+#: simulation/components/Player.js:358
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
@@ -750,7 +550,7 @@ msgid ""
 "%(resourceType3)s, %(resourceAmount4)s %(resourceType4)s"
 msgstr "Nedostatek surovin - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s, %(resourceAmount4)s %(resourceType4)s"
 
-#: simulation/components/ProductionQueue.js:391
+#: simulation/components/ProductionQueue.js:394
 msgid "The production queue is full."
 msgstr "Výrobní řada je plná."
 
@@ -758,42 +558,60 @@ msgstr "Výrobní řada je plná."
 msgid "Can't find free space to spawn trained units"
 msgstr "Nelze najít místo na vytváření cvičených jednotek"
 
+#: simulation/helpers/Cheat.js:53
+#, javascript-format
+msgid "%(player)s has been defeated (cheat)."
+msgstr "%(player)s byl poražen (podváděl)."
+
 #: simulation/helpers/Cheat.js:62
 msgid "You need to select a building that trains units."
 msgstr "Je potřeba, abyste vybral budovu, v níž se provádí výcvik jednotek."
 
-#: simulation/helpers/Commands.js:128
+#: simulation/helpers/Commands.js:124
 msgid "(Cheat - control all units)"
 msgstr "(Podfuk - Ovládat všechny jednotky)"
 
-#: simulation/helpers/Commands.js:568
+#: simulation/helpers/Commands.js:139
+msgid "(Cheat - reveal map)"
+msgstr "(Podvod - odhalit mapu)"
+
+#: simulation/helpers/Commands.js:466
+#, javascript-format
+msgid "%(player)s has resigned."
+msgstr "%(player)s se vzdal."
+
+#: simulation/helpers/Commands.js:608
 msgid "(Cheat - promoted units)"
 msgstr "(Podfuk - povýšení jednotek)"
 
-#: simulation/helpers/Commands.js:678
+#: simulation/helpers/Commands.js:722
 msgid ""
 "Cannot upgrade as distance requirements are not verified or terrain is "
 "obstructed."
 msgstr "Vylepšení nelze uvnitř tohoto odstupu provést, aniž by byla přezkoušena vzdálenost, nebo jsou v území položeny překážky."
 
-#: simulation/helpers/Commands.js:688
+#: simulation/helpers/Commands.js:732
 msgid "Cannot upgrade a garrisoned entity."
 msgstr "Nelze provést vylepšení jednotky obsazené posádkou."
 
-#: simulation/helpers/Commands.js:734
+#: simulation/helpers/Commands.js:775
 #, javascript-format
 msgid "Attack against %(_player_)s requested."
 msgstr "Požadován útok proti %(_player_)s."
 
-#: simulation/helpers/Commands.js:771
+#: simulation/helpers/Commands.js:814
+msgid "There are no bribable units"
+msgstr "Nejsou tu žádné podplatitelné jednotky"
+
+#: simulation/helpers/Commands.js:860
 msgid "Unable to ungarrison unit(s)"
 msgstr "Nelze vyložit jednotky"
 
-#: simulation/helpers/Commands.js:785
+#: simulation/helpers/Commands.js:874
 msgid "Some unit(s) can't go back to work"
 msgstr "Některé jednotky nemohou jít zpět do práce"
 
-#: simulation/helpers/Commands.js:1041
+#: simulation/helpers/Commands.js:1114
 msgid "The building's technology requirements are not met."
 msgstr "Technologické požadavky na postavení budovy nejsou splněny."
 
@@ -877,41 +695,56 @@ msgstr "Rychleji (10x)"
 msgid "Fast Forward (20x)"
 msgstr "Rychleji (20x)"
 
+#: simulation/data/settings/victory_conditions/capture_the_relic.jsonData.Description
+msgid ""
+"Capture all relics spread across the map and keep them for a certain time to"
+" win the game."
+msgstr "Ukořistěte všechny památky po celé mapěa podržte je po určitou dobu, abyste zvítězili ve hře."
+
+#: simulation/data/settings/victory_conditions/capture_the_relic.jsonData.Title
+msgid "Capture the Relic"
+msgstr "Ukořistit památku"
+
 #: simulation/data/settings/victory_conditions/conquest.jsonData.Description
-msgid "Defeat all opponents"
-msgstr "Poražte všechny soupeře"
+msgid ""
+"Defeat opponents by killing all their units and destroying all their "
+"structures."
+msgstr "Poražte nepřátele zabitím všech jejich jednotek a zničením všech jejich staveb."
 
 #: simulation/data/settings/victory_conditions/conquest.jsonData.Title
 msgid "Conquest"
 msgstr "Dobytí"
 
 #: simulation/data/settings/victory_conditions/conquest_structures.jsonData.Description
-msgid "Destroy all structures of enemies"
-msgstr "Zničte všechny nepřátelské stavby"
+msgid "Defeat opponents by destroying all their structures."
+msgstr "Poražte nepřátele zničením všech jejich staveb."
 
 #: simulation/data/settings/victory_conditions/conquest_structures.jsonData.Title
 msgid "Conquest Structures"
 msgstr "Dobýt budovy"
 
 #: simulation/data/settings/victory_conditions/conquest_units.jsonData.Description
-msgid "Kill all enemy units"
-msgstr "Zabijte všechny nepřátelské jednotky"
+msgid "Defeat opponents by killing all their units."
+msgstr "Poražte nepřátele zabitím všech jejich jednotek."
 
 #: simulation/data/settings/victory_conditions/conquest_units.jsonData.Title
 msgid "Conquest Units"
 msgstr "Dobýt jednotky"
 
 #: simulation/data/settings/victory_conditions/regicide.jsonData.Description
-msgid "Defeat opponents by killing their hero"
-msgstr "Porazit nepřátele zabitím jejich hrdiny"
+msgid "Defeat opponents by killing their hero."
+msgstr "Poražte nepřátele zabitím jejich hrdiny."
 
 #: simulation/data/settings/victory_conditions/regicide.jsonData.Title
 msgid "Regicide"
 msgstr "Královrah"
 
 #: simulation/data/settings/victory_conditions/wonder.jsonData.Description
-msgid "Build and protect a wonder to win"
-msgstr "Postavte a ochraňte div, abyste vyhrál"
+msgid ""
+"Be the first to build or capture a Wonder and keep it for a certain time to "
+"win the game. The timer will be reset when the Wonder is destroyed or "
+"captured or in allied victory when the owners alliances change."
+msgstr ""
 
 #: simulation/data/settings/victory_conditions/wonder.jsonData.Title
 msgid "Wonder"
@@ -947,53 +780,104 @@ msgctxt "startingResources"
 msgid "Deathmatch"
 msgstr "Zápas na život a na smrt"
 
+#: simulation/data/settings/trigger_difficulties.jsonData[0].Tooltip
+msgid "Choose this difficulty if you are discovering 0 A.D."
+msgstr "Zvolte tuto obtížnost, pokud objevujete 0 A.D."
+
+#: simulation/data/settings/trigger_difficulties.jsonData[0].Title
+msgid "Very Easy"
+msgstr "Velmi lehká"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[1].Tooltip
+msgid "Choose this difficulty if you do not like being knocked down."
+msgstr "Zvolte tuto obtížnost, pokud nemáte rád, když jste porážen."
+
+#: simulation/data/settings/trigger_difficulties.jsonData[1].Title
+msgid "Easy"
+msgstr "Lehká"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[2].Tooltip
+msgid ""
+"Choose this difficulty if you have already a good experience with 0 A.D."
+msgstr "Zvolte tuto obtížnost, pokud jste již s 0 A.D dobře obeznámen."
+
+#: simulation/data/settings/trigger_difficulties.jsonData[2].Title
+#: simulation/data/settings/map_sizes.jsonData[2].Name
+msgid "Medium"
+msgstr "Střední"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[3].Tooltip
+msgid "Choose this difficulty if you want to be really challenged."
+msgstr "Zvolte tuto obtížnost, pokud chcete být v nevýhodě (totiž podmínkami značně postižen, prostě milujete opravdové výzvy)."
+
+#: simulation/data/settings/trigger_difficulties.jsonData[3].Title
+msgid "Hard"
+msgstr "Těžká"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[4].Tooltip
+msgid "Choose this difficulty if you do not mind being swept out."
+msgstr "Zvolte tuto obtížnost, pokud vám nevadí, že se s vámi zametá."
+
+#: simulation/data/settings/trigger_difficulties.jsonData[4].Title
+msgid "Very Hard"
+msgstr "Velmi těžká"
+
 #: simulation/data/settings/map_sizes.jsonData[0].Name
-#: simulation/data/settings/map_sizes.jsonData[0].LongName
 msgid "Tiny"
 msgstr "Drobná"
+
+#: simulation/data/settings/map_sizes.jsonData[0].Tooltip
+msgid "This map size has barely any room for even the most basic resources."
+msgstr "Tato velikost mapy má jen taktak nějaký prostor pro dokonce byť nejzákladnější zdroje."
 
 #: simulation/data/settings/map_sizes.jsonData[1].Name
 msgid "Small"
 msgstr "Malá"
 
-#: simulation/data/settings/map_sizes.jsonData[1].LongName
-msgid "Small (2 players)"
-msgstr "Malá (2 hráči)"
+#: simulation/data/settings/map_sizes.jsonData[1].Tooltip
+msgid ""
+"Small maps are suitable for 1v1 matches, as players can reach the enemy "
+"quickly while still having some room to expand."
+msgstr ""
 
-#: simulation/data/settings/map_sizes.jsonData[2].Name
-msgid "Medium"
-msgstr "Střední"
-
-#: simulation/data/settings/map_sizes.jsonData[2].LongName
-msgid "Medium (3 players)"
-msgstr "Střední (3 hráči)"
+#: simulation/data/settings/map_sizes.jsonData[2].Tooltip
+msgid ""
+"Medium-sized maps provide plenty of space for two players, but even eight "
+"players fit."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[3].Name
 msgid "Normal"
 msgstr "Normální"
 
-#: simulation/data/settings/map_sizes.jsonData[3].LongName
-msgid "Normal (4 players)"
-msgstr "Normální (4 hráči)"
+#: simulation/data/settings/map_sizes.jsonData[3].Tooltip
+msgid ""
+"This is the ideal mapsize for 4 to 8 players, because there is plenty of "
+"space to expand while the neighbors are quickly reachable."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[4].Name
 msgid "Large"
 msgstr "Velká"
 
-#: simulation/data/settings/map_sizes.jsonData[4].LongName
-msgid "Large (6 players)"
-msgstr "Velká (6 hráčů)"
+#: simulation/data/settings/map_sizes.jsonData[4].Tooltip
+msgid ""
+"The large mapsize is recommended when great portions of the map are covered "
+"with water or inaccessible mountains."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[5].Name
 msgid "Very Large"
 msgstr "Velmi velká"
 
-#: simulation/data/settings/map_sizes.jsonData[5].LongName
-msgid "Very Large (8 players)"
-msgstr "Velmi velká (8 hráčů)"
+#: simulation/data/settings/map_sizes.jsonData[5].Tooltip
+#: simulation/data/settings/map_sizes.jsonData[6].Tooltip
+msgid ""
+"Very large maps are not recommended as it takes very long to reach the enemy"
+" and the game performance can be reduced."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[6].Name
-#: simulation/data/settings/map_sizes.jsonData[6].LongName
 msgid "Giant"
 msgstr "Obrovská"
 
@@ -1005,15 +889,5 @@ msgstr "UI Petra"
 msgid ""
 "Petra is the default 0 A.D. AI bot. Please report issues to Wildfire Games (see the link in the main menu).\n"
 "\n"
-"The AI has a bonus/penalty on resource stockpiling (either gathering rate or trade gain) varying from 0.5 for Sandbox to 1.6 for Very Hard (Medium = 1.0). In addition, the Sandbox level does not expand nor attack."
-msgstr "Petra je výchozí počítačový hráč (AI) 0 A.D. Prosím upozorňujte na chyby Wildfire Games (odkaz najdete v hlavní nabídce).\n\nUmělá inteligence má zvýhodnění/znevýhodnění v získávaní zdrojů (rychlost sběru nebo obchodování) začínající od 0,5 u pískoviště do 1,6 pro Velmi těžké (normální = 1,0). V režimu pískoviště se umělá inteligence nerozšiřuje ani neutočí."
-
-#: simulation/ai/tutorial-ai/data.jsonname
-msgid "Tutorial AI"
-msgstr "Umělá inteligence pro výuku"
-
-#: simulation/ai/tutorial-ai/data.jsondescription
-msgid ""
-"The Tutorial AI should only be used on the \"Introductory Tutorial\" "
-"scenario."
-msgstr "Výuková umělá inteligence by se měla používat jen při úvodních výukových scénářích."
+"The AI has a bonus/penalty on resource stockpiling (either gathering rate or trade gain) varying from -60% for Sandbox to +60% for Very Hard (Medium 0%) and the easiest levels have a slower production and building rate. In addition, the Sandbox level does not expand nor attack."
+msgstr ""

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -86,16 +86,25 @@ void COList::SetupText()
 	for (size_t i = 0; i < pList->m_Items.size(); ++i)
 	{
 		m_ItemsYPositions[i] = buffered_y;
+		float shift = 0.0f;
 		for (size_t c = 0; c < m_Columns.size(); ++c)
 		{
 			CGUIList* pList_c;
 			GUI<CGUIList>::GetSettingPointer(this, "list_" + m_Columns[c].m_Id, pList_c);
 			SGUIText* text = new SGUIText();
-			*text = GetGUI()->GenerateText(pList_c->m_Items[i], font, width, buffer_zone, this);
-			if (c == 0)
-				buffered_y += text->m_Size.cy;
+			if (!pList_c->m_Items[i].GetOriginalString().empty())
+				*text = GetGUI()->GenerateText(pList_c->m_Items[i], font, width, buffer_zone, this);
+			else
+			{
+				// Minimum height of a space character of the current font size
+				CGUIString align_string;
+				align_string.SetValue(L" ");
+				*text = GetGUI()->GenerateText(align_string, font, width, buffer_zone, this);
+			}
+			shift = std::max(shift, text->m_Size.cy);
 			AddText(text);
 		}
+		buffered_y += shift;
 	}
 
 	m_ItemsYPositions[pList->m_Items.size()] = buffered_y;
@@ -148,6 +157,11 @@ void COList::HandleMessage(SGUIMessage& Message)
 		float xpos = 0;
 		for (COListColumn column : m_Columns)
 		{
+			bool hidden = false;
+			GUI<bool>::GetSetting(this, "hidden_" + column.m_Id, hidden);
+			if (hidden)
+				continue;
+
 			float width = column.m_Width;
 			// Check if it's a decimal value, and if so, assume relative positioning.
 			if (column.m_Width < 1 && column.m_Width > 0)
@@ -201,6 +215,7 @@ bool COList::HandleAdditionalChildren(const XMBElement& child, CXeromyces* pFile
 	else if (child.GetNodeName() == elmt_column)
 	{
 		COListColumn column;
+		bool hidden = false;
 
 		for (XMBAttribute attr : child.GetAttributes())
 		{
@@ -218,6 +233,11 @@ bool COList::HandleAdditionalChildren(const XMBElement& child, CXeromyces* pFile
 			else if (attr_name == "id")
 			{
 				column.m_Id = attr_value;
+			}
+			else if (attr_name == "hidden")
+			{
+				if (!GUI<bool>::ParseString(attr_value.FromUTF8(), hidden))
+					LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name.c_str(), attr_value.c_str());
 			}
 			else if (attr_name == "width")
 			{
@@ -271,6 +291,9 @@ bool COList::HandleAdditionalChildren(const XMBElement& child, CXeromyces* pFile
 		m_Columns.push_back(column);
 
 		AddSetting(GUIST_CGUIList, "list_" + column.m_Id);
+		AddSetting(GUIST_bool, "hidden_" + column.m_Id);
+		GUI<bool>::SetSetting(this, "hidden_" + column.m_Id, hidden);
+
 		SetupText();
 
 		return true;
@@ -372,6 +395,11 @@ void COList::DrawList(const int& selected, const CStr& _sprite, const CStr& _spr
 	float xpos = 0;
 	for (size_t col = 0; col < m_Columns.size(); ++col)
 	{
+		bool hidden = false;
+		GUI<bool>::GetSetting(this, "hidden_" + m_Columns[col].m_Id, hidden);
+		if (hidden)
+			continue;
+
 		// Check if it's a decimal value, and if so, assume relative positioning.
 		float width = m_Columns[col].m_Width;
 		if (m_Columns[col].m_Width < 1 && m_Columns[col].m_Width > 0)
@@ -432,6 +460,11 @@ void COList::DrawList(const int& selected, const CStr& _sprite, const CStr& _spr
 		xpos = 0;
 		for (size_t col = 0; col < objectsCount; ++col)
 		{
+			bool hidden = false;
+			GUI<bool>::GetSetting(this, "hidden_" + m_Columns[col].m_Id, hidden);
+			if (hidden)
+				continue;
+
 			// Determine text position and width
 			const CPos textPos = rect.TopLeft() + CPos(xpos, -scroll + m_ItemsYPositions[i]);
 

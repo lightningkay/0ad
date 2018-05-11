@@ -6,7 +6,7 @@ const g_EngineInfo = Engine.GetEngineInfo();
 /**
  * Needed for formatPlayerInfo to show the player civs in the details.
  */
-const g_CivData = loadCivData();
+const g_CivData = loadCivData(false, false);
 
 /**
  * Used for creating the mapsize filter.
@@ -36,7 +36,7 @@ var g_MapNames = [];
 /**
  * Sorted list of the victory conditions occuring in the replays
  */
-var g_VictoryConditions = [];
+var g_VictoryConditions = g_Settings && g_Settings.VictoryConditions;
 
 /**
  * Directory name of the currently selected replay. Used to restore the selection after changing filters.
@@ -49,6 +49,11 @@ var g_SelectedReplayDirectory = "";
 var g_ReplaysLoaded = false;
 
 /**
+ * Remember last viewed summary panel and charts.
+ */
+var g_SummarySelectedData;
+
+/**
  * Initializes globals, loads replays and displays the list.
  */
 function init(data)
@@ -59,7 +64,7 @@ function init(data)
 		return;
 	}
 
-	loadReplays(data && data.replaySelectionData);
+	loadReplays(data && data.replaySelectionData, false);
 
 	if (!g_Replays)
 	{
@@ -67,17 +72,24 @@ function init(data)
 		return;
 	}
 
+	initHotkeyTooltips();
 	displayReplayList();
+
+	if (data && data.summarySelectedData)
+		g_SummarySelectedData = data.summarySelectedData;
 }
 
 /**
  * Store the list of replays loaded in C++ in g_Replays.
  * Check timestamp and compatibility and extract g_Playernames, g_MapNames, g_VictoryConditions.
  * Restore selected filters and item.
+ * @param replaySelectionData - Currently selected filters and item to be restored after the loading.
+ * @param compareFiles - If true, compares files briefly (which might be slow with optical harddrives),
+ *                       otherwise blindly trusts the replay cache.
  */
-function loadReplays(replaySelectionData)
+function loadReplays(replaySelectionData, compareFiles)
 {
-	g_Replays = Engine.GetReplays();
+	g_Replays = Engine.GetReplays(compareFiles);
 
 	if (!g_Replays)
 		return;
@@ -86,8 +98,6 @@ function loadReplays(replaySelectionData)
 	for (let replay of g_Replays)
 	{
 		let nonAIPlayers = 0;
-		// Use time saved in file, otherwise file mod date
-		replay.timestamp = replay.attribs.timestamp ? +replay.attribs.timestamp : +replay.filemod_timestamp-replay.duration;
 
 		// Check replay for compatibility
 		replay.isCompatible = isReplayCompatible(replay);
@@ -97,10 +107,6 @@ function loadReplays(replaySelectionData)
 		// Extract map names
 		if (g_MapNames.indexOf(replay.attribs.settings.Name) == -1 && replay.attribs.settings.Name != "")
 			g_MapNames.push(replay.attribs.settings.Name);
-
-		// Extract victory conditions
-		if (replay.attribs.settings.GameType && g_VictoryConditions.indexOf(replay.attribs.settings.GameType) == -1)
-			g_VictoryConditions.push(replay.attribs.settings.GameType);
 
 		// Extract playernames
 		for (let playerData of replay.attribs.settings.PlayerData)
@@ -128,7 +134,6 @@ function loadReplays(replaySelectionData)
 	}
 
 	g_MapNames.sort();
-	g_VictoryConditions.sort();
 
 	// Reload filters (since they depend on g_Replays and its derivatives)
 	initFilters(replaySelectionData && replaySelectionData.filters);
@@ -172,9 +177,6 @@ function sanitizeGameAttributes(attribs)
 	if (!attribs.settings.mapType)
 		attribs.settings.mapType = "skirmish";
 
-	if (!attribs.settings.GameType)
-		attribs.settings.GameType = "conquest";
-
 	// Remove gaia
 	if (attribs.settings.PlayerData.length && attribs.settings.PlayerData[0] == null)
 		attribs.settings.PlayerData.shift();
@@ -183,6 +185,15 @@ function sanitizeGameAttributes(attribs)
 		if (!pData.Name)
 			pData.Name = "";
 	});
+}
+
+function initHotkeyTooltips()
+{
+	Engine.GetGUIObjectByName("playersFilter").tooltip =
+		translate("Filter replays by typing one or more, partial or complete playernames.") +
+		" " + colorizeAutocompleteHotkey();
+
+	Engine.GetGUIObjectByName("deleteReplayButton").tooltip = deleteTooltip();
 }
 
 /**
@@ -204,12 +215,12 @@ function displayReplayList()
 		let works = replay.isCompatible;
 		return {
 			"directories": replay.directory,
-			"months": greyout(getReplayDateTime(replay), works),
-			"popCaps": greyout(translatePopulationCapacity(replay.attribs.settings.PopulationCap), works),
-			"mapNames": greyout(getReplayMapName(replay), works),
-			"mapSizes": greyout(translateMapSize(replay.attribs.settings.Size), works),
-			"durations": greyout(getReplayDuration(replay), works),
-			"playerNames": greyout(getReplayPlayernames(replay), works)
+			"months": compatibilityColor(getReplayDateTime(replay), works),
+			"popCaps": compatibilityColor(translatePopulationCapacity(replay.attribs.settings.PopulationCap), works),
+			"mapNames": compatibilityColor(getReplayMapName(replay), works),
+			"mapSizes": compatibilityColor(translateMapSize(replay.attribs.settings.Size), works),
+			"durations": compatibilityColor(getReplayDuration(replay), works),
+			"playerNames": compatibilityColor(getReplayPlayernames(replay), works)
 		};
 	});
 
@@ -246,6 +257,7 @@ function displayReplayDetails()
 	Engine.GetGUIObjectByName("replayInfoEmpty").hidden = replaySelected;
 	Engine.GetGUIObjectByName("startReplayButton").enabled = replaySelected;
 	Engine.GetGUIObjectByName("deleteReplayButton").enabled = replaySelected;
+	Engine.GetGUIObjectByName("replayFilename").hidden = !replaySelected;
 	Engine.GetGUIObjectByName("summaryButton").hidden = true;
 
 	if (!replaySelected)
@@ -256,8 +268,11 @@ function displayReplayDetails()
 	Engine.GetGUIObjectByName("sgMapName").caption = translate(replay.attribs.settings.Name);
 	Engine.GetGUIObjectByName("sgMapSize").caption = translateMapSize(replay.attribs.settings.Size);
 	Engine.GetGUIObjectByName("sgMapType").caption = translateMapType(replay.attribs.settings.mapType);
-	Engine.GetGUIObjectByName("sgVictory").caption = translateVictoryCondition(replay.attribs.settings.GameType);
-	Engine.GetGUIObjectByName("sgNbPlayers").caption = replay.attribs.settings.PlayerData.length;
+	Engine.GetGUIObjectByName("sgVictory").caption = replay.attribs.settings.VictoryConditions.map(victoryConditionName =>
+		translateVictoryCondition(victoryConditionName)).join(translate(", "));
+	Engine.GetGUIObjectByName("sgNbPlayers").caption = sprintf(translate("Players: %(numberOfPlayers)s"),
+		{ "numberOfPlayers": replay.attribs.settings.PlayerData.length });
+	Engine.GetGUIObjectByName("replayFilename").caption = Engine.GetReplayDirectoryName(replay.directory);
 
 	let metadata = Engine.GetReplayMetadata(replay.directory);
 	Engine.GetGUIObjectByName("sgPlayersNames").caption =
@@ -269,7 +284,7 @@ function displayReplayDetails()
 				metadata.playerStates.map(pState => pState.state)
 		);
 
-	let mapData = getMapDescriptionAndPreview(replay.attribs.settings.mapType, replay.attribs.map);
+	let mapData = getMapDescriptionAndPreview(replay.attribs.settings.mapType, replay.attribs.map, replay.attribs);
 	Engine.GetGUIObjectByName("sgMapDescription").caption = mapData.description;
 
 	Engine.GetGUIObjectByName("summaryButton").hidden = !Engine.HasReplayMetadata(replay.directory);
@@ -278,19 +293,11 @@ function displayReplayDetails()
 }
 
 /**
- * Adds grey font if replay is not compatible.
- */
-function greyout(text, isCompatible)
-{
-	return isCompatible ? text : '[color="96 96 96"]' + text + '[/color]';
-}
-
-/**
  * Returns a human-readable version of the replay date.
  */
 function getReplayDateTime(replay)
 {
-	return Engine.FormatMillisecondsIntoDateString(replay.timestamp * 1000, translate("yyyy-MM-dd HH:mm"));
+	return Engine.FormatMillisecondsIntoDateStringLocal(replay.attribs.timestamp * 1000, translate("yyyy-MM-dd HH:mm"));
 }
 
 /**
@@ -320,7 +327,7 @@ function getReplayMapName(replay)
  */
 function getReplayMonth(replay)
 {
-	return Engine.FormatMillisecondsIntoDateString(replay.timestamp * 1000, translate("yyyy-MM"));
+	return Engine.FormatMillisecondsIntoDateStringLocal(replay.attribs.timestamp * 1000, translate("yyyy-MM"));
 }
 
 /**
@@ -338,7 +345,7 @@ function getReplayDuration(replay)
  */
 function isReplayCompatible(replay)
 {
-	return replayHasSameEngineVersion(replay) && hasSameMods(replay.attribs, g_EngineInfo);
+	return replayHasSameEngineVersion(replay) && hasSameMods(replay.attribs.mods, g_EngineInfo.mods);
 }
 
 /**

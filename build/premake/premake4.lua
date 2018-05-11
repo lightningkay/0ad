@@ -106,21 +106,9 @@ configurations { "Release", "Debug" }
 
 -- Get some environement specific information used later.
 if os.is("windows") then
-	nasmpath(rootdir.."/build/bin/nasm.exe")
 	lcxxtestpath = rootdir.."/build/bin/cxxtestgen.exe"
 else
-
 	lcxxtestpath = rootdir.."/libraries/source/cxxtest-4.4/bin/cxxtestgen"
-
-	if os.is("linux") and arch == "amd64" then
-		nasmformat "elf64"
-	elseif os.is("macosx") and arch == "amd64" then
-		nasmformat "macho64"
-	elseif os.is("macosx") then
-		nasmformat "macho"
-	else
-		nasmformat "elf"
-	end
 end
 
 source_root = rootdir.."/source/" -- default for most projects - overridden by local in others
@@ -282,7 +270,8 @@ function project_set_build_flags()
 				end
 
 				if os.is("linux") or os.is("bsd") then
-					linkoptions { "-Wl,--no-undefined", "-Wl,--as-needed" }
+					buildoptions { "-fPIC" }
+					linkoptions { "-Wl,--no-undefined", "-Wl,--as-needed", "-Wl,-z,relro" }
 				end
 
 				if arch == "x86" then
@@ -634,9 +623,11 @@ function setup_all_libs ()
 		extern_libs = {
 			"spidermonkey",
 			"boost",
+			"enet",
 			"gloox",
 			"icu",
 			"iconv",
+			"libsodium",
 			"tinygettext"
 		}
 		setup_static_lib_project("lobby", source_dirs, extern_libs, {})
@@ -665,7 +656,8 @@ function setup_all_libs ()
 		}
 		extern_libs = {
 			"spidermonkey",
-			"boost"
+			"boost",
+			"libsodium"
 		}
 		setup_static_lib_project("lobby", source_dirs, extern_libs, {})
 		files { source_root.."lobby/Globals.cpp" }
@@ -705,7 +697,7 @@ function setup_all_libs ()
 	source_dirs = {
 		"ps",
 		"ps/scripting",
-		"ps/Network",
+		"network/scripting",
 		"ps/GameSetup",
 		"ps/XML",
 		"soundmanager",
@@ -730,6 +722,7 @@ function setup_all_libs ()
 		"tinygettext",
 		"icu",
 		"iconv",
+		"libsodium",
 	}
 
 	if not _OPTIONS["without-audio"] then
@@ -782,6 +775,7 @@ function setup_all_libs ()
 		"sdl",	-- key definitions
 		"opengl",
 		"boost",
+		"enet",
 		"tinygettext",
 		"icu",
 		"iconv",
@@ -812,6 +806,7 @@ function setup_all_libs ()
 	extern_libs = {
 		"boost",
 		"sdl",
+		"openal",
 		"opengl",
 		"libpng",
 		"zlib",
@@ -912,6 +907,7 @@ used_extern_libs = {
 	"tinygettext",
 	"icu",
 	"iconv",
+	"libsodium",
 
 	"valgrind",
 }
@@ -1120,19 +1116,17 @@ function setup_atlas_projects()
 		"CustomControls/SnapSplitterWindow",
 		"CustomControls/VirtualDirTreeCtrl",
 		"CustomControls/Windows",
-		"ErrorReporter",
 		"General",
 		"General/VideoRecorder",
 		"Misc",
 		"ScenarioEditor",
 		"ScenarioEditor/Sections/Common",
-		"ScenarioEditor/Sections/Cinematic",
+		"ScenarioEditor/Sections/Cinema",
 		"ScenarioEditor/Sections/Environment",
 		"ScenarioEditor/Sections/Map",
 		"ScenarioEditor/Sections/Object",
 		"ScenarioEditor/Sections/Player",
 		"ScenarioEditor/Sections/Terrain",
-		"ScenarioEditor/Sections/Trigger",
 		"ScenarioEditor/Tools",
 		"ScenarioEditor/Tools/Common",
 	}

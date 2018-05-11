@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ const int g_InitFlags = INIT_HAVE_VMODE|INIT_NO_GUI;
 MESSAGEHANDLER(Init)
 {
 	UNUSED2(msg);
-	
+
 	g_Quickstart = true;
 
 	// Mount mods if there are any specified as command line parameters
@@ -87,7 +87,7 @@ MESSAGEHANDLER(InitGraphics)
 
 	ogl_Init();
 
-	InitGraphics(g_AtlasGameLoop->args, g_InitFlags);
+	InitGraphics(g_AtlasGameLoop->args, g_InitFlags, {});
 
 #if OS_WIN
 	// HACK (to stop things looking very ugly when scrolling) - should
@@ -101,7 +101,7 @@ MESSAGEHANDLER(InitGraphics)
 MESSAGEHANDLER(Shutdown)
 {
 	UNUSED2(msg);
-	
+
 	// Empty the CommandProc, to get rid of its references to entities before
 	// we kill the EntityManager
 	GetCommandProc().Destroy();
@@ -123,7 +123,9 @@ QUERYHANDLER(Exit)
 
 MESSAGEHANDLER(RenderEnable)
 {
+	g_AtlasGameLoop->view->SetEnabled(false);
 	g_AtlasGameLoop->view = AtlasView::GetView(msg->view);
+	g_AtlasGameLoop->view->SetEnabled(true);
 }
 
 MESSAGEHANDLER(SetViewParamB)
@@ -196,6 +198,7 @@ MESSAGEHANDLER(ResizeScreen)
 MESSAGEHANDLER(RenderStyle)
 {
 	g_Renderer.SetTerrainRenderMode(msg->wireframe ? EDGED_FACES : SOLID);
+	g_Renderer.SetWaterRenderMode(msg->wireframe ? EDGED_FACES : SOLID);
 	g_Renderer.SetModelRenderMode(msg->wireframe ? EDGED_FACES : SOLID);
 }
 

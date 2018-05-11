@@ -127,7 +127,7 @@ m.TrainingPlan.prototype.start = function(gameState)
 
 	if (this.metadata && this.metadata.base !== undefined && this.metadata.base === 0)
 		this.metadata.base = this.trainers[0].getMetadata(PlayerID, "base");
-	this.trainers[0].train(gameState.civ(), this.type, this.number, this.metadata, this.promotedTypes(gameState));
+	this.trainers[0].train(gameState.getPlayerCiv(), this.type, this.number, this.metadata, this.promotedTypes(gameState));
 
 	this.onStart(gameState);
 };
@@ -169,7 +169,7 @@ m.TrainingPlan.prototype.promotedTypes = function(gameState)
 
 m.TrainingPlan.prototype.Serialize = function()
 {
-	let prop = {
+	return {
 		"category": this.category,
 		"type": this.type,
 		"ID": this.ID,
@@ -178,18 +178,15 @@ m.TrainingPlan.prototype.Serialize = function()
 		"number": this.number,
 		"maxMerge": this.maxMerge
 	};
-
-	return { "prop": prop };
 };
 
 m.TrainingPlan.prototype.Deserialize = function(gameState, data)
 {
-	for (let key in data.prop)
-		this[key] = data.prop[key];
+	for (let key in data)
+		this[key] = data[key];
 
-	let cost = new API3.Resources();
-	cost.Deserialize(data.prop.cost);
-	this.cost = cost;
+	this.cost = new API3.Resources();
+	this.cost.Deserialize(data.cost);
 };
 
 return m;

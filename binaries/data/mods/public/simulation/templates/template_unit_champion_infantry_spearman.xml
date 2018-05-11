@@ -9,14 +9,16 @@
       <Hack>6.0</Hack>
       <Pierce>5.0</Pierce>
       <Crush>0.0</Crush>
-      <MaxRange>5.0</MaxRange>
-      <RepeatTime>750</RepeatTime>
+      <MaxRange>4.5</MaxRange>
+      <PrepareTime>500</PrepareTime>
+      <RepeatTime>900</RepeatTime>
       <Bonuses>
           <BonusCavMelee>
             <Classes>Cavalry</Classes>
             <Multiplier>3.0</Multiplier>
           </BonusCavMelee>
       </Bonuses>
+      <PreferredClasses datatype="tokens">Human</PreferredClasses>
     </Melee>
   </Attack>
   <Cost>
@@ -32,16 +34,13 @@
     <VisibleClasses datatype="tokens">Melee Spear</VisibleClasses>
     <Tooltip>Counters: 3x vs. Cavalry.</Tooltip>
     <Formations datatype="tokens">
-      formations/phalanx
-      formations/testudo
+      special/formations/testudo
     </Formations>
   </Identity>
   <UnitMotion>
-    <WalkSpeed>11.5</WalkSpeed>
+    <WalkSpeed op="mul">1.3</WalkSpeed>
     <Run>
-      <Speed>23.0</Speed>
-      <Range>600.0</Range>
-      <RangeMin>5.0</RangeMin>
+      <Speed op="mul">1.3</Speed>
     </Run>
   </UnitMotion>
 </Entity>

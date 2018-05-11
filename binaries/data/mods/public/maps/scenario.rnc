@@ -37,7 +37,6 @@ angle = attribute angle { xsd:float }
 Scenario = element Scenario {
     attribute version { xsd:positiveInteger } &
     element Environment {
-        element LightingModel { text }? & # Deprecated
         element SkySet { text } &
         element SunColor { suncolor_rgb } &
         element SunElevation { angle } &
@@ -58,12 +57,10 @@ Scenario = element Scenario {
                 element Type { text } & # Not implemented
                 element Color { color_rgb } &
                 element Height { xsd:decimal } &
-                element Shininess { xsd:decimal }? & # Deprecated
                 element Waviness { xsd:decimal } &
                 element Murkiness { xsd:decimal } &
                 element Tint { color_rgb } &
-                element ReflectionTint { color_rgb } &
-                element ReflectionTintStrength { xsd:decimal }
+                element WindAngle { xsd:decimal }?
             }
         } &
         element Postproc {
@@ -87,7 +84,7 @@ Scenario = element Scenario {
         element Position { pos_xyz },
         element Rotation { angle },
         element Declination { angle }
-    } &
+    }? &
     element ScriptSettings {
         text
     } &
@@ -111,8 +108,21 @@ Scenario = element Scenario {
             }?
         }*
     }? &
-    element Paths { # Unused
-        empty
+    element Paths {
+        element Path {
+            attribute name { text } &
+            attribute timescale { xsd:decimal } &
+            attribute orientation { text } &
+            attribute mode { text } &
+            attribute style { text } &
+            element Node {
+                attribute deltatime {
+                    xsd:decimal { minInclusive = "0" }
+                } &
+                element Position { pos_xyz }? &
+                element Target { pos_xyz }?
+            }*
+        }*
     }? &
     element Triggers { # Unused
         empty

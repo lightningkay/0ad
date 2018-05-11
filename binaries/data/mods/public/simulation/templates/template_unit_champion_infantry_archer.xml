@@ -8,9 +8,11 @@
       <MaxRange>76</MaxRange>
       <MinRange>0.0</MinRange>
       <ProjectileSpeed>75.0</ProjectileSpeed>
-      <PrepareTime>500</PrepareTime>
+      <Gravity>9.81</Gravity>
+      <PrepareTime>300</PrepareTime>
       <RepeatTime>500</RepeatTime>
-      <Spread>1.2</Spread>
+      <Spread>1.0</Spread>
+      <Delay>0</Delay>
       <PreferredClasses datatype="tokens">Human</PreferredClasses>
     </Ranged>
   </Attack>
@@ -26,18 +28,13 @@
     <VisibleClasses datatype="tokens">Ranged Archer</VisibleClasses>
     <GenericName>Champion Archer</GenericName>
     <Formations datatype="tokens">
-      formations/skirmish
+      special/formations/skirmish
     </Formations>
   </Identity>
-  <Sound>
-    <SoundGroups>
-      <attack>attack/weapon/arrowfly.xml</attack>
-    </SoundGroups>
-  </Sound>
   <UnitMotion>
-    <WalkSpeed>11.0</WalkSpeed>
+    <WalkSpeed op="mul">1.2</WalkSpeed>
     <Run>
-      <Speed>18.0</Speed>
+      <Speed op="mul">1.2</Speed>
     </Run>
   </UnitMotion>
 </Entity>

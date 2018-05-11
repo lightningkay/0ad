@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace EntitySelection
 
 /**
  * Finds all selectable entities under the given screen coordinates.
- * 
+ *
  * @param camera use this view to convert screen to world coordinates.
  * @param screenX,screenY 2D screen coordinates.
  * @param player player whose LOS will be used when selecting entities. In Atlas
@@ -65,8 +65,14 @@ entity_id_t PickEntityAtPoint(CSimulation2& simulation, const CCamera& camera, i
 std::vector<entity_id_t> PickEntitiesInRect(CSimulation2& simulation, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, player_id_t owner, bool allowEditorSelectables);
 
 /**
+ * Finds all selectable entities within the given screen coordinate rectangle,
+ * belonging to any given player (excluding Gaia). Used for status bars.
+ */
+std::vector<entity_id_t> PickNonGaiaEntitiesInRect(CSimulation2& simulation, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, bool allowEditorSelectables);
+
+/**
  * Finds all entities with the given entity template name, belonging to the given player.
- * 
+ *
  * @param camera use this view to convert screen to world coordinates.
  * @param templateName the name of the template to match, or the selection group name
  *	for similar matching.

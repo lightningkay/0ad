@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,11 +33,11 @@
 #include "ps/Profiler2.h"
 
 entity_id_t EntitySelection::PickEntityAtPoint(CSimulation2& simulation, const CCamera& camera, int screenX, int screenY, player_id_t player, bool allowEditorSelectables)
-{	
+{
 	PROFILE2("PickEntityAtPoint");
 	CVector3D origin, dir;
 	camera.BuildCameraRay(screenX, screenY, origin, dir);
-	
+
 	CmpPtr<ICmpUnitRenderer> cmpUnitRenderer(simulation.GetSimContext().GetSystemEntity());
 	ENSURE(cmpUnitRenderer);
 
@@ -45,7 +45,7 @@ entity_id_t EntitySelection::PickEntityAtPoint(CSimulation2& simulation, const C
 	cmpUnitRenderer->PickAllEntitiesAtPoint(entities, origin, dir, allowEditorSelectables);
 	if (entities.empty())
 		return INVALID_ENTITY;
-	
+
 	// Filter for relevent entities in the list of candidates (all entities below the mouse)
 	std::vector<std::pair<float, CEntityHandle> > hits; // (dist^2, entity) pairs
 	for (size_t i = 0; i < entities.size(); ++i)
@@ -63,14 +63,14 @@ entity_id_t EntitySelection::PickEntityAtPoint(CSimulation2& simulation, const C
 		[](const std::pair<float, CEntityHandle>& a, const std::pair<float, CEntityHandle>& b) {
 			return a.first < b.first;
 		});
-	
+
 	CmpPtr<ICmpRangeManager> cmpRangeManager(simulation, SYSTEM_ENTITY);
 	ENSURE(cmpRangeManager);
-	
+
 	for (size_t i = 0; i < hits.size(); ++i)
 	{
 		const CEntityHandle& handle = hits[i].second;
-		
+
 		CmpPtr<ICmpSelectable> cmpSelectable(handle);
 		if (!cmpSelectable)
 			continue;
@@ -82,25 +82,21 @@ entity_id_t EntitySelection::PickEntityAtPoint(CSimulation2& simulation, const C
 		// Ignore entities hidden by LOS (or otherwise hidden, e.g. when not IsInWorld)
 		if (cmpRangeManager->GetLosVisibility(handle, player) == ICmpRangeManager::VIS_HIDDEN)
 			continue;
-			
+
 		return handle.GetId();
 	}
 	return INVALID_ENTITY;
 }
 
 /**
- * Returns true if the given entity is visible to the given player and visible in the given screen area.
+ * Returns true if the given entity is visible in the given screen area.
  * If the entity is a decorative, the function will only return true if allowEditorSelectables.
  */
-static bool CheckEntityVisibleAndInRect(CEntityHandle handle, CmpPtr<ICmpRangeManager> cmpRangeManager, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, player_id_t owner, bool allowEditorSelectables)
+static bool CheckEntityInRect(CEntityHandle handle, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, bool allowEditorSelectables)
 {
 	// Check if this entity is only selectable in Atlas
 	CmpPtr<ICmpSelectable> cmpSelectable(handle);
 	if (!cmpSelectable || (!allowEditorSelectables && cmpSelectable->IsEditorOnly()))
-		return false;
-
-	// Ignore entities hidden by LOS (or otherwise hidden, e.g. when not IsInWorld)
-	if (cmpRangeManager->GetLosVisibility(handle, owner) == ICmpRangeManager::VIS_HIDDEN)
 		return false;
 
 	// Find the current interpolated model position.
@@ -123,6 +119,18 @@ static bool CheckEntityVisibleAndInRect(CEntityHandle handle, CmpPtr<ICmpRangeMa
 	int ix = (int)x;
 	int iy = (int)y;
 	return sx0 <= ix && ix <= sx1 && sy0 <= iy && iy <= sy1;
+}
+
+/**
+ * Returns true if the given entity is visible to the given player and visible in the given screen area.
+ */
+static bool CheckEntityVisibleAndInRect(CEntityHandle handle, CmpPtr<ICmpRangeManager> cmpRangeManager, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, player_id_t player, bool allowEditorSelectables)
+{
+	// Ignore entities hidden by LOS (or otherwise hidden, e.g. when not IsInWorld)
+	if (cmpRangeManager->GetLosVisibility(handle, player) == ICmpRangeManager::VIS_HIDDEN)
+		return false;
+
+	return CheckEntityInRect(handle, camera, sx0, sy0, sx1, sy1, allowEditorSelectables);
 }
 
 std::vector<entity_id_t> EntitySelection::PickEntitiesInRect(CSimulation2& simulation, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, player_id_t owner, bool allowEditorSelectables)
@@ -162,7 +170,30 @@ std::vector<entity_id_t> EntitySelection::PickEntitiesInRect(CSimulation2& simul
 	return hitEnts;
 }
 
-std::vector<entity_id_t> EntitySelection::PickSimilarEntities(CSimulation2& simulation, const CCamera& camera, 
+std::vector<entity_id_t> EntitySelection::PickNonGaiaEntitiesInRect(CSimulation2& simulation, const CCamera& camera, int sx0, int sy0, int sx1, int sy1, bool allowEditorSelectables)
+{
+	PROFILE2("PickNonGaiaEntitiesInRect");
+
+	// Make sure sx0 <= sx1, and sy0 <= sy1
+	if (sx0 > sx1)
+		std::swap(sx0, sx1);
+	if (sy0 > sy1)
+		std::swap(sy0, sy1);
+
+	CmpPtr<ICmpRangeManager> cmpRangeManager(simulation, SYSTEM_ENTITY);
+	ENSURE(cmpRangeManager);
+
+	std::vector<entity_id_t> hitEnts;
+
+	CComponentManager& componentManager = simulation.GetSimContext().GetComponentManager();
+	for (entity_id_t ent : cmpRangeManager->GetNonGaiaEntities())
+		if (CheckEntityInRect(componentManager.LookupEntityHandle(ent), camera, sx0, sy0, sx1, sy1, allowEditorSelectables))
+			hitEnts.push_back(ent);
+
+	return hitEnts;
+}
+
+std::vector<entity_id_t> EntitySelection::PickSimilarEntities(CSimulation2& simulation, const CCamera& camera,
 	const std::string& templateName, player_id_t owner, bool includeOffScreen, bool matchRank,
 	bool allowEditorSelectables, bool allowFoundations)
 {

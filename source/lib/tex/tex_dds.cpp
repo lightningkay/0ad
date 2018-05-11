@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Wildfire Games
+/* Copyright (C) 2018 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -51,7 +51,7 @@ class S3tcBlock
 {
 public:
 	S3tcBlock(size_t dxt, const u8* RESTRICT block)
-		: dxt(dxt)
+		: m_Dxt(dxt)
 	{
 		// (careful, 'dxt != 1' doesn't work - there's also DXT1a)
 		const u8* a_block = block;
@@ -71,23 +71,23 @@ public:
 			out[i] = (u8)c[c_selector][i];
 
 		// if no alpha, done
-		if(dxt == 1)
+		if(m_Dxt == 1)
 			return;
 
 		size_t a;
-		if(dxt == 3)
+		if(m_Dxt == 3)
 		{
 			// table of 4-bit alpha entries
 			a = access_bit_tbl(a_bits, pixel_idx, 4);
 			a |= a << 4; // expand to 8 bits (replicate high into low!)
 		}
-		else if(dxt == 5)
+		else if(m_Dxt == 5)
 		{
 			// pixel index -> alpha selector (3 bit) -> alpha
 			const size_t a_selector = access_bit_tbl(a_bits, pixel_idx, 3);
 			a = dxt5_a_tbl[a_selector];
 		}
-		// (dxt == DXT1A)
+		// (m_Dxt == DXT1A)
 		else
 			a = c[c_selector][A];
 		out[A] = (u8)(a & 0xFF);
@@ -214,7 +214,7 @@ private:
 	// table of 2-bit color selectors
 	u32 c_selectors;
 
-	size_t dxt;
+	size_t m_Dxt;
 };
 
 
@@ -283,7 +283,7 @@ static Status s3tc_decompress(Tex* t)
 	const size_t out_bpp = (dxt != 1)? 32 : 24;
 	const size_t out_size = t->img_size() * out_bpp / t->m_Bpp;
 	shared_ptr<u8> decompressedData;
-	AllocateAligned(decompressedData, out_size, pageSize);
+	AllocateAligned(decompressedData, out_size, g_PageSize);
 
 	const size_t s3tc_block_size = (dxt == 3 || dxt == 5)? 16 : 8;
 	S3tcDecompressInfo di = { dxt, s3tc_block_size, out_bpp/8, decompressedData.get() };
@@ -303,7 +303,7 @@ static Status s3tc_decompress(Tex* t)
 // DDS file format
 //-----------------------------------------------------------------------------
 
-// bit values and structure definitions taken from 
+// bit values and structure definitions taken from
 // http://msdn.microsoft.com/en-us/library/ee417785(VS.85).aspx
 
 #pragma pack(push, 1)
@@ -604,7 +604,7 @@ size_t TexCodecDds::hdr_size(const u8* UNUSED(file)) const
 }
 
 
-Status TexCodecDds::decode(rpU8 data, size_t UNUSED(size), Tex* RESTRICT t) const
+Status TexCodecDds::decode(u8* RESTRICT data, size_t UNUSED(size), Tex* RESTRICT t) const
 {
 	const DDS_HEADER* sd = (const DDS_HEADER*)(data+4);
 	RETURN_STATUS_IF_ERR(decode_sd(sd, t->m_Width, t->m_Height, t->m_Bpp, t->m_Flags));

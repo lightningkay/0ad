@@ -6,7 +6,7 @@
     <Crush>20</Crush>
   </Armour>
   <Cost>
-    <BuildTime>30</BuildTime>
+    <BuildTime>20</BuildTime>
     <Resources>
       <food>125</food>
       <wood>0</wood>
@@ -40,18 +40,10 @@
       <order_garrison>voice/{lang}/civ/civ_{gender}_garrison.xml</order_garrison>
       <walk>actor/human/movement/walk.xml</walk>
       <run>actor/human/movement/walk.xml</run>
-      <attack>attack/weapon/sword.xml</attack>
+      <attack_melee>attack/weapon/sword.xml</attack_melee>
       <death>actor/human/death/{gender}_death.xml</death>
     </SoundGroups>
   </Sound>
-  <UnitMotion>
-    <WalkSpeed>8.5</WalkSpeed>
-    <Run>
-      <Speed>17.5</Speed>
-      <Range>600.0</Range>
-      <RangeMin>5.0</RangeMin>
-    </Run>
-  </UnitMotion>
   <Vision>
     <Range>84</Range>
   </Vision>

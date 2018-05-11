@@ -4,6 +4,7 @@
   <Identity>
     <Civ>gaia</Civ>
     <GenericName>Gaia</GenericName>
+    <Undeletable>true</Undeletable>
   </Identity>
   <Obstruction>
     <Active>true</Active>
@@ -13,6 +14,7 @@
     <BlockConstruction>true</BlockConstruction>
     <DisableBlockMovement>false</DisableBlockMovement>
     <DisableBlockPathfinding>false</DisableBlockPathfinding>
+    <DeleteUponConstruction>false</DeleteUponConstruction>
   </Obstruction>
   <OverlayRenderer/>
   <StatusBars>

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -126,8 +126,8 @@ private:
 				pauseTime = 50;
 
 			{
-				CScopeLock lock(m_WorkerMutex);
-		
+				CScopeLock workerLock(m_WorkerMutex);
+
 				ItemsList::iterator lstr = m_Items->begin();
 				ItemsList* nextItemList = new ItemsList;
 
@@ -143,7 +143,7 @@ private:
 					}
 					else
 					{
-						CScopeLock lock(m_DeadItemsMutex);
+						CScopeLock deadItemsLock(m_DeadItemsMutex);
 						m_DeadItems->push_back(*lstr);
 					}
 					++lstr;
@@ -193,9 +193,9 @@ void ISoundManager::CreateSoundManager()
 
 void ISoundManager::SetEnabled(bool doEnable)
 {
-	if (g_SoundManager && !doEnable) 
+	if (g_SoundManager && !doEnable)
 		SAFE_DELETE(g_SoundManager);
-	else if (!g_SoundManager && doEnable) 
+	else if (!g_SoundManager && doEnable)
 		ISoundManager::CreateSoundManager();
 }
 void ISoundManager::CloseGame()
@@ -288,7 +288,7 @@ CSoundManager::~CSoundManager()
 
 	if (m_Context)
 		alcDestroyContext(m_Context);
-	
+
 	if (m_Device)
 		alcCloseDevice(m_Device);
 }
@@ -300,7 +300,7 @@ void CSoundManager::StartWorker()
 }
 
 Status CSoundManager::AlcInit()
-{	
+{
 	Status ret = INFO::OK;
 
 	m_Device = alcOpenDevice(NULL);
@@ -380,7 +380,7 @@ void CSoundManager::SetDistressThroughShortage()
 	CScopeLock lock(m_DistressMutex);
 
 // Going into distress for normal reasons
-	
+
 	m_DistressTime = timer_Time();
 }
 
@@ -389,7 +389,7 @@ void CSoundManager::SetDistressThroughError()
 	CScopeLock lock(m_DistressMutex);
 
 // Going into distress due to unknown error
-	
+
 	m_DistressTime = timer_Time();
 	m_DistressErrCount++;
 }
@@ -503,7 +503,7 @@ void CSoundManager::SetUIGain(float gain)
 
 
 ISoundItem* CSoundManager::LoadItem(const VfsPath& itemPath)
-{	
+{
 	AL_CHECK;
 
 	if (m_Enabled)
@@ -519,12 +519,12 @@ ISoundItem* CSoundManager::LoadItem(const VfsPath& itemPath)
 }
 
 ISoundItem* CSoundManager::ItemForData(CSoundData* itemData)
-{	
+{
 	AL_CHECK;
 	ISoundItem* answer = NULL;
 
 	AL_CHECK;
-	
+
 	if (m_Enabled && (itemData != NULL))
 	{
 		if (itemData->IsOneShot())
@@ -639,7 +639,7 @@ void CSoundManager::SetMusicEnabled(bool isEnabled)
 	m_MusicEnabled = isEnabled;
 }
 
-void CSoundManager::PlayAsGroup(const VfsPath& groupPath, CVector3D sourcePos, entity_id_t source, bool ownedSound)
+void CSoundManager::PlayAsGroup(const VfsPath& groupPath, const CVector3D& sourcePos, entity_id_t source, bool ownedSound)
 {
 	// Make sure the sound group is loaded
 	CSoundGroup* group;
@@ -694,7 +694,7 @@ void CSoundManager::PlayAsUI(const VfsPath& itemPath, bool looping)
 	if (m_Enabled)
 	{
 		IdleTask();
-	
+
 		if (ISoundItem* anItem = LoadItem(itemPath))
 		{
 			if (m_UIGain > 0)
@@ -795,7 +795,7 @@ void CSoundManager::SetAmbientItem(ISoundItem* anItem)
 			m_CurrentEnvirons = NULL;
 		}
 		IdleTask();
-	
+
 		if (anItem)
 		{
 			if (m_AmbientGain > 0)

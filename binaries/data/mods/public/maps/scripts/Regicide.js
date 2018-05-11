@@ -1,11 +1,16 @@
 Trigger.prototype.CheckRegicideDefeat = function(data)
 {
 	if (data.entity == this.regicideHeroes[data.from])
-		TriggerHelper.DefeatPlayer(data.from);
+		TriggerHelper.DefeatPlayer(
+			data.from,
+			markForTranslation("%(player)s has been defeated (lost hero)."));
 };
 
 Trigger.prototype.InitRegicideGame = function(msg)
 {
+	let cmpEndGameManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_EndGameManager);
+	let regicideGarrison = cmpEndGameManager.GetGameSettings().regicideGarrison;
+
 	let playersCivs = [];
 	for (let playerID = 1; playerID < TriggerHelper.GetNumberOfPlayers(); ++playerID)
 		playersCivs[playerID] = QueryPlayerIDInterface(playerID).GetCiv();
@@ -15,7 +20,7 @@ Trigger.prototype.InitRegicideGame = function(msg)
 	let cmpTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
 	for (let templateName of cmpTemplateManager.FindAllTemplates(false))
 	{
-		if (templateName.substring(0,6) != "units/")
+		if (!templateName.startsWith("units/"))
 			continue;
 
 		let identity = cmpTemplateManager.GetTemplate(templateName).Identity;
@@ -30,7 +35,7 @@ Trigger.prototype.InitRegicideGame = function(msg)
 
 		if (heroTemplates[identity.Civ].indexOf(templateName) == -1)
 			heroTemplates[identity.Civ].push({
-				"templateName": templateName,
+				"templateName": regicideGarrison ? templateName : "ungarrisonable|" + templateName,
 				"classes": classes
 			});
 	}
@@ -58,6 +63,18 @@ Trigger.prototype.InitRegicideGame = function(msg)
 		let spawnPoints = cmpRangeManager.GetEntitiesByPlayer(playerID).sort((entity1, entity2) =>
 			getSpawnPreference(entity2) - getSpawnPreference(entity1));
 
+		// Spawn the hero on land as close as possible
+		if (!regicideGarrison && TriggerHelper.EntityMatchesClassList(spawnPoints[0], "Ship"))
+		{
+			let shipPosition = Engine.QueryInterface(spawnPoints[0], IID_Position).GetPosition2D();
+
+			let distanceToShip = entity =>
+				Engine.QueryInterface(entity, IID_Position).GetPosition2D().distanceToSquared(shipPosition);
+
+			spawnPoints = TriggerHelper.GetLandSpawnPoints().sort((entity1, entity2) =>
+				distanceToShip(entity1) - distanceToShip(entity2));
+		}
+
 		this.regicideHeroes[playerID] = this.SpawnRegicideHero(playerID, heroTemplates[playersCivs[playerID]], spawnPoints);
 	}
 };
@@ -78,7 +95,7 @@ Trigger.prototype.SpawnRegicideHero = function(playerID, heroTemplates, spawnPoi
 				continue;
 
 			// Consider nomad maps where units start on a ship
-			let isShip = TriggerHelper.EntityHasClass(spawnPoint, "Ship");
+			let isShip = TriggerHelper.EntityMatchesClassList(spawnPoint, "Ship");
 			if (isShip)
 			{
 				let cmpGarrisonHolder = Engine.QueryInterface(spawnPoint, IID_GarrisonHolder);
@@ -106,7 +123,9 @@ Trigger.prototype.SpawnRegicideHero = function(playerID, heroTemplates, spawnPoi
 	return undefined;
 };
 
-let cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
-cmpTrigger.regicideHeroes = [];
-cmpTrigger.DoAfterDelay(0, "InitRegicideGame", {});
-cmpTrigger.RegisterTrigger("OnOwnershipChanged", "CheckRegicideDefeat", { "enabled": true });
+{
+	let cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
+	cmpTrigger.regicideHeroes = [];
+	cmpTrigger.DoAfterDelay(0, "InitRegicideGame", {});
+	cmpTrigger.RegisterTrigger("OnOwnershipChanged", "CheckRegicideDefeat", { "enabled": true });
+}

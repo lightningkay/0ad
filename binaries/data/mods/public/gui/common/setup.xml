@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 
 <!DOCTYPE setup SYSTEM "..\gui.dtd">
 
@@ -53,6 +53,17 @@
 			anchor="top"
 			buffer_zone="4"
 			delay="100"
+			font="sans-14"
+			maxwidth="300"
+			offset="16 32"
+			sprite="BackgroundSessionTooltip"
+			textcolor="255 255 255"
+		/>
+
+		<tooltip name="sessionToolTipInstantly"
+			anchor="top"
+			buffer_zone="4"
+			delay="0"
 			font="sans-14"
 			maxwidth="300"
 			offset="16 32"

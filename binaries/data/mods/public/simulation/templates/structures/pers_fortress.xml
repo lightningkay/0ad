@@ -3,7 +3,6 @@
   <Identity>
     <Civ>pers</Civ>
     <SpecificName>Didā</SpecificName>
-    <History>The Susa Chateau was a fortress in the administrative capital of Susa, which was reconstructed by a French archaeologist in 1890 with the use of original building material.</History>
     <Tooltip>Train Champion Cavalry and Construct Siege Rams.</Tooltip>
   </Identity>
   <ProductionQueue>
@@ -20,4 +19,8 @@
   <VisualActor>
     <Actor>structures/persians/fortress.xml</Actor>
   </VisualActor>
+  <WallPiece>
+    <Length>24.5</Length>
+    <Indent>7.6</Indent>
+  </WallPiece>
 </Entity>

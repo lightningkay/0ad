@@ -5,13 +5,12 @@
       structures/ptol_military_colony
       structures/ptol_lighthouse
       structures/ptol_library
-      structures/ptol_wonder
     </Entities>
   </Builder>
   <Cost>
     <Resources>
-      <food>25</food>
-      <metal>50</metal>
+      <food op="add">-25</food>
+      <metal op="add">25</metal>
     </Resources>
   </Cost>
   <Identity>

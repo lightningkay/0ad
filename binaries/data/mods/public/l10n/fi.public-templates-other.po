@@ -7,11 +7,12 @@
 # Max Ihalempia, 2016
 # Max Ihalempia, 2015
 # Olavi Tuomaala <olatuo1955@gmail.com>, 2015
+# Pauli Kaikkonen <p.kaikkon@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-07-04 09:01+0200\n"
-"PO-Revision-Date: 2016-07-04 08:28+0000\n"
+"POT-Creation-Date: 2018-02-07 09:03+0100\n"
+"PO-Revision-Date: 2018-02-07 15:04+0000\n"
 "Last-Translator: Adrián Chaves Fernández <adriyetichaves@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/wildfire-games/0ad/language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -24,28 +25,15 @@ msgstr ""
 msgid "Gaia"
 msgstr "Gaia"
 
-#: simulation/templates/template_gaia_flora.xml:8
-msgid "Generic Flora"
-msgstr "Tavallinen kasvisto"
-
 #: simulation/templates/template_gaia_flora_bush.xml:8
-#: simulation/templates/template_gaia_flora_bush_berry.xml:8
 msgid "Bush"
 msgstr "Pensas"
 
-#: simulation/templates/template_gaia_flora_bush_berry.xml:9
-msgid "Berries"
-msgstr "Marjoja"
-
-#: simulation/templates/template_gaia_flora_bush_berry.xml:10
-msgid "Gather the fruit from these bushes to accumulate Food."
-msgstr "Kerää marjoja näistä pensaista saadaksesi ruokaa."
-
-#: simulation/templates/template_gaia_flora_tree.xml:5
+#: simulation/templates/template_gaia_flora_tree.xml:8
 msgid "Tree"
 msgstr "Puu"
 
-#: simulation/templates/template_gaia_flora_tree.xml:7
+#: simulation/templates/template_gaia_flora_tree.xml:9
 msgid "Chop down to accumulate Wood."
 msgstr "Hakkaa metsää kerätäksesi puuta."
 
@@ -82,9 +70,8 @@ msgid "Generic Ruins"
 msgstr "Yleiset rauniot"
 
 #: simulation/templates/template_gaia_ruins.xml:9
-#: simulation/templates/gaia/special_ruins.xml:9
-#: simulation/templates/gaia/special_ruins_column_doric.xml:9
-#: simulation/templates/other/unfinished_greek_temple.xml:9
+#: simulation/templates/gaia/ruins/column_doric.xml:9
+#: simulation/templates/gaia/ruins/unfinished_greek_temple.xml:9
 msgid "Ruins"
 msgstr "Rauniot"
 
@@ -97,20 +84,20 @@ msgid "Generic Treasure"
 msgstr "Yleiset aarteet"
 
 #: simulation/templates/template_gaia_treasure.xml:9
-#: simulation/templates/gaia/special_treasure_food_barrel.xml:9
-#: simulation/templates/gaia/special_treasure_food_barrels_buried.xml:9
-#: simulation/templates/gaia/special_treasure_food_bin.xml:9
-#: simulation/templates/gaia/special_treasure_food_crate.xml:9
-#: simulation/templates/gaia/special_treasure_food_jars.xml:9
-#: simulation/templates/gaia/special_treasure_golden_fleece.xml:9
-#: simulation/templates/gaia/special_treasure_pegasus.xml:9
-#: simulation/templates/gaia/special_treasure_stone.xml:9
-#: simulation/templates/gaia/special_treasure_wood.xml:9
-#: simulation/templates/other/special_treasure_shipwreck.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_debris.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_ram_bow.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat_cut.xml:9
+#: simulation/templates/gaia/treasure/food_barrel.xml:9
+#: simulation/templates/gaia/treasure/food_barrels_buried.xml:9
+#: simulation/templates/gaia/treasure/food_bin.xml:9
+#: simulation/templates/gaia/treasure/food_crate.xml:9
+#: simulation/templates/gaia/treasure/food_jars.xml:9
+#: simulation/templates/gaia/treasure/golden_fleece.xml:9
+#: simulation/templates/gaia/treasure/pegasus.xml:9
+#: simulation/templates/gaia/treasure/shipwreck.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_debris.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_ram_bow.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat_cut.xml:9
+#: simulation/templates/gaia/treasure/stone.xml:9
+#: simulation/templates/gaia/treasure/wood.xml:9
 msgid "Treasure"
 msgstr "Aarre"
 
@@ -118,11 +105,11 @@ msgstr "Aarre"
 msgid "A treasure that can be quickly gathered."
 msgstr "Aarre, jonka voi nopeasti kerätä."
 
-#: simulation/templates/template_structure.xml:58
+#: simulation/templates/template_structure.xml:59
 msgid "Structure"
 msgstr "Rakenne"
 
-#: simulation/templates/template_unit.xml:39
+#: simulation/templates/template_unit.xml:40
 msgid "Unit"
 msgstr "Yksikkö"
 
@@ -156,6 +143,11 @@ msgstr "Leonidas I:n armeija."
 msgid "Army of Leonidas I"
 msgstr "Leonidas I:n armeija "
 
+#: simulation/templates/campaigns/campaign_city_minor_test.xml:25
+#: simulation/templates/campaigns/campaign_city_test.xml:25
+msgid "Market"
+msgstr "Tori"
+
 #: simulation/templates/campaigns/campaign_city_minor_test.xml:26
 #: simulation/templates/campaigns/campaign_city_test.xml:26
 msgid "Settlement"
@@ -185,97 +177,21 @@ msgstr "Uskonnollinen pyhäkkö"
 msgid "Greek Religious Sanctuary"
 msgstr "Kreikkalainen uskonnollinen pyhäkkö"
 
-#: simulation/templates/formations/battle_line.xml:5
-msgid "Battle Line"
-msgstr "Taistelulinja"
-
-#: simulation/templates/formations/box.xml:6
-msgid "4 units required"
-msgstr "4 yksikköä edelletettynä"
-
-#: simulation/templates/formations/box.xml:7
-msgid "Box"
-msgstr "Laatikko"
-
-#: simulation/templates/formations/column_closed.xml:5
-msgid "Column Closed"
-msgstr "Kolonna suljettu"
-
-#: simulation/templates/formations/column_open.xml:5
-msgid "Column Open"
-msgstr "Kolonna avoinna"
-
-#: simulation/templates/formations/flank.xml:6
-msgid "8 units required"
-msgstr "8 yksikköä tarvitaan"
-
-#: simulation/templates/formations/flank.xml:7
-msgid "Flank"
-msgstr "Sivusta"
-
-#: simulation/templates/formations/line_closed.xml:5
-msgid "Line Closed"
-msgstr "Linja suljettu"
-
-#: simulation/templates/formations/line_open.xml:5
-msgid "Line Open"
-msgstr "Linja avoinna"
-
-#: simulation/templates/formations/null.xml:5
-msgid "None"
-msgstr "Ei mitään"
-
-#: simulation/templates/formations/phalanx.xml:6
-msgid "10 melee infantry units required"
-msgstr "10 lähitaistelujalkaväkiyksikköä edelletettynä"
-
-#: simulation/templates/formations/phalanx.xml:7
-msgid "Phalanx"
-msgstr "Falangi"
-
-#: simulation/templates/formations/scatter.xml:5
-msgid "Scatter"
-msgstr "Hajaantua"
-
-#: simulation/templates/formations/skirmish.xml:5
-msgid "Only ranged units allowed"
-msgstr "Vain ampuma-alue yksiköt sallittuna"
-
-#: simulation/templates/formations/skirmish.xml:6
-msgid "Skirmish"
-msgstr "Kahakka"
-
-#: simulation/templates/formations/syntagma.xml:6
-msgid "9 pike infantry units required"
-msgstr "9 peitsimiesyksikköä tarvitaan"
-
-#: simulation/templates/formations/syntagma.xml:7
-msgid "Syntagma"
-msgstr "Syntagma"
-
-#: simulation/templates/formations/testudo.xml:6
-msgid "9 melee infantry units required"
-msgstr "9 lähitaisteluyksikkö edelletetty"
-
-#: simulation/templates/formations/testudo.xml:7
-msgid "Testudo"
-msgstr "Testudo"
-
-#: simulation/templates/formations/wedge.xml:6
-msgid "3 cavalry units required"
-msgstr "3 ratsuväkiyksikköä edelletettynä"
-
-#: simulation/templates/formations/wedge.xml:7
-msgid "Wedge"
-msgstr "Kiila"
+#: simulation/templates/gaia/fauna_arctic_wolf.xml:4
+msgid "Arctic Wolf"
+msgstr ""
 
 #: simulation/templates/gaia/fauna_bear.xml:18
 msgid "Bear"
 msgstr "Karhu"
 
 #: simulation/templates/gaia/fauna_boar.xml:18
-msgid "Boar"
-msgstr "Villisika"
+msgid "Wild Boar"
+msgstr ""
+
+#: simulation/templates/gaia/fauna_boar.xml:19
+msgid "Sus scrofa"
+msgstr ""
 
 #: simulation/templates/gaia/fauna_camel.xml:9
 msgid "Camel"
@@ -297,19 +213,23 @@ msgstr "Niilinkrokotiili"
 msgid "Deer"
 msgstr "Peura"
 
-#: simulation/templates/gaia/fauna_elephant_african_bush.xml:46
+#: simulation/templates/gaia/fauna_elephant_african_bush.xml:11
 msgid "African Bush Elephant"
 msgstr "Afrikan pensasnorsu"
 
-#: simulation/templates/gaia/fauna_elephant_african_infant.xml:15
-msgid "African Elephant (Infant)"
-msgstr "African elefantti"
+#: simulation/templates/gaia/fauna_elephant_african_infant.xml:4
+msgid "African Elephant Calf"
+msgstr ""
 
-#: simulation/templates/gaia/fauna_elephant_asian.xml:46
+#: simulation/templates/gaia/fauna_elephant_asian.xml:11
 msgid "Asian Elephant"
 msgstr "Aasian norsu"
 
-#: simulation/templates/gaia/fauna_elephant_north_african.xml:33
+#: simulation/templates/gaia/fauna_elephant_asian_infant.xml:4
+msgid "Asian Elephant Calf"
+msgstr ""
+
+#: simulation/templates/gaia/fauna_elephant_north_african.xml:11
 msgid "North African Elephant"
 msgstr "Pohjois-Afrikan norsu"
 
@@ -320,16 +240,24 @@ msgstr "Tonnikala"
 
 #: simulation/templates/gaia/fauna_fish.xml:6
 #: simulation/templates/gaia/fauna_fish_tuna.xml:6
-msgid "Collect food from this bountiful oceanic resource."
-msgstr "Kerää ruokaa tästä runsaasta merellisestä resurssista."
+msgid "Gather food from this bountiful oceanic resource."
+msgstr ""
 
 #: simulation/templates/gaia/fauna_fish_tilapia.xml:5
 msgid "Tilapia Fish"
 msgstr "Tilapia kala"
 
 #: simulation/templates/gaia/fauna_fish_tilapia.xml:6
-msgid "Collect food from this bountiful riparian resource."
-msgstr "Kerää ruokaa tästä runsaasta joenvarsiresurssista"
+msgid "Gather food from this bountiful riparian resource."
+msgstr ""
+
+#: simulation/templates/gaia/fauna_fox_arctic.xml:4
+msgid "Arctic Fox"
+msgstr ""
+
+#: simulation/templates/gaia/fauna_fox_red.xml:4
+msgid "Red Fox"
+msgstr ""
 
 #: simulation/templates/gaia/fauna_gazelle.xml:9
 msgid "Gazelle"
@@ -343,7 +271,7 @@ msgstr "Kirahvi (aikuinen)"
 msgid "Giraffe (Juvenile)"
 msgstr "Kirahvi (pentu)"
 
-#: simulation/templates/gaia/fauna_goat.xml:15
+#: simulation/templates/gaia/fauna_goat.xml:9
 msgid "Goat"
 msgstr "Vuohi"
 
@@ -359,17 +287,37 @@ msgstr "Leijona"
 msgid "Lioness"
 msgstr "Naarasleijona"
 
+#: simulation/templates/gaia/fauna_mastiff.xml:4
+msgid "Mastiff"
+msgstr ""
+
 #: simulation/templates/gaia/fauna_muskox.xml:9
 msgid "Muskox"
 msgstr "Myskihärkä"
 
-#: simulation/templates/gaia/fauna_peacock.xml:12
+#: simulation/templates/gaia/fauna_peacock.xml:8
 msgid "Peacock"
 msgstr "Riikinkukko"
 
-#: simulation/templates/gaia/fauna_pig.xml:15
+#: simulation/templates/gaia/fauna_peacock.xml:9
+msgid "Pavo cristatus"
+msgstr ""
+
+#: simulation/templates/gaia/fauna_pig.xml:9
 msgid "Pig"
 msgstr "Sika"
+
+#: simulation/templates/gaia/fauna_pig_flaming.xml:18
+msgid "Flaming Pig"
+msgstr ""
+
+#: simulation/templates/gaia/fauna_pig_flaming.xml:19
+msgid "Sus scrofa domesticus igne"
+msgstr ""
+
+#: simulation/templates/gaia/fauna_pony.xml:4
+msgid "Pony"
+msgstr ""
 
 #: simulation/templates/gaia/fauna_rabbit.xml:9
 msgid "Rabbit"
@@ -387,7 +335,7 @@ msgstr "Suuri Valkoinen"
 msgid "Shark"
 msgstr "Hai"
 
-#: simulation/templates/gaia/fauna_sheep.xml:15
+#: simulation/templates/gaia/fauna_sheep.xml:9
 msgid "Sheep"
 msgstr "Lammas"
 
@@ -395,7 +343,7 @@ msgstr "Lammas"
 msgid "Tiger"
 msgstr "Tiikeri"
 
-#: simulation/templates/gaia/fauna_walrus.xml:23
+#: simulation/templates/gaia/fauna_walrus.xml:25
 msgid "Walrus"
 msgstr "Mursu"
 
@@ -411,35 +359,43 @@ msgstr "Ryhävalas"
 msgid "Wildebeest"
 msgstr "Gnu"
 
-#: simulation/templates/gaia/fauna_wolf.xml:18
+#: simulation/templates/gaia/fauna_wolf.xml:4
 msgid "Wolf"
 msgstr "Susi"
 
-#: simulation/templates/gaia/fauna_wolf_snow.xml:18
-msgid "Snow Wolf"
-msgstr "Lumisusi"
+#: simulation/templates/gaia/fauna_wolfhound.xml:4
+msgid "Wolfhound"
+msgstr ""
 
 #: simulation/templates/gaia/fauna_zebra.xml:9
 msgid "Zebra"
 msgstr "Seepra"
 
-#: simulation/templates/gaia/flora_bush_badlands.xml:8
+#: simulation/templates/gaia/fauna_zebu.xml:9
+msgid "Zebu"
+msgstr ""
+
+#: simulation/templates/gaia/flora_bush_badlands.xml:4
 msgid "Hardy Bush"
 msgstr "Sitkeä pensas"
 
-#: simulation/templates/gaia/flora_bush_grapes.xml:4
-msgid "Forage"
-msgstr "Kerätä"
+#: simulation/templates/gaia/flora_bush_berry.xml:4
+msgid "Berries"
+msgstr "Marjoja"
 
-#: simulation/templates/gaia/flora_bush_grapes.xml:5
+#: simulation/templates/gaia/flora_bush_berry.xml:5
+msgid "Gather the fruit from these bushes to accumulate Food."
+msgstr "Kerää marjoja näistä pensaista saadaksesi ruokaa."
+
+#: simulation/templates/gaia/flora_bush_grapes.xml:4
 msgid "Grapes"
 msgstr "Rypäleet"
 
-#: simulation/templates/gaia/flora_bush_grapes.xml:6
+#: simulation/templates/gaia/flora_bush_grapes.xml:5
 msgid "Gather grapes from these vines for Food."
 msgstr "Kerää rypäleitä näistä viiniköynnöksistä ruuaksi."
 
-#: simulation/templates/gaia/flora_bush_temperate.xml:8
+#: simulation/templates/gaia/flora_bush_temperate.xml:4
 msgid "Deciduous Bush"
 msgstr "Lehtensä pudottava pensas"
 
@@ -451,7 +407,7 @@ msgstr "Akaasiapuu"
 msgid "Aleppo Pine Tree"
 msgstr "Alepon mänty"
 
-#: simulation/templates/gaia/flora_tree_apple.xml:8
+#: simulation/templates/gaia/flora_tree_apple.xml:4
 msgid "Apple Tree"
 msgstr "Omenapuu"
 
@@ -486,11 +442,11 @@ msgstr "Kuollut puu"
 msgid "European Beech Tree"
 msgstr "Pyökkipuu"
 
-#: simulation/templates/gaia/flora_tree_fig.xml:8
+#: simulation/templates/gaia/flora_tree_fig.xml:7
 msgid "Fig"
 msgstr "Viikuna"
 
-#: simulation/templates/gaia/flora_tree_fig.xml:10
+#: simulation/templates/gaia/flora_tree_fig.xml:8
 msgid "Gather figs for Food."
 msgstr "Kerää viikunoita ruuaksi"
 
@@ -510,7 +466,7 @@ msgstr "Tammipuu"
 msgid "Large Oak Tree"
 msgstr "Suuri tammi"
 
-#: simulation/templates/gaia/flora_tree_olive.xml:8
+#: simulation/templates/gaia/flora_tree_olive.xml:4
 msgid "Olive Tree"
 msgstr "Oliivipuu"
 
@@ -532,8 +488,8 @@ msgid "Poplar Tree"
 msgstr "Poppelipuu"
 
 #: simulation/templates/gaia/flora_tree_poplar_lombardy.xml:4
-msgid "Lombardy Poplar Tree"
-msgstr "Lombardian poppelipuu"
+msgid "Black Poplar Tree"
+msgstr ""
 
 #: simulation/templates/gaia/flora_tree_senegal_date_palm.xml:4
 msgid "Senegal Date Palm"
@@ -547,83 +503,137 @@ msgstr "Tamarixpuu"
 msgid "Toona Tree"
 msgstr "Toonapuu"
 
-#: simulation/templates/gaia/special_ruins.xml:10
-#: simulation/templates/gaia/special_ruins_column_doric.xml:10
+#: simulation/templates/gaia/ruins/column_doric.xml:10
 msgid "Ancient Ruins"
 msgstr "Muinaiset rauniot"
 
-#: simulation/templates/gaia/special_ruins_standing_stone.xml:9
-#: simulation/templates/gaia/special_ruins_stone_statues_egyptian.xml:9
-#: simulation/templates/gaia/special_ruins_stone_statues_roman.xml:9
+#: simulation/templates/gaia/ruins/pyramid_great.xml:9
+#: simulation/templates/gaia/ruins/pyramid_minor.xml:9
+msgid "Pyramid"
+msgstr "Pyramidi"
+
+#: simulation/templates/gaia/ruins/pyramid_great.xml:10
+msgid "Great Pyramid"
+msgstr "Mahtava pyramidi"
+
+#: simulation/templates/gaia/ruins/pyramid_minor.xml:10
+msgid "Minor Pyramid"
+msgstr "Vähäpätöinen pyramidi"
+
+#: simulation/templates/gaia/ruins/standing_stone.xml:9
+#: simulation/templates/gaia/ruins/stone_statues_egyptian.xml:9
+#: simulation/templates/gaia/ruins/stone_statues_kushite.xml:9
+#: simulation/templates/gaia/ruins/stone_statues_roman.xml:9
 msgid "Stone Ruins"
 msgstr "Kivirauniot"
 
-#: simulation/templates/gaia/special_ruins_standing_stone.xml:10
-#: simulation/templates/gaia/special_treasure_standing_stone.xml:10
+#: simulation/templates/gaia/ruins/standing_stone.xml:10
+#: simulation/templates/gaia/treasure/standing_stone.xml:10
 msgid "Celtic Standing Stone"
 msgstr "Kelttiläinen kivipaasi"
 
-#: simulation/templates/gaia/special_ruins_stone_statues_egyptian.xml:10
+#: simulation/templates/gaia/ruins/stone_statues_egyptian.xml:10
 msgid "Ptolemaic Egyptian Statues"
 msgstr "Ptolemaiolaisen Egyptin patsaat"
 
-#: simulation/templates/gaia/special_ruins_stone_statues_roman.xml:10
+#: simulation/templates/gaia/ruins/stone_statues_kushite.xml:10
+msgid "Kushite Statue"
+msgstr ""
+
+#: simulation/templates/gaia/ruins/stone_statues_roman.xml:10
 msgid "Roman Statues"
 msgstr "Rooman patsaat"
 
-#: simulation/templates/gaia/special_treasure_food_barrel.xml:10
-#: simulation/templates/gaia/special_treasure_food_bin.xml:10
-#: simulation/templates/gaia/special_treasure_food_crate.xml:10
-#: simulation/templates/gaia/special_treasure_food_jars.xml:10
-#: simulation/templates/gaia/special_treasure_food_persian_big.xml:9
-#: simulation/templates/gaia/special_treasure_food_persian_small.xml:9
+#: simulation/templates/gaia/ruins/unfinished_greek_temple.xml:10
+msgid "Unfinished Greek Temple"
+msgstr "Valmistumaton Kreikkalainen temppeli"
+
+#: simulation/templates/gaia/ruins/unfinished_greek_temple.xml:11
+msgid "This temple is unfinished and has fallen to ruin."
+msgstr "Tämä temppeli on valmistautumaton ja on tullut raunioksi."
+
+#: simulation/templates/gaia/treasure/food_barrel.xml:10
+#: simulation/templates/gaia/treasure/food_bin.xml:10
+#: simulation/templates/gaia/treasure/food_crate.xml:10
+#: simulation/templates/gaia/treasure/food_jars.xml:10
+#: simulation/templates/gaia/treasure/food_persian_big.xml:9
+#: simulation/templates/gaia/treasure/food_persian_small.xml:9
 msgid "Food Treasure"
 msgstr "Ruoka-aarre"
 
-#: simulation/templates/gaia/special_treasure_food_barrels_buried.xml:10
+#: simulation/templates/gaia/treasure/food_barrels_buried.xml:10
 msgid "Half-buried Barrels"
 msgstr "Puoliksi haudatut tynnyrit"
 
-#: simulation/templates/gaia/special_treasure_food_persian_big.xml:10
+#: simulation/templates/gaia/treasure/food_persian_big.xml:10
 msgid "Persian Food Stores"
 msgstr "Persian ruokamarkkinat"
 
-#: simulation/templates/gaia/special_treasure_food_persian_small.xml:10
+#: simulation/templates/gaia/treasure/food_persian_small.xml:10
 msgid "Persian Food Treasure"
 msgstr "Persialainen ruoka-aarre"
 
-#: simulation/templates/gaia/special_treasure_golden_fleece.xml:10
+#: simulation/templates/gaia/treasure/golden_fleece.xml:10
 msgid "Golden Fleece"
 msgstr "Kultainen talja"
 
-#: simulation/templates/gaia/special_treasure_metal.xml:9
-#: simulation/templates/gaia/special_treasure_metal_persian_bigl.xml:9
-#: simulation/templates/gaia/special_treasure_metal_persian_small.xml:9
+#: simulation/templates/gaia/treasure/metal.xml:9
+#: simulation/templates/gaia/treasure/metal_persian_big.xml:9
+#: simulation/templates/gaia/treasure/metal_persian_small.xml:9
 msgid "Metal Treasure"
 msgstr "Metalliaarre"
 
-#: simulation/templates/gaia/special_treasure_metal.xml:10
+#: simulation/templates/gaia/treasure/metal.xml:10
 msgid "Secret Box"
 msgstr "Salainen laatikko"
 
-#: simulation/templates/gaia/special_treasure_metal_persian_bigl.xml:10
+#: simulation/templates/gaia/treasure/metal_persian_big.xml:10
 msgid "Persian Wares"
 msgstr "Persialainen hyödyke"
 
-#: simulation/templates/gaia/special_treasure_metal_persian_small.xml:10
+#: simulation/templates/gaia/treasure/metal_persian_small.xml:10
 msgid "Persian Rugs"
 msgstr "Persialaiset matot"
 
-#: simulation/templates/gaia/special_treasure_pegasus.xml:10
+#: simulation/templates/gaia/treasure/pegasus.xml:10
 msgid "Pegasus"
 msgstr "Pegasus"
 
-#: simulation/templates/gaia/special_treasure_standing_stone.xml:9
-#: simulation/templates/gaia/special_treasure_stone.xml:10
+#: simulation/templates/gaia/treasure/shipwreck.xml:10
+#: simulation/templates/gaia/treasure/shipwreck_ram_bow.xml:10
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat.xml:10
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat_cut.xml:10
+msgid "Shipwreck"
+msgstr "Laivanhylky"
+
+#: simulation/templates/gaia/treasure/shipwreck.xml:11
+msgid "A decaying military shipwreck. A good opportunity for any businessman."
+msgstr "Heikentynyt sotilaallinen laivanhylky. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
+
+#: simulation/templates/gaia/treasure/shipwreck_debris.xml:10
+msgid "Shipwreck Cargo"
+msgstr "Laivanhylyn rahti"
+
+#: simulation/templates/gaia/treasure/shipwreck_ram_bow.xml:11
+msgid ""
+"A shipwreck with much loss of life. A good opportunity for any businessman."
+msgstr "Laivanhylky niin paljolla elämien menetyksillä. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
+
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat.xml:11
+msgid ""
+"The wreck of a small cargo ship. A good opportunity for any businessman."
+msgstr "Pienen rahtilaivan hylky. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
+
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat_cut.xml:11
+msgid "A cargo ship rammed in half. A good opportunity for any businessman."
+msgstr "Rahtilaiva puskettu kahtia. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
+
+#: simulation/templates/gaia/treasure/standing_stone.xml:9
+#: simulation/templates/gaia/treasure/stone.xml:10
 msgid "Stone Treasure"
 msgstr "Kiviaarre"
 
-#: simulation/templates/gaia/special_treasure_wood.xml:10
+#: simulation/templates/gaia/treasure/wood.xml:10
 msgid "Wood Treasure"
 msgstr "Puuaarre"
 
@@ -645,19 +655,7 @@ msgstr "Silta"
 msgid "Wooden Bridge"
 msgstr "Puinen silta"
 
-#: simulation/templates/other/cart_tophet.xml:22
-msgid "Sacrificial Temple"
-msgstr "Uhraustemppeli"
-
-#: simulation/templates/other/cart_tophet.xml:23
-msgid "Tophet"
-msgstr "Tophet"
-
-#: simulation/templates/other/cart_tophet.xml:24
-msgid "Train physicians and Sacred Band Cavalrymen."
-msgstr "Kouluta tohtoreita ja Pyhän joukon ratsumiehiä"
-
-#: simulation/templates/other/celt_hut.xml:21
+#: simulation/templates/other/celt_hut.xml:22
 msgid "Hut"
 msgstr "Talo"
 
@@ -679,6 +677,14 @@ msgstr "Doorilainen kolonna"
 #: simulation/templates/other/column_doric_fallen_b.xml:21
 msgid "Fallen Doric Column"
 msgstr "Kaatunut Doorilainen kolonna"
+
+#: simulation/templates/other/desert_trading_post.xml:15
+msgid "Desert Trading Post"
+msgstr ""
+
+#: simulation/templates/other/desert_trading_post.xml:16
+msgid "Ardatašta"
+msgstr "Ardatašta"
 
 #: simulation/templates/other/fence_long.xml:21
 #: simulation/templates/other/fence_short.xml:21
@@ -710,9 +716,9 @@ msgstr "Suurenmoinen temppeli"
 msgid "Naos Parthenos"
 msgstr "Naos Parthenos"
 
-#: simulation/templates/other/hellenic_epic_temple.xml:32
+#: simulation/templates/other/hellenic_epic_temple.xml:31
 msgid "Garrison units to heal them at a quick rate."
-msgstr ""
+msgstr "Miehitä joukkosi, parantaaksesi ne nopeammin."
 
 #: simulation/templates/other/hellenic_propylaea.xml:25
 msgid "Portico"
@@ -730,10 +736,6 @@ msgstr "Stoa"
 msgid "Hellenic Stoa"
 msgstr "Helleeninen Stoa"
 
-#: simulation/templates/other/maur_palace.xml:12
-msgid "Harmya"
-msgstr "Harmya"
-
 #: simulation/templates/other/obelisk.xml:20
 msgid "Obelisk"
 msgstr "Obeliski"
@@ -742,11 +744,11 @@ msgstr "Obeliski"
 msgid "Egyptian Obelisk"
 msgstr "Egyptiläinen obeliski"
 
-#: simulation/templates/other/palisades_angle_spike.xml:16
+#: simulation/templates/other/palisades_angle_spike.xml:15
 msgid "Palisade Angle Spike"
 msgstr "Paaluaidan kulmapiikki"
 
-#: simulation/templates/other/palisades_angle_spike.xml:17
+#: simulation/templates/other/palisades_angle_spike.xml:16
 msgid "Big Spike"
 msgstr "Iso piikki"
 
@@ -766,19 +768,19 @@ msgstr "Paaluaidan loppu"
 msgid "Wooden Wall End"
 msgstr "Puisen muurin loppu"
 
-#: simulation/templates/other/palisades_rocks_fort.xml:5
+#: simulation/templates/other/palisades_rocks_fort.xml:6
 msgid "Palisade Fort"
 msgstr "Paaluaitalinna"
 
-#: simulation/templates/other/palisades_rocks_fort.xml:6
+#: simulation/templates/other/palisades_rocks_fort.xml:7
 msgid "Wooden Tower"
-msgstr "Puinen torni"
+msgstr ""
 
-#: simulation/templates/other/palisades_rocks_gate.xml:25
+#: simulation/templates/other/palisades_rocks_gate.xml:18
 msgid "Palisade Gate"
 msgstr "Paaluaidan portti"
 
-#: simulation/templates/other/palisades_rocks_gate.xml:26
+#: simulation/templates/other/palisades_rocks_gate.xml:19
 msgid "Wooden Gate"
 msgstr "Puinen portti"
 
@@ -786,7 +788,7 @@ msgstr "Puinen portti"
 #: simulation/templates/other/palisades_rocks_medium.xml:27
 #: simulation/templates/other/palisades_rocks_short.xml:26
 #: simulation/templates/other/palisades_rocks_straight.xml:15
-#: simulation/templates/other/palisades_rocks_tower.xml:26
+#: simulation/templates/other/palisades_rocks_tower.xml:25
 #: simulation/templates/other/wallset_palisade.xml:6
 msgid "Palisade"
 msgstr "Paaluaita"
@@ -795,7 +797,7 @@ msgstr "Paaluaita"
 #: simulation/templates/other/palisades_rocks_medium.xml:28
 #: simulation/templates/other/palisades_rocks_short.xml:27
 #: simulation/templates/other/palisades_rocks_straight.xml:16
-#: simulation/templates/other/palisades_rocks_tower.xml:27
+#: simulation/templates/other/palisades_rocks_tower.xml:26
 #: simulation/templates/other/wallset_palisade.xml:5
 msgid "Wooden Wall"
 msgstr "Puinen muuri"
@@ -813,59 +815,21 @@ msgstr "Puinen vartiotorni"
 msgid "Watchtower"
 msgstr "Vahtitorni"
 
-#: simulation/templates/other/palisades_small_spikes.xml:16
+#: simulation/templates/other/palisades_small_spikes.xml:15
 msgid "Spikes Small"
 msgstr "Piikit pienet"
 
-#: simulation/templates/other/palisades_small_spikes.xml:17
+#: simulation/templates/other/palisades_small_spikes.xml:16
 msgid "Small Spikes"
 msgstr "Pienet piikit"
 
-#: simulation/templates/other/palisades_tall_spikes.xml:16
+#: simulation/templates/other/palisades_tall_spikes.xml:15
 msgid "Spikes Tall"
 msgstr "Piikit korkeat"
 
-#: simulation/templates/other/palisades_tall_spikes.xml:17
+#: simulation/templates/other/palisades_tall_spikes.xml:16
 msgid "Tall Spikes"
 msgstr "Korkeat piikit"
-
-#: simulation/templates/other/pers_apartment_block.xml:15
-msgid "Apartment Block"
-msgstr "Kerrostalokortteli"
-
-#: simulation/templates/other/pers_house_a.xml:12
-msgid "House"
-msgstr "Tal"
-
-#: simulation/templates/other/pers_house_b.xml:15
-#: simulation/templates/other/pers_inn.xml:15
-msgid "Inn"
-msgstr "Taverna"
-
-#: simulation/templates/other/pers_warehouse.xml:12
-msgid "Warehouse"
-msgstr "Varastotalo"
-
-#: simulation/templates/other/plane.xml:37
-msgid "P-51 Mustang"
-msgstr "P-51 Mustangi"
-
-#: simulation/templates/other/plane.xml:39
-msgid "A World War 2 American fighter plane."
-msgstr "2. maailmansodan amerikkalainen hävittäjä."
-
-#: simulation/templates/other/pyramid_great.xml:9
-#: simulation/templates/other/pyramid_minor.xml:9
-msgid "Pyramid"
-msgstr "Pyramidi"
-
-#: simulation/templates/other/pyramid_great.xml:10
-msgid "Great Pyramid"
-msgstr "Mahtava pyramidi"
-
-#: simulation/templates/other/pyramid_minor.xml:10
-msgid "Minor Pyramid"
-msgstr "Vähäpätöinen pyramidi"
 
 #: simulation/templates/other/sele_colonnade.xml:20
 msgid "Colonnade"
@@ -874,35 +838,6 @@ msgstr "Pylväsrivi"
 #: simulation/templates/other/sele_colonnade.xml:21
 msgid "Corinthian Colonnade"
 msgstr "Korinttilainen pylväsrivi"
-
-#: simulation/templates/other/special_treasure_shipwreck.xml:10
-#: simulation/templates/other/special_treasure_shipwreck_ram_bow.xml:10
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat.xml:10
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat_cut.xml:10
-msgid "Shipwreck"
-msgstr "Laivanhylky"
-
-#: simulation/templates/other/special_treasure_shipwreck.xml:11
-msgid "A decaying military shipwreck. A good opportunity for any businessman."
-msgstr "Heikentynyt sotilaallinen laivanhylky. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
-
-#: simulation/templates/other/special_treasure_shipwreck_debris.xml:10
-msgid "Shipwreck Cargo"
-msgstr "Laivanhylyn rahti"
-
-#: simulation/templates/other/special_treasure_shipwreck_ram_bow.xml:11
-msgid ""
-"A shipwreck with much loss of life. A good opportunity for any businessman."
-msgstr "Laivanhylky niin paljolla elämien menetyksillä. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
-
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat.xml:11
-msgid ""
-"The wreck of a small cargo ship. A good opportunity for any businessman."
-msgstr "Pienen rahtilaivan hylky. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
-
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat_cut.xml:11
-msgid "A cargo ship rammed in half. A good opportunity for any businessman."
-msgstr "Rahtilaiva puskettu kahtia. Hyvä mahdollisuus kenelle tahansa liikemiehelle."
 
 #: simulation/templates/other/stall_big.xml:12
 msgid "Big stall"
@@ -930,58 +865,106 @@ msgstr "Suorakulmionmuotoinen pöytä"
 msgid "Square Table"
 msgstr "Neliönmuotoinen pöytä"
 
-#: simulation/templates/other/unfinished_greek_temple.xml:10
-msgid "Unfinished Greek Temple"
-msgstr "Valmistumaton Kreikkalainen temppeli"
-
-#: simulation/templates/other/unfinished_greek_temple.xml:12
-msgid "This temple is unfinished and has fallen to ruin."
-msgstr "Tämä temppeli on valmistautumaton ja on tullut raunioksi."
-
 #: simulation/templates/skirmish/structures/default_house_10.xml:5
 msgid ""
 "Changes in a 10-pop house for civilisations with those houses, is deleted "
 "for other civs"
 msgstr "Muutokset 10-asukkaan taloissa niitä omaavien sivilisaatioille on poistettu toisilta sivilisaatioilta."
 
-#: simulation/templates/skirmish/structures/default_house_5.xml:5
+#: simulation/templates/skirmish/structures/default_house_5.xml:8
 msgid ""
 "Changes in a 5-pop house for civilisations with those houses, is deleted for"
 " other civs"
 msgstr "Muutokset 5-asukkaan taloissa niitä omaavien sivilisatioille on poistettu toisilta sivilisaatioilta."
 
-#: simulation/templates/special/marker_object_sound.xml:15
-#: simulation/templates/special/marker_object_sound.xml:16
-msgid "Marker"
-msgstr "Tunnus"
+#: simulation/templates/special/spy.xml:17
+msgid "Spy"
+msgstr ""
 
-#: simulation/templates/special/player.xml:56
+#: simulation/templates/special/formations/battle_line.xml:5
+msgid "Battle Line"
+msgstr "Taistelulinja"
+
+#: simulation/templates/special/formations/box.xml:6
+msgid "4 units required"
+msgstr "4 yksikköä edelletettynä"
+
+#: simulation/templates/special/formations/box.xml:7
+msgid "Box"
+msgstr "Laatikko"
+
+#: simulation/templates/special/formations/column_closed.xml:5
+msgid "Forced March"
+msgstr ""
+
+#: simulation/templates/special/formations/column_open.xml:5
+msgid "Column Open"
+msgstr "Kolonna avoinna"
+
+#: simulation/templates/special/formations/flank.xml:6
+msgid "8 units required"
+msgstr "8 yksikköä tarvitaan"
+
+#: simulation/templates/special/formations/flank.xml:7
+msgid "Flank"
+msgstr "Sivusta"
+
+#: simulation/templates/special/formations/line_closed.xml:5
+msgid "Close Order"
+msgstr ""
+
+#: simulation/templates/special/formations/line_open.xml:5
+msgid "Open Order"
+msgstr ""
+
+#: simulation/templates/special/formations/null.xml:5
+msgid "None"
+msgstr "Ei mitään"
+
+#: simulation/templates/special/formations/phalanx.xml:6
+msgid "10 hoplite infantry required"
+msgstr ""
+
+#: simulation/templates/special/formations/phalanx.xml:7
+msgid "Phalanx"
+msgstr "Falangi"
+
+#: simulation/templates/special/formations/scatter.xml:5
+msgid "Scatter"
+msgstr "Hajaantua"
+
+#: simulation/templates/special/formations/skirmish.xml:5
+msgid "Only ranged units allowed"
+msgstr "Vain ampuma-alue yksiköt sallittuna"
+
+#: simulation/templates/special/formations/skirmish.xml:6
+msgid "Skirmish"
+msgstr "Kahakka"
+
+#: simulation/templates/special/formations/syntagma.xml:6
+msgid "16 pike infantry units required"
+msgstr ""
+
+#: simulation/templates/special/formations/syntagma.xml:8
+msgid "Syntagma"
+msgstr "Syntagma"
+
+#: simulation/templates/special/formations/testudo.xml:6
+msgid "9 melee infantry units required"
+msgstr "9 lähitaisteluyksikkö edelletetty"
+
+#: simulation/templates/special/formations/testudo.xml:7
+msgid "Testudo"
+msgstr "Testudo"
+
+#: simulation/templates/special/formations/wedge.xml:6
+msgid "6 cavalry units required"
+msgstr ""
+
+#: simulation/templates/special/formations/wedge.xml:7
+msgid "Wedge"
+msgstr "Kiila"
+
+#: simulation/templates/special/player/player.xml:57
 msgid "Player"
 msgstr "Pelaaja"
-
-#: simulation/templates/special_units/athen_mechanical_siege_lithobolos_common.xml:5
-#: simulation/templates/special_units/mace_mechanical_siege_lithobolos_common.xml:5
-#: simulation/templates/special_units/ptol_mechanical_siege_lithobolos_common.xml:5
-#: simulation/templates/special_units/sele_mechanical_siege_lithobolos_common.xml:5
-msgid "Lithobólos"
-msgstr "Lithobólos"
-
-#: simulation/templates/special_units/athen_mechanical_siege_oxybeles_common.xml:5
-#: simulation/templates/special_units/cart_mechanical_siege_oxybeles_common.xml:5
-#: simulation/templates/special_units/mace_mechanical_siege_oxybeles_common.xml:5
-#: simulation/templates/special_units/spart_mechanical_siege_oxybeles_common.xml:5
-msgid "Oxybelḗs"
-msgstr "Oxybelḗs"
-
-#: simulation/templates/special_units/cart_mechanical_siege_ballista_common.xml:5
-#: simulation/templates/special_units/rome_mechanical_siege_ballista_common.xml:20
-msgid "Ballista"
-msgstr "Ballista"
-
-#: simulation/templates/special_units/ptol_mechanical_siege_polybolos_common.xml:5
-msgid "Polybolos"
-msgstr "Polybolos"
-
-#: simulation/templates/special_units/rome_mechanical_siege_scorpio_common.xml:16
-msgid "Scorpio"
-msgstr "Scorpio"

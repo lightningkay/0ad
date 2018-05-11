@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_unit_champion_infantry_spearman">
   <Armour>
-    <Hack op="add">-3</Hack>
-    <Pierce op="add">-3</Pierce>
+    <Hack op="add">-4</Hack>
+    <Pierce op="add">-4</Pierce>
   </Armour>
   <Cost>
-    <BuildTime op="mul">0.5</BuildTime>
+    <BuildTime op="mul">0.75</BuildTime>
     <Resources>
       <food>0</food>
       <metal op="mul">2</metal>
@@ -15,19 +15,16 @@
     <Civ>gaul</Civ>
     <GenericName>Naked Fanatic</GenericName>
     <SpecificName>Gaesata</SpecificName>
-    <History>A fanatic Celtic warrior, devoted to war and his Celtic liege lord. These bloodthirsty young men roamed Gaul in search of battle.</History>
     <Icon>units/celt_fanatic.png</Icon>
     <RequiredTechnology>phase_town</RequiredTechnology>
   </Identity>
   <UnitMotion>
-    <WalkSpeed op="mul">1.5</WalkSpeed>
+    <WalkSpeed op="mul">1.4</WalkSpeed>
     <Run>
-      <Speed op="mul">1.5</Speed>
-      <Range>600.0</Range>
-      <RangeMin>5.0</RangeMin>
+      <Speed op="mul">1.4</Speed>
     </Run>
   </UnitMotion>
   <VisualActor>
-    <Actor>units/celts/fanatic.xml</Actor>
+    <Actor>units/gauls/infantry_spearman_c.xml</Actor>
   </VisualActor>
 </Entity>

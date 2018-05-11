@@ -1,4 +1,4 @@
-const NATURAL_COLOR = "255 255 255 255"; // pure white
+const g_NaturalColor = "255 255 255 255"; // pure white
 
 function StatusBars() {}
 
@@ -16,31 +16,36 @@ StatusBars.prototype.Schema =
 /**
  * For every sprite, the code will call their "Add" method when regenerating
  * the sprites. Every sprite adder should return the height it needs.
- * 
+ *
  * Modders who need extra sprites can just modify this array, and
  * provide the right methods.
  */
-StatusBars.prototype.Sprites =
-	[
-		"PackBar",
-		"ResourceSupplyBar",
-		"CaptureBar",
-		"HealthBar",
-		"AuraIcons",
-	];
+StatusBars.prototype.Sprites = [
+	"PackBar",
+	"ResourceSupplyBar",
+	"CaptureBar",
+	"HealthBar",
+	"AuraIcons",
+	"RankIcon"
+];
 
 StatusBars.prototype.Init = function()
 {
 	this.enabled = false;
+	this.showRank = false;
+
+	// Whether the status bars used the player colors anywhere (e.g. in the capture bar)
+	this.usedPlayerColors = false;
+
 	this.auraSources = new Map();
 };
 
 /**
- * Don't serialise this.enabled since it's modified by the GUI
+ * Don't serialise this.enabled since it's modified by the GUI.
  */
 StatusBars.prototype.Serialize = function()
 {
-	return {"auraSources": this.auraSources};
+	return { "auraSources": this.auraSources };
 };
 
 StatusBars.prototype.Deserialize = function(data)
@@ -49,13 +54,14 @@ StatusBars.prototype.Deserialize = function(data)
 	this.auraSources = data.auraSources;
 };
 
-StatusBars.prototype.SetEnabled = function(enabled)
+StatusBars.prototype.SetEnabled = function(enabled, showRank)
 {
 	// Quick return if no change
-	if (enabled == this.enabled)
+	if (enabled == this.enabled && showRank == this.showRank)
 		return;
 
 	this.enabled = enabled;
+	this.showRank = showRank;
 
 	// Update the displayed sprites
 	this.RegenerateSprites();
@@ -101,6 +107,12 @@ StatusBars.prototype.OnPackProgressUpdate = function(msg)
 		this.RegenerateSprites();
 };
 
+StatusBars.prototype.UpdateColor = function()
+{
+	if (this.usedPlayerColors)
+		this.RegenerateSprites();
+};
+
 StatusBars.prototype.RegenerateSprites = function()
 {
 	let cmpOverlayRenderer = Engine.QueryInterface(this.entity, IID_OverlayRenderer);
@@ -108,12 +120,12 @@ StatusBars.prototype.RegenerateSprites = function()
 
 	let yoffset = 0;
 	for (let sprite of this.Sprites)
-		yoffset += this["Add"+sprite](cmpOverlayRenderer, yoffset);
+		yoffset += this["Add" + sprite](cmpOverlayRenderer, yoffset);
 };
 
 // Internal helper functions
 /**
- * Generic piece of code to add a bar
+ * Generic piece of code to add a bar.
  */
 StatusBars.prototype.AddBar = function(cmpOverlayRenderer, yoffset, type, amount)
 {
@@ -126,20 +138,20 @@ StatusBars.prototype.AddBar = function(cmpOverlayRenderer, yoffset, type, amount
 
 	// background
 	cmpOverlayRenderer.AddSprite(
-		"art/textures/ui/session/icons/"+type+"_bg.png",
-		{ "x": -width/2, "y": yoffset },
-		{ "x": width/2, "y": height + yoffset},
+		"art/textures/ui/session/icons/" + type + "_bg.png",
+		{ "x": -width / 2, "y": yoffset },
+		{ "x": width / 2, "y": height + yoffset },
 		offset,
-		NATURAL_COLOR
+		g_NaturalColor
 	);
 
 	// foreground
 	cmpOverlayRenderer.AddSprite(
-		"art/textures/ui/session/icons/"+type+"_fg.png",
-		{ "x": -width/2, "y": yoffset},
-		{ "x": width*(amount - 0.5), "y": height + yoffset},
+		"art/textures/ui/session/icons/" + type + "_fg.png",
+		{ "x": -width / 2, "y": yoffset },
+		{ "x": width * (amount - 0.5), "y": height + yoffset },
 		offset,
-		NATURAL_COLOR
+		g_NaturalColor
 	);
 
 	return height * 1.2;
@@ -163,7 +175,7 @@ StatusBars.prototype.AddHealthBar = function(cmpOverlayRenderer, yoffset)
 		return 0;
 
 	let cmpHealth = QueryMiragedInterface(this.entity, IID_Health);
-	if (!cmpHealth || !cmpHealth.GetHitpoints() > 0)
+	if (!cmpHealth || cmpHealth.GetHitpoints() <= 0)
 		return 0;
 
 	return this.AddBar(cmpOverlayRenderer, yoffset, "health", cmpHealth.GetHitpoints() / cmpHealth.GetMaxHitpoints());
@@ -195,6 +207,10 @@ StatusBars.prototype.AddCaptureBar = function(cmpOverlayRenderer, yoffset)
 		return 0;
 
 	let owner = cmpOwnership.GetOwner();
+	if (owner == INVALID_PLAYER)
+		return 0;
+
+	this.usedPlayerColors = true;
 	let cp = cmpCapturable.GetCapturePoints();
 
 	// Size of health bar (in world-space units)
@@ -206,14 +222,14 @@ StatusBars.prototype.AddCaptureBar = function(cmpOverlayRenderer, yoffset)
 
 	let setCaptureBarPart = function(playerID, startSize)
 	{
-		let c = QueryPlayerIDInterface(playerID).GetColor();
+		let c = QueryPlayerIDInterface(playerID).GetDisplayedColor();
 		let strColor = (c.r * 255) + " " + (c.g * 255) + " " + (c.b * 255) + " 255";
 		let size = width * cp[playerID] / cmpCapturable.GetMaxCapturePoints();
 
 		cmpOverlayRenderer.AddSprite(
 			"art/textures/ui/session/icons/capture_bar.png",
 			{ "x": startSize, "y": yoffset },
-			{ "x": startSize + size, "y": height + yoffset},
+			{ "x": startSize + size, "y": height + yoffset },
 			offset,
 			strColor
 		);
@@ -221,7 +237,7 @@ StatusBars.prototype.AddCaptureBar = function(cmpOverlayRenderer, yoffset)
 		return size + startSize;
 	};
 
-	// first handle the owner's points, to keep those points on the left for clarity
+	// First handle the owner's points, to keep those points on the left for clarity
 	let size = setCaptureBarPart(owner, -width / 2);
 	for (let i in cp)
 		if (i != owner && cp[i] > 0)
@@ -241,33 +257,51 @@ StatusBars.prototype.AddAuraIcons = function(cmpOverlayRenderer, yoffset)
 	let iconSet = new Set();
 	for (let ent of sources)
 	{
-		let cmpAuras = Engine.QueryInterface(ent, IID_Auras); 
-		if (!cmpAuras) // probably the ent just died 
-			continue; 
-		for (let name of this.auraSources.get(ent)) 
-			iconSet.add(cmpAuras.GetOverlayIcon(name)); 
+		let cmpAuras = Engine.QueryInterface(ent, IID_Auras);
+		if (!cmpAuras) // probably the ent just died
+			continue;
+		for (let name of this.auraSources.get(ent))
+			iconSet.add(cmpAuras.GetOverlayIcon(name));
 	}
 
 	// World-space offset from the unit's position
 	let offset = { "x": 0, "y": +this.template.HeightOffset + yoffset, "z": 0 };
 
-	let iconSize = +this.template.BarWidth / 2; 
+	let iconSize = +this.template.BarWidth / 2;
 	let xoffset = -iconSize * (iconSet.size - 1) * 0.6;
-	for (let icon of iconSet) 
-	{ 
-		cmpOverlayRenderer.AddSprite( 
-			icon, 
-			{ "x": xoffset - iconSize/2, "y": yoffset }, 
-			{ "x": xoffset + iconSize/2, "y": iconSize + yoffset }, 
+	for (let icon of iconSet)
+	{
+		cmpOverlayRenderer.AddSprite(
+			icon,
+			{ "x": xoffset - iconSize / 2, "y": yoffset },
+			{ "x": xoffset + iconSize / 2, "y": iconSize + yoffset },
 			offset,
-			NATURAL_COLOR
-		); 
+			g_NaturalColor
+		);
 		xoffset += iconSize * 1.2;
-	} 
+	}
 
 	return iconSize + this.template.BarHeight / 2;
 };
 
+StatusBars.prototype.AddRankIcon = function(cmpOverlayRenderer, yoffset)
+{
+	if (!this.enabled || !this.showRank)
+		return 0;
 
+	let cmpIdentity = Engine.QueryInterface(this.entity, IID_Identity);
+	if (!cmpIdentity || !cmpIdentity.GetRank())
+		return 0;
+
+	let iconSize = +this.template.BarWidth / 2;
+	cmpOverlayRenderer.AddSprite(
+		"art/textures/ui/session/icons/ranks/" + cmpIdentity.GetRank() + ".png",
+		{ "x": -iconSize / 2, "y": yoffset },
+		{ "x": iconSize / 2, "y": iconSize + yoffset },
+		{ "x": 0, "y": +this.template.HeightOffset + 0.1, "z": 0 },
+		g_NaturalColor);
+
+	return iconSize + this.template.BarHeight / 2;
+};
 
 Engine.RegisterComponentType(IID_StatusBars, "StatusBars", StatusBars);

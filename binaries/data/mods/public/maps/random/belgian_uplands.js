@@ -1,60 +1,40 @@
-// Prepare progress calculation
-var timeArray = [];
-timeArray.push(new Date().getTime());
+Engine.LoadLibrary("rmgen");
+Engine.LoadLibrary("rmgen-common");
+Engine.LoadLibrary("heightmap");
 
-// Importing rmgen libraries
-RMS.LoadLibrary("rmgen");
-RMS.LoadLibrary("heightmap");
+const tPrimary = ["temp_grass", "temp_grass_b", "temp_grass_c", "temp_grass_d",
+	"temp_grass_long_b", "temp_grass_clovers_2", "temp_grass_mossy", "temp_grass_plants"];
 
-log("Initializing map...");
-
-InitMap();
-
+const heightLand = 0;
+var g_Map = new RandomMap(heightLand, tPrimary);
 var numPlayers = getNumPlayers();
-var mapSize = getMapSize();
-
-
-// Function to apply a heightmap
-function setReliefmap(reliefmap)
-{
-	// g_Map.height = reliefmap;
-	for (var x = 0; x <= mapSize; x++)
-		for (var y = 0; y <= mapSize; y++)
-			setHeight(x, y, reliefmap[x][y]);
-}
-
+var mapSize = g_Map.getSize();
+var mapCenter = g_Map.getCenter();
 
 // Set target min and max height depending on map size to make average stepness the same on all map sizes
 var heightRange = {"min": MIN_HEIGHT * mapSize / 8192, "max": MAX_HEIGHT * mapSize / 8192};
 
-// Set average water coverage
-var averageWaterCoverage = 1/3; // NOTE: Since errosion is not predictable actual water coverage might differ much with the same value
-if (mapSize < 200) // Sink the waterlevel on tiny maps to ensure enough space
-	averageWaterCoverage = 2/3 * averageWaterCoverage;
+// Since erosion is not predictable, actual water coverage can differ much with the same value
+var averageWaterCoverage = scaleByMapSize(1/5, 1/3);
 
-var waterHeight = -MIN_HEIGHT + heightRange.min + averageWaterCoverage * (heightRange.max - heightRange.min);
-var waterHeightAdjusted = waterHeight + MIN_HEIGHT;
-setWaterHeight(waterHeight);
-
-
-//////////
-// Prepare terrain texture by height placement
-//////////
+var heightSeaGround = -MIN_HEIGHT + heightRange.min + averageWaterCoverage * (heightRange.max - heightRange.min);
+var heightSeaGroundAdjusted = heightSeaGround + MIN_HEIGHT;
+setWaterHeight(heightSeaGround);
 
 var textueByHeight = [];
 
 // Deep water
-textueByHeight.push({"upperHeightLimit": heightRange.min + 1/3 * (waterHeightAdjusted - heightRange.min), "terrain": "temp_sea_rocks"});
+textueByHeight.push({"upperHeightLimit": heightRange.min + 1/3 * (heightSeaGroundAdjusted - heightRange.min), "terrain": "temp_sea_rocks"});
 
 // Medium deep water (with fish)
 var terrains = ["temp_sea_weed"];
 terrains = terrains.concat(terrains, terrains, terrains, terrains);
 terrains = terrains.concat(terrains, terrains, terrains, terrains);
 terrains.push("temp_sea_weed|gaia/fauna_fish");
-textueByHeight.push({"upperHeightLimit": heightRange.min + 2/3 * (waterHeightAdjusted - heightRange.min), "terrain": terrains});
+textueByHeight.push({"upperHeightLimit": heightRange.min + 2/3 * (heightSeaGroundAdjusted - heightRange.min), "terrain": terrains});
 
 // Flat Water
-textueByHeight.push({"upperHeightLimit": heightRange.min + 3/3 * (waterHeightAdjusted - heightRange.min), "terrain": "temp_mud_a"});
+textueByHeight.push({"upperHeightLimit": heightRange.min + 3/3 * (heightSeaGroundAdjusted - heightRange.min), "terrain": "temp_mud_a"});
 
 // Water surroundings/bog (with stone/metal some rabits and bushes)
 var terrains = ["temp_plants_bog", "temp_plants_bog_aut", "temp_dirt_gravel_plants", "temp_grass_d"];
@@ -62,19 +42,19 @@ terrains = terrains.concat(terrains, terrains, terrains, terrains, terrains);
 terrains = ["temp_plants_bog|gaia/flora_bush_temperate"].concat(terrains, terrains);
 terrains = ["temp_dirt_gravel_plants|gaia/geology_metal_temperate", "temp_dirt_gravel_plants|gaia/geology_stone_temperate", "temp_plants_bog|gaia/fauna_rabbit"].concat(terrains, terrains);
 terrains = ["temp_plants_bog_aut|gaia/flora_tree_dead"].concat(terrains, terrains);
-textueByHeight.push({"upperHeightLimit": waterHeightAdjusted + 1/6 * (heightRange.max - waterHeightAdjusted), "terrain": terrains});
+textueByHeight.push({"upperHeightLimit": heightSeaGroundAdjusted + 1/6 * (heightRange.max - heightSeaGroundAdjusted), "terrain": terrains});
 
 // Juicy grass near bog
-textueByHeight.push({"upperHeightLimit": waterHeightAdjusted + 2/6 * (heightRange.max - waterHeightAdjusted),
+textueByHeight.push({"upperHeightLimit": heightSeaGroundAdjusted + 2/6 * (heightRange.max - heightSeaGroundAdjusted),
 	"terrain": ["temp_grass", "temp_grass_d", "temp_grass_long_b", "temp_grass_plants"]});
 
 // Medium level grass
 // var testActor = "actor|geology/decal_stone_medit_a.xml";
-textueByHeight.push({"upperHeightLimit": waterHeightAdjusted + 3/6 * (heightRange.max - waterHeightAdjusted),
+textueByHeight.push({"upperHeightLimit": heightSeaGroundAdjusted + 3/6 * (heightRange.max - heightSeaGroundAdjusted),
 	"terrain": ["temp_grass", "temp_grass_b", "temp_grass_c", "temp_grass_mossy"]});
 
 // Long grass near forest border
-textueByHeight.push({"upperHeightLimit": waterHeightAdjusted + 4/6 * (heightRange.max - waterHeightAdjusted),
+textueByHeight.push({"upperHeightLimit": heightSeaGroundAdjusted + 4/6 * (heightRange.max - heightSeaGroundAdjusted),
 	"terrain": ["temp_grass", "temp_grass_b", "temp_grass_c", "temp_grass_d", "temp_grass_long_b", "temp_grass_clovers_2", "temp_grass_mossy", "temp_grass_plants"]});
 
 // Forest border (With wood/food plants/deer/rabits)
@@ -86,371 +66,218 @@ var terrains = ["temp_grass_plants|gaia/flora_tree_euro_beech", "temp_grass_moss
 var numTerrains = terrains.length;
 for (var i = 0; i < numTerrains; i++)
 	terrains.push("temp_grass_plants");
-textueByHeight.push({"upperHeightLimit": waterHeightAdjusted + 5/6 * (heightRange.max - waterHeightAdjusted), "terrain": terrains});
+textueByHeight.push({"upperHeightLimit": heightSeaGroundAdjusted + 5/6 * (heightRange.max - heightSeaGroundAdjusted), "terrain": terrains});
 
 // Unpassable woods
-textueByHeight.push({"upperHeightLimit": waterHeightAdjusted + 6/6 * (heightRange.max - waterHeightAdjusted),
+textueByHeight.push({"upperHeightLimit": heightSeaGroundAdjusted + 6/6 * (heightRange.max - heightSeaGroundAdjusted),
 	"terrain": ["temp_grass_mossy|gaia/flora_tree_oak", "temp_forestfloor_pine|gaia/flora_tree_pine",
 	"temp_grass_mossy|gaia/flora_tree_oak", "temp_forestfloor_pine|gaia/flora_tree_pine",
 	"temp_mud_plants|gaia/flora_tree_dead", "temp_plants_bog|gaia/flora_tree_oak_large",
 	"temp_dirt_gravel_plants|gaia/flora_tree_aleppo_pine", "temp_forestfloor_autumn|gaia/flora_tree_carob"]});
 
-var minTerrainDistToBorder = 3;
+Engine.SetProgress(5);
 
-// Time check 1
-timeArray.push(new Date().getTime());
-RMS.SetProgress(5);
+var lowerHeightLimit = textueByHeight[3].upperHeightLimit;
+var upperHeightLimit = textueByHeight[6].upperHeightLimit;
 
+var playerPosition;
+var playerIDs;
 
-// START THE GIANT WHILE LOOP:
-// - Generate Heightmap
-// - Search valid start position tiles
-// - Choose a good start position derivation (largest distance between closest players)
-// - Restart the loop if start positions are invalid or two players are to close to each other
-var goodStartPositionsFound = false;
-var minDistBetweenPlayers = 16 + mapSize / 16; // Don't set this higher than 25 for tiny maps! It will take forever with 8 players!
-var enoughTiles = false;
-var tries = 0;
-
-while (!goodStartPositionsFound)
+while (true)
 {
-	tries++;
-	log("Starting giant while loop try " + tries);
+	g_Map.log("Randomizing heightmap")
+	createArea(
+		new MapBoundsPlacer(),
+		new RandomElevationPainter(heightRange.min, heightRange.max));
 
-	// Generate reliefmap
-	var myReliefmap = deepcopy(g_Map.height);
-	setRandomHeightmap(heightRange.min, heightRange.max, myReliefmap);
-	for (var i = 0; i < 50 + mapSize/4; i++) // Cycles depend on mapsize (more cycles -> bigger structures)
-		globalSmoothHeightmap(0.8, myReliefmap);
+	 // More cycles yield bigger structures
+	g_Map.log("Smoothing map");
+	createArea(
+		new MapBoundsPlacer(),
+		new SmoothingPainter(2, 1, 20));
 
-	rescaleHeightmap(heightRange.min, heightRange.max, myReliefmap);
-	setReliefmap(myReliefmap);
-	
-	// Find good start position tiles
-	var startPositions = [];
-	var possibleStartPositions = [];
-	var neededDistance = 7;
-	var distToBorder = 2 * neededDistance; // Has to be greater than neededDistance! Otherwise the check if low/high ground is near will fail...
-	var lowerHeightLimit = textueByHeight[3].upperHeightLimit;
-	var upperHeightLimit = textueByHeight[6].upperHeightLimit;
+	g_Map.log("Rescaling map");
+	rescaleHeightmap(heightRange.min, heightRange.max, g_Map.height);
 
-	// Check for valid points by height
-	for (var x = distToBorder + minTerrainDistToBorder; x < mapSize - distToBorder - minTerrainDistToBorder; x++)
-		for (var y = distToBorder + minTerrainDistToBorder; y < mapSize - distToBorder - minTerrainDistToBorder; y++)
-		{
-			var actualHeight = getHeight(x, y);
-			if (actualHeight > lowerHeightLimit && actualHeight < upperHeightLimit)
-			{
-				// Check for points within a valid area by height (rectangular since faster)
-				var isPossible = true;
-				for (var offX = - neededDistance; offX <= neededDistance; offX++)
-					for (var offY = - neededDistance; offY <= neededDistance; offY++)
-					{
-						var testHeight = getHeight(x + offX, y + offY);
-						if (testHeight <= lowerHeightLimit || testHeight >= upperHeightLimit)
-						{
-							isPossible = false;
-							break;
-						}
-					}
+	g_Map.log("Mark valid heightrange for player starting positions");
+	let tHeightRange = g_Map.createTileClass();
+	let area = createArea(
+		new DiskPlacer(fractionToTiles(0.5) - MAP_BORDER_WIDTH, mapCenter),
+		new TileClassPainter(tHeightRange),
+		new HeightConstraint(lowerHeightLimit, upperHeightLimit));
 
-				if (isPossible)
-					possibleStartPositions.push([x, y]);
-					// placeTerrain(x, y, "blue"); // For debug reasons. Plz don't remove. // Only works properly for 1 loop
-			}
-		}
-	
-	// Trying to reduce the number of possible start locations...
-	
-	// Reduce to tiles in a circle of mapSize / 2 distance to the center (to avoid players placed in corners)
-	var possibleStartPositionsTemp = [];
-	var maxDistToCenter = mapSize / 2;
-	for (var i = 0; i < possibleStartPositions.length; i++)
+	let players = area && playerPlacementRandom(sortAllPlayers(), stayClasses(tHeightRange, 15), true);
+	if (players)
 	{
-		var deltaX = possibleStartPositions[i][0] - mapSize / 2;
-		var deltaY = possibleStartPositions[i][1] - mapSize / 2;
-		var distToCenter = Math.pow(Math.pow(deltaX, 2) + Math.pow(deltaY, 2), 1/2);
-
-		if (distToCenter < maxDistToCenter)
-			possibleStartPositionsTemp.push(possibleStartPositions[i]);
-			// placeTerrain(possibleStartPositions[i][0], possibleStartPositions[i][1], "purple"); // Only works properly for 1 loop
-	}
-	possibleStartPositions = deepcopy(possibleStartPositionsTemp);
-	
-	// Reduce to tiles near low and high ground (Rectangular check since faster) to make sure each player has access to all resource types.
-	var possibleStartPositionsTemp = [];
-	var maxDistToResources = distToBorder; // Has to be <= distToBorder!
-	var minNumLowTiles = 10;
-	var minNumHighTiles = 10;
-
-	for (var i = 0; i < possibleStartPositions.length; i++)
-	{
-		var numLowTiles = 0;
-		var numHighTiles = 0;
-		for (var dx = - maxDistToResources; dx < maxDistToResources; dx++)
-		{
-			for (var dy = - maxDistToResources; dy < maxDistToResources; dy++)
-			{
-				var testHeight = getHeight(possibleStartPositions[i][0] + dx, possibleStartPositions[i][1] + dy);
-
-				if (testHeight < lowerHeightLimit)
-					numLowTiles++;
-
-				if (testHeight > upperHeightLimit)
-					numHighTiles++;
-
-				if (numLowTiles > minNumLowTiles && numHighTiles > minNumHighTiles)
-					break;
-			}
-			if (numLowTiles > minNumLowTiles && numHighTiles > minNumHighTiles)
-				break;
-		}
-		if (numLowTiles > minNumLowTiles && numHighTiles > minNumHighTiles)
-			possibleStartPositionsTemp.push(possibleStartPositions[i]);
-			// placeTerrain(possibleStartPositions[i][0], possibleStartPositions[i][1], "red"); // Only works properly for 1 loop
+		[playerIDs, playerPosition] = players;
+		break;
 	}
 
-	possibleStartPositions = deepcopy(possibleStartPositionsTemp);
-	
-	if(possibleStartPositions.length > numPlayers)
-		enoughTiles = true;
-	else
-	{
-		enoughTiles = false;
-		log("possibleStartPositions.length < numPlayers, possibleStartPositions.length = " + possibleStartPositions.length + ", numPlayers = " + numPlayers);
-	}
-	
-	// Find a good start position derivation
-	if (enoughTiles)
-	{
-		// Get some random start location derivations. NOTE: Itterating over all possible derivations is just to much (valid points ** numPlayers)
-		var maxTries = 100000; // floor(800000 / (Math.pow(numPlayers, 2) / 2));
-		var possibleDerivations = [];
-		for (var i = 0; i < maxTries; i++)
-		{
-			var vector = [];
-			for (var p = 0; p < numPlayers; p++)
-				vector.push(randInt(possibleStartPositions.length));
-			possibleDerivations.push(vector);
-		}
-		
-		// Choose the start location derivation with the greatest minimum distance between players
-		var maxMinDist = 0;
-		for (var d = 0; d < possibleDerivations.length; d++)
-		{
-			var minDist = 2 * mapSize;
-			for (var p1 = 0; p1 < numPlayers - 1; p1++)
-			{
-				for (var p2 = p1 + 1; p2 < numPlayers; p2++)
-				{
-					if (p1 != p2)
-					{
-						var StartPositionP1 = possibleStartPositions[possibleDerivations[d][p1]];
-						var StartPositionP2 = possibleStartPositions[possibleDerivations[d][p2]];
-						var actualDist = Math.pow(Math.pow(StartPositionP1[0] - StartPositionP2[0], 2) + Math.pow(StartPositionP1[1] - StartPositionP2[1], 2), 1/2);
-						if (actualDist < minDist)
-							minDist = actualDist;
-						if (minDist < maxMinDist)
-							break;
-					}
-				}
-				if (minDist < maxMinDist)
-					break;
-			}
-			if (minDist > maxMinDist)
-			{
-				maxMinDist = minDist;
-				var bestDerivation = possibleDerivations[d];
-			}
-		}
-		if (maxMinDist > minDistBetweenPlayers)
-		{
-			goodStartPositionsFound = true;
-			log("Exiting giant while loop after " +  tries + " tries with a minimum player distance of " + maxMinDist);
-		}
-		else
-			log("maxMinDist <= " + minDistBetweenPlayers + ", maxMinDist = " + maxMinDist);
-	} // End of derivation check
-} // END THE GIANT WHILE LOOP
+	g_Map.log("Too few starting locations");
+}
+Engine.SetProgress(60);
 
-// Time check 2
-timeArray.push(new Date().getTime());
-RMS.SetProgress(60);
-
-
-////////
-// Paint terrain by height and add props
-////////
-
+g_Map.log("Painting terrain by height and add props");
 var propDensity = 1; // 1 means as determined in the loop, less for large maps as set below
 if (mapSize > 500)
 	propDensity = 1/4;
 else if (mapSize > 400)
 	propDensity = 3/4;
 
-for(var x = minTerrainDistToBorder; x < mapSize - minTerrainDistToBorder; x++)
-{
-	for (var y = minTerrainDistToBorder; y < mapSize - minTerrainDistToBorder; y++)
+for (let x = 0; x < mapSize; ++x)
+	for (let y = 0; y < mapSize; ++y)
 	{
+		let position = new Vector2D(x, y);
+		if (!g_Map.validHeight(position))
+			continue;
+
 		var textureMinHeight = heightRange.min;
 		for (var i = 0; i < textueByHeight.length; i++)
 		{
-			if (getHeight(x, y) >= textureMinHeight && getHeight(x, y) <= textueByHeight[i].upperHeightLimit)
+			if (g_Map.getHeight(position) >= textureMinHeight && g_Map.getHeight(position) <= textueByHeight[i].upperHeightLimit)
 			{
-				placeTerrain(x, y, textueByHeight[i].terrain);
-				// Add some props at...
+				createTerrain(textueByHeight[i].terrain).place(position);
+
+				let template;
+
 				if (i == 0) // ...deep water
 				{
-					if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/pond_lillies_large.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/water_lillies.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 100))
+						template = "actor|props/flora/pond_lillies_large.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/water_lillies.xml";
 				}
 				if (i == 1) // ...medium water (with fish)
 				{
-					if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/pond_lillies_large.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/water_lillies.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 200))
+						template = "actor|props/flora/pond_lillies_large.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/water_lillies.xml";
 				}
 				if (i == 2) // ...low water/mud
 				{
-					if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/water_log.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/water_lillies.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|geology/highland_c.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/20 * propDensity)
-						placeObject(x, y, "actor|props/flora/reeds_pond_lush_b.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/10 * propDensity)
-						placeObject(x, y, "actor|props/flora/reeds_pond_lush_a.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 200))
+						template = "actor|props/flora/water_log.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/water_lillies.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|geology/highland_c.xml";
+					else if (randBool(propDensity / 20))
+						template = "actor|props/flora/reeds_pond_lush_b.xml";
+					else if (randBool(propDensity / 10))
+						template = "actor|props/flora/reeds_pond_lush_a.xml";
 				}
 				if (i == 3) // ...water suroundings/bog
 				{
-					if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/water_log.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|geology/highland_c.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/reeds_pond_lush_a.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 200))
+						template = "actor|props/flora/water_log.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|geology/highland_c.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/reeds_pond_lush_a.xml";
 				}
 				if (i == 4) // ...low height grass
 				{
-					if (randFloat() < 1/800 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_field_flowering_tall.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/400 * propDensity)
-						placeObject(x, y, "actor|geology/gray_rock1.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/bush_tempe_sm_lush.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/bush_tempe_b.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_soft_small_tall.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 800))
+						template = "actor|props/flora/grass_field_flowering_tall.xml";
+					else if (randBool(propDensity / 400))
+						template = "actor|geology/gray_rock1.xml";
+					else if (randBool(propDensity / 200))
+						template = "actor|props/flora/bush_tempe_sm_lush.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/bush_tempe_b.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/grass_soft_small_tall.xml";
 				}
 				if (i == 5) // ...medium height grass
 				{
-					if (randFloat() < 1/800 * propDensity)
-						placeObject(x, y, "actor|geology/decal_stone_medit_a.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/400 * propDensity)
-						placeObject(x, y, "actor|props/flora/decals_flowers_daisies.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/bush_tempe_underbrush.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_soft_small_tall.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_temp_field.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 800))
+						template = "actor|geology/decal_stone_medit_a.xml";
+					else if (randBool(propDensity / 400))
+						template = "actor|props/flora/decals_flowers_daisies.xml";
+					else if (randBool(propDensity / 200))
+						template = "actor|props/flora/bush_tempe_underbrush.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/grass_soft_small_tall.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/grass_temp_field.xml";
 				}
 				if (i == 6) // ...high height grass
 				{
-					if (randFloat() < 1/400 * propDensity)
-						placeObject(x, y, "actor|geology/stone_granite_boulder.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/foliagebush.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/bush_tempe_underbrush.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_soft_small_tall.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/20 * propDensity)
-						placeObject(x, y, "actor|props/flora/ferns.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 400))
+						template = "actor|geology/stone_granite_boulder.xml";
+					else if (randBool(propDensity / 200))
+						template = "actor|props/flora/foliagebush.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/bush_tempe_underbrush.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/grass_soft_small_tall.xml";
+					else if (randBool(propDensity / 20))
+						template = "actor|props/flora/ferns.xml";
 				}
 				if (i == 7) // ...forest border (with wood/food plants/deer/rabits)
 				{
-					if (randFloat() < 1/400 * propDensity)
-						placeObject(x, y, "actor|geology/highland_c.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|props/flora/bush_tempe_a.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/ferns.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_soft_tuft_a.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 400))
+						template = "actor|geology/highland_c.xml";
+					else if (randBool(propDensity / 200))
+						template = "actor|props/flora/bush_tempe_a.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/ferns.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/grass_soft_tuft_a.xml";
 				}
 				if (i == 8) // ...woods
 				{
-					if (randFloat() < 1/200 * propDensity)
-						placeObject(x, y, "actor|geology/highland2_moss.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/100 * propDensity)
-						placeObject(x, y, "actor|props/flora/grass_soft_tuft_a.xml", 0, randFloat(0, 2*PI));
-					else if (randFloat() < 1/40 * propDensity)
-						placeObject(x, y, "actor|props/flora/ferns.xml", 0, randFloat(0, 2*PI));
+					if (randBool(propDensity / 200))
+						template = "actor|geology/highland2_moss.xml";
+					else if (randBool(propDensity / 100))
+						template = "actor|props/flora/grass_soft_tuft_a.xml";
+					else if (randBool(propDensity / 40))
+						template = "actor|props/flora/ferns.xml";
 				}
+
+				if (template)
+					g_Map.placeEntityAnywhere(template, 0, position, randomAngle());
+
 				break;
 			}
 			else
 				textureMinHeight = textueByHeight[i].upperHeightLimit;
 		}
 	}
-}
 
-// Time check 3
-timeArray.push(new Date().getTime());
-RMS.SetProgress(90);
+Engine.SetProgress(90);
 
-
-////////
-// Place players and start resources
-////////
-
-for (var p = 0; p < numPlayers; p++)
+if (isNomad())
+	placePlayersNomad(g_Map.createTileClass(), new HeightConstraint(lowerHeightLimit, upperHeightLimit));
+else
 {
-	var actualX = possibleStartPositions[bestDerivation[p]][0];
-	var actualY = possibleStartPositions[bestDerivation[p]][1];
-	placeCivDefaultEntities(actualX, actualY, p + 1, { "iberWall": false });
+	g_Map.log("Placing players and starting resources");
 
-	// Place some start resources
-	var uDist = 8;
-	var uSpace = 1;
-	for (var j = 1; j <= 4; ++j)
+	let resourceDistance = 8;
+	let resourceSpacing = 1;
+	let resourceCount = 4;
+
+	for (let i = 0; i < numPlayers; ++i)
 	{
-		var uAngle = BUILDING_ORIENTATION - PI * (2-j) / 2;
-		var count = 4;
-		for (var numberofentities = 0; numberofentities < count; numberofentities++)
-		{
-			var ux = actualX + uDist * cos(uAngle) + numberofentities * uSpace * cos(uAngle + PI/2) - (0.75 * uSpace * floor(count / 2) * cos(uAngle + PI/2));
-			var uz = actualY + uDist * sin(uAngle) + numberofentities * uSpace * sin(uAngle + PI/2) - (0.75 * uSpace * floor(count / 2) * sin(uAngle + PI/2));
+		placeCivDefaultStartingEntities(playerPosition[i], playerIDs[i], false);
 
-			if (j % 2 == 0)
-				placeObject(ux, uz, "gaia/flora_bush_berry", 0, randFloat(0, 2*PI)); 
-			else
-				placeObject(ux, uz, "gaia/flora_tree_cypress", 0, randFloat(0, 2*PI)); 
+		for (let j = 1; j <= 4; ++j)
+		{
+			let uAngle = BUILDING_ORIENTATION - Math.PI * (2-j) / 2;
+			for (let k = 0; k < resourceCount; ++k)
+			{
+				let pos = Vector2D.sum([
+					playerPosition[i],
+					new Vector2D(resourceDistance, 0).rotate(-uAngle),
+					new Vector2D(k * resourceSpacing, 0).rotate(-uAngle - Math.PI/2),
+					new Vector2D(-0.75 * resourceSpacing * Math.floor(resourceCount / 2), 0).rotate(-uAngle - Math.PI/2)
+				]);
+
+				g_Map.placeEntityPassable(j % 2 ? "gaia/flora_tree_cypress" : "gaia/flora_bush_berry", 0, pos, randomAngle());
+			}
 		}
 	}
 }
 
-
-// Export map data
-ExportMap();
-
-// Time check 7
-timeArray.push(new Date().getTime());
-
-// Calculate progress percentage with the time checks
-var generationTime = timeArray[timeArray.length - 1] - timeArray[0];
-log("Total generation time (ms): " + generationTime);
-
-for (var i = 0; i < timeArray.length; i++)
-{
-	var timeSinceStart = timeArray[i] - timeArray[0];
-	var progressPercentage = 100 * timeSinceStart / generationTime;
-	log("Time check " + i + ": Progress (%): " + progressPercentage);
-}
+g_Map.ExportMap();

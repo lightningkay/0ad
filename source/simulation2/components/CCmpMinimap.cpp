@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ class CCmpMinimap : public ICmpMinimap
 public:
 	static void ClassInit(CComponentManager& componentManager)
 	{
+		componentManager.SubscribeToMessageType(MT_Deserialized);
 		componentManager.SubscribeToMessageType(MT_PositionChanged);
 		componentManager.SubscribeToMessageType(MT_OwnershipChanged);
 		componentManager.SubscribeToMessageType(MT_MinimapPing);
@@ -65,7 +66,6 @@ public:
 					"<value>stone</value>"
 					"<value>metal</value>"
 					"<value>structure</value>"
-					"<value>settlement</value>"
 					"<value>unit</value>"
 					"<value>support</value>"
 					"<value>hero</value>"
@@ -117,13 +117,6 @@ public:
 	template<typename S>
 	void SerializeCommon(S& serialize)
 	{
-		if (m_UsePlayerColor)
-		{
-			serialize.NumberU8_Unbounded("r", m_R);
-			serialize.NumberU8_Unbounded("g", m_G);
-			serialize.NumberU8_Unbounded("b", m_B);
-		}
-
 		serialize.Bool("active", m_Active);
 
 		if (m_Active)
@@ -166,30 +159,10 @@ public:
 
 			break;
 		}
+		case MT_Deserialized:
 		case MT_OwnershipChanged:
 		{
-			if (!m_UsePlayerColor)
-				break;
-
-			const CMessageOwnershipChanged& msgData = static_cast<const CMessageOwnershipChanged&> (msg);
-
-			// If there's no new owner (e.g. the unit is dying) then don't try updating the color
-			if (msgData.to == -1)
-				break;
-
-			// Find the new player's color
-			CmpPtr<ICmpPlayerManager> cmpPlayerManager(GetSystemEntity());
-			if (!cmpPlayerManager)
-				break;
-			CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(msgData.to));
-			if (!cmpPlayer)
-				break;
-			CColor color = cmpPlayer->GetColor();
-			m_R = (u8)(color.r*255.0);
-			m_G = (u8)(color.g*255.0);
-			m_B = (u8)(color.b*255.0);
-			// TODO: probably should avoid using floating-point here
-
+			UpdateColor();
 			break;
 		}
 		case MT_MinimapPing:
@@ -207,7 +180,7 @@ public:
 		}
 	}
 
-	virtual bool GetRenderData(u8& r, u8& g, u8& b, entity_pos_t& x, entity_pos_t& z)
+	virtual bool GetRenderData(u8& r, u8& g, u8& b, entity_pos_t& x, entity_pos_t& z) const
 	{
 		if (!m_Active)
 			return false;
@@ -235,6 +208,33 @@ public:
 		}
 
 		return m_IsPinging;
+	}
+
+	virtual void UpdateColor()
+	{
+		if (!m_UsePlayerColor)
+			return;
+
+		CmpPtr<ICmpOwnership> cmpOwnership(GetEntityHandle());
+		if (!cmpOwnership)
+			return;
+
+		player_id_t owner = cmpOwnership->GetOwner();
+		if (owner == INVALID_PLAYER)
+			return;
+
+		CmpPtr<ICmpPlayerManager> cmpPlayerManager(GetSystemEntity());
+		if (!cmpPlayerManager)
+			return;
+
+		CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(owner));
+		if (!cmpPlayer)
+			return;
+
+		CColor color = cmpPlayer->GetDisplayedColor();
+		m_R = (u8) (color.r * 255);
+		m_G = (u8) (color.g * 255);
+		m_B = (u8) (color.b * 255);
 	}
 };
 

@@ -4,11 +4,11 @@
 # 
 # Translators:
 # Allan Nordhøy <epost@anotheragency.no>, 2014
-# Allan Nordhøy <epost@anotheragency.no>, 2016
+# Allan Nordhøy <epost@anotheragency.no>, 2016-2017
 # asd, 2014
 # Erling Ekholt Kristiansen <kongrapemann@gmail.com>, 2014
-# Jarl.Arntzen <jarl.arntzen@gmail.com>, 2014-2015
-# Jarl.Arntzen <jarl.arntzen@gmail.com>, 2014
+# Jarl Arntzen <jarl.arntzen@gmail.com>, 2014-2015
+# Jarl Arntzen <jarl.arntzen@gmail.com>, 2014
 # joharei <johan.reitan@gmail.com>, 2013
 # Kurt-Håkon Eilertsen <kurt@kheds.com>, 2014
 # Lene Raastad <lene.raastad.lr@gmail.com>, 2014
@@ -17,8 +17,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-03-19 09:25+0100\n"
-"PO-Revision-Date: 2016-04-23 00:22+0000\n"
+"POT-Creation-Date: 2017-06-05 09:01+0200\n"
+"PO-Revision-Date: 2017-06-20 16:52+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/wildfire-games/0ad/language/nb/)\n"
 "MIME-Version: 1.0\n"
@@ -44,7 +44,7 @@ msgstr "Sølvugler"
 msgid ""
 "The mines at Laureion in Attica provided Athens with a wealth of silver from"
 " which to mint her famous and highly prized coin, The Athenian Owl."
-msgstr "Gruvene ved Laureion i Attica forsynte Athen med rikdommer i sølv som ble slått til hennes berømte og høyt skattede mynt, Den Athenske Ugle. "
+msgstr "Gruvene ved Laureion i Attica forsynte Athen med rikdommer i sølv som ble slått til hennes berømte og høyt skattede mynt, Den Athenske ugle. "
 
 #: simulation/data/civs/athen.jsonCivBonuses[1].Description
 #: simulation/data/civs/mace.jsonCivBonuses[2].Description
@@ -52,7 +52,7 @@ msgstr "Gruvene ved Laureion i Attica forsynte Athen med rikdommer i sølv som b
 msgid ""
 "Constructing a Theatron increases the territory expanse of all buildings by "
 "+20%."
-msgstr "Konstruering av et Theatron øker teritoriumets omfang med +20% for alle bygninger. "
+msgstr "Konstruering av et antikt gresk utendørsteater øker territoriets omfang med +20% for alle bygninger. "
 
 #: simulation/data/civs/athen.jsonCivBonuses[1].Name
 #: simulation/data/civs/mace.jsonCivBonuses[2].Name
@@ -163,7 +163,7 @@ msgstr "Steinvegger kan bygges på nøytralt territorium. Byggetiden for vegger 
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[1].Name
 msgid "Long Walls"
-msgstr "Lange Vegger"
+msgstr "Lange vegger"
 
 #: simulation/data/civs/athen.jsonFactions[0].Technologies[1].History
 msgid ""
@@ -194,13 +194,14 @@ msgstr "Den klassiske falanks-formasjonen ble utviklet rundt det 8. århundre f.
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].History
 msgid ""
-"The general whom persuaded the Athenians to invest their income from silver "
+"The general who persuaded the Athenians to invest their income from silver "
 "mines in a war navy of 200 Triremes. A key figure during the Persian Wars, "
 "he commanded the victorious Athenian navy at the decisive battle of Salamis "
 "in 479 B.C. Later, he pursued an active policy against the Persians in the "
-"Aegean, thereby laying the foundations of future Athenian power. Ostracised "
-"by the Athenians, he was forced to flee to the protection of the Persians."
-msgstr "Generalen som overtalte Athenerne til å investere deres inntekter fra sølvgruvene i en marineflåte på 200 Trimerer. Han var en nøkkelfigur under perserkrigene, og kommanderte den seierrike, Athenske marinen i det avgjørende slaget ved Salamis i 479 f.Kr. Senere førte han aktiv politikk mot persere i Egerhavet, for dermed å legge grunnlaget for fremtidig athensk makt. Da han senere ble landsforvist av athenerne ble han tvunget til å rømme til beskyttelse hos perserne. "
+"Aegean, thereby laying the foundations of future Athenian power. However, he"
+" was eventually ostracised by the Athenians and forced to flee to the "
+"protection of the Persians."
+msgstr "Generalen som overtalte Athenerne til å investere deres inntekter fra sølvgruvene i en marineflåte på 200 Trimerer. Han var en nøkkelfigur under perserkrigene, og kommanderte den seierrike, Athenske marinen i det avgjørende slaget ved Salamis i 479 f.Kr. Senere førte han aktiv politikk mot persere i Egerhavet, for dermed å legge grunnlaget for fremtidig athensk makt. Dog ble han senere andsforvist av athenerne og tvunget til å rømme for beskyttelse av perserne. "
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[1].History
 msgid "Pericles was the foremost Athenian politician of the 5th Century B.C."
@@ -227,14 +228,14 @@ msgstr "Et hellensk folk fra den ioniske stammen."
 #: simulation/data/civs/mace.jsonStructures[0].Name
 #: simulation/data/civs/spart.jsonStructures[0].Name
 msgid "Theatron"
-msgstr "Theatron"
+msgstr "Antikkens greske teater"
 
 #: simulation/data/civs/athen.jsonStructures[0].Special
 #: simulation/data/civs/spart.jsonStructures[0].Special
 msgid ""
 "The Hellenization civ bonus. Building a Theatron increases the territory "
 "effect of all buildings by 25%."
-msgstr "Bygging av et Theatron øker teritoriumets omfang med +25% for alle bygninger."
+msgstr "Bygging av et antikt gresk utendørsteater øker territoriets omfang med +25% for alle bygninger."
 
 #: simulation/data/civs/athen.jsonStructures[0].History
 #: simulation/data/civs/mace.jsonStructures[0].History
@@ -300,7 +301,7 @@ msgstr "Ardiosmanae"
 #: simulation/data/civs/brit.jsonCivBonuses[0].History
 #: simulation/data/civs/gaul.jsonCivBonuses[0].History
 msgid "Represents Celtic farming methods. "
-msgstr "Representerer keltiske jordbruksmetoder."
+msgstr "Representerer Keltiske jordbruksmetoder."
 
 #: simulation/data/civs/brit.jsonCivBonuses[1].Description
 #: simulation/data/civs/gaul.jsonCivBonuses[1].Description
@@ -318,17 +319,14 @@ msgid "Celtic religion and druidry inspired their warlike mindset. "
 msgstr "Keltisk religion og druider inspirerte det krigeraktige tankesettet."
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Description
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
-msgid "Bonus to tech speed."
-msgstr "Bonus til teknologisk utviklingshastighet."
+msgid "-20% resources cost for allies healers."
+msgstr "-20% ressurskost for allierte helbredere."
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Name
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
-msgid "Druides"
+msgid "Druids"
 msgstr "Druider"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].History
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
 msgid ""
 "The Druids of the Celts maintained an organized religion that advanced the "
 "technology of their people even during wartime."
@@ -428,7 +426,7 @@ msgid ""
 "displays to celebrate. Karatakos was brought before the Emperor and Senate "
 "at his request to explain himself. What he said is not known for certainty, "
 "but Tacitus applies to him a famous speech..."
-msgstr "Caratacus er den litt endrede romerske formen av Karatakos, hans egentlige navn, som ble trykket på mange, mange mynter. Under dette navnet er han husket som en voldsom forsvarer av Britannia mot romerne etter deres invasjon i 43 e.Kr. Sønn av Kong Cunobelin av de forente Catuvellanske stammer. Han kjempet i ni år mot romerne med lite fremgang og flyktet til slutt til stammene i Wales der han led et avgjørende nederlag. Da han til slutt gikk inn i de nordlige britiske øyer ble han overgitt romerne og fraktet til Roma. Krakatos fikk lov til å leve av keiser Claudius og døde i Italia. Tradisjonen sier at han omvendte seg til kristendommen etter hans kone men dette er ikke bekreftet. Antagelig er det mer verdt å merke seg at han fikk leve etter at var tatt til fange. Romersk praksis var vanligvis å få slike menn drept offentlig for å feire. Krakatos ble på hans forespørsel bragt for keiser og senat for å forklare seg. Det han sa er ikke sikkert men Tacitus tillegger ham en berømt tale..."
+msgstr "Caratacus er den litt endrede romerske formen av Karatakos, hans egentlige navn, som ble trykket på mange, mange mynter. Under dette navnet er han husket som en voldsom forsvarer av Britannia mot romerne etter deres invasjon i 43 e.Kr. Sønn av Kong Cunobelin av de forente Catuvellanske stammer. Han kjempet i ni år mot romerne med lite fremgang og flyktet til slutt til stammene i Wales der han led et avgjørende nederlag. Da han til slutt gikk inn i de nordlige britiske øyer ble han overgitt romerne og fraktet til Roma. Krakatos fikk lov til å leve av keiser Claudius og døde i Italia. Tradisjonen sier at han omvendte seg til kristendommen etter hans kone men dette er ikke bekreftet. Antagelig er det mer verdt å merke seg at han fikk leve etter at var tatt til fange. Romersk praksis var vanligvis å få slike menn drept offentlig for å feire. Krakatos ble på hans forespørsel bragt for keiser og senat for å forklare seg. Det han sa er ikke sikkert men Tacitus tillegger ham en berømt tale…"
 
 #: simulation/data/civs/brit.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -482,7 +480,7 @@ msgid ""
 "agreed upon a will with his wife and subordinates; his daughters would "
 "inherit the physical running of the territory, under Boudicca's stewardship "
 "until they were adults, and the Emperor of Rome would have overlordship, "
-"collecting taxes and being allowed to request military aide. Much the same "
+"collecting taxes and being allowed to request military aid. Much the same "
 "situation as he already held. The problem lay in that the Romans did not "
 "recognize female heirs, and thus asserted, upon Prasutagus's death, that "
 "only the Emperor's claim to the kingdom of Icenia was valid. They further "
@@ -506,7 +504,7 @@ msgid ""
 "slaughtered as they could not withdraw to safety. Boudicca herself escaped, "
 "and then slew her daughters, and then herself, to avoid further shame at "
 "Roman hands."
-msgstr "Ammanius Marcellinus beskrev hvor vanskelig det ville være for en gruppe utlendinger å hanskes med en kelter hvis han tilkalte hjelp fra sin kone. Hun var sterkere enn han, og kunne slå og sparke like hardt som en katapult. Boudicca, ikenernes dronning, skal etter sigende ha hatt en meget høyreist og skremmende fremtoning; hennes stemme var skarp, og en kraftig rød hårmanke falt ned over hennes skuldre. Hun bar en fargerik tunika, og en tykk kappe festet med en brosje. Boudicca hadde først vært alliert med Romerne, sammen med hennes ektemann Prasutagus, ikenerkongen. Prasutagus hadde vært en nær alliert av Romerne etter et kortvarig opprør, og var respektert for å ha evnen til å tenke lansiktig til og med av sine tidligere fiender, nå allierte Romere, og sto fritt til å herske over sitt kongerime slik deres gamle tradisjoner dikterte - med ett unntak. Prasutagis, som forstå at han ville komme til å dø, skrev et testamente sammen med hans kone og hans underordnete; hans døtre skulle arve den fysiske ledelsen av territoriet, under Boudiccas forvaltning, illtil de var voksne. Romas keiser skulle være overherre, og ha ansvar for å inndra skatt og ha tillatelse til å be om militær bistand. I stor grad den samme rollen han allerede hadde. Problemet lå i det faktum at Romerne ikke anerkjente kvinnelige arvinger. Romerne gjorde dermed den vurdering at ved Prasutagus' død var det kun keiseren av Romas begjæring om makt over Ikenerne som var gyldig. De bemerket videre at det var vanlig romersk skikk at et underkongedømme kun var selvstendig så lenge dets første konge levde, slik som hadde vært tilfelle i Galatia. Romerriket gikk dermed inn for å formelt annektere Ikenerriket, og begynte umiddelbart å pålegge dem strenge skatter, med henvisning til Prasutagus' gjeld til romerne på grunn av hans mangfoldige lån hos dem som han ennå ikke hadde tilbakebetalt. Boudiccas påklage angående denne behandlingen ble møtt med brutalitet; romerske soldater pisket henne, og hennes døtre - bare barn - ble voldtatt. Boudicca og hennes undersåtter ble rasende over vanæren dette brakte over henne og barna. Mens den romerske guvernøren av Storbritannia var opptatt med druidene i Cambria, nå Wales, fikk Boudicca muligheten til å samle flere følgere i tillegg til Ikernerne, ettersom de var langt fra de eneste britiske stammene som var skuffet over Romernes styre. Boudicca og hennes hær ødela tre byer, jaget en romersk legion på flukt, og påkalte Arminius minne, en tysker som hadde jaget Romerne fra hans land, og deres egne forfedre som hadde drevet bort Cæsar nesten et århundre tidligere. Boudicca ble beseiret på grunn av et gigantisk taktisk feiltrinn i Slaget ved Watling Street, der mesteparten av hennes hær ble drept da de ikke kunne trekke seg tilbake og komme i sikkerhet. Boudicca kom seg unna, og slaktet deretter først sine døtre og så seg selv, for å unngø ytterligere skam for romerske hender."
+msgstr "Ammanius Marcellinus beskrev hvor vanskelig det ville være for en gruppe utlendinger å hanskes med en kelter hvis han tilkalte hjelp fra sin kone. Hun var sterkere enn han, og kunne slå og sparke like hardt som en katapult. Boudicca, Ikenernes dronning, skal etter sigende ha hatt en meget høyreist og skremmende fremtoning; hennes stemme var skarp, og en kraftig rød hårmanke falt ned over hennes skuldre. Hun bar en fargerik tunika, og en tykk kappe festet med en brosje. Boudicca hadde først vært alliert med Romerne, sammen med hennes ektemann Prasutagus, Ikenerkongen. Prasutagus hadde vært en nær alliert av Romerne etter et kortvarig opprør, og var respektert for å ha evnen til å tenke langsiktig til og med av sine tidligere fiender, nå allierte Romere, og sto fritt til å herske over sitt kongerike slik deres gamle tradisjoner dikterte - med ett unntak. Prasutagis, som forstå at han ville komme til å dø, skrev et testamente sammen med hans kone og hans underordnete; hans døtre skulle arve den fysiske ledelsen av territoriet, under Boudiccas forvaltning, inntil de var voksne. Romas keiser skulle være overherre, og ha ansvar for å inndra skatt og ha tillatelse til å be om militær bistand. I stor grad den samme rollen han allerede hadde. Problemet lå i det faktum at Romerne ikke anerkjente kvinnelige arvinger. Romerne gjorde dermed den vurdering at ved Prasutagus' død var det kun keiseren av Romas begjæring om makt over Ikenerne som var gyldig. De bemerket videre at det var vanlig romersk skikk at et underkongedømme kun var selvstendig så lenge dets første konge levde, slik som hadde vært tilfelle i Galatia. Romerriket gikk dermed inn for å formelt annektere Ikenerriket, og begynte umiddelbart å pålegge dem strenge skatter, med henvisning til Prasutagus' gjeld til romerne på grunn av hans mangfoldige lån hos dem som han ennå ikke hadde tilbakebetalt. Boudiccas påklage angående denne behandlingen ble møtt med brutalitet; romerske soldater pisket henne, og hennes døtre - bare barn - ble voldtatt. Boudicca og hennes undersåtter ble rasende over vanæren dette brakte over henne og barna. Mens den romerske guvernøren av Storbritannia var opptatt med druidene i Cambria, nå Wales, fikk Boudicca muligheten til å samle flere følgere i tillegg til Ikernerne, ettersom de var langt fra de eneste britiske stammene som var skuffet over Romernes styre. Boudicca og hennes hær ødela tre byer, jaget en romersk legion på flukt, og påkalte Arminius minne, en tysker som hadde jaget Romerne fra hans land, og deres egne forfedre som hadde drevet bort Cæsar nesten et århundre tidligere. Boudicca ble beseiret på grunn av et gigantisk taktisk feiltrinn i Slaget ved Watling Street, der mesteparten av hennes hær ble drept da de ikke kunne trekke seg tilbake og komme i sikkerhet. Boudicca kom seg unna, og slaktet deretter først sine døtre og så seg selv, for å unngå ytterligere skam for romerske hender."
 
 #: simulation/data/civs/brit.jsonFactions[0].Description
 msgid "The Celts of the British Isles."
@@ -523,10 +521,10 @@ msgstr "Britene var kjent for å ale opp krigshunder."
 #: simulation/data/civs/brit.jsonHistory
 msgid ""
 "The Britons were the Celtic tribes of the British Isles. Using chariots, "
-"longswordsmen and powerful melee soldiers, they staged fearesome revolts "
+"longswordsmen and powerful melee soldiers, they staged fearsome revolts "
 "against Rome to protect their customs and interests. Also, they built "
 "thousands of unique structures such as hill forts, crannogs and brochs."
-msgstr "Britene var de keltiske stammene på de britiske øyer. Ved hjelp av hestestridsvogner, langsverdmenn og kraftige nærkampsoldater satte de opp fryktinngytende opprør mot Roma for å beskytte deres skikker og interesser. De bygget også tusner av unike konstruksjoner slik som åsfort, crannóger og rundhus."
+msgstr "Britene var de keltiske stammene på de britiske øyer. Ved hjelp av hestevogner, langsverdmenn og kraftige nærkampssoldater satte de opp fryktinngytende opprør mot Rom for å beskytte deres skikker og interesser. De bygget også tusener av unike konstruksjoner slik som åsfort, crannóger og rundhus."
 
 #: simulation/data/civs/cart.jsonName
 msgid "Carthaginians"
@@ -536,7 +534,7 @@ msgstr "Kartagerne"
 msgid ""
 "Carthaginian walls, gates, and towers have 3x health of a standard wall, but"
 " also 2x build time."
-msgstr "Karthaganske murer, porter og tårn 3x helse en standard mur men også 2x byggetid."
+msgstr "Kartagiske murer, porter og tårn 3x helse en standard mur men også 2x byggetid."
 
 #: simulation/data/civs/cart.jsonCivBonuses[0].Name
 msgid "Triple Walls"
@@ -563,11 +561,11 @@ msgid ""
 "Not unlike the Iberian Peninsula, North Africa was known as horse country, "
 "capable of producing up to 100,000 new mounts each year. It was also the "
 "home of the North African Forest Elephant."
-msgstr "Som også den iberiske halvøy var nord-afrika også kjent som hestens land, fullt i stand til å fremskaffe 100.000 nye ridedyr hvert år. Det var også hjemmet til den nord-afrikanske skog-elefanten."
+msgstr "Som også den iberiske halvøy var Nord-Afrika også kjent som hestens land, fullt i stand til å fremskaffe 100.000 nye ridedyr hvert år. Det var også hjemmet til den nord-afrikanske skog-elefanten."
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Description
-msgid "+33% trade profit international routes."
-msgstr "+33% handelsprofitt for internatsjonale ruter."
+msgid "10% bonus of trade profit for allies' international routes."
+msgstr "10% handelsprofitt for alliertes internasjonale ruter."
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Name
 msgid "Trademasters"
@@ -577,7 +575,7 @@ msgstr "Handelsmestere"
 msgid ""
 "The Phoenicians and Carthaginians were broadly known as the greatest trading"
 " civilization of the ancient and classical world."
-msgstr "Fønikerne og Karthaginerne var viden kjent som de største handelssivilisasjonene i oldtiden og antikken."
+msgstr "Fønikerne og Kartagerne var viden kjent som de største handelssivilisasjonene i oldtiden og antikken."
 
 #: simulation/data/civs/cart.jsonAINames[0]
 #: simulation/data/civs/cart.jsonFactions[0].Heroes[0].Name
@@ -673,7 +671,7 @@ msgstr "Kolonisering"
 msgid ""
 "Carthaginians established many trading centers as colonies and ultimately "
 "held dominion over 300 cities and towns in North Africa alone."
-msgstr "Kartagerne etablerte mange handelssentrum som kolonier og hersket til sist over 300 storbyer og byer bare i nord-Afrika."
+msgstr "Kartagerne etablerte mange handelssentrum som kolonier og hersket til sist over 300 storbyer og byer bare i Nord-Afrika."
 
 #: simulation/data/civs/cart.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -742,7 +740,7 @@ msgid ""
 "When Hannibal invaded Italy and defeated the Romans in a series of battles, "
 "many of the Italian peoples subject to Rome, including the Italian Greeks "
 "and powerful Samnites, revolted and joined the Carthaginian cause."
-msgstr "Da Hannibal invaderte Italia og beseiret Romerne i en serie slag, gjorde mange Italienske folkeslag underlagt Roma opprør og tok del i Karthagos sak. Dette inkluderte de italienske grekere og de mektige Samnitene."
+msgstr "Da Hannibal invaderte Italia og beseiret Romerne i en serie slag, gjorde mange Italienske folkeslag underlagt Rom opprør og tok del i Karthagos sak. Dette inkluderte de italienske grekere og de mektige Samnitene."
 
 #: simulation/data/civs/cart.jsonStructures[3].Name
 msgid "Iberian Embassy"
@@ -765,22 +763,36 @@ msgid ""
 "among the fiercest contenders on the high seas, and masters of naval trade. "
 "They deployed towered War Elephants on the battlefield to fearsome effect, "
 "and had defensive walls so strong, they were never breached."
-msgstr "Kartago, en by-stat i nåværende Tunisia, var en formidabel makt i de vestlige middelhavslandene, og tok omsider over mye av nord-afrika og det nåværende Spania i det tredje århundre f.Kr. Seilerne fra Kartago var blant de voldsomste tevlerne i høy sjø og mestere innen maritim handel. De utplasserte krigselefanter med tårn på slagmarken, med fryktinngytende virkning, og hadde forsvarsmurer så sterke at de aldri ble gjennombrutt."
+msgstr "Kartago, en by-stat i nåværende Tunisia, var en formidabel makt i de vestlige middelhavslandene, og tok omsider over mye av Nord-Afrika og det nåværende Spania i det tredje århundre f.kr. Seilerne fra Kartago var blant de voldsomste tevlerne i høy sjø og mestere innen maritim handel. De utplasserte krigselefanter med tårn på slagmarken, med fryktinngytende virkning, og hadde forsvarsmurer så sterke at de aldri ble gjennombrutt."
 
 #: simulation/data/civs/gaul.jsonName
 #: simulation/data/civs/gaul.jsonFactions[0].Name
 msgid "Gauls"
 msgstr "Gallere"
 
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
+msgid "-10% research time for technologies of allies."
+msgstr "-10% forskningstid for alliertes teknologier."
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
+msgid "Druidic Wisdom"
+msgstr "Druidisk visdom"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
+msgid ""
+"The Druids of the Gauls maintained an organized religion that advanced the "
+"technology of their people even during wartime."
+msgstr "De galliske druidene holdt i hevd en organisert religion som drev folkets teknologier fremover, til og med i krigstid."
+
 #: simulation/data/civs/gaul.jsonAINames[0]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].Name
-msgid "Britomartos"
-msgstr "Britomartos"
+msgid "Viridomarus"
+msgstr "Viridomarus"
 
 #: simulation/data/civs/gaul.jsonAINames[1]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].Name
-msgid "Brennos"
-msgstr "Brennos"
+msgid "Brennus"
+msgstr "Brennus"
 
 #: simulation/data/civs/gaul.jsonAINames[2]
 msgid "Cativolcus"
@@ -792,8 +804,8 @@ msgstr "Cingetorix"
 
 #: simulation/data/civs/gaul.jsonAINames[4]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].Name
-msgid "Uerkingetorix"
-msgstr "Uerkingetorix"
+msgid "Vercingetorix"
+msgstr "Vercingetorix"
 
 #: simulation/data/civs/gaul.jsonAINames[5]
 msgid "Divico"
@@ -808,8 +820,8 @@ msgid "Liscus"
 msgstr "Liscus"
 
 #: simulation/data/civs/gaul.jsonAINames[8]
-msgid "Valetiacos"
-msgstr "Valetiacos"
+msgid "Valetiacus"
+msgstr "Valetiacus"
 
 #: simulation/data/civs/gaul.jsonAINames[9]
 msgid "Viridovix"
@@ -821,14 +833,17 @@ msgid ""
 msgstr "En gitt mengde metall og mat fra hver bygning som blir ødelagt eller overtatt."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Name
-msgid "Uae Uictos"
-msgstr "Uae Uictos"
+msgid "Vae Victis"
+msgstr "Vae Victis"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].History
 msgid ""
-"Means Woe to the Defeated. It was the words that the Gallic Leader, Brennos,"
-" spoke at the Capitol at Rome after they took their plunder."
-msgstr "Betyr \"Ve de beseirede\". Det var ordene gallernes leder, Brennos, kom med da han sto på Kapitolhøyden etter at de hadde forsynt seg av sitt plyndringsgods."
+"Woe to the Defeated! The Gallic chieftain Brennus seized Rome (with the "
+"exception of a garrison on Capitoline Hill). When Camillus besieged him with"
+" a relief force from Veii, he negotiated his surrender for 1000 pounds of "
+"gold, and adding the weight of his sword on the scale when the Romans "
+"complained that he used false weights he uttered those famous words."
+msgstr "Ve den beseirede! Den galliske høvdingen Brennus tok Rom (med unntak av en garnison på Kapitol-høyden). Da Camillus beleiret ham med en forsterkningsstyrke fra Veii, forhandlet han frem sin overgivelse for 1000 pund gull, og la sverdet på vekta da romerne klaget over at han brukte falske vekter og uttalte de berømte ordene."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[1].Description
 msgid "Gallic druids gain a small melee attack."
@@ -843,25 +858,25 @@ msgid ""
 "The Carnutes were druids from Aulercia. They fought when needed, and were "
 "largely responsible for turning back the Belgae incursions into Armorica and"
 " Aulercia."
-msgstr "Carnutene var druider far Aulercia. De kjempet når det var nødvendig og var hovedansvarlige for å snu den belgaeiske invasjonen bort fra Amorica og Aurlercia. "
+msgstr "Carnutene var druider fra Aulercia. De kjempet når det var nødvendig og var hovedansvarlige for å snu den belgaeiske invasjonen bort fra Amorica og Aurlercia. "
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].History
 msgid ""
-"When celt armies met the enemy, before the battle would start, the celt "
+"When Celtic armies met the enemy, before the battle would start, the Celtic "
 "leader would go to the first line and challenge the bravest of the enemy "
 "warriors to a single combat. The story of how Marcus Claudius Marcellus "
 "killed a Gallic leader at Clastidium (222 B.C.) is typical of such "
-"encounters. Advancing with a smallish army, Marcellus met a combined force "
-"of Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with"
-" the usual rush and terrifying cries, and their king, Britomartos, picking "
+"encounters. Advancing with a small army, Marcellus met a combined force of "
+"Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with "
+"the usual rush and terrifying cries, and their king, Viridomarus, picking "
 "out Marcellus by means of his badges of rank, made for him, shouting a "
-"challenge and brandishing his spear. Britomartos was an outstanding figure "
+"challenge and brandishing his spear. Viridomarus was an outstanding figure "
 "not only for his size but also for his adornments; for he was resplendent in"
 " bright colors and his armor shone with gold and silver. This armor, thought"
 " Marcellus, would be a fitting offering to the gods. He charged the Gaul, "
 "pierced his bright breastplate and cast him to the ground. It was an easy "
-"task to kill Britomartos and strip him of his armor."
-msgstr "Når keltiske tropper møtte fienden før kampstart, pleide den keltiske lederen å gå til frontlinjen og utforde den modigste av fiendens krigere til duell. Vitnesbyrdet om hvordan Marcus Claudius Marcellus drepte en gallisk leder ved Clastidium (222 f.Kr.) er et eksempel på et slikt møte. Mens Marcellus avanserte med en relativt liten hær møtte han en kombinert hærstyrke av Insubriske gallere og Gaesatae ved Clastidium. Den galliske hæren avanserte med sitt vanlige stormende tempo og skrekkinngytende skrik, og deres konge, Britomartos, som identifiserte Marcellus på hans ordensmedaljer, svinget spydet sitt og ønsket å utfordre han. Britomartos var en enestående figur; ikke bare på grunn av hans størrelse, men også på grunn av hans utsmykninger. Rustningen hans glinset i lyse farger, gull og sølv. Marcellus tenkte at denne rustningen ville tjene som et passende offer til gudene. Han stormet mot galleren, spiddet rustningens brystplate og kastet ham i bakken. Det var en enkel oppgave å drepe Britomartos og frata ham hans rustning. "
+"task to kill Viridomarus and strip him of his armor."
+msgstr "Når keltiske hærer møtte fienden, før kampen begynte, ville den keltiske lederen gå til frontlinjen og utfordre den modigste av fiendens krigere til en enkelt kamp. Historien om hvordan Marcus Claudius Marcellus drepte en gallisk leder ved Clastidium (222 f.Kr.), er typisk for slike møter. Da han avanserte med en liten hær, møtte Marcellus en kombinert kraft av insubrianske gallere og Gaesatae på Clastidium. Den galliske hæren rykket fram i vanlig raskt tempo med skremmende rop, og deres konge, Viridomarus, som plukket ut Marcellus ved hjelp av hans spesiallagde rangmerker, ropte en utfordring med spydet hevet. Viridomarus var en enestående figur, ikke bare for sin størrelse, men også i form av hans utsmykninger; Strålende i lyse farger og rustning skinnende i gull og sølv. Denne rustningen, trodde Marcellus, ville være en passende offergave til gudene. Han påtalte galleren, gjennomboret hans lyse brystplate og kastet ham til bakken. Det var en lett oppgave å drepe Viridomarus og ta rustningen hans."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -872,19 +887,19 @@ msgid ""
 "that Britons had conquered Rome, the greatest civilization in the world, "
 "long before Rome conquered the Britons. We know from many ancient sources "
 "which predate Geoffrey that Rome was indeed sacked, but in 387 not 390, and "
-"that the raid was led by a man named Brennos (which was latinized to "
-"Brennus), but he and his invading horde were Gallic Senones, not British. In"
-" this episode several features of Geoffrey's editing method can be seen: he "
-"modified the historical Brennus/Brennos, created the brother Belinus, "
-"borrowed the Gallic invasion, but omitted the parts where the Celts seemed "
-"weak or foolish. His technique is both additive and subtractive. Like the "
-"tale of Trojan origin, the story of the sack of Rome is not pure "
-"fabrication; it is a creative rearrangement of the available facts, with "
-"details added as necessary. By virtue of their historical association, Beli "
-"and Bran are often muddled with the earlier brothers Belinus and Brennus "
-"(the sons of Dunvallo Molmutius) who contended for power in northern Britain"
-" in around 390 B.C., and were regarded as gods in old Celtic tradition."
-msgstr ""
+"that the raid was led by a man named Brennus, but he and his invading horde "
+"were Gallic Senones, not British. In this episode several features of "
+"Geoffrey's editing method can be seen: he modified the historical Brennus, "
+"created the brother Belinus, borrowed the Gallic invasion, but omitted the "
+"parts where the Celts seemed weak or foolish. His technique is both additive"
+" and subtractive. Like the tale of Trojan origin, the story of the sack of "
+"Rome is not pure fabrication; it is a creative rearrangement of the "
+"available facts, with details added as necessary. By virtue of their "
+"historical association, Beli and Bran are often muddled with the earlier "
+"brothers Belinus and Brennus (the sons of Dunvallo Molmutius) who contended "
+"for power in northern Britain in around 390 B.C., and were regarded as gods "
+"in old Celtic tradition."
+msgstr "Brennus er navnet de romerske historikerne gir den berømte lederen av Gallerne som tok Rom i Camillus tid. Ifølge Geoffrey av Monmouth, presten som skrev \"Historien om kongene i Storbritannia\", invaderte og plyndret Brennus og hans bror Belinus Gaul Rom i 390 f.Kr., og \"beviste\" at britene hadde erobret Rom, verdens største sivilisasjon, lenge Før Rom erobret britene. Vi vet fra mange eldgamle kilder forut for Geoffrey at Rom faktisk ble plyndret, men i 387 ikke i 390, og at raidet ble ledet av en mann ved navn Brennus, men han og hans invaderende horde var galliske Senoner, ikke briter. I denne episoden kan man se flere funksjoner av Geoffreys redigeringsmetode: Han endret den historiske Brennus, skapte broren Belinus, lånte den galliske invasjonen, men utelatt delene der kelterne virket svake eller dumme. Hans teknikk er både additiv og subtraktiv. Som fortellingen om trojansk opprinnelse er historien om plyndringen av Rom ikke ren fabrikasjon; Det er en kreativ blanding av tilgjengelige fakta, med detaljer lagt til etter behov. På grunn av deres historiske forening, blir Beli og Bran ofte forvekslet med de tidligere brødrene Belinus og Brennus (sønner av Dunvallo Molmutius) som konkurrerte om makten i Nord-Brittannia omkring rundt 390 f.kr., og ble ansett som guder i gammel keltisk tradisjon."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -897,7 +912,7 @@ msgid ""
 "was. Because we only know of him from Roman sources we don't know much about"
 " Vercingetorix as a child or young man, except that perhaps he was probably "
 "very high spirited and probably gained some renown in deeds."
-msgstr ""
+msgstr "Vercingetorix (Galisk: Ver-Rix Cingetos) var høvdingen av Arverni-stammen i Gallia (moderne Frankrike). Med oppstart i 52 f.kr. ledet han opptøyet mot de invaderende Romerne som fulgte Julius Caesar, hans gjørende under opptøyet blir husket selv i dag. Vercingetorix ble antageligvis født nær sin stammes hovedstad (Gerovia). Fra den lille informasjonen vi har om Vercingetorix ble han antageligvis født i 72 f.kr., hans far var Celtius, og vi vet ikke hvem mora var. Fordi vi bare kjenner han fra Romerske kilder vet vi ikke mye om Vercingetorix som barn eller ungdom, bortsett fra at han antageligvis var glup og antageligvis nøt anseelse som følge av dygder."
 
 #: simulation/data/civs/gaul.jsonFactions[0].Description
 msgid "The Celts of mainland Europe."
@@ -1051,7 +1066,7 @@ msgid ""
 "losses in some requiring retreat). He succumbed instead to another treachery"
 " arranged by a later Roman commander, Q. Servilius Caepio, to have him "
 "assassinated by three comrades that were close to him."
-msgstr ""
+msgstr "Viriato, som Vercingetorix blandt Gallerne, var av de mest berømte Iberiske stammelederne, han førte ihvertfall 7 kampanjer mot Romerne i den sørlige delen av halvøya under de Lutsianske krigene, fra 147-139 f.kr. Han dukket opp som en overlevende etter den forferdelige massakren av 9000 menn der også 21000 eldre damer og barnene av Lutsitani ble solgt til slaveri. De hadde signert en fredsavtale med Romerne, ført i pennen av Servius Sulpicus Galba, guvernøren av Hispania Ulterior, som den 'endelige løsningen' på Lusitani-problemet. Han dukket opp fra enkle kår i 151 f.kr. til å bli høvding av Lusitaniene. Han var intelligent og en overlegen taktiker, egentlig aldri overvunnet i noen trefning (selv om han led tap i noen som krevde retrett). Han falt istedenfor for et forederi iscenesatt av den senere Romerske kommandøren, Q. Servilius Caepio, der han ble snikmyrdet av tre kamerater som sto han nær."
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -1067,11 +1082,11 @@ msgid ""
 " a battle on the 23rd of August. Karos was wounded in an after battle small "
 "cavalry action the same evening and soon died thereafter, but he had carried"
 " off one of the most humiliating defeats that Rome ever suffered."
-msgstr ""
+msgstr "Karos var øverste leder for Belli-stammen som ligger like øst for Celtiberi (Numantines ligger i midten). Ledende føderale stammene i Meseta Central (sentrale høylandssletter) han skjulte 20000 fotsoldater og 5000 faste tropper langs en tett skogkledd vei. Q. Fulvius Nobilior neglisjerte rekognosering fatalt og ledet sin hær i fellen strukket ut i en lang kolonne. Omtrent 10000 av 15000 Romerske legionærer falt i det massive bakhold på dem. Datoen var 23 august 153 f.Kr., dagen da Roma feiret gildet for Vulcan. Ved senere senator-resolusjon ble det deretter kjent som dies ater, 'en skummel dag', og Rom utkjempet aldri igjen en kamp den 23. August. Karos ble såret i en etter slaget etter en liten kavalerihandling samme kveld og døde snart deretter, men han hadde båret en av de mest ydmykende nederlag som Rom noensinne led."
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[2].History
 msgid ""
-"Indibil was king of the Ilegetes, a large federation ranged principally "
+"Indibil was king of the Ilergetes, a large federation ranged principally "
 "along the Ebro River in the northwest of the Iberian Peninsula. During the "
 "Barcid expansion, from 212 B.C. he had initially been talked into allying "
 "himself with the Carthaginians who had taken control of a lot of territory "
@@ -1087,7 +1102,7 @@ msgid ""
 "were again defeated, Indibil losing his life in the final battle and "
 "Mandonio being captured then later put to death. From that date onward the "
 "Ilergetes remained a pacified tribe under Roman rule."
-msgstr ""
+msgstr "Indibil var konge av Ilergetene, en stor federasjon som strekte seg hovedsakelig langs elven Ebro nordvest av den Iberiske halvøya. Under Barkidiske utvidelse, fra 212 f.Kr. hadde han i utgangspunktet blitt overtalt til å alliere seg med Kartagerne som hadde tatt kontroll over en rekke territorium mot sør og vest, men etter tap og deretter å blitt tatt til fange i en stor kamp ble overbevist om, noen sier lurt, til å gå over til den Romerske siden av Scipio Africanus. Men den alliansen varte ikke lenge, siden de Romerske løftene var hule og Romerne handlet mer i kraft av erobrere enn allierte. Så, mens Romerne og deres allierte hadde endt Kartagisk nærvær i \"Hispania\" i 206 f.Kr. reiste Indibil og annen stamme-prins ved navn Mandonio, (som kan ha vært hans bror), seg i opprør mot Romerne. De ble beseiret i kamp, ​​men reiste seg til et påfølgende enda større opprør som hadde samlet alle Ilergetene igjen i 205 f.Kr. I mindretall og med mindre våpen ble de igjen ble beseiret, Indibil mistet livet i den siste kampen og Mandonio ble fanget og senere drept. Fra denne datoen og framover forble Ilergetene en pasifisert stamme under Romersk herredømme."
 
 #: simulation/data/civs/iber.jsonStructures[0].Name
 msgid "Gur Oroigarri"
@@ -1098,7 +1113,7 @@ msgid ""
 "Defensive Aura - Gives all Iberian units and buildings within vision range "
 "of the monument a 10-15% attack boost. Build Limit: Only 5 may be built per "
 "map."
-msgstr "Forsvarsaura - Gir alle iberiske enheter og bygninger innen synsvidde 10-15% angrepsbonus. Begrensning: Kun 5 kan bygges per kart."
+msgstr "Forsvarsaura - Gir alle Iberiske enheter og bygninger innen synsvidde 10-15% angrepsbonus. Begrensning: Kun 5 kan bygges per kart."
 
 #: simulation/data/civs/iber.jsonStructures[0].History
 msgid ""
@@ -1115,7 +1130,7 @@ msgid ""
 "proved tenacious when Rome sought to take their land and freedom from them, "
 "and employed pioneering guerrilla tactics and flaming javelins as they "
 "fought back."
-msgstr "Ibererne var et folk av mystisk opprinnelse med sterke tradisjoner i hesteoppdrett og metallarbeider. En forholdsvis fredelig kultur men kjempet i andres slag som leiesoldater. Likevel viste de seg standhaftige da Roma forsøkte å ta deres land og frihet og tok i bruk tidlige geriljataktikker og brennende kastespyd i kamp."
+msgstr "Ibererne var et folk av mystisk opprinnelse med sterke tradisjoner i hesteoppdrett og metallarbeider. En forholdsvis fredelig kultur men kjempet i andres slag som leiesoldater. Likevel viste de seg standhaftige da Romerriket forsøkte å ta deres land og frihet og tok i bruk tidlige geriljataktikker og brennende kastespyd i kamp."
 
 #: simulation/data/civs/mace.jsonName
 #: simulation/data/civs/mace.jsonFactions[0].Name
@@ -1164,8 +1179,8 @@ msgid ""
 msgstr "Grekerne var svært fremgangsrike i å utbre hellenismen utlandet. Under den Hellenistiske æra var gresk felles språk i antikkens verden, i utstrakt bruk fra Spania til India."
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Description
-msgid "+15% tribute and trade bonus on metal."
-msgstr "+15% gave og handelsbonus på metall."
+msgid "+20% sell prices at market."
+msgstr "+20% salgspriser på markedet."
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Name
 msgid "Standardized Currency"
@@ -1207,7 +1222,7 @@ msgstr "Lysimachus"
 
 #: simulation/data/civs/mace.jsonAINames[6]
 msgid "Pyrrhus of Epirus"
-msgstr "Pyrrhus of Epirus"
+msgstr "Pyrrhos fra Epirus"
 
 #: simulation/data/civs/mace.jsonAINames[7]
 msgid "Antigonus II Gonatas"
@@ -1269,7 +1284,7 @@ msgid ""
 "In India near the end of his long anabasis, Alexander gifted to the Royal "
 "Hypaspist corps shields of silver for their long and valiant service in his "
 "army."
-msgstr "I India, mot slutten av hans lange korstog, gav Alexander sølvskjold i gave til det Kongelige Hyaspistkorpset, som takk for deres lange og heltemodige tjeneste i hans hær. "
+msgstr "I India, mot slutten av hans lange korstog, gav Aleksander det Kongelige Hyaspistkorpset sølvskjold i gave som takk for deres lange og heltemodige tjeneste i hæren hans."
 
 #: simulation/data/civs/mace.jsonFactions[0].Technologies[2].Description
 #: simulation/data/civs/ptol.jsonFactions[0].Technologies[0].Description
@@ -1290,7 +1305,7 @@ msgid ""
 "Beginning with Alexander, the Hellenistic monarchs founded many cities "
 "throughout their empires, where Greek culture and art blended with local "
 "customs to create the motley Hellenistic civilization."
-msgstr "De Hellenistiske monarkene, med Alexander som den første, grunnla mange byer overalt i sine imperier, der gresk kultur og kunst ble forent med lokale skikker for å skape den blandede hellenistiske sivilisasjonen. "
+msgstr "De Hellenistiske monarkene, med Aleksander som den første, grunnla mange byer overalt i sine imperier, der gresk kultur og kunst ble forent med lokale skikker for å skape den blandede hellenistiske sivilisasjonen. "
 
 #: simulation/data/civs/mace.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -1340,7 +1355,7 @@ msgstr "Et hellenistisk kongerike på grensen av de greske by-statene."
 msgid ""
 "The Hellenization civ bonus. Building a Theatron increases the territory "
 "effect of all buildings by 25%. Build limit: 1."
-msgstr "Helleniseringssivilisasjonsbonus. Ved å bygge et Theatron øker alle bygningers territorieeffekt med 25%. Byggegrense: 1. "
+msgstr "Helleniseringssivilisasjonsbonus. Ved å bygge et antikt gresk utendørsteater øker alle bygningers territorieeffekt med 25%. Byggegrense: 1. "
 
 #: simulation/data/civs/mace.jsonStructures[1].Name
 #: simulation/data/civs/ptol.jsonStructures[0].Name
@@ -1425,17 +1440,17 @@ msgid ""
 msgstr "Kshatriya eller Kashtriya, som betyr kriger, er en av de fire varnas (sosiale ordner) i Hinduismen. Tradisjonelt utgjør Kshatriya militæret og den ledende eliten i det vedisk-hinduistiske sosiale systemet, som spinner ut fra Vedaene og Manus lover. "
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Description
-msgid "Allied Temple techs -50% cost and research time."
-msgstr "Allierte tempelteknokogier -50% kostnads- og utforskningstid. "
+msgid "Allied temples and temple technologies -50% cost and research time."
+msgstr "Allierte tempel og tilhørende teknologier -50% kost og forskningstid."
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Name
-msgid "Evangelism."
-msgstr "Evangelisering"
+msgid "Ashoka's Religious Support"
+msgstr "Ashokas religiøse støtte"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].History
 msgid ""
 "Ashoka the Great sent embassies West to spread knowledge of the Buddha."
-msgstr "Ashoka den Store sendte delegasjoner mot vest for å spre kunnskap om Buddhaen. "
+msgstr "Ashoka den store sendte delegasjoner mot vest for å spre kunnskap om Buddhaen. "
 
 #: simulation/data/civs/maur.jsonAINames[0]
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[0].Name
@@ -1445,7 +1460,7 @@ msgstr "Chandragupta Maurya"
 #: simulation/data/civs/maur.jsonAINames[1]
 #: simulation/data/civs/maur.jsonFactions[0].Heroes[1].Name
 msgid "Ashoka the Great"
-msgstr "Ashoka den Store"
+msgstr "Ashoka den store"
 
 #: simulation/data/civs/maur.jsonAINames[2]
 msgid "Ashokavardhan Maurya"
@@ -1487,7 +1502,7 @@ msgstr "Brihadratha Maurya"
 msgid ""
 "Capture up to 5 Gaia elephants and garrison them in the Elephant Stables to "
 "gain up to a 25% bonus in cost and train time of elephant units."
-msgstr "Fang opptil 5 gaiaelefanter og stasjoner dem i elefantstallene for å få opptil 25% bonus i kostnads- og treningstid for elefantenheter. "
+msgstr "Fang opptil 5 gaiaelefanter og stasjoner dem i elefantstallene for å få opptil 25% bonus i kostnads- og opptreningstid for elefantenheter. "
 
 #: simulation/data/civs/maur.jsonFactions[0].Technologies[0].Name
 msgid "Elephant Roundup"
@@ -1535,11 +1550,11 @@ msgstr "Elefantstall"
 msgid ""
 "Trains Elephant Archer and Worker Elephant at Town Phase, then adds the "
 "champion War Elephant at the City phase."
-msgstr "Trener elefantbueskyttere og arbeidselefanter i by-fasen, legger så til mesterkrigs-elefanten i storby-fasen."
+msgstr "Trener elefantbueskyttere og arbeidselefanter i tettstedfasen, legger så til mesterkrigselefanten i byfasen."
 
 #: simulation/data/civs/maur.jsonStructures[1].Name
 msgid "Edict Pillar of Ashoka"
-msgstr "Edict Pillar of Ashoka"
+msgstr "Ashokasøyler"
 
 #: simulation/data/civs/maur.jsonStructures[1].Special
 msgid ""
@@ -1558,7 +1573,7 @@ msgid ""
 "Acharya Chanakya, contributed to such varied fields such as economics, "
 "religion, diplomacy, warfare, and good governance. Under the rule of Ashoka "
 "the Great, the empire saw 40 years of peace, harmony, and prosperity."
-msgstr ""
+msgstr "Grunnlagt i 322 f.kr. av Chandragupta Maurya; Mauryariket var det første til å styre det meste av det Indiske underkontinentet, og var en av de største og mest folkerike herredømmene i antikken. Militæret deres hadde bueskyttere som brukte bambus-langbuer, voldsomme kvinnelige krigere, krigsvogner, og tusener av elefanter med rustninger. Dets filosofer, spesielt den berømte Acharya Chanakya, bidro til vidtfavnende områder som økonomi, religion, diplomati, krigføring, og god styring. Under styret til Ashoka den store, hadde herredømmet 40 år med fred, harmoni og velstand."
 
 #: simulation/data/civs/pers.jsonName
 msgid "Persians"
@@ -1572,7 +1587,7 @@ msgstr "Ressurskostnaden for å trene kamelridende enheter (handelsmann) eller h
 
 #: simulation/data/civs/pers.jsonCivBonuses[0].Name
 msgid "Corral Camels and Horses"
-msgstr "Innhegning av Kameler og Hester"
+msgstr "Innhegning av kameler og hester"
 
 #: simulation/data/civs/pers.jsonCivBonuses[0].History
 msgid ""
@@ -1580,7 +1595,7 @@ msgid ""
 "accompanied by great success (most notably during the battle of Sardis in "
 "546 B.C.) The satrapy of Bactria was a rich source of 'two-hump' camels, "
 "while Northern Arabia supplied 'one-hump' camels."
-msgstr ""
+msgstr "Selv om Perserne sjeldent brukte kameler, var det alltid med stort hell, (mest merkverdig i kampen om Sardis i 546 f.kr.) Satrapene av Bactria var en rikholdig kilde av 'to-pukkels'-kameler, mens Nordre Arabia forsynte 'én-pukkels'-kameler."
 
 #: simulation/data/civs/pers.jsonCivBonuses[1].Description
 msgid ""
@@ -1603,12 +1618,12 @@ msgid ""
 msgstr "Perserne kunne tvangsutskrive et stort antall infanterister under krigstid på grunn av Akamenide-dynastiets voldsomme størrelse og måten det var organisert på. Generelt var det persiske infanteriet godt trent, målbevisst og kjempet med fasthet. På den annen side var infanteristene svake i nærkamp uten våpen. Dessuten - med unntak av eliteregimentene - var ikke det persiske infanteriet en permanent profesjonell styrke."
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Description
-msgid "+25% trade profit land routes."
-msgstr "+25 handelsprofitt for landbaserte ruter."
+msgid "Higher income (+15%) from land trade routes for ally's traders."
+msgstr "Høyere inntekt (+15%) fra landhandelruter for allierte handelsmenn."
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Name
 msgid "Royal Road"
-msgstr "Kongelig Vei"
+msgstr "Kongelig vei"
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].History
 msgid ""
@@ -1616,11 +1631,11 @@ msgid ""
 " common until the Persian period. Darius the Great standardized coined money"
 " and his golden coins (known as 'darics') became commonplace not only "
 "throughout his empire, but as far to the west as Central Europe."
-msgstr ""
+msgstr "Myntverket ble oppfunnet av Lyderne i det syvende århundre f.kr., men det var ikke veldig vanlig til den Persiske perioden. Darius den store standardiserte myntpreging og hans gyldne mynter (kjent som 'dareiker') ble vanlige ikke bare i hans herredømme, men så langt vest som Sentraleuropa."
 
 #: simulation/data/civs/pers.jsonAINames[0]
 msgid "Kurush II the Great"
-msgstr "Kurush II den Store"
+msgstr "Kurush II den store"
 
 #: simulation/data/civs/pers.jsonAINames[1]
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[1].Name
@@ -1674,7 +1689,7 @@ msgstr "Fønikiske triremer får den unike muligheten til å trene kavalerienhet
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[0].Name
 msgid "Naval Craftsmanship"
-msgstr "Marine Håndverk"
+msgstr "Marint håndverk"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[0].History
 msgid ""
@@ -1699,15 +1714,15 @@ msgstr "Persisk arkitektur"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].History
 msgid ""
-"The Persians built the wonderful 1677 mile-long Royal Highway from Sardis to"
-" Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
-"Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
-"Elamite capital of Susa."
-msgstr "Perserne bygde den fantastiske 2699 kilometer lange kongelige hovedvei fra Sardis til Susa; Darius den Store og Xerxes bygde også det storslåtte Persepolis; Cyrus den Store forbedret Ecbatana og gjenoppbygde praktisk talt den gamle elamittiske hovedstaden Susa."
+"The Persians built the wonderful 2700 kilometer-long Royal Highway from "
+"Sardis to Susa; Darius the Great and Xerxes also built the magnificent "
+"Persepolis; Cyrus the Great greatly improved Ecbatana and virtually "
+"'rebuilt' the old Elamite capital of Susa."
+msgstr "Perserne bygde den fantastiske 2700 kilometer lange kongelige hovedvei fra Sardis til Susa; Darius den store og Xerxes bygde også det storslåtte Persepolis; Cyrus den store forbedret Ecbatana og \"gjenoppbygde\" praktisk talt den gamle elamittiske hovedstaden Susa."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Description
 msgid "Reduces train time for Anusiya champion infantry by half."
-msgstr "Halverer tiden det tar å trene mesterinfanteri av typen Anusiya."
+msgstr "Halverer opptreningstiden for mesterinfanteri av typen Anusiya."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Name
 msgid "Immortals"
@@ -1716,7 +1731,7 @@ msgstr "Udødelige"
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[3].Description
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[3].Description
 msgid "+25% health for cavalry, but +10% train time."
-msgstr "+25 helse for kavaleri, men +10% treningstid."
+msgstr "+25 helse for kavaleri, men +10% opptreningstid."
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[3].Name
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[3].Name
@@ -1737,7 +1752,7 @@ msgid ""
 "Empire. He was also renown as a benevolent conqueror. (OP - Kurush). "
 "Technically the second ruler of the Persians by that name, and so appears as"
 " Kurush II on his documents and coins. Kurush I was his grandfather."
-msgstr ""
+msgstr "Cyrus (styrte i 559-530 f.kr.) Sønn av den Medinske prinsessen og bestyrer av Anshan; med rette kjent som grunnleggeren av Emperiet, Cyrus den store overvant Media, Lydia, Babylonia og Baktria, og etablerte dermed det Persiske Imperiet. Han var også anerkjent som en vennligsinnet erobrer. (gammelpersisk - Kurush). Teknisk sett den andre styreren av Perserne med dette navnet, så han figurerer som Kurush II på sine dokumenter og penger. Kurush I var hans bestefar."
 
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[0].Name
 msgid "Kurush II"
@@ -1749,7 +1764,7 @@ msgid ""
 "Parthia and Hyrcania; a great administrator as well as a decent general, "
 "Darius introduced the division of the empire into satrapies and conquered NW"
 " India, Thrace and Macedonia. He was called the 'Merchant of the Empire'."
-msgstr ""
+msgstr "Darius (styrte i 522-486 f.kr.) Sønn av Vishtaspa (Hystaspes), satrapen av Parthia og Hyrcania; en stor administrator såvel som en grei general, Darius introduserte inndelingen av imperiet i satrapier og overvant Nordvest-India, Trakia og Makedonia. Han ble kalt 'kjøpmannen av imperiet'."
 
 #: simulation/data/civs/pers.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -1758,16 +1773,16 @@ msgid ""
 "extended Imperial rule into Chorasmia. Apart from his failed invasion of "
 "Greece, he was famous for his extensive building programme, especially at "
 "Persepolis."
-msgstr ""
+msgstr "Xerxes (styrte i 485-465 f.kr.) Sønn av Darius den store og Atoosa, en datter av Cyrus den Store, Xerxes fikk tilgang til å bli administrator, som også utvidet imperialistisk styre inn til Chorasmia.  Bortsett fra hans mislykkede invasjon av Hellas, han var også kjent for hans omfattende byggeprogram, spesielt ved Persepolis."
 
 #: simulation/data/civs/pers.jsonStructures[0].Name
 #: simulation/data/civs/sele.jsonStructures[1].Name
 msgid "Cavalry Stables"
-msgstr "Kavaleri Stall"
+msgstr "Kavaleristall"
 
 #: simulation/data/civs/pers.jsonStructures[0].Special
 msgid "Train Cavalry citizen-soldiers."
-msgstr "Tren Kavaleri innbygger-soldater."
+msgstr "Tren kavaleri-borgersoldater."
 
 #: simulation/data/civs/pers.jsonStructures[0].History
 msgid "The Persian Empire's best soldiers were Eastern horsemen."
@@ -1790,7 +1805,7 @@ msgid ""
 "Persepolis. Functioning as the empire's central audience hall, the palace is"
 " famous for the reliefs of the tribute-bearers and of the army, including "
 "the Immortals."
-msgstr ""
+msgstr "Begrepet Apadana betegner et stor palass i hypostil (kolonnehall) i Persia. Det mest kjente eksempelet, og det desidert største, var det store Apadana i Persepolis. I funksjonen som imperiets sentrale publikumshall, ble palasset berømt for relieffene av tribute-bærere og av hæren, inkludert de udødelige."
 
 #: simulation/data/civs/pers.jsonHistory
 msgid ""
@@ -1801,7 +1816,7 @@ msgid ""
 "rule over various peoples with different customs, laws, religions and "
 "languages, and building a cosmopolitan army made up of contingents from each"
 " of these nations."
-msgstr ""
+msgstr "Det Persiske imperiet, under styre av Akamenide-dynastiet, var en av de største imperiene i antikken. I sin videste utfavnelse strakk det seg fra Indusdalen i øst til Hellas i vest. Perserne var pionerene innen imperiumsbygging i oldtiden, og overførte sentralisert styre over forskjellige folk med forskjellige skikker, lover, religioner og språk, og bygget en kosmopolitisk arme av kontingenter fra hver av disse nasjonene."
 
 #: simulation/data/civs/ptol.jsonName
 msgid "Ptolemies"
@@ -1818,17 +1833,16 @@ msgid "Mercenary Army"
 msgstr "Leiesoldathær"
 
 #: simulation/data/civs/ptol.jsonCivBonuses[0].History
-#: simulation/data/civs/ptol.jsonStructures[1].History
 msgid ""
 "The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
 "foreign mercenaries for the bulk of its military force, mainly because the "
 "loyalty of native Egyptian units was often suspect. Indeed, during one "
 "native uprising, Upper Egypt was lost to the Ptolemies for decades. "
-"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"Mercenaries were often battle-hardened and their loyalty could be bought, "
 "sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
 " under the Ptolemies was so prosperous as to be the richest of Alexander's "
 "successor states."
-msgstr ""
+msgstr "Det Gresk-Makedonske Ptolemeerdynastiet avhengte av et stort antall Greske og utenlandske leiesoldater for brorparten av sin militære makt, hovedsakelig fordi lojaliteten til innfødte Egyptiske enheter ofte var i mistanke . Faktisk gikk Øvre Egypt tapt for Ptolemeerne i flere tiår som følge av innfødt opprør. Leiesoldatene var ofte krigsherdet, og deres lojalitet kunne kjøpes, noen ganger billig, noen ganger ikke så billig. Dette var uansett ikke noe å bekymre seg over, siden Egypt under Ptolemaios var så velstående at det faktisk var den rikeste av Aleksanders etterfølgende stater."
 
 #: simulation/data/civs/ptol.jsonCivBonuses[1].Description
 msgid "The Ptolemaic Egyptians receive 3 additional farming technologies."
@@ -1861,7 +1875,7 @@ msgid ""
 "Egypt was a net exporter of grain, so much so that large cities such as "
 "Athens, Antioch, and Rome came to rely upon Egyptian grain in order to feed "
 "their masses."
-msgstr "Egypt var en nettoeksportør av korn, i så stor grad at store byer som Athen, Antiokia, og Roma ble avhengige av Egyptisk korn for å livnære sine folkemasser. "
+msgstr "Egypt var en nettoeksportør av korn, i så stor grad at store byer som Athen, Antiokia, og Rom ble avhengige av Egyptisk korn for å livnære sine folkemasser. "
 
 #: simulation/data/civs/ptol.jsonAINames[0]
 msgid "Ptolemy Soter"
@@ -1897,7 +1911,7 @@ msgstr "Ptolemy Eupator"
 
 #: simulation/data/civs/ptol.jsonAINames[8]
 msgid "Ptolemy Alexander"
-msgstr "Ptolemy Alexander"
+msgstr "Ptolemy Aleksander"
 
 #: simulation/data/civs/ptol.jsonAINames[9]
 msgid "Ptolemy Neos Dionysos"
@@ -2005,6 +2019,18 @@ msgid ""
 "Trains all 'mercenary' units."
 msgstr "Må bygges i nøytralt territorium. Har ikke en radiell territorieeffekt. Trener alle 'leiesoldat'-enheter."
 
+#: simulation/data/civs/ptol.jsonStructures[1].History
+msgid ""
+"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
+"foreign mercenaries for the bulk of its military force, mainly because the "
+"loyalty of native Egyptian units was often suspect. Indeed, during one "
+"native uprising, Upper Egypt was lost to the Ptolemies for decades. "
+"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
+" under the Ptolemies was so prosperous as to be the richest of Alexander's "
+"successor states."
+msgstr "Det Gresk-Makedonske Ptolemeerdynastiet avhengte av et stort antall Greske og utenlandske leiesoldater for brorparten av sin militære makt, hovedsakelig fordi lojaliteten til innfødte Egyptiske enheter ofte var i mistanke . Faktisk gikk Øvre Egypt tapt for Ptolemeerne i flere tiår som følge av innfødt opprør. Leiesoldatene var ofte krigsherdet, og deres lojalitet kunne kjøpes, noen ganger billig, noen ganger ikke så billig. Dette var uansett ikke noe å bekymre seg over, siden Egypt under Ptolemaios var så velstående at det faktisk var den rikeste av Aleksanders etterfølgende stater."
+
 #: simulation/data/civs/ptol.jsonStructures[2].Name
 msgid "Lighthouse"
 msgstr "Fyrtårn"
@@ -2021,7 +2047,7 @@ msgid ""
 "Alexandria near the harbor mouth of that Nile Delta city. This structure "
 "could be seen for many kilometers out to sea and was one of the Seven "
 "Wonders of the World."
-msgstr ""
+msgstr "Ptolemeerdynastiet i Egypt bygde det storslåtte Fyrtårnet på Faros, nær havnens utmunning av nildelta-byen. Dette byggverket kunne sees på flere kilometers hold ute på sjøen og var en av verdens syv underverker."
 
 #: simulation/data/civs/ptol.jsonHistory
 msgid ""
@@ -2029,7 +2055,7 @@ msgid ""
 "Ptolemaic Empire in Egypt during the Hellenistic period. Their rule lasted "
 "for 275 years, from 305 BC to 30 BC. They were the last dynasty of ancient "
 "Egypt."
-msgstr ""
+msgstr "Ptolemeerdynastiet var en Makedonsk-Gresk kongefamilie som styrte over Ptolemeer-imperiet i Egypt i den Hellenistiske perioden. Deres styre varte i 275 år, fra 305 f.kr. til 30 f.kr. De var det siste dynastiet i oldtidens Egypt."
 
 #: simulation/data/civs/rome.jsonName
 msgid "Romans"
@@ -2054,7 +2080,7 @@ msgstr "Romerne brukte ofte Testudo eller skilpadde-formasjon som forsvar: Legio
 msgid ""
 "Any Roman citizen-soldier fighting within Roman territory gains a non-"
 "permanent +10% bonus in armor."
-msgstr "Enhver romersk borger-soldat som kjemper innenfor romersk territorium vil få en midlertidig +10% bonus for rustning."
+msgstr "Enhver romersk borger-soldat som kjemper innenfor romersk territorium vil få en midlertidig +10% bonus rustningsgrad."
 
 #: simulation/data/civs/rome.jsonCivBonuses[1].Name
 msgid "Citizenship"
@@ -2067,20 +2093,26 @@ msgid ""
 "peoples. It is said that harming a Roman citizen was akin to harming Rome "
 "herself, and would cause the entire might of Rome to fall upon the "
 "perpetrator."
-msgstr "Romersk borgerskap var svært ettertraktet i den gamle verden. Grunnleggende retter og privililegier som var tilgjengelig for romerske borgere, ble nektet andre, erobrede folk. Det har blitt sagt at å skade en romersk borger var lik å skade Roma selv og ville føre til at overtrederen fikk føle hele den romerske makt."
+msgstr "Romersk borgerskap var svært ettertraktet i den gamle verden. Grunnleggende retter og privilegier som var tilgjengelig for romerske borgere, ble nektet andre, erobrede folk. Det har blitt sagt at å skade en romersk borger var likestilt med å påføre selve Rom skade, og ville føre til at overtrederen fikk føle hele den romerske makt."
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Description
-msgid "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-msgstr "Allierte borger-soldater får en +15% angrepsbonus innenfor romersk territorium."
+msgid "-20% training time for allied infantry."
+msgstr "-20% opptreningstid for alliert infanteri."
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Name
-msgid "Socii"
-msgstr "Socii"
+msgid "Conscription"
+msgstr "Verneplikt"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].History
 msgid ""
-"Being allied with Rome came with great benefits (as well as great peril)."
-msgstr "En allianse med Roma bragte både store fordeler og like stor fare."
+"Many Roman soldiers were conscripted into service. While volunteers were "
+"preferred, the Roman state did maintain an annual military draft. During an "
+"emergency the draft and the terms of service were enlarged. The importance "
+"of military service in Republican Rome was so great it was a prerequisite "
+"for a political career. Members of the Senate were called Conscript Fathers "
+"because of this, reflected in how the ordo equester was said to have been "
+"\"conscripted\" into the Senate."
+msgstr "Mange romerske soldater ble innkalt til tjeneste. Mens frivillige ble foretrukket, holdt den romerske staten en årlig sesjon. Under en nødsituasjon ble sesjonen og kravene utvidet. Betydningen av militærtjeneste i republikken Rom var så stor at det var en forutsetning for en politisk karriere. Senatmedlemmer ble kalt \"Patres (et) Conscripti\" på grunn av dette, av hensyn til hvordan det ble sagt at romerske ordo-riddere ble \"innrullert\" i senatet."
 
 #: simulation/data/civs/rome.jsonAINames[0]
 msgid "Lucius Junius Brutus"
@@ -2152,7 +2184,7 @@ msgid ""
 "throughout its long history. The Romans lured enemies or neutral factions to"
 " their side by offering them certain privileges. In due period of time, "
 "friends as well as foes were subjugated."
-msgstr "'Splitt og hersk' var hovedprinsippet for Romas utenlandspolitikk gjennom hele dens lange historie. Romerene lokket fiender eller nøytrale grupper over på deres side ved å tilby visse privilegier. Både venner og fiender ble erobret innen planlagt tid."
+msgstr "'Splitt og hersk' var hovedprinsippet for Romerrikets utenlandspolitikk gjennom hele dens lange historie. Romerene lokket fiender eller nøytrale grupper over på deres side ved å tilby visse privilegier. Både venner og fiender ble erobret innen planlagt tid."
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[0].History
 msgid ""
@@ -2176,7 +2208,7 @@ msgid ""
 "Greek culture and arts, which he enthusiastically promoted in Rome. He met "
 "his demise when his men were ambushed near Venusia. In honor of the respect "
 "the people held for him, Marcellus was granted the title of 'Sword of Rome.'"
-msgstr "Soldat i den første karthagokrigen, en helt i den andre punerkrigen og seierherre over gallerne ved Clastidium. Plutarch beskriver ham som en krigens mann, sterk og utholden, med en jernvilje til å kjempe videre. Som general var han umåtelig kapabel helt på høyde med Scipio Africanus og Cladius Nero som den mest effektive romerske general under hele den andre punerkrigen. I tillegg til hans militære prestasjoner var Marcellus en tilhenger av gresk kultur og kunst som han entusiastisk promoterte i Roma. Han møtte sin undergang i et bakholdsanngrep nær Venusia. Til ære for folkets respekt for ham, ble Marcellus gitt tittelen 'Romas Sverd'."
+msgstr "Soldat i den første karthagokrigen, en helt i den andre punerkrigen og seierherre over gallerne ved Clastidium. Plutarch beskriver ham som en krigens mann, sterk og utholden, med en jernvilje til å kjempe videre. Som general var han umåtelig kapabel, helt på høyde med Scipio Africanus og Cladius Nero som den mest effektive romerske general under hele den andre punerkrigen. I tillegg til hans militære prestasjoner var Marcellus en tilhenger av gresk kultur og kunst som han entusiastisk promoterte i Roma. Han møtte sin undergang i et bakholdsanngrep nær Venusia. Til ære for folkets respekt for ham, ble Marcellus gitt tittelen 'Roms Sverd'."
 
 #: simulation/data/civs/rome.jsonFactions[0].Heroes[1].Name
 msgid "Marcus Claudius Marcellus"
@@ -2214,7 +2246,7 @@ msgid ""
 "execution. It has a turf wall, and it's surrounded by a canal filled with "
 "water whenever possible for extra defense. Many towns started up as bigger "
 "military camps to evolve to more complicated cities."
-msgstr ""
+msgstr "Noen ganger var det en midlertidig leir bygget mot marsjruten, andre ganger en defensiv eller offensive konstruksjoner, for beleiring. Innenfor denne Pretorianske porten, som enten skal vende mot øst eller fienden, ble teltene eller kohortene satt de første århundrene, og dragene eller annen insignia plantet. Den Dekumanske porten er direkte ovenfor den Pretorianske, bak i leiren, og gjennom denne ledes soldatene til stedet der straff eller avliving finner sted. Den har en torvvegg, og omringes av en kanal fylt med vann når det er mulig for ekstra beskyttelse. Mange tettsteder startet som større militærleire og utviklet seg til å bli mer komplekse byer."
 
 #: simulation/data/civs/rome.jsonStructures[1].Name
 msgid "Murus Latericius"
@@ -2222,7 +2254,7 @@ msgstr "Murus Latericius"
 
 #: simulation/data/civs/rome.jsonStructures[1].Special
 msgid "Can be built in neutral and enemy territory to strangle enemy towns."
-msgstr "- Kan bygges i nøytralt land eller i fiendens territorium for å kvele fientlige byer."
+msgstr "- Kan bygges i nøytralt land eller i fiendens territorium for å kvele fiendtlige byer."
 
 #: simulation/data/civs/rome.jsonStructures[1].History
 msgid "Turf walls built by legionaries during sieges."
@@ -2237,7 +2269,7 @@ msgid ""
 "nations on earth for almost 800 years. The Romans were the supreme builders "
 "of the ancient world, excelled at siege warfare and had an exquisite "
 "infantry and navy."
-msgstr "Romerne kontrollerte et av de største imperiene i antikken, i sin største utstrekning strakte det seg helt fra det sørlige Skottland til Saharaørkenen og inneholdt mellom 60 og 80 millioner innbyggere, en fjerdedel av jordens befolkning på den tiden. Roma forble en av de sterkeste nasjonene i 800 år. Romerne var de overlegne konstruktørene av antikken og utmerket seg i beleiring og hadde et utsøkt infanteri og marine."
+msgstr "Romerne kontrollerte et av de største imperiene i antikken, i sin største utstrekning strakte det seg helt fra det sørlige Skottland til Saharaørkenen og inneholdt mellom 60 og 80 millioner innbyggere, en fjerdedel av jordens befolkning på den tiden. Romerriket forble en av de sterkeste nasjonene i 800 år. Romerne var de overlegne konstruktørene av antikken og utmerket seg i beleiring og hadde et utsøkt infanteri og marine."
 
 #: simulation/data/civs/sele.jsonName
 #: simulation/data/civs/sele.jsonFactions[0].Name
@@ -2271,7 +2303,7 @@ msgid ""
 " the cavalry arm. War with the Romans from the West and invasions from the "
 "Galatians also forced the Seleucids to reform their infantry regiments to be"
 " more flexible."
-msgstr ""
+msgstr "Selevkiderne og faktisk etterfølgende krigføring utviklet seg i løpet av det tredje og andre århundre. Kontakt med østlige oppkomlinger som Parterne og stadige opprør av perifere satrapier som Baktria forårsaket at Selevkiderne reformere sitt militære og endret sin taktikk, spesielt i kavaleriet. Krig med Romerne fra Vesten og invasjoner fra Galaterne tvang Selevkiderne til å reformere sine infanteriregimenter til å bli mer fleksible."
 
 #: simulation/data/civs/sele.jsonTeamBonuses[0].Description
 msgid "Allied Civic Centers are 20% cheaper."
@@ -2329,7 +2361,7 @@ msgstr "Demetrius I Soter"
 
 #: simulation/data/civs/sele.jsonAINames[10]
 msgid "Alexander I Balas"
-msgstr "Alexander I Balas"
+msgstr "Aleksander I Balas"
 
 #: simulation/data/civs/sele.jsonAINames[11]
 #: simulation/data/civs/sele.jsonAINames[15]
@@ -2350,7 +2382,7 @@ msgstr "Antiokos VII Sidetes"
 
 #: simulation/data/civs/sele.jsonAINames[16]
 msgid "Alexander II Zabinas"
-msgstr "Alexander II Zabinas"
+msgstr "Aleksander II Zabinas"
 
 #: simulation/data/civs/sele.jsonAINames[17]
 msgid "Cleopatra Thea"
@@ -2421,7 +2453,7 @@ msgstr "Et engangskjøp av 20 indiske krigselefanter fra det Mauryariket."
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[2].Name
 msgid "Marriage Alliance"
-msgstr "Ekteskaps allianse"
+msgstr "Ekteskapsallianse"
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[2].History
 msgid ""
@@ -2433,7 +2465,7 @@ msgid ""
 "alliance, he married his daughter to Chandragupta. In return, Chandragupta "
 "gifted Seleucus a corps of 500 war elephants, which would prove a decisive "
 "military asset for Seleucus as he fought the rest of Alexander's successors."
-msgstr ""
+msgstr "Selevkos I Nicator invaderte Punjab-regionen i India i 305 f.Kr., og konfrontere med det Chandragupta Maurya (Sandrokottos), grunnlegger av Mauryariket. Det sies at Chandragupta stilte en hær på 600.000 mann og 9000 krigselefanter (Plinius, Natural History VI, 22,4). Selevkos møtte dem for å skape fred, fånyttes. For å skape fred mellom de to stormaktene og for å formalisere sin allianse, giftet han sin datter til Chandragupta. Til gjengjeld gav Chandragupta Seleucus et korps på 500 krigselefanter , som skulle vise seg en avgjørende militær ressurs for Seleucus der han kjempet mot resten av Aleksanders etterfølgere."
 
 #: simulation/data/civs/sele.jsonFactions[0].Technologies[3].History
 msgid ""
@@ -2451,7 +2483,7 @@ msgid ""
 "were the most extensive in Asia after that of Alexander. The whole region "
 "from Phrygia to the Indus was subject to Seleucus. — Appian, 'The Syrian "
 "Wars'."
-msgstr ""
+msgstr "Alltid liggende på lur for de nærliggende nasjoner, armsterk og overbevisende i kommunestyret, kjøpte han (Seleucus) Mesopotamia, Armenia, 'selevkidenes' Kappadokia, Persis, Partia, Baktria, Arabia, Tapouria, Sogdia, Arachosia, Hyrcania, og andre tilstøtende folk som hadde blitt undertrykt av Aleksander, så langt som til elven Indus, slik at grensene for hans imperium var de mest omfattende i Asia etter Aleksander. Hele regionen fra Frygia til Indus var gjenstand for Seleucus. - Appian, 'De syriske krigene'."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[0].Name
 msgid "Seleukos A' Nikator"
@@ -2461,14 +2493,14 @@ msgstr "Seleukos A' Nikator"
 msgid ""
 "Antiochus inherited a troubled kingdom upon the beginning of his reign. From"
 " the verge of collapse he managed to weld back together the empire Seleukus "
-"I so hard to found. The rebellious eastern satraps of Bactria and Parthia "
-"were brought to heel , temporarily securing his eastern borders. He then "
-"turned his attention to mother Greece, attempting to fulfill the dreams of "
-"his fathers by invading Greece under the pretext of liberation. The Achaean "
-"League and the Kingdom of Pergamon banded together with the Romans to defeat"
-" him at the Battle of Magnesia, forever burying the dream of reuniting "
-"Alexander's empire."
-msgstr ""
+"I fought so hard to found. The rebellious eastern satraps of Bactria and "
+"Parthia were brought to heel , temporarily securing his eastern borders. He "
+"then turned his attention to mother Greece, attempting to fulfill the dreams"
+" of his fathers by invading Greece under the pretext of liberation. The "
+"Achaean League and the Kingdom of Pergamon banded together with the Romans "
+"to defeat him at the Battle of Magnesia, forever burying the dream of "
+"reuniting Alexander's empire."
+msgstr "Antiokos arvet et urolig rike i begynnelsen av sin regjeringstid. Fra randen av kollaps klarte han å sveise sammen igjen imperiet  Seleukus I kjempet så hardt for å opprette. De opprørske østlige satrapene av Baktria og Partia ble brakt til rette, noe som førte med seg midlertidig sikring av hans østlige grenser. Han vendte så sin oppmerksomhet til mor Hellas, i et forsøk på å oppfylle drømmene til sine fedre ved å invadere Hellas under påskudd om frigjøring. Det akhaiske forbund og Kongeriket Pergamon slo seg sammen med Romerne å beseire ham i slaget ved Magnesia, noe som for alltid begravet hans drøm om å gjenforene Aleksanders imperium."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[1].Name
 msgid "Antiokhos G' Megas"
@@ -2483,7 +2515,7 @@ msgid ""
 "conquest of Egypt (twice), which was halted by the threat of Roman "
 "intervention, and the beginning of the Jewish revolt of the Maccabees. He "
 "died of sudden illness while fighting off a Parthian invasion from the East."
-msgstr ""
+msgstr "Antiochus IV Epiphanes var sønn av Antiochus III den store og broren til Seleucus IV Philopator. Opprinnelig ved navn Mithridates, tok han navnet Antiochus enten i det han tok tronen eller etter sin elste brors død, Antiochus. Av minneverdige hendelser under hans styre kan det nevnes nesten-erobringen av Egypt (to ganger), som ble forsinket av trusselen om Romersk inngripen, og begynnelsen på det Jødiske opprøret i Makkabeerne. Han døde av plutselig sykdom mens han holdt av en Partisk invasjon fra øst."
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[2].Name
 msgid "Antiokhos D' Epiphanes"
@@ -2493,7 +2525,7 @@ msgstr "Antiokhos D' Epiphanes"
 msgid ""
 "The Macedonian-Greek dynasty that ruled the Eastern part of Alexander's "
 "former empire."
-msgstr "Det makedonsk-greske dynastiet som hersket over den østlige delen av Alexanders tidligere imperium."
+msgstr "Det makedonsk-greske dynastiet som hersket over den østlige delen av Aleksanders tidligere imperium."
 
 #: simulation/data/civs/sele.jsonStructures[1].Special
 msgid "Trains all cavalry units except Citizen-Militia Cavalry."
@@ -2522,12 +2554,12 @@ msgid ""
 "manpower for the imperial Seleucid army. A side effect of this system was "
 "that it drained the Greek homeland of military-aged men, a contributing "
 "factor to Greece's eventual conquest by Rome."
-msgstr ""
+msgstr "Selevkid-kongene invitert Grekere, Makedonere , Galaterne (Gallere), Kretere og Thrakerne både til å bosette seg i de enorme områdene imperiet rommet. De bosatte seg i militærkolonier kalt cleruchies (klēroukhia). Under denne ordningen ble nybyggere gitt en tomt eller et kleros, og til gjengjeld ble de pålagt å tjenestegjøre i den store kongens hær når de ble kalt inn. Dette skapte en øvre middelklasse av militære bosettere som skyldte sitt livsgrunnlag og formuer til de syriske kongene og hjalp med å øke tilgjengelig arbeidskraft for den keiserlige selevkid-hæren. En bivirkning av dette systemet var at det tømte det greske hjemland for menn i tjenestedyktig alder, en medvirkende faktor til Roms 'eventuelle erobring av Hellas."
 
 #: simulation/data/civs/sele.jsonHistory
 msgid ""
 "The Macedonian-Greek dynasty that ruled most of Alexander's former empire."
-msgstr "Det makedonsk-greske dynastiet som hersket over mesteparten av Alexanders tidligere imperium."
+msgstr "Det makedonsk-greske dynastiet som hersket over mesteparten av Aleksanders tidligere imperium."
 
 #: simulation/data/civs/spart.jsonName
 #: simulation/data/civs/spart.jsonFactions[0].Name
@@ -2564,8 +2596,10 @@ msgid ""
 msgstr "Under grunnloven skrevet av den legendariske lovmakeren Lykurg, ble institusjonen Agoge etablert, der Spartanerne ble trenet fra 6 års alder til å bli overlegne krigere i forsvaret av den spartanske stat. "
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Description
-msgid "Allies can train Spartiates."
-msgstr "Allierte kan trene Spartiatere."
+msgid ""
+"Increases the health for citizen-soldier infantry spearmen by 10% for allies"
+" of Spartan players."
+msgstr "Øker helsen for borgersoldatinfanteri-spydmenn med 10% for allierte av Spartaner-spillere."
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Name
 msgid "Peloponnesian League"
@@ -2644,7 +2678,7 @@ msgid ""
 "lost battle against Pyrrhus of Epirus they overnight built an earthen "
 "rampart to protect the city while their men slept in preparation for the "
 "next day's siege."
-msgstr "Spartanske kvinner var blant de frieste i antikken. De kunne eie land og slaver og kunne til og med trene nakne som spartanske menn. Det ble sagt at kun spartanske kvinner fødte ekte menn. Slike stenharde kvinner hjalp mer enn en gang til med å redde byen deres fra katastrofe. For eksempel etter et tapt slag mot Pyrrhus fra Epirus bygde de over natten en forsvarsmur av jord for å beskytte byen mens deres menn sov i påvente av neste dags beleiring."
+msgstr "Spartanske kvinner var blant de frieste i antikken. De kunne eie land og slaver og kunne til og med trene nakne som spartanske menn. Det ble sagt at kun spartanske kvinner fødte ekte menn. Slike stenharde kvinner hjalp mer enn en gang til med å redde byen deres fra katastrofe. For eksempel etter et tapt slag mot Pyrrhos fra Epirus bygde de over natten en forsvarsmur av jord for å beskytte byen mens deres menn sov i påvente av neste dags beleiring."
 
 #: simulation/data/civs/spart.jsonFactions[0].Technologies[1].Description
 msgid "Units in phalanx formation move faster."
@@ -2663,7 +2697,7 @@ msgstr "Paeaner var kamp-hymner som ble sunget av hoplittene når de jaget mot f
 
 #: simulation/data/civs/spart.jsonFactions[0].Technologies[2].Description
 msgid "+25% health for spear infantry, but also +10% train time."
-msgstr "+25% i helse for spyd-infanteri men også +10% treningstid."
+msgstr "+25% i helse for spyd-infanteri men også +10% opptreningstid."
 
 #: simulation/data/civs/spart.jsonFactions[0].Technologies[2].Name
 msgid "The Agoge"
@@ -2683,7 +2717,7 @@ msgid ""
 "unobstructed path. Finding the enemy at his rear, Leonidas sent home most of"
 " his troops, choosing to stay behind with 300 hand-picked hoplites and win "
 "time for the others to withdraw."
-msgstr ""
+msgstr "Kongen av Sparta, som kjempet og døde i slaget ved Thermopylae i 480 f.Kr. Han blokkerte den enorme persiske hæren gjennom den trange passasjen med hans 7000 menn, til Xerxes ble gjort klar over en hemmelig uhindret sti. Da Leonidas fant fienden bak seg sendte han de fleste soldatene hjem. Bare 300 hånd-plukkede hoplitter ble igjen for å vinne tid så de andre kunne trekke seg tilbake."
 
 #: simulation/data/civs/spart.jsonFactions[0].Heroes[0].Name
 msgid "Leonidas I"
@@ -2707,7 +2741,7 @@ msgid ""
 " the Battle of Megalopolis, the Macedonians prevailed in a long and bloody "
 "battle. Much like Leonidas 150 years earlier, instead of surrendering, Agis "
 "made a heroic final stand in order to buy time for his troops to retreat."
-msgstr ""
+msgstr "Agis III var den tjuende Spartakongen av Eurypontidisk herkomst. Agis klasket sammen en allianse av sørlige greske stater for å hindre Makedonsk hegemoni mens Aleksander den store var på reise i Asia på sin erobringsmarsj. Etter å ha sikret Kreta som et Spartansk lydrike, flyttet Agis på seg for å beleire byen Megalopolis i Peloponnesene, som var en alliert av Makedon. Antipater, den Megalopoliske regenten, ledet en hær for å stoppe dette nye oppvigleriet. I kampen om Megalopolis, kom Makedonerne ut på topp etter et langt og blodig slag. Veldig likt Leonidas 150 år tidligere, istedenfor å overgi seg, holdt Aegis heltemodig stand for at hans tropper kunne trekke i retrett."
 
 #: simulation/data/civs/spart.jsonFactions[0].Heroes[2].Name
 msgid "Agis III"
@@ -2719,7 +2753,7 @@ msgstr "Syssition"
 
 #: simulation/data/civs/spart.jsonStructures[1].Special
 msgid "Train heroes and Spartiates and research technologies related to them."
-msgstr "Tren helter og Spartanere og forsk på teknologier for disse."
+msgstr "Tren helter og spartanere og forsk på teknologier for disse."
 
 #: simulation/data/civs/spart.jsonStructures[1].History
 msgid ""

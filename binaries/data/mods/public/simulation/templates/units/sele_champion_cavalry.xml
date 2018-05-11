@@ -5,11 +5,10 @@
     <Lang>greek</Lang>
     <GenericName>Seleucid Cataphract</GenericName>
     <SpecificName>Seleukidón Kataphraktos</SpecificName>
-    <Icon>units/pers_champion_cavalry.png</Icon>
-    <History>Cataphracts were the crushing blow of the Seleucid cavalry. The development of the Seleucid cataphract is not well understood, as is the relationship between these men and future generations of cataphract cavalry. At best it seems the Seleucids adopted the catapharct from encounters with Iranian nomads like the Massagetes, Scythian steppes tribes, or Bactrians in the East.</History>
+    <Icon>units/sele_champion_cavalry.png</Icon>
     <RequiredTechnology>successors/unlock_reform_army</RequiredTechnology>
   </Identity>
   <VisualActor>
-    <Actor>units/persians/champion_unit_2.xml</Actor>
+    <Actor>units/seleucids/cavalry_spearman_c_m.xml</Actor>
   </VisualActor>
 </Entity>

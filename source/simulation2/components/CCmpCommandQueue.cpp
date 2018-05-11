@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 #include "ps/CLogger.h"
 #include "ps/Game.h"
 #include "ps/Profile.h"
-#include "network/NetTurnManager.h"
+#include "simulation2/system/TurnManager.h"
 
 class CCmpCommandQueue : public ICmpCommandQueue
 {
@@ -66,7 +66,7 @@ public:
 	{
 		JSContext* cx = GetSimContext().GetScriptInterface().GetContext();
 		JSAutoRequest rq(cx);
-	
+
 		u32 numCmds;
 		deserialize.NumberU32_Unbounded("num commands", numCmds);
 		for (size_t i = 0; i < numCmds; ++i)
@@ -82,6 +82,8 @@ public:
 	virtual void PushLocalCommand(player_id_t player, JS::HandleValue cmd)
 	{
 		JSContext* cx = GetSimContext().GetScriptInterface().GetContext();
+		JSAutoRequest rq(cx);
+
 		m_LocalQueue.emplace_back(SimulationCommand(player, cx, cmd));
 	}
 
@@ -89,7 +91,7 @@ public:
 	{
 		JSContext* cx = GetSimContext().GetScriptInterface().GetContext();
 		JSAutoRequest rq(cx);
-		
+
 		// TODO: This is a workaround because we need to pass a MutableHandle to StringifyJSON.
 		JS::RootedValue cmd(cx, cmd1.get());
 
@@ -103,10 +105,10 @@ public:
 
 	virtual void FlushTurn(const std::vector<SimulationCommand>& commands)
 	{
-		ScriptInterface& scriptInterface = GetSimContext().GetScriptInterface();
+		const ScriptInterface& scriptInterface = GetSimContext().GetScriptInterface();
 		JSContext* cx = scriptInterface.GetContext();
 		JSAutoRequest rq(cx);
-		
+
 		JS::RootedValue global(cx, scriptInterface.GetGlobalObject());
 		std::vector<SimulationCommand> localCommands;
 		m_LocalQueue.swap(localCommands);

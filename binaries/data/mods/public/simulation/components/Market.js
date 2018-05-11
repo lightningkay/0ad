@@ -23,7 +23,7 @@ Market.prototype.Init = function()
 
 Market.prototype.AddTrader = function(ent)
 {
-	this.traders.add(ent); 
+	this.traders.add(ent);
 };
 
 Market.prototype.RemoveTrader = function(ent)
@@ -81,7 +81,7 @@ Market.prototype.OnDiplomacyChanged = function(msg)
 
 Market.prototype.OnOwnershipChanged = function(msg)
 {
-	this.UpdateTraders(msg.to == -1);
+	this.UpdateTraders(msg.to == INVALID_PLAYER);
 };
 
 Engine.RegisterComponentType(IID_Market, "Market", Market);

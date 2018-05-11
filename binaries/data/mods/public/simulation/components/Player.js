@@ -1,35 +1,60 @@
 function Player() {}
 
 Player.prototype.Schema =
+	"<element name='BarterMultiplier' a:help='Multipliers for barter prices.'>" +
+		"<interleave>" +
+			"<element name='Buy' a:help='Multipliers for the buy prices.'>" +
+				Resources.BuildSchema("positiveDecimal") +
+			"</element>" +
+			"<element name='Sell' a:help='Multipliers for the sell prices.'>" +
+				Resources.BuildSchema("positiveDecimal") +
+			"</element>" +
+		"</interleave>" +
+	"</element>" +
 	"<element name='SharedLosTech' a:help='Allies will share los when this technology is researched. Leave empty to never share LOS.'>" +
 		"<text/>" +
 	"</element>" +
 	"<element name='SharedDropsitesTech' a:help='Allies will share dropsites when this technology is researched. Leave empty to never share dropsites.'>" +
 		"<text/>" +
+	"</element>" +
+	"<element name='SpyCostMultiplier'>" +
+		"<ref name='nonNegativeDecimal'/>" +
 	"</element>";
+
+/**
+ * Don't serialize diplomacyColor or displayDiplomacyColor since they're modified by the GUI.
+ */
+Player.prototype.Serialize = function()
+{
+	let state = {};
+	for (let key in this)
+		if (this.hasOwnProperty(key))
+			state[key] = this[key];
+
+	state.diplomacyColor = undefined;
+	state.displayDiplomacyColor = false;
+	return state;
+};
+
+/**
+ * Which units will be shown with special icons at the top.
+ */
+var panelEntityClasses = "Hero Relic";
 
 Player.prototype.Init = function()
 {
 	this.playerID = undefined;
 	this.name = undefined;	// define defaults elsewhere (supporting other languages)
 	this.civ = undefined;
-	this.color = { "r": 0.0, "g": 0.0, "b": 0.0, "a": 1.0 };
+	this.color = undefined;
+	this.diplomacyColor = undefined;
+	this.displayDiplomacyColor = false;
 	this.popUsed = 0; // population of units owned or trained by this player
 	this.popBonuses = 0; // sum of population bonuses of player's entities
 	this.maxPop = 300; // maximum population
 	this.trainingBlocked = false; // indicates whether any training queue is currently blocked
-	this.resourceCount = {
-		"food": 300,
-		"wood": 300,
-		"metal": 300,
-		"stone": 300
-	};
-	// goods for next trade-route and its proba in % (the sum of probas must be 100)
-	this.tradingGoods = [
-		{ "goods":  "wood", "proba": 30 },
-		{ "goods": "stone", "proba": 35 },
-		{ "goods": "metal", "proba": 35 },
-	];
+	this.resourceCount = {};
+	this.tradingGoods = []; // goods for next trade-route and its proba in % (the sum of probas must be 100)
 	this.team = -1;	// team number of the player, players on the same team will always have ally diplomatic status - also this is useful for team emblems, scoring, etc.
 	this.teamsLocked = false;
 	this.state = "active"; // game state - one of "active", "defeated", "won"
@@ -39,20 +64,36 @@ Player.prototype.Init = function()
 	this.startCam = undefined;
 	this.controlAllUnits = false;
 	this.isAI = false;
+	this.timeMultiplier = 1;
 	this.gatherRateMultiplier = 1;
 	this.tradeRateMultiplier = 1;
 	this.cheatsEnabled = false;
 	this.cheatTimeMultiplier = 1;
-	this.heroes = [];
-	this.resourceNames = {
-		"food": markForTranslation("Food"),
-		"wood": markForTranslation("Wood"),
-		"metal": markForTranslation("Metal"),
-		"stone": markForTranslation("Stone"),
-	};
+	this.panelEntities = [];
+	this.resourceNames = {};
 	this.disabledTemplates = {};
 	this.disabledTechnologies = {};
 	this.startingTechnologies = [];
+	this.spyCostMultiplier = +this.template.SpyCostMultiplier;
+	this.barterMultiplier = {
+		"buy": clone(this.template.BarterMultiplier.Buy),
+		"sell": clone(this.template.BarterMultiplier.Sell)
+	};
+
+	// Initial resources and trading goods probability in steps of 5
+	let resCodes = Resources.GetCodes();
+	let quotient = Math.floor(20 / resCodes.length);
+	let remainder = 20 % resCodes.length;
+	for (let i in resCodes)
+	{
+		let res = resCodes[i];
+		this.resourceCount[res] = 300;
+		this.resourceNames[res] = Resources.GetResource(res).name;
+		this.tradingGoods.push({
+			"goods": res,
+			"proba": 5 * (quotient + (+i < remainder ? 1 : 0))
+		});
+	}
 };
 
 Player.prototype.SetPlayerID = function(id)
@@ -97,12 +138,35 @@ Player.prototype.GetCiv = function()
 
 Player.prototype.SetColor = function(r, g, b)
 {
-	this.color = { "r": r/255.0, "g": g/255.0, "b": b/255.0, "a": 1.0 };
+	var colorInitialized = !!this.color;
+
+	this.color = { "r": r / 255, "g": g / 255, "b": b / 255, "a": 1 };
+
+	// Used in Atlas
+	if (colorInitialized)
+		Engine.BroadcastMessage(MT_PlayerColorChanged, {
+			"player": this.playerID
+		});
+};
+
+Player.prototype.SetDiplomacyColor = function(color)
+{
+	this.diplomacyColor = { "r": color.r / 255, "g": color.g / 255, "b": color.b / 255, "a": 1 };
+};
+
+Player.prototype.SetDisplayDiplomacyColor = function(displayDiplomacyColor)
+{
+	this.displayDiplomacyColor = displayDiplomacyColor;
 };
 
 Player.prototype.GetColor = function()
 {
 	return this.color;
+};
+
+Player.prototype.GetDisplayedColor = function()
+{
+	return this.displayDiplomacyColor ? this.diplomacyColor : this.color;
 };
 
 // Try reserving num population slots. Returns 0 on success or number of missing slots otherwise.
@@ -152,22 +216,22 @@ Player.prototype.SetMaxPopulation = function(max)
 
 Player.prototype.GetMaxPopulation = function()
 {
-	return Math.round(ApplyValueModificationsToPlayer("Player/MaxPopulation", this.maxPop, this.entity, this.playerID));
+	return Math.round(ApplyValueModificationsToEntity("Player/MaxPopulation", this.maxPop, this.entity));
 };
 
-Player.prototype.SetGatherRateMultiplier = function(value)
+Player.prototype.GetBarterMultiplier = function()
 {
-	this.gatherRateMultiplier = value;
+	return this.barterMultiplier;
 };
 
 Player.prototype.GetGatherRateMultiplier = function()
 {
-	return this.gatherRateMultiplier;
+	return this.gatherRateMultiplier / this.cheatTimeMultiplier;
 };
 
-Player.prototype.SetTradeRateMultiplier = function(value)
+Player.prototype.GetTimeMultiplier = function()
 {
-	this.tradeRateMultiplier = value;
+	return this.timeMultiplier * this.cheatTimeMultiplier;
 };
 
 Player.prototype.GetTradeRateMultiplier = function()
@@ -175,9 +239,34 @@ Player.prototype.GetTradeRateMultiplier = function()
 	return this.tradeRateMultiplier;
 };
 
-Player.prototype.GetHeroes = function()
+Player.prototype.GetSpyCostMultiplier = function()
 {
-	return this.heroes;
+	return this.spyCostMultiplier;
+};
+
+/**
+ * Setters currently used by the AI to set the difficulty level
+ */
+Player.prototype.SetGatherRateMultiplier = function(value)
+{
+	this.gatherRateMultiplier = value;
+	Engine.BroadcastMessage(MT_MultiplierChanged, { "player": this.playerID, "type": "gather" });
+};
+
+Player.prototype.SetTimeMultiplier = function(value)
+{
+	this.timeMultiplier = value;
+	Engine.BroadcastMessage(MT_MultiplierChanged, { "player": this.playerID, "type": "time" });
+};
+
+Player.prototype.SetTradeRateMultiplier = function(value)
+{
+	this.tradeRateMultiplier = value;
+};
+
+Player.prototype.GetPanelEntities = function()
+{
+	return this.panelEntities;
 };
 
 Player.prototype.IsTrainingBlocked = function()
@@ -197,14 +286,8 @@ Player.prototype.UnBlockTraining = function()
 
 Player.prototype.SetResourceCounts = function(resources)
 {
-	if (resources.food !== undefined)
-		this.resourceCount.food = resources.food;
-	if (resources.wood !== undefined)
-		this.resourceCount.wood = resources.wood;
-	if (resources.stone !== undefined)
-		this.resourceCount.stone = resources.stone;
-	if (resources.metal !== undefined)
-		this.resourceCount.metal = resources.metal;
+	for (let res in resources)
+		this.resourceCount[res] = resources[res];
 };
 
 Player.prototype.GetResourceCounts = function()
@@ -228,9 +311,7 @@ Player.prototype.AddResource = function(type, amount)
 Player.prototype.AddResources = function(amounts)
 {
 	for (var type in amounts)
-	{
 		this.resourceCount[type] += +amounts[type];
-	}
 };
 
 Player.prototype.GetNeededResources = function(amounts)
@@ -295,7 +376,6 @@ Player.prototype.SubtractResourcesOrNotify = function(amounts)
 		return false;
 	}
 
-	// Subtract the resources
 	for (var type in amounts)
 		this.resourceCount[type] -= amounts[type];
 
@@ -317,7 +397,7 @@ Player.prototype.TrySubtractResources = function(amounts)
 
 Player.prototype.GetNextTradingGoods = function()
 {
-	var value = 100*Math.random();
+	var value = randFloat(0, 100);
 	var last = this.tradingGoods.length - 1;
 	var sumProba = 0;
 	for (var i = 0; i < last; ++i)
@@ -340,18 +420,30 @@ Player.prototype.GetTradingGoods = function()
 
 Player.prototype.SetTradingGoods = function(tradingGoods)
 {
-	var sumProba = 0;
-	for (var resource in tradingGoods)
-		sumProba += tradingGoods[resource];
-	if (sumProba != 100)	// consistency check
+	let resCodes = Resources.GetCodes();
+	let sumProba = 0;
+	for (let resource in tradingGoods)
 	{
-		error("Player.js SetTradingGoods: " + uneval(tradingGoods));
-		tradingGoods = { "food": 20, "wood":20, "stone":30, "metal":30 };
+		if (resCodes.indexOf(resource) == -1 || tradingGoods[resource] < 0)
+		{
+			error("Invalid trading goods: " + uneval(tradingGoods));
+			return;
+		}
+		sumProba += tradingGoods[resource];
+	}
+
+	if (sumProba != 100)
+	{
+		error("Invalid trading goods: " + uneval(tradingGoods));
+		return;
 	}
 
 	this.tradingGoods = [];
-	for (var resource in tradingGoods)
-		this.tradingGoods.push( {"goods": resource, "proba": tradingGoods[resource]} );
+	for (let resource in tradingGoods)
+		this.tradingGoods.push({
+			"goods": resource,
+			"proba": tradingGoods[resource]
+		});
 };
 
 Player.prototype.GetState = function()
@@ -359,7 +451,13 @@ Player.prototype.GetState = function()
 	return this.state;
 };
 
-Player.prototype.SetState = function(newState, resign)
+/**
+ * @param {string} newState - Either "defeated" or "won".
+ * @param {string|undefined} message - A string to be shown in chat, for example
+ *     markForTranslation("%(player)s has been defeated (failed objective).").
+ *     If it is undefined, the caller MUST send that GUI notification manually.
+ */
+Player.prototype.SetState = function(newState, message)
 {
 	if (this.state != "active")
 		return;
@@ -373,12 +471,10 @@ Player.prototype.SetState = function(newState, resign)
 	this.state = newState;
 
 	let won = newState == "won";
-
-	// Reveal map to all or only that player
 	let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
-	cmpRangeManager.SetLosRevealAll(won ? -1 : this.playerID, true);
-
-	if (!won)
+	if (won)
+		cmpRangeManager.SetLosRevealAll(this.playerID, true);
+	else
 	{
 		// Reassign all player's entities to Gaia
 		let entities = cmpRangeManager.GetEntitiesByPlayer(this.playerID);
@@ -401,20 +497,18 @@ Player.prototype.SetState = function(newState, resign)
 			});
 	}
 
-	Engine.BroadcastMessage(won ? MT_PlayerWon : MT_PlayerDefeated, { "playerId": this.playerID });
+	Engine.PostMessage(this.entity, won ? MT_PlayerWon : MT_PlayerDefeated, { "playerId": this.playerID });
 
-	let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-	if (won)
+	if (message)
+	{
+		let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 		cmpGUIInterface.PushNotification({
-			"type": "won",
-			"players": [this.playerID]
-		});
-	else
-		cmpGUIInterface.PushNotification({
-			"type": "defeat",
+			"type": won ? "won" : "defeat",
 			"players": [this.playerID],
-			"resign": resign
+			"allies": [this.playerID],
+			"message": message
 		});
+	}
 };
 
 Player.prototype.GetTeam = function()
@@ -430,9 +524,10 @@ Player.prototype.SetTeam = function(team)
 	this.team = team;
 
 	// Set all team members as allies
-	let cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);
-	if (cmpPlayerManager && this.team != -1)
-		for (let i = 0; i < cmpPlayerManager.GetNumPlayers(); ++i)
+	if (this.team != -1)
+	{
+		let numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
+		for (let i = 0; i < numPlayers; ++i)
 		{
 			let cmpPlayer = QueryPlayerIDInterface(i);
 			if (this.team != cmpPlayer.GetTeam())
@@ -441,6 +536,7 @@ Player.prototype.SetTeam = function(team)
 			this.SetAlly(i);
 			cmpPlayer.SetAlly(this.playerID);
 		}
+	}
 
 	Engine.BroadcastMessage(MT_DiplomacyChanged, {
 		"player": this.playerID,
@@ -693,12 +789,11 @@ Player.prototype.OnGlobalOwnershipChanged = function(msg)
 		if (cmpCost)
 			this.popUsed -= cmpCost.GetPopCost();
 
-		if (cmpIdentity && cmpIdentity.HasClass("Hero"))
+		if (cmpIdentity && MatchesClassList(cmpIdentity.GetClassesList(), panelEntityClasses))
 		{
-			//Remove from Heroes list
-			var index = this.heroes.indexOf(msg.entity);
+			let index = this.panelEntities.indexOf(msg.entity);
 			if (index >= 0)
-				this.heroes.splice(index, 1);
+				this.panelEntities.splice(index, 1);
 		}
 	}
 	if (msg.to == this.playerID)
@@ -706,8 +801,8 @@ Player.prototype.OnGlobalOwnershipChanged = function(msg)
 		if (cmpCost)
 			this.popUsed += cmpCost.GetPopCost();
 
-		if (cmpIdentity && cmpIdentity.HasClass("Hero"))
-			this.heroes.push(msg.entity);
+		if (cmpIdentity && MatchesClassList(cmpIdentity.GetClassesList(), panelEntityClasses))
+			this.panelEntities.push(msg.entity);
 	}
 };
 
@@ -724,6 +819,22 @@ Player.prototype.OnDiplomacyChanged = function()
 	this.UpdateSharedLos();
 };
 
+Player.prototype.OnValueModification = function(msg)
+{
+	if (msg.component != "Player")
+		return;
+
+	if (msg.valueNames.indexOf("Player/SpyCostMultiplier") != -1)
+		this.spyCostMultiplier = ApplyValueModificationsToEntity("Player/SpyCostMultiplier", +this.template.SpyCostMultiplier, this.entity);
+
+	if (msg.valueNames.some(mod => mod.startsWith("Player/BarterMultiplier/")))
+		for (let res in this.template.BarterMultiplier.Buy)
+		{
+			this.barterMultiplier.buy[res] = ApplyValueModificationsToEntity("Player/BarterMultiplier/Buy/"+res, +this.template.BarterMultiplier.Buy[res], this.entity);
+			this.barterMultiplier.sell[res] = ApplyValueModificationsToEntity("Player/BarterMultiplier/Sell/"+res, +this.template.BarterMultiplier.Sell[res], this.entity);
+		}
+};
+
 Player.prototype.SetCheatsEnabled = function(flag)
 {
 	this.cheatsEnabled = flag;
@@ -737,6 +848,7 @@ Player.prototype.GetCheatsEnabled = function()
 Player.prototype.SetCheatTimeMultiplier = function(time)
 {
 	this.cheatTimeMultiplier = time;
+	Engine.BroadcastMessage(MT_MultiplierChanged, { "player": this.playerID, "type": "cheat" });
 };
 
 Player.prototype.GetCheatTimeMultiplier = function()
@@ -753,9 +865,17 @@ Player.prototype.TributeResource = function(player, amounts)
 	if (this.state != "active" || cmpPlayer.state != "active")
 		return;
 
+	for (let resCode in amounts)
+		if (Resources.GetCodes().indexOf(resCode) == -1 ||
+		    !Number.isInteger(amounts[resCode]) ||
+		    amounts[resCode] < 0)
+		{
+			warn("Invalid tribute amounts: " + uneval(amounts));
+			return;
+		}
+
 	if (!this.SubtractResourcesOrNotify(amounts))
 		return;
-
 	cmpPlayer.AddResources(amounts);
 
 	var total = Object.keys(amounts).reduce((sum, type) => sum + amounts[type], 0);

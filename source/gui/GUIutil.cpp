@@ -47,6 +47,13 @@ bool __ParseString<int>(const CStrW& Value, int& Output)
 }
 
 template <>
+bool __ParseString<u32>(const CStrW& Value, u32& Output)
+{
+	Output = Value.ToUInt();
+	return true;
+}
+
+template <>
 bool __ParseString<float>(const CStrW& Value, float& Output)
 {
 	Output = Value.ToFloat();
@@ -253,13 +260,18 @@ bool __ParseString<CGUIList>(const CStrW& UNUSED(Value), CGUIList& UNUSED(Output
 	return false;
 }
 
+template <>
+bool __ParseString<CGUISeries>(const CStrW& UNUSED(Value), CGUISeries& UNUSED(Output))
+{
+	return false;
+}
 
 //--------------------------------------------------------
 
 CMatrix3D GetDefaultGuiMatrix()
 {
-	float xres = g_xres * g_GuiScale;
-	float yres = g_yres * g_GuiScale;
+	float xres = g_xres / g_GuiScale;
+	float yres = g_yres / g_GuiScale;
 
 	CMatrix3D m;
 	m.SetIdentity();

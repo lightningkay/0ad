@@ -2,17 +2,24 @@
 
 <objects>
 
-	<script file="gui/common/color.js"/>
-	<script file="gui/common/functions_civinfo.js"/>
-	<script file="gui/common/functions_global_object.js"/>
-	<script file="gui/common/functions_utility.js"/>
-	<script file="gui/common/gamedescription.js"/>
-	<script file="gui/common/network.js"/>
-	<script file="gui/common/settings.js"/>
-	<script file="gui/common/timer.js"/>
+	<script directory="gui/common/"/>
+	<script directory="gui/gamesetup/"/>
 
-	<!-- After settings.js, which defines g_Settings -->
-	<script file="gui/gamesetup/gamesetup.js"/>
+	<object	hotkey="civinfo">
+		<action on="Press">
+			Engine.PushGuiPage("page_civinfo.xml", { "civ": g_CivInfo.code, "callback": "storeCivInfoPage" });
+		</action>
+	</object>
+
+	<object	hotkey="structree">
+		<action on="Press">
+			Engine.PushGuiPage("page_structree.xml", { "civ": g_CivInfo.code, "callback": "storeCivInfoPage" });
+		</action>
+	</object>
+
+	<object hotkey="cancel">
+		<action on="Press">selectPanel(undefined);</action>
+	</object>
 
 	<!-- Add a translucent black background to fade out the menu page -->
 	<object type="image" style="ModernWindow" size="0 0 100% 100%">
@@ -28,7 +35,7 @@
 			</object>
 
 			<object type="text" style="ModernLabelText">
-				<translatableAttribute id="caption">Loading map data. Please wait...</translatableAttribute>
+				<translatableAttribute id="caption">Loading map data. Please wait…</translatableAttribute>
 			</object>
 
 		</object>
@@ -38,16 +45,20 @@
 			<action on="Tick">
 				onTick();
 			</action>
+			<!--  Keep the settings panel size fitting to the settings when resizing -->
+			<action on="WindowResized">
+				distributeSettings();
+			</action>
 
 			<!-- Player assignments -->
-			<object size="24 49 100%-440 345" type="image" sprite="ModernDarkBoxGold" name="playerAssignmentsPanel">
+			<object size="24 40 100%-440 336" type="image" sprite="ModernDarkBoxGold" name="playerAssignmentsPanel">
 				<object size="0 6 100% 30">
 
-					<object name="playerNameHeading" type="text" style="ModernLabelText" size="0 0 22% 100%">
+					<object name="playerNameHeading" type="text" style="ModernLabelText" size="0 0 20%+5 100%">
 						<translatableAttribute id="caption">Player Name</translatableAttribute>
 					</object>
 
-					<object name="playerColorHeading" type="text" style="ModernLabelText" size="22%+5 0 22%+40 100%">
+					<object name="playerColorHeading" type="text" style="ModernLabelText" size="20%+5 0 22%+45 100%">
 						<translatableAttribute id="caption">Color</translatableAttribute>
 					</object>
 
@@ -55,44 +66,43 @@
 						<translatableAttribute id="caption">Player Placement</translatableAttribute>
 					</object>
 
-					<object name="playerCivHeading" type="text" style="ModernLabelText" size="50%+65 0 85%-26 100%">
+					<object name="playerCivHeading" type="text" style="ModernLabelText" size="50%+69 0 85%-37 100%">
 						<translatableAttribute id="caption">Civilization</translatableAttribute>
 					</object>
 
 					<object name="civInfoButton"
 						type="button"
+						style="IconButton"
 						sprite="iconInfoGold"
 						sprite_over="iconInfoWhite"
-						size="67.5%+68 0 67.5%+84 16"
-						tooltip_style="onscreenToolTip"
+						size="85%-37 0 85%-21 16"
 					>
-						<translatableAttribute id="tooltip">View civilization info</translatableAttribute>
-						<action on="Press"><![CDATA[
-							Engine.PushGuiPage("page_civinfo.xml");
-						]]></action>
+						<action on="Press">
+							Engine.PushGuiPage(g_CivInfo.page, { "civ": g_CivInfo.code, "callback": "storeCivInfoPage" });
+						</action>
 					</object>
 
 					<object name="civResetButton"
 						type="button"
+						style="IconButton"
 						sprite="iconResetGold"
 						sprite_over="iconResetWhite"
-						size="67.5%+93 0 67.5%+109 16"
-						tooltip_style="onscreenToolTip"
+						size="85%-16 0 85% 16"
 					>
 						<translatableAttribute id="tooltip">Reset any civilizations that have been selected to the default (random)</translatableAttribute>
 						<action on="Press">resetCivilizations();</action>
 					</object>
 
-					<object name="playerTeamHeading" type="text" style="ModernLabelText" size="85%+15 0 100%-30 100%">
+					<object name="playerTeamHeading" type="text" style="ModernLabelText" size="85%+5 0 100%-21 100%">
 						<translatableAttribute id="caption">Team</translatableAttribute>
 					</object>
 
 					<object name="teamResetButton"
 						type="button"
+						style="IconButton"
 						sprite="iconResetGold"
 						sprite_over="iconResetWhite"
-						size="100%-30 0 100%-15 16"
-						tooltip_style="onscreenToolTip"
+						size="100%-21 0 100%-5 16"
 					>
 						<translatableAttribute id="tooltip">Reset all teams to the default.</translatableAttribute>
 						<action on="Press">resetTeams();</action>
@@ -101,7 +111,7 @@
 
 				<object size="1 36 100%-1 100%">
 					<repeat count="8">
-						<object name="playerBox[n]" size="0 0 100% 32" hidden="true">
+						<object name="playerBox[n]" size="0 0 100% 32">
 							<object name="playerColor[n]" type="image" size="0 0 100% 100%"/>
 							<object name="playerName[n]" type="text" style="ModernLabelText" size="0 2 22% 30"/>
 							<object name="playerColorPicker[n]" type="dropdown" style="ModernDropDown" size="22%+5 2 22%+33 30" sprite="" scrollbar="false" button_width="22" font="sans-stroke-14" tooltip_style="onscreenToolTip">
@@ -120,7 +130,7 @@
 							>
 								<translatableAttribute id="tooltip">Configure AI settings.</translatableAttribute>
 							</object>
-							<object name="playerCiv[n]" type="dropdown" style="ModernDropDown" size="50%+69 2 85% 30" tooltip_style="onscreenToolTip">
+							<object name="playerCiv[n]" type="dropdown" style="ModernDropDown" size="50%+69 2 85% 30" tooltip_style="onscreenToolTip" dropdown_size="424">
 								<translatableAttribute id="tooltip">Select player's civilization.</translatableAttribute>
 							</object>
 							<object name="playerCivText[n]" type="text" style="ModernLabelText" size="50%+65 0 85% 30"/>
@@ -132,102 +142,101 @@
 					</repeat>
 				</object>
 			</object>
-			<object size="24 64 100%-460 358" type="image" sprite="CoverFillDark" name="playerAssignmentsPanelCover" hidden="true"/>
-			<!-- Map selection -->
 
-			<object size="100%-425 355 100%-285 470" name="mapTypeTooltip">
-				<object type="text" style="ModernRightLabelText" size="0 0 100% 30">
-					<translatableAttribute id="caption">Map Type:</translatableAttribute>
+			<!-- Singleplayer / AI tips -->
+			<object name="spTips" size="24 370 500 570" type="image" hidden="true">
+				<object size="4 10 28 34" type="image" sprite="ModernGear"/>
+				<object name="aiTips" size="32 0 100%-20 100%-32" type="text" style="ModernLeftLabelText"/>
+				<object size="30 100%-30 100% 100%-8" type="text" style="ModernLeftLabelText">
+					<translatableAttribute id="caption">Show this message in the future</translatableAttribute>
 				</object>
-				<object type="text" style="ModernRightLabelText" size="0 32 100% 62">
-					<translatableAttribute id="caption">Map Filter:</translatableAttribute>
+				<object name="displaySPTips" size="8 100%-30 28 100%-8" type="checkbox" style="ModernTickBox">
+					<action on="Press">saveSettingAndWriteToUserConfig("gui.gamesetup.enabletips", String(this.checked));</action>
 				</object>
-				<object type="text" style="ModernRightLabelText" size="0 64 100% 94">
-					<translatableAttribute id="caption">Select Map:</translatableAttribute>
-				</object>
-				<object type="text" style="ModernRightLabelText" size="0 96 100% 126">
-					<translatableAttribute id="caption">Number of Players:</translatableAttribute>
-				</object>
-				<object name="mapSizeDesc" type="text" style="ModernRightLabelText" size="0 128 100% 158">
-					<translatableAttribute id="caption">Map Size:</translatableAttribute>
-				</object>
-			</object>
-
-
-			<object size="100%-275 355 100%-25 470" name="mapFilterTooltip">
-				<object name="mapTypeText" type="text" style="ModernLeftLabelText" size="0 0 100% 30" hidden="true"/>
-				<object name="mapFilterText" type="text" style="ModernLeftLabelText" size="0 32 100% 62" hidden="true"/>
-				<object name="mapSelectionText" type="text" style="ModernLeftLabelText" size="0 64 100% 94" hidden="true"/>
-				<object name="mapSizeText" type="text" style="ModernLeftLabelText" size="0 128 100% 158" hidden="true"/>
-			</object>
-
-			<object name="mapType"
-				type="dropdown"
-				style="ModernDropDown"
-				size="100%-275 355 100%-25 383"
-				tooltip_style="onscreenToolTip">
-				<translatableAttribute id="tooltip">Select a map type.</translatableAttribute>
-			</object>
-
-			<object name="mapFilter"
-				type="dropdown"
-				style="ModernDropDown"
-				size="100%-275 387 100%-25 415"
-				tooltip_style="onscreenToolTip">
-				<translatableAttribute id="tooltip">Select a map filter.</translatableAttribute>
-			</object>
-
-			<object size="100%-275 419 100%-25 447" name="mapSelectionPannel">
-				<object name="mapSelection"
-					style="ModernDropDown"
-					type="dropdown"
-					size="0 0 100% 100%"
-					tooltip_style="onscreenToolTip">
-					<translatableAttribute id="tooltip">Select a map to play on.</translatableAttribute>
-				</object>
-			</object>
-
-			<object name="numPlayersText" size="100%-275 451 100%-25 483" type="text" style="ModernLeftLabelText"/>
-				<object name="numPlayers"
-					type="dropdown"
-					style="ModernDropDown"
-					size="100%-275 451 100%-25 479"
-					tooltip_style="onscreenToolTip">
-				<translatableAttribute id="tooltip">Select number of players.</translatableAttribute>
-			</object>
-
-			<object name="mapSize" size="100%-275 483 100%-25 511" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-				<translatableAttribute id="tooltip">Select map size. (Larger sizes may reduce performance.)</translatableAttribute>
 			</object>
 
 			<!-- Map Preview -->
-			<object type="image" sprite="ModernDarkBoxGold" name="gamePreviewBox" size="100%-426 49 100%-24 345">
+			<object type="image" sprite="ModernDarkBoxGold" name="gamePreviewBox" size="100%-426 40 100%-24 336">
 				<object type="image" sprite="snMapPreview" size="1 1 401 294" name="mapPreview"/>
+				<object name="mapInfoName" type="text" style="ModernLeftLabelText" size="5 100%-20 100% 100%-1"/>
+			</object>
+
+			<!-- Settings -->
+			<object name="settingsBackground" type="image" sprite="ModernDarkBoxGold" size="100%-715 346 100%-315 100%-60"/>
+			<object name="settingsPanel" type="image" sprite="ModernDarkBoxGold" size="100%-785 351 100%-315 100%-65" hidden="true" z="1">
+				<repeat count="60" var="n">
+					<object name="settingFrame[n]" size="0 2 320 32">
+						<object
+							name="settingTitle[n]"
+							type="text"
+							size="0 0 170 30"
+							style="ModernRightLabelText"
+							z="1"
+						/>
+						<object
+							name="settingText[n]"
+							type="text"
+							size="175 0 100% 30"
+							style="ModernLeftLabelText"
+							z="1"
+						/>
+						<object
+							name="settingDropdown[n]"
+							type="dropdown"
+							size="175 0 100% 30"
+							style="ModernDropDown"
+							tooltip_style="onscreenToolTip"
+							z="1"
+						/>
+						<object
+							name="settingCheckbox[n]"
+							type="checkbox"
+							size="175 5 193 30"
+							style="ModernTickBox"
+							tooltip_style="onscreenToolTip"
+							z="1"
+						/>
+					</object>
+				</repeat>
+			</object>
+
+			<!-- Re-add background to hide settings panel -->
+			<object type="image" sprite="ModernWindowCornerBottomRight" size="100%-315 346 100% 100%" z="20"/>
+
+			<!-- Category Tabs -->
+			<object name="settingTabButtonsBackground" type="image" sprite="ModernDarkBoxGold" size="100%-315 346 100%-25 556" z="21"/>
+			<object name="settingTabButtons" size="100%-315 346 100%-25 556" z="21">
+				<include file="gui/common/tab_buttons.xml"/>
+			</object>
+
+			<!-- View Lobby Button -->
+			<object name="lobbyButton"
+				type="button"
+				style="IconButton"
+				sprite="iconBubbleGold"
+				sprite_over="iconBubbleWhite"
+				size="100%-41 346 100%-25 362"
+				hotkey="lobby"
+				z="100"
+			>
+				<translatableAttribute id="tooltip">Show the multiplayer lobby in a dialog window.</translatableAttribute>
 			</object>
 
 			<!-- Map Description -->
-			<object size="100%-425 529 100%-25 100%-60">
-				<object name="mapInfoName" type="text" style="ModernLeftLabelText" size="0 0 100%-120 30"/>
-				<object type="image" sprite="ModernDarkBoxGold" size="0 30 100% 100%">
-					<object name="mapInfoDescription" type="text" style="ModernText" size="0 0 100% 100%"/>
-				</object>
+			<object name="mapInfoDescriptionFrame" type="image" sprite="ModernDarkBoxGold" size="100%-315 550 100%-25 100%-60" z="21">
+				<object name="mapInfoDescription" type="text" style="ModernText" size="0 0 100% 100%"/>
 			</object>
 
 			<!-- Chat window -->
-			<object name="chatPanel" size="24 355 100%-440 100%-58" type="image" sprite="ModernDarkBoxGold">
-				<object name="chatText" size="2 2 100%-2 100%-26" type="text" style="ChatPanel"/>
+			<object name="chatPanel" size="24 346 100%-640 100%-60" type="image" sprite="ModernDarkBoxGold">
+				<object name="chatText" size="2 2 100%-2 100%-28" type="text" style="ChatPanel"/>
 
-				<object name="chatInput" size="4 100%-24 100%-76 100%-4" type="input" style="ModernInput">
+				<object name="chatInput" size="4 100%-26 100%-96 100%-4" type="input" style="ModernInput">
 					<action on="Press">submitChatInput();</action>
-					<action on="Tab">
-						let players = [];
-						for (let player in g_PlayerAssignments)
-							players.push(g_PlayerAssignments[player].name);
-						autoCompleteNick(this, players);
-					</action>
+					<action on="Tab">autoCompleteNick(this, g_Autocomplete);</action>
 				</object>
 
-				<object size="100%-72 100%-24 100%-4 100%-4" type="button" style="StoneButton">
+				<object size="100%-92 100%-26 100%-4 100%-4" type="button" style="StoneButton">
 					<translatableAttribute id="caption">Send</translatableAttribute>
 					<action on="Press">submitChatInput();</action>
 				</object>
@@ -239,12 +248,11 @@
 				font="sans-14"
 				textcolor="white"
 				sprite="BackgroundTranslucent"
-				hidden="true"
 				size="20 100%-56 100%-312 100%-24"
 			/>
 
 			<!-- Cheat Warning Text -->
-			<object size="0 100%-52 100%-320 100%-24" hidden="true" name="cheatWarningText">
+			<object size="0 100%-52 100%-320 100%-24" name="cheatWarningText">
 				<object type="text" textcolor="red" style="ModernRightLabelText" size="0 0 100% 30">
 					<translatableAttribute id="caption">Cheats enabled.</translatableAttribute>
 				</object>
@@ -257,10 +265,8 @@
 				style="StoneButton"
 				size="100%-164 100%-52 100%-24 100%-24"
 				tooltip_style="onscreenToolTip"
-				enabled="false"
+				z="21"
 			>
-				<translatableAttribute id="caption">Start game!</translatableAttribute>
-				<translatableAttribute id="tooltip">Start a new game with the current settings.</translatableAttribute>
 				<action on="Press">
 					if (g_IsController)
 						launchGame();
@@ -276,180 +282,10 @@
 				style="StoneButton"
 				size="100%-308 100%-52 100%-168 100%-24"
 				tooltip_style="onscreenToolTip"
+				z="21"
 			>
 				<translatableAttribute id="caption">Back</translatableAttribute>
 				<action on="Press">cancelSetup();</action>
-			</object>
-
-			<!-- Options -->
-			<object name="gameOptionsBox" size="100%-425 529 100%-25 525">
-				<!-- More Options Button -->
-				<object
-					name="showMoreOptions"
-					type="button"
-					style="StoneButton"
-					size="100%-120 0 100% 28"
-					tooltip_style="onscreenToolTip"
-				>
-					<translatableAttribute id="caption">More Options</translatableAttribute>
-					<translatableAttribute id="tooltip">See more game options</translatableAttribute>
-					<action on="Press">showMoreOptions(true);</action>
-				</object>
-
-			<!-- End Options -->
-			</object>
-
-			<!-- More Options -->
-			<object hidden="true" name="moreOptionsFade" type="image" z="60" sprite="ModernFade"/>
-			<object name="moreOptions" type="image" sprite="ModernDialog" size="50%-200 50%-195 50%+200 50%+220" z="70" hidden="true">
-				<object name="moreOptionsLabel" style="ModernLabelText" type="text" size="50%-128 -18 50%+128 14">
-					<translatableAttribute id="caption">More Options</translatableAttribute>
-				</object>
-
-				<object name="optionGameSpeed" size="14 38 94% 66">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Game Speed:</translatableAttribute>
-					</object>
-					<object name="gameSpeedText" size="40% 0 100% 100%" type="text" style="ModernLeftLabelText"/>
-					<object name="gameSpeed" size="40%+10 0 100% 28" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Select game speed.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionVictoryCondition" size="14 68 94% 96">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Victory Condition:</translatableAttribute>
-					</object>
-					<object name="victoryConditionText" size="40% 0 100% 100%" type="text" style="ModernLeftLabelText"/>
-					<object name="victoryCondition" size="40%+10 0 100% 28" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Select victory condition.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionWonderDuration" size="14 188 94% 216">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Wonder Victory:</translatableAttribute>
-					</object>
-					<object name="wonderDurationText" size="40% 0 100% 100%" type="text" style="ModernLeftLabelText"/>
-					<object name="wonderDuration" size="40%+10 0 100% 28" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Number of minutes that the player has to keep the wonder in order to win.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionPopulationCap" size="14 98 94% 126">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Population Cap:</translatableAttribute>
-					</object>
-					<object name="populationCapText" size="40% 0 100% 100%" type="text" style="ModernLeftLabelText"/>
-					<object name="populationCap" size="40%+10 0 100% 28" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Select population cap.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionStartingResources" size="14 128 94% 156">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Starting Resources:</translatableAttribute>
-					</object>
-					<object name="startingResourcesText" size="40% 0 100% 100%" type="text" style="ModernLeftLabelText"/>
-					<object name="startingResources" size="40%+10 0 100% 28" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Select the game's starting resources.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionCeasefire" size="14 158 94% 186">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Ceasefire:</translatableAttribute>
-					</object>
-					<object name="ceasefireText" size="40% 0 100% 100%" type="text" style="ModernLeftLabelText"/>
-					<object name="ceasefire" size="40%+10 0 100% 28" type="dropdown" style="ModernDropDown" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Set time where no attacks are possible.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionRevealMap" size="14 218 94% 246">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption" comment="Make sure to differentiate between the revealed map and explored map options!">Revealed Map:</translatableAttribute>
-					</object>
-					<object name="revealMapText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="revealMap" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip" comment="Make sure to differentiate between the revealed map and explored map options!">Toggle revealed map (see everything).</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionExploreMap" size="14 248 94% 276">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption" comment="Make sure to differentiate between the revealed map and explored map options!">Explored Map:</translatableAttribute>
-					</object>
-					<object name="exploreMapText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="exploreMap" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip" comment="Make sure to differentiate between the revealed map and explored map options!">Toggle explored map (see initial map).</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionDisableTreasures" size="14 278 94% 306">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Disable Treasures:</translatableAttribute>
-					</object>
-					<object name="disableTreasuresText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="disableTreasures" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Disable all treasures on the map.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionLockTeams" size="14 308 94% 336">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Teams Locked:</translatableAttribute>
-					</object>
-					<object name="lockTeamsText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="lockTeams" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Toggle locked teams.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionLastManStanding" size="14 338 94% 366">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Last Man Standing:</translatableAttribute>
-					</object>
-					<object name="lastManStandingText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="lastManStanding" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Toggle whether the last remaining player or the last remaining set of allies wins.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionCheats" size="14 368 94% 396" hidden="true">
-					<object size="0 0 40% 28" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Cheats:</translatableAttribute>
-					</object>
-					<object name="enableCheatsText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="enableCheats" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Toggle the usability of cheats.</translatableAttribute>
-					</object>
-				</object>
-
-				<object name="optionRating" size="14 398 94% 426" hidden="true">
-					<object size="0 0 40% 28" hidden="false" type="text" style="ModernRightLabelText">
-						<translatableAttribute id="caption">Rated Game:</translatableAttribute>
-					</object>
-					<object name="enableRatingText" size="40% 0 100% 28" type="text" style="ModernLeftLabelText"/>
-					<object name="enableRating" size="40%+10 5 40%+30 100%-5" type="checkbox" style="ModernTickBox" hidden="true" tooltip_style="onscreenToolTip">
-						<translatableAttribute id="tooltip">Toggle if this game will be rated for the leaderboard.</translatableAttribute>
-					</object>
-				</object>
-
-				<!-- Hide More Options Button -->
-				<object
-					name="hideMoreOptions"
-					type="button"
-					style="StoneButton"
-					size="50%-70 428 50%+70 456"
-					tooltip_style="onscreenToolTip"
-					hotkey="cancel"
-				>
-					<translatableAttribute id="caption">OK</translatableAttribute>
-					<translatableAttribute id="tooltip">Close more game options window</translatableAttribute>
-					<action on="Press">showMoreOptions(false);</action>
-				</object>
-			<!-- End More Options -->
 			</object>
 		</object>
 	</object>

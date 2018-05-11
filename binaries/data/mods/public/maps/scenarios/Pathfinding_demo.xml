@@ -11,7 +11,7 @@
 		<Fog>
 			<FogFactor>0</FogFactor>
 			<FogThickness>0.5</FogThickness>
-			<FogColour r="0.8" g="0.8" b="0.894118"/>
+			<FogColor r="0.8" g="0.8" b="0.894118"/>
 		</Fog>
 		<Water>
 			<WaterBody>
@@ -21,8 +21,6 @@
 				<Waviness>4.0</Waviness>
 				<Murkiness>0.45</Murkiness>
 				<Tint r="0.27451" g="0.294118" b="0.584314"/>
-				<ReflectionTint r="0.27451" g="0.294118" b="0.584314"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -42,7 +40,6 @@
 {
   "DefaultStance": "defensive",
   "Description": "A map for testing unit movement algorithms.",
-  "GameType": "endless",
   "Keywords": [
     "demo"
   ],
@@ -57,7 +54,8 @@
       "Civ": "brit"
     }
   ],
-  "RevealMap": true
+  "RevealMap": true,
+  "VictoryConditions": []
 }
 ]]></ScriptSettings>
 	<Entities>

@@ -3,9 +3,8 @@
 		"Name" : "Continent",
 		"Script" : "continent.js",
 		"Description" : "All players starts on a continent surrounded by water.",
-		"BaseTerrain" : ["medit_sea_depths"],
-		"BaseHeight" : -5,
 		"Preview" : "continent.png",
+		"SupportedBiomes": "generic/",
 		"CircularMap" : true
 	}
 }

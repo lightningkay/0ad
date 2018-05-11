@@ -1,29 +1,32 @@
-RMS.LoadLibrary("rmgen");
-RMS.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmgen");
+Engine.LoadLibrary("rmgen-common");
+Engine.LoadLibrary("rmgen2");
+Engine.LoadLibrary("rmbiome");
 
-InitMap();
+setSelectedBiome();
 
-randomizeBiome();
-initMapSettings();
-initTileClasses();
-
-RMS.SetProgress(10);
-
-// Pick a random elevation with a bias towards lower elevations
-var randElevation = randInt(30);
+// Random elevation with a bias towards lower elevations
+var randElevation = randIntInclusive(0, 29);
 if (randElevation < 25)
-	randElevation = 1 + randInt(4);
+	randElevation = randIntInclusive(1, 4);
 
-resetTerrain(g_Terrains.mainTerrain, g_TileClasses.land, randElevation);
-RMS.SetProgress(20);
+var g_Map = new RandomMap(randElevation, g_Terrains.mainTerrain);
 
-var pos = randomStartingPositionPattern();
-addBases(pos.setup, pos.distance, pos.separation);
-RMS.SetProgress(40);
+initTileClasses();
+createArea(
+	new MapBoundsPlacer(),
+	new TileClassPainter(g_TileClasses.land));
+
+Engine.SetProgress(20);
+
+const playerbasePattern = randomStartingPositionPattern(getTeamsArray());
+createBasesByPattern(playerbasePattern.setup, playerbasePattern.distance, playerbasePattern.groupedDistance, randomAngle());
+Engine.SetProgress(40);
 
 var features = [
 	{
 		"func": addBluffs,
+		"baseHeight": randElevation,
 		"avoid": [
 			g_TileClasses.bluff, 20,
 			g_TileClasses.hill, 10,
@@ -95,7 +98,7 @@ if (randElevation < 4)
 			g_TileClasses.valley, 10,
 			g_TileClasses.water, 25
 		],
-		"sizes": g_AllSizes,
+		"sizes": ["small"],
 		"mixes": g_AllMixes,
 		"amounts": g_AllAmounts
 	});
@@ -103,6 +106,7 @@ if (randElevation < 4)
 if (randElevation > 20)
 	features.push({
 		"func": addValleys,
+		"baseHeight": randElevation,
 		"avoid": [
 			g_TileClasses.bluff, 5,
 			g_TileClasses.hill, 5,
@@ -118,7 +122,7 @@ if (randElevation > 20)
 	});
 
 addElements(shuffleArray(features));
-RMS.SetProgress(50);
+Engine.SetProgress(50);
 
 addElements([
 	{
@@ -151,7 +155,7 @@ addElements([
 		"amounts": ["normal"]
 	}
 ]);
-RMS.SetProgress(60);
+Engine.SetProgress(60);
 
 addElements(shuffleArray([
 	{
@@ -206,7 +210,7 @@ addElements(shuffleArray([
 		"amounts": ["few", "normal", "many", "tons"]
 	}
 ]));
-RMS.SetProgress(70);
+Engine.SetProgress(70);
 
 addElements(shuffleArray([
 	{
@@ -261,6 +265,18 @@ addElements(shuffleArray([
 		"amounts": g_AllAmounts
 	}
 ]));
-RMS.SetProgress(90);
+Engine.SetProgress(90);
 
-ExportMap();
+placePlayersNomad(
+	g_TileClasses.player,
+	avoidClasses(
+		g_TileClasses.bluff, 4,
+		g_TileClasses.water, 4,
+		g_TileClasses.forest, 1,
+		g_TileClasses.metal, 4,
+		g_TileClasses.rock, 4,
+		g_TileClasses.mountain, 4,
+		g_TileClasses.plateau, 4,
+		g_TileClasses.animals, 2));
+
+g_Map.ExportMap();

@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -74,8 +74,6 @@
 #include "renderer/VertexBufferManager.h"
 #include "renderer/WaterManager.h"
 #include "scriptinterface/ScriptInterface.h"
-
-extern bool g_GameRestarted;
 
 struct SScreenRect
 {
@@ -289,13 +287,13 @@ public:
 
 	/// Material manager
 	CMaterialManager materialManager;
-	
+
 	/// Time manager
 	CTimeManager timeManager;
 
 	/// Shadow map
 	ShadowMap shadow;
-	
+
 	/// Postprocessing effect manager
 	CPostprocManager postprocManager;
 
@@ -421,6 +419,7 @@ CRenderer::CRenderer()
 	m_Width = 0;
 	m_Height = 0;
 	m_TerrainRenderMode = SOLID;
+	m_WaterRenderMode = SOLID;
 	m_ModelRenderMode = SOLID;
 	m_ClearColor[0] = m_ClearColor[1] = m_ClearColor[2] = m_ClearColor[3] = 0;
 
@@ -430,12 +429,19 @@ CRenderer::CRenderer()
 	m_Options.m_NoVBO = false;
 	m_Options.m_RenderPath = RP_DEFAULT;
 	m_Options.m_Shadows = false;
+	m_Options.m_WaterEffects = false;
+	m_Options.m_WaterFancyEffects = false;
+	m_Options.m_WaterRealDepth = false;
+	m_Options.m_WaterRefraction = false;
+	m_Options.m_WaterReflection = false;
+	m_Options.m_WaterShadows = false;
 	m_Options.m_ShadowAlphaFix = true;
 	m_Options.m_ARBProgramShadow = true;
 	m_Options.m_ShadowPCF = false;
 	m_Options.m_Particles = false;
 	m_Options.m_Silhouettes = false;
 	m_Options.m_PreferGLSL = false;
+	m_Options.m_Fog = false;
 	m_Options.m_ForceAlphaTest = false;
 	m_Options.m_GPUSkinning = false;
 	m_Options.m_SmoothLOS = false;
@@ -575,6 +581,9 @@ void CRenderer::ReloadShaders()
 	if (m_LightEnv)
 		m->globalContext.Add(CStrIntern("LIGHTING_MODEL_" + m_LightEnv->GetLightingModel()), str_1);
 
+	if (m_Options.m_PreferGLSL && m_Options.m_Fog)
+		m->globalContext.Add(str_USE_FOG, str_1);
+
 	m->Model.ModShader = LitRenderModifierPtr(new ShaderRenderModifier());
 
 	bool cpuLighting = (GetRenderPath() == RP_FIXED);
@@ -648,7 +657,7 @@ bool CRenderer::Open(int width, int height)
 	// Let component renderers perform one-time initialization after graphics capabilities and
 	// the shader path have been determined.
 	m->overlayRenderer.Initialize();
-	
+
 	if (m_Options.m_Postproc)
 		m->postprocManager.Initialize();
 
@@ -663,9 +672,9 @@ void CRenderer::Resize(int width, int height)
 
 	m_Width = width;
 	m_Height = height;
-	
+
 	m->postprocManager.Resize();
-	
+
 	m_WaterManager->Resize();
 }
 
@@ -673,6 +682,10 @@ void CRenderer::Resize(int width, int height)
 // SetOptionBool: set boolean renderer option
 void CRenderer::SetOptionBool(enum Option opt,bool value)
 {
+	// Don't do anything if the option didn't change from its previous value.
+	if (value == GetOptionBool(opt))
+		return;
+
 	switch (opt) {
 		case OPT_NOVBO:
 			m_Options.m_NoVBO = value;
@@ -681,8 +694,8 @@ void CRenderer::SetOptionBool(enum Option opt,bool value)
 			m_Options.m_Shadows = value;
 			MakeShadersDirty();
 			break;
-		case OPT_WATERUGLY:
-			m_Options.m_WaterUgly = value;
+		case OPT_WATEREFFECTS:
+			m_Options.m_WaterEffects = value;
 			break;
 		case OPT_WATERFANCYEFFECTS:
 			m_Options.m_WaterFancyEffects = value;
@@ -710,6 +723,10 @@ void CRenderer::SetOptionBool(enum Option opt,bool value)
 			m_Options.m_PreferGLSL = value;
 			MakeShadersDirty();
 			RecomputeSystemShaderDefines();
+			break;
+		case OPT_FOG:
+			m_Options.m_Fog = value;
+			MakeShadersDirty();
 			break;
 		case OPT_SILHOUETTES:
 			m_Options.m_Silhouettes = value;
@@ -741,8 +758,8 @@ bool CRenderer::GetOptionBool(enum Option opt) const
 			return m_Options.m_NoVBO;
 		case OPT_SHADOWS:
 			return m_Options.m_Shadows;
-		case OPT_WATERUGLY:
-			return m_Options.m_WaterUgly;
+		case OPT_WATEREFFECTS:
+			return m_Options.m_WaterEffects;
 		case OPT_WATERFANCYEFFECTS:
 			return m_Options.m_WaterFancyEffects;
 		case OPT_WATERREALDEPTH:
@@ -759,6 +776,8 @@ bool CRenderer::GetOptionBool(enum Option opt) const
 			return m_Options.m_Particles;
 		case OPT_PREFERGLSL:
 			return m_Options.m_PreferGLSL;
+		case OPT_FOG:
+			return m_Options.m_Fog;
 		case OPT_SILHOUETTES:
 			return m_Options.m_Silhouettes;
 		case OPT_SHOWSKY:
@@ -856,7 +875,7 @@ void CRenderer::BeginFrame()
 
 	if (m->ShadersDirty)
 		ReloadShaders();
-	
+
 	m->Model.ModShader->SetShadowMap(&m->shadow);
 	m->Model.ModShader->SetLightEnv(m_LightEnv);
 }
@@ -1064,7 +1083,7 @@ void CRenderer::RenderTransparentModels(const CShaderDefines& context, int cullG
 // - worldPlane is a clip plane in world space (worldPlane.Dot(v) >= 0 for any vector v passing the clipping test)
 void CRenderer::SetObliqueFrustumClipping(CCamera& camera, const CVector4D& worldPlane) const
 {
-	// First, we'll convert the given clip plane to camera space, then we'll 
+	// First, we'll convert the given clip plane to camera space, then we'll
 	// Get the view matrix and normal matrix (top 3x3 part of view matrix)
 	CMatrix3D normalMatrix = camera.m_Orientation.GetTranspose();
 	CVector4D camPlane = normalMatrix.Transform(worldPlane);
@@ -1175,7 +1194,7 @@ void CRenderer::RenderReflections(const CShaderDefines& context, const CBounding
 	// Save the post-processing framebuffer.
 	GLint fbo;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &fbo);
-	
+
 	WaterManager& wm = m->waterManager;
 
 	// Remember old camera
@@ -1202,7 +1221,7 @@ void CRenderer::RenderReflections(const CShaderDefines& context, const CBounding
 
 	// try binding the framebuffer
 	pglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, wm.m_ReflectionFbo);
-	
+
 	glClearColor(0.5f,0.5f,1.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -1224,7 +1243,7 @@ void CRenderer::RenderReflections(const CShaderDefines& context, const CBounding
 		ogl_WarnIfError();
 	}
 	glFrontFace(GL_CCW);
-	
+
 	// Particles are always oriented to face the camera in the vertex shader,
 	// so they don't need the inverted glFrontFace
 	if (m_Options.m_Particles)
@@ -1232,16 +1251,16 @@ void CRenderer::RenderReflections(const CShaderDefines& context, const CBounding
 		RenderParticles(CULL_REFLECTIONS);
 		ogl_WarnIfError();
 	}
-	
+
 	glDisable(GL_SCISSOR_TEST);
-	
+
   	// Reset old camera
   	m_ViewCamera = normalCamera;
   	m->SetOpenGLCamera(m_ViewCamera);
-	
+
 	// rebind post-processing frambuffer.
 	pglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
-	
+
 	return;
 }
 
@@ -1255,7 +1274,7 @@ void CRenderer::RenderRefractions(const CShaderDefines& context, const CBounding
 	// Save the post-processing framebuffer.
 	GLint fbo;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &fbo);
-	
+
 	WaterManager& wm = m->waterManager;
 
 	// Remember old camera
@@ -1282,13 +1301,13 @@ void CRenderer::RenderRefractions(const CShaderDefines& context, const CBounding
 
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(screenScissor.x1, screenScissor.y1, screenScissor.x2 - screenScissor.x1, screenScissor.y2 - screenScissor.y1);
-	
+
 	// try binding the framebuffer
 	pglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, wm.m_RefractionFbo);
 
 	glClearColor(1.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	// Render terrain and models
 	RenderPatches(context, CULL_REFRACTIONS);
 	ogl_WarnIfError();
@@ -1296,16 +1315,16 @@ void CRenderer::RenderRefractions(const CShaderDefines& context, const CBounding
 	ogl_WarnIfError();
 	RenderTransparentModels(context, CULL_REFRACTIONS, TRANSPARENT_OPAQUE, false);
 	ogl_WarnIfError();
-	
+
 	glDisable(GL_SCISSOR_TEST);
-	
+
   	// Reset old camera
   	m_ViewCamera = normalCamera;
   	m->SetOpenGLCamera(m_ViewCamera);
-	
+
 	// rebind post-processing frambuffer.
 	pglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
-	
+
 	return;
 }
 
@@ -1386,10 +1405,13 @@ void CRenderer::RenderSilhouettes(const CShaderDefines& context)
 	}
 
 	{
-		PROFILE("render casters");
+		PROFILE("render model casters");
 		m->CallModelRenderers(contextDisplay, CULL_SILHOUETTE_CASTER, 0);
-		// (This won't render transparent objects with SILHOUETTE_CASTER - will
-		// we have any units that need that?)
+	}
+
+	{
+		PROFILE("render transparent casters");
+		m->CallTranspModelRenderers(contextDisplay, CULL_SILHOUETTE_CASTER, 0);
 	}
 
 	// Restore state
@@ -1447,9 +1469,9 @@ void CRenderer::RenderParticles(int cullGroup)
 void CRenderer::RenderSubmissions(const CBoundingBoxAligned& waterScissor)
 {
 	PROFILE3("render submissions");
-	
+
 	GetScene().GetLOSTexture().InterpolateLOS();
-	
+
 	if (m_Options.m_Postproc)
 	{
 		m->postprocManager.Initialize();
@@ -1562,7 +1584,7 @@ void CRenderer::RenderSubmissions(const CBoundingBoxAligned& waterScissor)
 		RenderParticles(cullGroup);
 		ogl_WarnIfError();
 	}
-	
+
 	if (m_Options.m_Postproc)
 	{
 		m->postprocManager.ApplyPostproc();
@@ -1575,7 +1597,7 @@ void CRenderer::RenderSubmissions(const CBoundingBoxAligned& waterScissor)
 	}
 
 #if !CONFIG2_GLES
-	// Clean up texture blend mode so particles and other things render OK 
+	// Clean up texture blend mode so particles and other things render OK
 	// (really this should be cleaned up by whoever set it)
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 #endif
@@ -1594,7 +1616,7 @@ void CRenderer::RenderSubmissions(const CBoundingBoxAligned& waterScissor)
 	// render overlays that should appear on top of all other objects
 	m->overlayRenderer.RenderForegroundOverlays(m_ViewCamera);
 	ogl_WarnIfError();
-	
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1624,7 +1646,7 @@ void CRenderer::EndFrame()
 		int err = glGetError();
 		if (err)
 		{
-			ONCE(LOGERROR("CRenderer::EndFrame: GL errors %i occurred", err));
+			ONCE(LOGERROR("CRenderer::EndFrame: GL errors %s (%04x) occurred", ogl_GetErrorName(err), err));
 		}
 	}
 }
@@ -2017,9 +2039,9 @@ int CRenderer::LoadAlphaMaps()
 	// upload the composite texture
 	Tex t;
 	(void)t.wrap(total_w, total_h, 8, TEX_GREY, data, 0);
-	
+
 	/*VfsPath filename("blendtex.png");
-	
+
 	DynArray da;
 	RETURN_STATUS_IF_ERR(tex_encode(&t, filename.Extension(), &da));
 
@@ -2035,7 +2057,7 @@ int CRenderer::LoadAlphaMaps()
 	}
 
 	(void)da_free(&da);*/
-	
+
 	m_hCompositeAlphaMap = ogl_tex_wrap(&t, g_VFS, key);
 	(void)ogl_tex_set_filter(m_hCompositeAlphaMap, GL_LINEAR);
 	(void)ogl_tex_set_wrap  (m_hCompositeAlphaMap, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -2074,6 +2096,7 @@ Status CRenderer::ReloadChangedFileCB(void* param, const VfsPath& path)
 void CRenderer::MakeShadersDirty()
 {
 	m->ShadersDirty = true;
+	m_WaterManager->m_NeedsReloading = true;
 }
 
 CTextureManager& CRenderer::GetTextureManager()
@@ -2114,4 +2137,15 @@ CPostprocManager& CRenderer::GetPostprocManager()
 CFontManager& CRenderer::GetFontManager()
 {
 	return m->fontManager;
+}
+
+ShadowMap& CRenderer::GetShadowMap()
+{
+	return m->shadow;
+}
+
+void CRenderer::ResetState()
+{
+	// Clear all emitters, that were created in previous games
+	GetParticleManager().ClearUnattachedEmitters();
 }

@@ -1,39 +1,64 @@
 const g_IsReplay = Engine.IsVisualReplay();
 
+const g_CivData = loadCivData(false, true);
+
 const g_Ceasefire = prepareForDropdown(g_Settings && g_Settings.Ceasefire);
-const g_GameSpeeds = prepareForDropdown(g_Settings && g_Settings.GameSpeeds.filter(speed => !speed.ReplayOnly || g_IsReplay));
 const g_MapSizes = prepareForDropdown(g_Settings && g_Settings.MapSizes);
 const g_MapTypes = prepareForDropdown(g_Settings && g_Settings.MapTypes);
 const g_PopulationCapacities = prepareForDropdown(g_Settings && g_Settings.PopulationCapacities);
 const g_StartingResources = prepareForDropdown(g_Settings && g_Settings.StartingResources);
-const g_VictoryConditions = prepareForDropdown(g_Settings && g_Settings.VictoryConditions);
-const g_WonderDurations = prepareForDropdown(g_Settings && g_Settings.WonderDurations);
+const g_VictoryDurations = prepareForDropdown(g_Settings && g_Settings.VictoryDurations);
+const g_VictoryConditions = g_Settings && g_Settings.VictoryConditions;
+
+var g_GameSpeeds;
+
+/**
+ * Whether to display diplomacy colors (where players see self/ally/neutral/enemy each in different colors and
+ * observers see each team in a different color) or regular player colors.
+ */
+var g_DiplomacyColorsToggle = false;
+
+/**
+ * The array of displayed player colors (either the diplomacy color or regular color for each player).
+ */
+var g_DisplayedPlayerColors;
 
 /**
  * Colors to flash when pop limit reached.
  */
-const g_DefaultPopulationColor = "white";
-const g_PopulationAlertColor = "orange";
+var g_DefaultPopulationColor = "white";
+var g_PopulationAlertColor = "orange";
+
+/**
+ * Seen in the tooltip of the top panel.
+ */
+var g_ResourceTitleFont = "sans-bold-16";
 
 /**
  * A random file will be played. TODO: more variety
  */
-const g_Ambient = [ "audio/ambient/dayscape/day_temperate_gen_03.ogg" ];
+var g_Ambient = ["audio/ambient/dayscape/day_temperate_gen_03.ogg"];
 
 /**
  * Map, player and match settings set in gamesetup.
  */
-const g_GameAttributes = Object.freeze(Engine.GetInitAttributes());
-
-/**
- * Is this user in control of game settings (i.e. is a network server, or offline player).
- */
-var g_IsController;
+const g_GameAttributes = deepfreeze(Engine.GetInitAttributes());
 
 /**
  * True if this is a multiplayer game.
  */
-var g_IsNetworked = false;
+const g_IsNetworked = Engine.HasNetClient();
+
+/**
+ * Is this user in control of game settings (i.e. is a network server, or offline player).
+ */
+var g_IsController = !g_IsNetworked || Engine.HasNetServer();
+
+/**
+ * Whether we have finished the synchronization and
+ * can start showing simulation related message boxes.
+ */
+var g_IsNetworkedActive = false;
 
 /**
  * True if the connection to the server has been lost.
@@ -85,24 +110,23 @@ var g_Players = [];
  * Last time when onTick was called().
  * Used for animating the main menu.
  */
-var lastTickTime = new Date();
+var g_LastTickTime = Date.now();
 
 /**
- * Not constant as we add "gaia".
+ * Recalculate which units have their status bars shown with this frequency in milliseconds.
  */
-var g_CivData = {};
+var g_StatusBarUpdate = 200;
 
 /**
  * For restoring selection, order and filters when returning to the replay menu
  */
 var g_ReplaySelectionData;
 
-var g_PlayerAssignments = {
-	"local": {
-		"name": singleplayerName(),
-		"player": 1
-	}
-};
+/**
+ * Remembers which clients are assigned to which player slots.
+ * The keys are guids or "local" in Singleplayer.
+ */
+var g_PlayerAssignments;
 
 /**
  * Cache dev-mode settings that are frequently or widely used.
@@ -111,6 +135,12 @@ var g_DevSettings = {
 	"changePerspective": false,
 	"controlAll": false
 };
+
+/**
+ * Whether the entire UI should be hidden (useful for promotional screenshots).
+ * Can be toggled with a hotkey.
+ */
+var g_ShowGUI = true;
 
 /**
  * Whether status bars should be shown for all of the player's units.
@@ -123,13 +153,14 @@ var g_ShowAllStatusBars = false;
 var g_IsTrainingBlocked = false;
 
 /**
- * Cache simulation state (updated on every simulation update).
+ * Cache of simulation state and template data (apart from TechnologyData, updated on every simulation update).
  */
 var g_SimState;
 var g_EntityStates = {};
 var g_TemplateData = {};
-var g_TemplateDataWithoutLocalization = {};
 var g_TechnologyData = {};
+
+var g_ResourceData = new Resources();
 
 /**
  * Top coordinate of the research list.
@@ -145,51 +176,52 @@ var g_ShowGuarded = false;
 var g_AdditionalHighlight = [];
 
 /**
- * Display data of the current players heroes.
+ * Display data of the current players entities shown in the top panel.
  */
-var g_Heroes = [];
+var g_PanelEntities = [];
+
+/**
+ * Order in which the panel entities are shown.
+ */
+var g_PanelEntityOrder = ["Hero", "Relic"];
 
 /**
  * Unit classes to be checked for the idle-worker-hotkey.
  */
-var g_WorkerTypes = ["Female", "Trader", "FishingBoat", "CitizenSoldier"];
+var g_WorkerTypes = ["FemaleCitizen", "Trader", "FishingBoat", "CitizenSoldier"];
+
 /**
  * Unit classes to be checked for the military-only-selection modifier and for the idle-warrior-hotkey.
  */
 var g_MilitaryTypes = ["Melee", "Ranged"];
-/**
- * Cache the idle worker status.
- */
-var g_HasIdleWorker = false;
 
 function GetSimState()
 {
 	if (!g_SimState)
-		g_SimState = Engine.GuiInterfaceCall("GetSimulationState");
+		g_SimState = deepfreeze(Engine.GuiInterfaceCall("GetSimulationState"));
 
 	return g_SimState;
+}
+
+function GetMultipleEntityStates(ents)
+{
+	if (!ents.length)
+		return null;
+	let entityStates = Engine.GuiInterfaceCall("GetMultipleEntityStates", ents);
+	for (let item of entityStates)
+		g_EntityStates[item.entId] = item.state && deepfreeze(item.state);
+	return entityStates;
 }
 
 function GetEntityState(entId)
 {
 	if (!g_EntityStates[entId])
-		g_EntityStates[entId] = Engine.GuiInterfaceCall("GetEntityState", entId);
+	{
+		let entityState = Engine.GuiInterfaceCall("GetEntityState", entId);
+		g_EntityStates[entId] = entityState && deepfreeze(entityState);
+	}
 
 	return g_EntityStates[entId];
-}
-
-function GetExtendedEntityState(entId)
-{
-	let entState = GetEntityState(entId);
-	if (!entState || entState.extended)
-		return entState;
-
-	let extension = Engine.GuiInterfaceCall("GetExtendedEntityState", entId);
-	for (let prop in extension)
-		entState[prop] = extension[prop];
-	entState.extended = true;
-	g_EntityStates[entId] = entState;
-	return entState;
 }
 
 function GetTemplateData(templateName)
@@ -198,33 +230,25 @@ function GetTemplateData(templateName)
 	{
 		let template = Engine.GuiInterfaceCall("GetTemplateData", templateName);
 		translateObjectKeys(template, ["specific", "generic", "tooltip"]);
-		g_TemplateData[templateName] = template;
+		g_TemplateData[templateName] = deepfreeze(template);
 	}
 
 	return g_TemplateData[templateName];
 }
 
-function GetTemplateDataWithoutLocalization(templateName)
+function GetTechnologyData(technologyName, civ)
 {
-	if (!(templateName in g_TemplateDataWithoutLocalization))
-	{
-		let template = Engine.GuiInterfaceCall("GetTemplateData", templateName);
-		g_TemplateDataWithoutLocalization[templateName] = template;
-	}
+	if (!g_TechnologyData[civ])
+		g_TechnologyData[civ] = {};
 
-	return g_TemplateDataWithoutLocalization[templateName];
-}
-
-function GetTechnologyData(technologyName)
-{
-	if (!(technologyName in g_TechnologyData))
+	if (!(technologyName in g_TechnologyData[civ]))
 	{
-		let template = Engine.GuiInterfaceCall("GetTechnologyData", technologyName);
+		let template = GetTechnologyDataHelper(TechnologyTemplates.Get(technologyName), civ, g_ResourceData);
 		translateObjectKeys(template, ["specific", "generic", "description", "tooltip", "requirementsTooltip"]);
-		g_TechnologyData[technologyName] = template;
+		g_TechnologyData[civ][technologyName] = deepfreeze(template);
 	}
 
-	return g_TechnologyData[technologyName];
+	return g_TechnologyData[civ][technologyName];
 }
 
 function init(initData, hotloadData)
@@ -236,64 +260,26 @@ function init(initData, hotloadData)
 		return;
 	}
 
+	// Fallback used by atlas
+	g_PlayerAssignments = initData ? initData.playerAssignments : { "local": { "player": 1 } };
+
+	// Fallback used by atlas and autostart games
+	if (g_PlayerAssignments.local && !g_PlayerAssignments.local.name)
+		g_PlayerAssignments.local.name = singleplayerName();
+
 	if (initData)
 	{
-		g_IsNetworked = initData.isNetworked;
-		g_IsController = initData.isController;
-		g_PlayerAssignments = initData.playerAssignments;
 		g_ReplaySelectionData = initData.replaySelectionData;
 		g_HasRejoined = initData.isRejoining;
 
 		if (initData.savedGUIData)
 			restoreSavedGameData(initData.savedGUIData);
-
-		Engine.GetGUIObjectByName("gameSpeedButton").hidden = g_IsNetworked;
-	}
-	else // Needed for autostart loading option
-	{
-		if (g_IsReplay)
-			g_PlayerAssignments.local.player = -1;
 	}
 
-	g_Players = getPlayerData();
-
-	g_CivData = loadCivData();
-	g_CivData.gaia = { "Code": "gaia", "Name": translate("Gaia") };
-
+	LoadModificationTemplates();
+	updatePlayerData();
 	initializeMusic(); // before changing the perspective
-
-	let gameSpeed = Engine.GetGUIObjectByName("gameSpeed");
-	gameSpeed.list = g_GameSpeeds.Title;
-	gameSpeed.list_data = g_GameSpeeds.Speed;
-	let gameSpeedIdx = g_GameSpeeds.Speed.indexOf(Engine.GetSimRate());
-	gameSpeed.selected = gameSpeedIdx != -1 ? gameSpeedIdx : g_GameSpeeds.Default;
-	gameSpeed.onSelectionChange = function() { changeGameSpeed(+this.list_data[this.selected]); };
-	initMenuPosition();
-
-	for (let slot in Engine.GetGUIObjectByName("unitHeroPanel").children)
-		initGUIHeroes(slot);
-
-	// Populate player selection dropdown
-	let playerNames = [translate("Observer")];
-	let playerIDs = [-1];
-	for (let player in g_Players)
-	{
-		playerIDs.push(player);
-		playerNames.push(colorizePlayernameHelper("■", player) + " " + g_Players[player].name);
-	}
-
-	// Select "observer" item when rejoining as a defeated player
-	let viewedPlayer = g_Players[Engine.GetPlayerID()];
-	let viewPlayerDropdown = Engine.GetGUIObjectByName("viewPlayer");
-	viewPlayerDropdown.list = playerNames;
-	viewPlayerDropdown.list_data = playerIDs;
-	viewPlayerDropdown.selected = viewedPlayer && viewedPlayer.state == "defeated" ? 0 : Engine.GetPlayerID() + 1;
-
-	// If in Atlas editor, disable the exit button
-	if (Engine.IsAtlasRunning())
-		Engine.GetGUIObjectByName("menuExitButton").enabled = false;
-
-	initHotkeyTooltips();
+	initGUIObjects();
 
 	if (hotloadData)
 		g_Selection.selected = hotloadData.selection;
@@ -309,52 +295,239 @@ function init(initData, hotloadData)
 	//
 	// DISABLED: this information isn't currently useful for anything much,
 	// and it generates a massive amount of data to transmit and store
-	//setTimeout(function() { reportPerformance(5); }, 5000);
-	//setTimeout(function() { reportPerformance(60); }, 60000);
+	// setTimeout(function() { reportPerformance(5); }, 5000);
+	// setTimeout(function() { reportPerformance(60); }, 60000);
 }
 
-function initHotkeyTooltips()
+function initGUIObjects()
 {
+	initMenu();
+	updateGameSpeedControl();
+	resizeDiplomacyDialog();
+	resizeTradeDialog();
+	initBarterButtons();
+	initPanelEntities();
+	initViewedPlayerDropdown();
+	initChatWindow();
+	Engine.SetBoundingBoxDebugOverlay(false);
+	updateEnabledRangeOverlayTypes();
+}
+
+function updatePlayerData()
+{
+	let simState = GetSimState();
+	if (!simState)
+		return;
+
+	let playerData = [];
+
+	for (let i = 0; i < simState.players.length; ++i)
+	{
+		let playerState = simState.players[i];
+
+		playerData.push({
+			"name": playerState.name,
+			"civ": playerState.civ,
+			"color": {
+				"r": playerState.color.r * 255,
+				"g": playerState.color.g * 255,
+				"b": playerState.color.b * 255,
+				"a": playerState.color.a * 255
+			},
+			"team": playerState.team,
+			"teamsLocked": playerState.teamsLocked,
+			"cheatsEnabled": playerState.cheatsEnabled,
+			"state": playerState.state,
+			"isAlly": playerState.isAlly,
+			"isMutualAlly": playerState.isMutualAlly,
+			"isNeutral": playerState.isNeutral,
+			"isEnemy": playerState.isEnemy,
+			"guid": undefined, // network guid for players controlled by hosts
+			"offline": g_Players[i] && !!g_Players[i].offline
+		});
+	}
+
+	for (let guid in g_PlayerAssignments)
+	{
+		let playerID = g_PlayerAssignments[guid].player;
+
+		if (!playerData[playerID])
+			continue;
+
+		playerData[playerID].guid = guid;
+		playerData[playerID].name = g_PlayerAssignments[guid].name;
+	}
+
+	g_Players = playerData;
+}
+
+function updateDiplomacyColorsButton()
+{
+	g_DiplomacyColorsToggle = !g_DiplomacyColorsToggle;
+
+	let diplomacyColorsButton = Engine.GetGUIObjectByName("diplomacyColorsButton");
+
+	diplomacyColorsButton.sprite = g_DiplomacyColorsToggle ?
+		"stretched:session/minimap-diplomacy-on.png" :
+		"stretched:session/minimap-diplomacy-off.png";
+
+	diplomacyColorsButton.sprite_over = g_DiplomacyColorsToggle ?
+		"stretched:session/minimap-diplomacy-on-highlight.png" :
+		"stretched:session/minimap-diplomacy-off-highlight.png";
+
+	Engine.GetGUIObjectByName("diplomacyColorsWindowButtonIcon").sprite = g_DiplomacyColorsToggle ?
+		"stretched:session/icons/diplomacy-on.png" :
+		"stretched:session/icons/diplomacy.png";
+
+	updateDisplayedPlayerColors();
+}
+
+/**
+ * Updates the displayed colors of players in the simulation and GUI.
+ */
+function updateDisplayedPlayerColors()
+{
+	if (g_DiplomacyColorsToggle)
+	{
+		let getDiplomacyColor = stance =>
+			guiToRgbColor(Engine.ConfigDB_GetValue("user", "gui.session.diplomacycolors." + stance)) ||
+			guiToRgbColor(Engine.ConfigDB_GetValue("default", "gui.session.diplomacycolors." + stance));
+
+		let teamRepresentatives = {};
+		for (let i = 1; i < g_Players.length; ++i)
+			if (g_ViewedPlayer <= 0)
+			{
+				// Observers and gaia see team colors
+				let team = g_Players[i].team;
+				g_DisplayedPlayerColors[i] = g_Players[teamRepresentatives[team] || i].color;
+				if (team != -1 && !teamRepresentatives[team])
+					teamRepresentatives[team] = i;
+			}
+			else
+				// Players see colors depending on diplomacy
+				g_DisplayedPlayerColors[i] =
+					g_ViewedPlayer == i ? getDiplomacyColor("self") :
+					g_Players[g_ViewedPlayer].isAlly[i] ? getDiplomacyColor("ally") :
+					g_Players[g_ViewedPlayer].isNeutral[i] ? getDiplomacyColor("neutral") :
+					getDiplomacyColor("enemy");
+
+		g_DisplayedPlayerColors[0] = g_Players[0].color;
+	}
+	else
+		g_DisplayedPlayerColors = g_Players.map(player => player.color);
+
+	Engine.GuiInterfaceCall("UpdateDisplayedPlayerColors", {
+		"displayedPlayerColors": g_DisplayedPlayerColors,
+		"displayDiplomacyColors": g_DiplomacyColorsToggle,
+		"showAllStatusBars": g_ShowAllStatusBars,
+		"selected": g_Selection.toList()
+	});
+
+	updateGUIObjects();
+}
+
+/**
+ * Depends on the current player (g_IsObserver).
+ */
+function updateHotkeyTooltips()
+{
+	Engine.GetGUIObjectByName("chatInput").tooltip =
+		translateWithContext("chat input", "Type the message to send.") + "\n" +
+		colorizeAutocompleteHotkey() +
+		colorizeHotkey("\n" + translate("Press %(hotkey)s to open the public chat."), "chat") +
+		colorizeHotkey(
+			"\n" + (g_IsObserver ?
+				translate("Press %(hotkey)s to open the observer chat.") :
+				translate("Press %(hotkey)s to open the ally chat.")),
+			"teamchat") +
+		colorizeHotkey("\n" + translate("Press %(hotkey)s to open the previously selected private chat."), "privatechat");
+
 	Engine.GetGUIObjectByName("idleWorkerButton").tooltip =
 		colorizeHotkey("%(hotkey)s" + " ", "selection.idleworker") +
 		translate("Find idle worker");
 
-	Engine.GetGUIObjectByName("tradeHelp").tooltip =
-		translate("Select one goods as origin of the changes, then use the arrows of the target goods to make the changes.") +
-		colorizeHotkey(
-			"\n" + translate("Using %(hotkey)s will put the selected resource to 100%%."),
-			"session.fulltradeswap");
+	Engine.GetGUIObjectByName("diplomacyColorsButton").tooltip =
+		colorizeHotkey("%(hotkey)s" + " ", "session.diplomacycolors") +
+		translate("Toggle Diplomacy Colors");
+
+	Engine.GetGUIObjectByName("diplomacyColorsWindowButton").tooltip =
+		colorizeHotkey("%(hotkey)s" + " ", "session.diplomacycolors") +
+		translate("Toggle Diplomacy Colors");
+
+	Engine.GetGUIObjectByName("tradeHelp").tooltip = colorizeHotkey(
+		translate("Select one type of goods you want to modify by clicking on it, and then use the arrows of the other types to modify their shares. You can also press %(hotkey)s while selecting one type of goods to bring its share to 100%%."),
+		"session.fulltradeswap");
+
+	Engine.GetGUIObjectByName("barterHelp").tooltip = sprintf(
+		translate("Start by selecting the resource you wish to sell from the upper row. For each time the lower buttons are pressed, %(quantity)s of the upper resource will be sold for the displayed quantity of the lower. Press and hold %(hotkey)s to temporarily multiply the traded amount by %(multiplier)s."), {
+			"quantity": g_BarterResourceSellQuantity,
+			"hotkey": colorizeHotkey("%(hotkey)s", "session.massbarter"),
+			"multiplier": g_BarterMultiplier
+		});
 }
 
-function initGUIHeroes(slot)
+function initPanelEntities()
 {
-	let button = Engine.GetGUIObjectByName("unitHeroButton[" + slot + "]");
+	Engine.GetGUIObjectByName("panelEntityPanel").children.forEach((button, slot) => {
 
-	button.onPress = function() {
-		let hero = g_Heroes.find(hero => hero.slot !== undefined && hero.slot == slot);
-		if (!hero)
-			return;
+		button.onPress = function() {
+			let panelEnt = g_PanelEntities.find(ent => ent.slot !== undefined && ent.slot == slot);
+			if (!panelEnt)
+				return;
 
-		if (!Engine.HotkeyIsPressed("selection.add"))
-			g_Selection.reset();
+			if (!Engine.HotkeyIsPressed("selection.add"))
+				g_Selection.reset();
 
-		g_Selection.addList([hero.ent]);
-	};
+			g_Selection.addList([panelEnt.ent]);
+		};
 
-	button.onDoublePress = function() {
-		let hero = g_Heroes.find(hero => hero.slot !== undefined && hero.slot == slot);
-		if (hero)
-			selectAndMoveTo(getEntityOrHolder(hero.ent));
-	};
+		button.onDoublePress = function() {
+			let panelEnt = g_PanelEntities.find(ent => ent.slot !== undefined && ent.slot == slot);
+			if (panelEnt)
+				selectAndMoveTo(getEntityOrHolder(panelEnt.ent));
+		};
+	});
+}
+
+/**
+ * Returns the entity itself except when garrisoned where it returns its garrisonHolder
+ */
+function getEntityOrHolder(ent)
+{
+	let entState = GetEntityState(ent);
+	if (entState && !entState.position && entState.unitAI && entState.unitAI.orders.length &&
+			entState.unitAI.orders[0].type == "Garrison")
+		return getEntityOrHolder(entState.unitAI.orders[0].data.target);
+
+	return ent;
 }
 
 function initializeMusic()
 {
 	initMusic();
-	if (g_ViewedPlayer != -1)
+	if (g_ViewedPlayer != -1 && g_CivData[g_Players[g_ViewedPlayer].civ].Music)
 		global.music.storeTracks(g_CivData[g_Players[g_ViewedPlayer].civ].Music);
 	global.music.setState(global.music.states.PEACE);
 	playAmbient();
+}
+
+function initViewedPlayerDropdown()
+{
+	g_DisplayedPlayerColors = g_Players.map(player => player.color);
+	updateViewedPlayerDropdown();
+
+	// Select "observer" in the view player dropdown when rejoining as a defeated player
+	let player = g_Players[Engine.GetPlayerID()];
+	Engine.GetGUIObjectByName("viewPlayer").selected = player && player.state == "defeated" ? 0 : Engine.GetPlayerID() + 1;
+}
+
+function updateViewedPlayerDropdown()
+{
+	let viewPlayer = Engine.GetGUIObjectByName("viewPlayer");
+	viewPlayer.list_data = [-1].concat(g_Players.map((player, i) => i));
+	viewPlayer.list = [translate("Observer")].concat(g_Players.map(
+		(player, i) => colorizePlayernameHelper("■", i) + " " + player.name
+	));
 }
 
 function toggleChangePerspective(enabled)
@@ -378,7 +551,11 @@ function selectViewPlayer(playerID)
 	g_IsObserver = isPlayerObserver(Engine.GetPlayerID());
 
 	if (g_IsObserver || g_DevSettings.changePerspective)
+	{
+		if (g_ViewedPlayer != playerID)
+			clearSelection();
 		g_ViewedPlayer = playerID;
+	}
 
 	if (g_DevSettings.changePerspective)
 	{
@@ -387,12 +564,14 @@ function selectViewPlayer(playerID)
 	}
 
 	Engine.SetViewedPlayer(g_ViewedPlayer);
-
+	updateDisplayedPlayerColors();
 	updateTopPanel();
-
 	updateChatAddressees();
+	updateHotkeyTooltips();
 
 	// Update GUI and clear player-dependent cache
+	g_TemplateData = {};
+	Engine.GuiInterfaceCall("ResetTemplateModified");
 	onSimulationUpdate();
 
 	if (g_IsDiplomacyOpen)
@@ -426,17 +605,36 @@ function controlsPlayer(playerID)
 }
 
 /**
- * Called when a player has won or was defeated.
+ * Called when one or more players have won or were defeated.
+ *
+ * @param {array} - IDs of the players who have won or were defeated.
+ * @param {object} - a plural string stating the victory reason.
+ * @param {boolean} - whether these players have won or lost.
  */
-function playerFinished(player, won)
+function playersFinished(players, victoryString, won)
 {
-	if (player == Engine.GetPlayerID())
+	addChatMessage({
+		"type": "defeat-victory",
+		"message": victoryString,
+		"players": players
+	});
+
+	if (players.indexOf(Engine.GetPlayerID()) != -1)
 		reportGame();
 
-	updateDiplomacy();
-	updateChatAddressees();
+	sendLobbyPlayerlistUpdate();
 
-	if (player != Engine.GetPlayerID() || Engine.IsAtlasRunning())
+	updatePlayerData();
+	updateChatAddressees();
+	updateGameSpeedControl();
+
+	if (players.indexOf(g_ViewedPlayer) == -1)
+		return;
+
+	// Select "observer" item on loss. On win enable observermode without changing perspective
+	Engine.GetGUIObjectByName("viewPlayer").selected = won ? g_ViewedPlayer + 1 : 0;
+
+	if (players.indexOf(Engine.GetPlayerID()) == -1 || Engine.IsAtlasRunning())
 		return;
 
 	global.music.setState(
@@ -444,9 +642,6 @@ function playerFinished(player, won)
 			global.music.states.VICTORY :
 			global.music.states.DEFEAT
 	);
-
-	// Select "observer" item on loss. On win enable observermode without changing perspective
-	Engine.GetGUIObjectByName("viewPlayer").selected = won ? g_ViewedPlayer + 1 : 0;
 
 	g_ConfirmExit = won ? "won" : "defeated";
 }
@@ -464,31 +659,58 @@ function updateTopPanel()
 	if (isPlayer)
 	{
 		civIcon.sprite = "stretched:" + g_CivData[g_Players[g_ViewedPlayer].civ].Emblem;
-		Engine.GetGUIObjectByName("civIconOverlay").tooltip = sprintf(translate("%(civ)s - Structure Tree"), {
-			"civ": g_CivData[g_Players[g_ViewedPlayer].civ].Name
-		});
+		Engine.GetGUIObjectByName("civIconOverlay").tooltip =
+			sprintf(
+				translate("%(civ)s\n%(hotkey_civinfo)s / %(hotkey_structree)s: View History / Structure Tree\nLast opened will be reopened on click."), {
+					"civ": setStringTags(g_CivData[g_Players[g_ViewedPlayer].civ].Name, { "font": "sans-bold-stroke-14" }),
+					"hotkey_civinfo": colorizeHotkey("%(hotkey)s", "civinfo"),
+					"hotkey_structree": colorizeHotkey("%(hotkey)s", "structree")
+			});
 	}
 
-	Engine.GetGUIObjectByName("optionFollowPlayer").hidden = !g_IsObserver || !isPlayer;
+	// Following gaia can be interesting on scripted maps
+	Engine.GetGUIObjectByName("optionFollowPlayer").hidden = !g_IsObserver || g_ViewedPlayer == -1;
 
 	let viewPlayer = Engine.GetGUIObjectByName("viewPlayer");
 	viewPlayer.hidden = !g_IsObserver && !g_DevSettings.changePerspective;
 
-	Engine.GetGUIObjectByName("food").hidden = !isPlayer;
-	Engine.GetGUIObjectByName("wood").hidden = !isPlayer;
-	Engine.GetGUIObjectByName("stone").hidden = !isPlayer;
-	Engine.GetGUIObjectByName("metal").hidden = !isPlayer;
+	let followPlayerLabel = Engine.GetGUIObjectByName("followPlayerLabel");
+	followPlayerLabel.hidden = Engine.GetTextWidth(followPlayerLabel.font, followPlayerLabel.caption + "  ") +
+		followPlayerLabel.getComputedSize().left > viewPlayer.getComputedSize().left;
+
+	let resCodes = g_ResourceData.GetCodes();
+	let r = 0;
+	for (let res of resCodes)
+	{
+		if (!Engine.GetGUIObjectByName("resource[" + r + "]"))
+		{
+			warn("Current GUI limits prevent displaying more than " + r + " resources in the top panel!");
+			break;
+		}
+		Engine.GetGUIObjectByName("resource[" + r + "]_icon").sprite = "stretched:session/icons/resources/" + res + ".png";
+		Engine.GetGUIObjectByName("resource[" + r + "]").hidden = !isPlayer;
+		++r;
+	}
+	horizontallySpaceObjects("resourceCounts", 5);
+	hideRemaining("resourceCounts", r);
+
+	let resPop = Engine.GetGUIObjectByName("population");
+	let resPopSize = resPop.size;
+	resPopSize.left = Engine.GetGUIObjectByName("resource[" + (r - 1) + "]").size.right;
+	resPop.size = resPopSize;
+
 	Engine.GetGUIObjectByName("population").hidden = !isPlayer;
-	Engine.GetGUIObjectByName("diplomacyButton1").hidden = !isPlayer;
-	Engine.GetGUIObjectByName("tradeButton1").hidden = !isPlayer;
+	Engine.GetGUIObjectByName("diplomacyButton").hidden = !isPlayer;
+	Engine.GetGUIObjectByName("tradeButton").hidden = !isPlayer;
 	Engine.GetGUIObjectByName("observerText").hidden = isPlayer;
 
 	let alphaLabel = Engine.GetGUIObjectByName("alphaLabel");
 	alphaLabel.hidden = isPlayer && !viewPlayer.hidden;
-	alphaLabel.size = isPlayer ? "50%+20 0 100%-226 100%" : "200 0 100%-475 100%";
+	alphaLabel.size = isPlayer ? "50%+44 0 100%-283 100%" : "155 0 85%-279 100%";
 
-	Engine.GetGUIObjectByName("pauseButton").enabled = !g_IsObserver || !g_IsNetworked;
+	Engine.GetGUIObjectByName("pauseButton").enabled = !g_IsObserver || !g_IsNetworked || g_IsController;
 	Engine.GetGUIObjectByName("menuResignButton").enabled = !g_IsObserver;
+	Engine.GetGUIObjectByName("lobbyButton").enabled = Engine.HasXmppClient();
 }
 
 function reportPerformance(time)
@@ -513,9 +735,7 @@ function resignGame(leaveGameAfterResign)
 		return;
 
 	Engine.PostNetworkCommand({
-		"type": "defeat-player",
-		"playerId": Engine.GetPlayerID(),
-		"resign": true
+		"type": "resign"
 	});
 
 	if (!leaveGameAfterResign)
@@ -534,8 +754,14 @@ function leaveGame(willRejoin)
 	// Before ending the game
 	let replayDirectory = Engine.GetCurrentReplayDirectory();
 	let simData = getReplayMetadata();
+	let playerID = Engine.GetPlayerID();
 
 	Engine.EndGame();
+
+	// After the replay file was closed in EndGame
+	// Done here to keep EndGame small
+	if (!g_IsReplay)
+		Engine.AddReplayToCache(replayDirectory);
 
 	if (g_IsController && Engine.HasXmppClient())
 		Engine.SendUnregisterGame();
@@ -543,7 +769,8 @@ function leaveGame(willRejoin)
 	Engine.SwitchGuiPage("page_summary.xml", {
 		"sim": simData,
 		"gui": {
-			"assignedPlayer": Engine.GetPlayerID(),
+			"dialog": false,
+			"assignedPlayer": playerID,
 			"disconnected": g_Disconnected,
 			"isReplay": g_IsReplay,
 			"replayDirectory": !g_HasRejoined && replayDirectory,
@@ -592,9 +819,9 @@ function onTick()
 	if (!g_Settings)
 		return;
 
-	let now = new Date();
-	let tickLength = new Date() - lastTickTime;
-	lastTickTime = now;
+	let now = Date.now();
+	let tickLength = now - g_LastTickTime;
+	g_LastTickTime = now;
 
 	handleNetMessages();
 
@@ -603,6 +830,8 @@ function onTick()
 	if (g_Selection.dirty)
 	{
 		g_Selection.dirty = false;
+		// When selection changed, get the entityStates of new entities
+		GetMultipleEntityStates(g_Selection.toList().filter(entId => !g_EntityStates[entId]));
 
 		updateGUIObjects();
 
@@ -610,15 +839,25 @@ function onTick()
 		if (Engine.GetPlayerID() != -1)
 			Engine.GuiInterfaceCall("DisplayRallyPoint", { "entities": g_Selection.toList() });
 	}
+	else if (g_ShowAllStatusBars && now % g_StatusBarUpdate <= tickLength)
+		recalculateStatusBarDisplay();
 
 	updateTimers();
 
 	updateMenuPosition(tickLength);
 
 	// When training is blocked, flash population (alternates color every 500msec)
-	Engine.GetGUIObjectByName("resourcePop").textcolor = g_IsTrainingBlocked && Date.now() % 1000 < 500 ? g_PopulationAlertColor : g_DefaultPopulationColor;
+	Engine.GetGUIObjectByName("resourcePop").textcolor = g_IsTrainingBlocked && now % 1000 < 500 ? g_PopulationAlertColor : g_DefaultPopulationColor;
 
 	Engine.GuiInterfaceCall("ClearRenamedEntities");
+}
+
+function onWindowResized()
+{
+	// Update followPlayerLabel
+	updateTopPanel();
+
+	resizeChatWindow();
 }
 
 function changeGameSpeed(speed)
@@ -627,39 +866,33 @@ function changeGameSpeed(speed)
 		Engine.SetSimRate(speed);
 }
 
-function hasIdleWorker()
-{
-	return Engine.GuiInterfaceCall("HasIdleUnits", {
-			"viewedPlayer": g_ViewedPlayer,
-			"idleClasses": g_WorkerTypes,
-			"excludeUnits": []
-	});
-}
-
 function updateIdleWorkerButton()
 {
-	g_HasIdleWorker = hasIdleWorker();
-
-	let idleWorkerButton = Engine.GetGUIObjectByName("idleOverlay");
-	let prefix = "stretched:session/";
-
-	if (!g_HasIdleWorker)
-		idleWorkerButton.sprite = prefix + "minimap-idle-disabled.png";
-	else if (idleWorkerButton.sprite != prefix + "minimap-idle-highlight.png")
-		idleWorkerButton.sprite = prefix + "minimap-idle.png";
+	Engine.GetGUIObjectByName("idleWorkerButton").enabled = Engine.GuiInterfaceCall("HasIdleUnits", {
+		"viewedPlayer": g_ViewedPlayer,
+		"idleClasses": g_WorkerTypes,
+		"excludeUnits": []
+	});
 }
 
 function onSimulationUpdate()
 {
+	// Templates change depending on technologies and auras, so they have to be reloaded after such a change.
+	// g_TechnologyData data never changes, so it shouldn't be deleted.
 	g_EntityStates = {};
-	g_TemplateData = {};
-	g_TechnologyData = {};
+	if (Engine.GuiInterfaceCall("IsTemplateModified"))
+	{
+		g_TemplateData = {};
+		Engine.GuiInterfaceCall("ResetTemplateModified");
+	}
+	g_SimState = undefined;
 
-	g_SimState = Engine.GuiInterfaceCall("GetSimulationState");
-
-	if (!g_SimState)
+	if (!GetSimState())
 		return;
 
+	GetMultipleEntityStates(g_Selection.toList());
+
+	updateCinemaPath();
 	handleNotifications();
 	updateGUIObjects();
 
@@ -672,13 +905,20 @@ function onSimulationUpdate()
  */
 function confirmExit()
 {
+	if (g_IsNetworked && !g_IsNetworkedActive)
+		return;
+
 	closeOpenDialogs();
 
-	let subject = g_PlayerStateMessages[g_ConfirmExit] + "\n" +
-		translate("Do you want to quit?");
+	// Don't ask for exit if other humans are still playing
+	let askExit = !Engine.HasNetServer() || g_Players.every((player, i) =>
+		i == 0 ||
+		player.state != "active" ||
+		g_GameAttributes.settings.PlayerData[i].AI != "");
 
-	if (g_IsNetworked && g_IsController)
-		subject += "\n" + translate("Leaving will disconnect all other players.");
+	let subject = g_PlayerStateMessages[g_ConfirmExit];
+	if (askExit)
+		subject += "\n" + translate("Do you want to quit?");
 
 	messageBox(
 		400, 200,
@@ -686,11 +926,25 @@ function confirmExit()
 		g_ConfirmExit == "won" ?
 			translate("VICTORIOUS!") :
 			translate("DEFEATED!"),
-		[translate("No"), translate("Yes")],
-		[resumeGame, leaveGame]
+		askExit ? [translate("No"), translate("Yes")] : [translate("OK")],
+		askExit ? [resumeGame, leaveGame] : [resumeGame]
 	);
 
 	g_ConfirmExit = false;
+}
+
+function toggleGUI()
+{
+	g_ShowGUI = !g_ShowGUI;
+	updateCinemaPath();
+}
+
+function updateCinemaPath()
+{
+	let isPlayingCinemaPath = GetSimState().cinemaPlaying && !g_Disconnected;
+
+	Engine.GetGUIObjectByName("session").hidden = !g_ShowGUI || isPlayingCinemaPath;
+	Engine.Renderer_SetSilhouettesEnabled(!isPlayingCinemaPath && Engine.ConfigDB_GetValue("user", "silhouettes") == "true");
 }
 
 function updateGUIObjects()
@@ -703,8 +957,8 @@ function updateGUIObjects()
 	if (g_ShowGuarding || g_ShowGuarded)
 		updateAdditionalHighlight();
 
-	updateHeroes();
-	displayHeroes();
+	updatePanelEntities();
+	displayPanelEntities();
 
 	updateGroups();
 	updateDebug();
@@ -714,6 +968,12 @@ function updateGUIObjects()
 	updateBuildingPlacementPreview();
 	updateTimeNotifications();
 	updateIdleWorkerButton();
+
+	if (g_IsTradeOpen)
+	{
+		updateTraderTexts();
+		updateBarterButtons();
+	}
 
 	if (g_ViewedPlayer > 0)
 	{
@@ -729,6 +989,9 @@ function updateGUIObjects()
 		if (battleState)
 			global.music.setState(global.music.states[battleState]);
 	}
+
+	updateViewedPlayerDropdown();
+	updateDiplomacy();
 }
 
 function onReplayFinished()
@@ -762,7 +1025,7 @@ function updateGUIStatusBar(nameOfBar, points, maxPoints, direction)
 		return;
 
 	let healthSize = statusBar.size;
-	let value = 100*Math.max(0, Math.min(1, points / maxPoints));
+	let value = 100 * Math.max(0, Math.min(1, points / maxPoints));
 
 	// inverse bar
 	if (direction == 2 || direction == 3)
@@ -780,99 +1043,105 @@ function updateGUIStatusBar(nameOfBar, points, maxPoints, direction)
 	statusBar.size = healthSize;
 }
 
-function updateHeroes()
+function updatePanelEntities()
 {
-	let playerState = GetSimState().players[g_ViewedPlayer];
-	let heroes = playerState ? playerState.heroes : [];
+	let panelEnts =
+		g_ViewedPlayer == -1 ?
+			GetSimState().players.reduce((ents, pState) => ents.concat(pState.panelEntities), []) :
+			GetSimState().players[g_ViewedPlayer].panelEntities;
 
-	g_Heroes = g_Heroes.filter(hero => heroes.find(ent => ent == hero.ent));
+	g_PanelEntities = g_PanelEntities.filter(panelEnt => panelEnts.find(ent => ent == panelEnt.ent));
 
-	for (let ent of heroes)
+	for (let ent of panelEnts)
 	{
-		let heroState = GetExtendedEntityState(ent);
-		let template = GetTemplateData(heroState.template);
+		let panelEntState = GetEntityState(ent);
+		let template = GetTemplateData(panelEntState.template);
 
-		let hero = g_Heroes.find(hero => ent == hero.ent);
-		if (!hero)
+		let panelEnt = g_PanelEntities.find(pEnt => ent == pEnt.ent);
+
+		if (!panelEnt)
 		{
-			hero = {
+			panelEnt = {
 				"ent": ent,
 				"tooltip": undefined,
 				"sprite": "stretched:session/portraits/" + template.icon,
 				"maxHitpoints": undefined,
-				"currentHitpoints": heroState.hitpoints,
+				"currentHitpoints": panelEntState.hitpoints,
 				"previousHitpoints": undefined
 			};
-			g_Heroes.push(hero);
+			g_PanelEntities.push(panelEnt);
 		}
 
-		hero.tooltip = createHeroTooltip(heroState, template);
-
-		hero.previousHitpoints = hero.currentHitpoints;
-		hero.currentHitpoints = heroState.hitpoints;
-		hero.maxHitpoints = heroState.maxHitpoints;
+		panelEnt.tooltip = createPanelEntityTooltip(panelEntState, template);
+		panelEnt.previousHitpoints = panelEnt.currentHitpoints;
+		panelEnt.currentHitpoints = panelEntState.hitpoints;
+		panelEnt.maxHitpoints = panelEntState.maxHitpoints;
 	}
+
+	let panelEntIndex = ent => g_PanelEntityOrder.findIndex(entClass =>
+		GetEntityState(ent).identity.classes.indexOf(entClass) != -1);
+
+	g_PanelEntities = g_PanelEntities.sort((panelEntA, panelEntB) => panelEntIndex(panelEntA.ent) - panelEntIndex(panelEntB.ent));
 }
 
-function createHeroTooltip(heroState, template)
+function createPanelEntityTooltip(panelEntState, template)
 {
+	let getPanelEntNameTooltip = panelEntState => "[font=\"sans-bold-16\"]" + template.name.specific + "[/font]";
+
 	return [
-		"[font=\"sans-bold-16\"]" + template.name.specific + "[/font]" + "\n" +
-			sprintf(translate("%(label)s %(current)s / %(max)s"), {
-				"label": "[font=\"sans-bold-13\"]" + translate("Health:") + "[/font]",
-				"current": Math.ceil(heroState.hitpoints),
-				"max": Math.ceil(heroState.maxHitpoints)
-			}),
-		getAttackTooltip(heroState),
-		getArmorTooltip(heroState),
-		getEntityTooltip(heroState)
-	].filter(tip => tip).join("\n");
+		getPanelEntNameTooltip,
+		getCurrentHealthTooltip,
+		getAttackTooltip,
+		getArmorTooltip,
+		getEntityTooltip,
+		getAurasTooltip
+	].map(tooltip => tooltip(panelEntState)).filter(tip => tip).join("\n");
 }
 
-function displayHeroes()
+function displayPanelEntities()
 {
-	let buttons = Engine.GetGUIObjectByName("unitHeroPanel").children;
+	let buttons = Engine.GetGUIObjectByName("panelEntityPanel").children;
 
 	buttons.forEach((button, slot) => {
 
-		if (button.hidden || g_Heroes.some(hero => hero.slot !== undefined && hero.slot == slot))
+		if (button.hidden || g_PanelEntities.some(ent => ent.slot !== undefined && ent.slot == slot))
 			return;
 
 		button.hidden = true;
-		stopColorFade("heroHitOverlay[" + slot + "]");
+		stopColorFade("panelEntityHitOverlay[" + slot + "]");
 	});
 
 	// The slot identifies the button, displayIndex determines its position.
-	for (let displayIndex = 0; displayIndex < Math.min(g_Heroes.length, buttons.length); ++displayIndex)
+	for (let displayIndex = 0; displayIndex < Math.min(g_PanelEntities.length, buttons.length); ++displayIndex)
 	{
-		let hero = g_Heroes[displayIndex];
+		let panelEnt = g_PanelEntities[displayIndex];
 
 		// Find the first unused slot if new, otherwise reuse previous.
-		let slot = hero.slot === undefined ?
+		let slot = panelEnt.slot === undefined ?
 			buttons.findIndex(button => button.hidden) :
-			hero.slot;
+			panelEnt.slot;
 
-		let heroButton = Engine.GetGUIObjectByName("unitHeroButton[" + slot + "]");
-		heroButton.tooltip = hero.tooltip;
+		let panelEntButton = Engine.GetGUIObjectByName("panelEntityButton[" + slot + "]");
+		panelEntButton.tooltip = panelEnt.tooltip;
 
-		updateGUIStatusBar("heroHealthBar[" + slot + "]", hero.currentHitpoints, hero.maxHitpoints);
+		updateGUIStatusBar("panelEntityHealthBar[" + slot + "]", panelEnt.currentHitpoints, panelEnt.maxHitpoints);
 
-		if (hero.slot === undefined)
+		if (panelEnt.slot === undefined)
 		{
-			let heroImage = Engine.GetGUIObjectByName("unitHeroImage[" + slot + "]");
-			heroImage.sprite = hero.sprite;
+			let panelEntImage = Engine.GetGUIObjectByName("panelEntityImage[" + slot + "]");
+			panelEntImage.sprite = panelEnt.sprite;
 
-			heroButton.hidden = false;
-			hero.slot = slot;
+			panelEntButton.hidden = false;
+			panelEnt.slot = slot;
 		}
 
-		// If the health of the hero changed since the last update, trigger the animation.
-		if (hero.previousHitpoints > hero.currentHitpoints)
-			startColorFade("heroHitOverlay[" + slot + "]", 100, 0,
+		// If the health of the panelEnt changed since the last update, trigger the animation.
+		if (panelEnt.previousHitpoints > panelEnt.currentHitpoints)
+			startColorFade("panelEntityHitOverlay[" + slot + "]", 100, 0,
 				colorFade_attackUnit, true, smoothColorFadeRestart_attackUnit);
 
 		// TODO: Instead of instant position changes, animate button movement.
-		setPanelObjectPosition(heroButton, displayIndex, buttons.length);
+		setPanelObjectPosition(panelEntButton, displayIndex, buttons.length);
 	}
 }
 
@@ -880,15 +1149,35 @@ function updateGroups()
 {
 	g_Groups.update();
 
+	// Determine the sum of the costs of a given template
+	let getCostSum = (ent) => {
+		let cost = GetTemplateData(GetEntityState(ent).template).cost;
+		return cost ? Object.keys(cost).map(key => cost[key]).reduce((sum, cur) => sum + cur) : 0;
+	};
+
 	for (let i in Engine.GetGUIObjectByName("unitGroupPanel").children)
 	{
 		Engine.GetGUIObjectByName("unitGroupLabel[" + i + "]").caption = i;
 
-		let button = Engine.GetGUIObjectByName("unitGroupButton["+i+"]");
+		let button = Engine.GetGUIObjectByName("unitGroupButton[" + i + "]");
 		button.hidden = g_Groups.groups[i].getTotalCount() == 0;
 		button.onpress = (function(i) { return function() { performGroup((Engine.HotkeyIsPressed("selection.add") ? "add" : "select"), i); }; })(i);
 		button.ondoublepress = (function(i) { return function() { performGroup("snap", i); }; })(i);
 		button.onpressright = (function(i) { return function() { performGroup("breakUp", i); }; })(i);
+
+		// Chose icon of the most common template (or the most costly if it's not unique)
+		if (g_Groups.groups[i].getTotalCount() > 0)
+		{
+			let icon = GetTemplateData(GetEntityState(g_Groups.groups[i].getEntsGrouped().reduce((pre, cur) => {
+				if (pre.ents.length == cur.ents.length)
+					return getCostSum(pre.ents[0]) > getCostSum(cur.ents[0]) ? pre : cur;
+				return pre.ents.length > cur.ents.length ? pre : cur;
+			}).ents[0]).template).icon;
+
+			Engine.GetGUIObjectByName("unitGroupIcon[" + i + "]").sprite =
+				icon ? ("stretched:session/portraits/" + icon) : "groupsIcon";
+		}
+
 		setPanelObjectPosition(button, i, 1);
 	}
 }
@@ -905,20 +1194,20 @@ function updateDebug()
 
 	debug.hidden = false;
 
-	let conciseSimState = deepcopy(GetSimState());
+	let conciseSimState = clone(GetSimState());
 	conciseSimState.players = "<<<omitted>>>";
 	let text = "simulation: " + uneval(conciseSimState);
 
 	let selection = g_Selection.toList();
 	if (selection.length)
 	{
-		let entState = GetExtendedEntityState(selection[0]);
+		let entState = GetEntityState(selection[0]);
 		if (entState)
 		{
 			let template = GetTemplateData(entState.template);
 			text += "\n\nentity: {\n";
 			for (let k in entState)
-				text += "  "+k+":"+uneval(entState[k])+"\n";
+				text += "  " + k + ":" + uneval(entState[k]) + "\n";
 			text += "}\n\ntemplate: " + uneval(template);
 		}
 	}
@@ -926,40 +1215,86 @@ function updateDebug()
 	debug.caption = text.replace(/\[/g, "\\[");
 }
 
-function getAllyStatTooltip(resource)
+/**
+ * Create ally player stat tooltip.
+ * @param {string} resource - Resource type, on which values will be sorted.
+ * @param {object} playerStates - Playerstates from players whos stats are viewed in the tooltip.
+ * @param {number} sort - 0 no order, -1 descending, 1 ascending order.
+ * @returns {string} Tooltip string.
+ */
+function getAllyStatTooltip(resource, playerStates, sort)
 {
-	let playersState = GetSimState().players;
-	let ret = "";
-	for (let player in playersState)
-		if (player != 0 && player != g_ViewedPlayer &&
-		    (g_IsObserver || playersState[g_ViewedPlayer].hasSharedLos && g_Players[player].isMutualAlly[g_ViewedPlayer]))
-			ret += "\n" + sprintf(translate("%(playername)s: %(statValue)s"),{
-				"playername": colorizePlayernameHelper("■", player) + " " + g_Players[player].name,
-				"statValue": resource == "pop" ?
-					sprintf(translate("%(popCount)s/%(popLimit)s/%(popMax)s"), playersState[player]) :
-					Math.round(playersState[player].resourceCounts[resource])
-			});
-	return ret;
+	let tooltip = [];
+
+	for (let player in playerStates)
+		tooltip.push({
+			"playername": colorizePlayernameHelper("■", player) + " " + g_Players[player].name,
+			"statValue": resource == "pop" ?
+				sprintf(translate("%(popCount)s/%(popLimit)s/%(popMax)s"), playerStates[player]) :
+				Math.round(playerStates[player].resourceCounts[resource]),
+			"orderValue": resource == "pop" ? playerStates[player].popCount :
+				Math.round(playerStates[player].resourceCounts[resource])
+		});
+	if (sort)
+		tooltip.sort((a, b) => sort * (b.orderValue - a.orderValue));
+	return "\n" + tooltip.map(stat => sprintf(translate("%(playername)s: %(statValue)s"), stat)).join("\n");
 }
 
 function updatePlayerDisplay()
 {
-	let playerState = GetSimState().players[g_ViewedPlayer];
-	if (!playerState)
+	let allPlayerStates = GetSimState().players;
+	let viewedPlayerState = allPlayerStates[g_ViewedPlayer];
+	let viewablePlayerStates = {};
+	for (let player in allPlayerStates)
+		if (player != 0 &&
+			player != g_ViewedPlayer &&
+			g_Players[player].state != "defeated" &&
+			(g_IsObserver ||
+				viewedPlayerState.hasSharedLos &&
+				g_Players[player].isMutualAlly[g_ViewedPlayer]))
+			viewablePlayerStates[player] = allPlayerStates[player];
+
+	if (!viewedPlayerState)
 		return;
 
-	for (let res of RESOURCES)
+	let tooltipSort = +Engine.ConfigDB_GetValue("user", "gui.session.respoptooltipsort");
+
+	let orderHotkeyTooltip = Object.keys(viewablePlayerStates).length <= 1 ? "" :
+		"\n" + sprintf(translate("%(order)s: %(hotkey)s to change order."), {
+		"hotkey": setStringTags("\\[Click]", g_HotkeyTags),
+		"order": tooltipSort == 0 ? translate("Unordered") : tooltipSort == 1 ? translate("Descending") : translate("Ascending")
+	});
+
+	let resCodes = g_ResourceData.GetCodes();
+	for (let r = 0; r < resCodes.length; ++r)
 	{
-		Engine.GetGUIObjectByName("resource_" + res).caption = Math.floor(playerState.resourceCounts[res]);
-		Engine.GetGUIObjectByName(res).tooltip = getLocalizedResourceName(res, "firstWord") + getAllyStatTooltip(res);
+		let resourceObj = Engine.GetGUIObjectByName("resource[" + r + "]");
+		if (!resourceObj)
+			break;
+
+		let res = resCodes[r];
+
+		let tooltip = '[font="' + g_ResourceTitleFont + '"]' +
+			resourceNameFirstWord(res) + '[/font]';
+
+		let descr = g_ResourceData.GetResource(res).description;
+		if (descr)
+			tooltip += "\n" + translate(descr);
+
+		tooltip += orderHotkeyTooltip + getAllyStatTooltip(res, viewablePlayerStates, tooltipSort);
+
+		resourceObj.tooltip = tooltip;
+
+		Engine.GetGUIObjectByName("resource[" + r + "]_count").caption = Math.floor(viewedPlayerState.resourceCounts[res]);
 	}
 
-	Engine.GetGUIObjectByName("resourcePop").caption = sprintf(translate("%(popCount)s/%(popLimit)s"), playerState);
+	Engine.GetGUIObjectByName("resourcePop").caption = sprintf(translate("%(popCount)s/%(popLimit)s"), viewedPlayerState);
 	Engine.GetGUIObjectByName("population").tooltip = translate("Population (current / limit)") + "\n" +
-		sprintf(translate("Maximum population: %(popCap)s"), { "popCap": playerState.popMax }) +
-		getAllyStatTooltip("pop");
+		sprintf(translate("Maximum population: %(popCap)s"), { "popCap": viewedPlayerState.popMax }) +
+		orderHotkeyTooltip +
+		getAllyStatTooltip("pop", viewablePlayerStates, tooltipSort);
 
-	g_IsTrainingBlocked = playerState.trainingBlocked;
+	g_IsTrainingBlocked = viewedPlayerState.trainingBlocked;
 }
 
 function selectAndMoveTo(ent)
@@ -997,7 +1332,7 @@ function updateResearchDisplay()
 		if (numButtons >= 10)
 			break;
 
-		let template = GetTechnologyData(tech);
+		let template = GetTechnologyData(tech, g_Players[g_ViewedPlayer].civ);
 		let button = Engine.GetGUIObjectByName("researchStartedButton[" + numButtons + "]");
 		button.hidden = false;
 		button.tooltip = getEntityNames(template);
@@ -1012,6 +1347,9 @@ function updateResearchDisplay()
 		// Buttons are assumed to be square, so left/right offsets can be used for top/bottom.
 		size.top = size.left + Math.round(researchStarted[tech].progress * (size.right - size.left));
 		Engine.GetGUIObjectByName("researchStartedProgressSlider[" + numButtons + "]").size = size;
+
+		Engine.GetGUIObjectByName("researchStartedTimeRemaining[" + numButtons + "]").caption =
+			Engine.FormatMillisecondsIntoDateStringGMT(researchStarted[tech].timeRemaining, translateWithContext("countdown format", "m:ss"));
 
 		++numButtons;
 	}
@@ -1049,8 +1387,52 @@ function recalculateStatusBarDisplay(remove = false)
 
 	Engine.GuiInterfaceCall("SetStatusBars", {
 		"entities": entities,
-		"enabled": g_ShowAllStatusBars && !remove
+		"enabled": g_ShowAllStatusBars && !remove,
+		"showRank": Engine.ConfigDB_GetValue("user", "gui.session.rankabovestatusbar") == "true"
 	});
+}
+
+/**
+ * Inverts the given configuration boolean and returns the current state.
+ * For example "silhouettes".
+ */
+function toggleConfigBool(configName)
+{
+	let enabled = Engine.ConfigDB_GetValue("user", configName) != "true";
+	saveSettingAndWriteToUserConfig(configName, String(enabled));
+	return enabled;
+}
+
+/**
+ * Toggles the display of range overlays of selected entities for the given range type.
+ * @param {string} type - for example "Auras"
+ */
+function toggleRangeOverlay(type)
+{
+	let enabled = toggleConfigBool("gui.session." + type.toLowerCase() + "range");
+
+	Engine.GuiInterfaceCall("EnableVisualRangeOverlayType", {
+		"type": type,
+		"enabled": enabled
+	});
+
+	let selected = g_Selection.toList();
+	for (let ent in g_Selection.highlighted)
+		selected.push(g_Selection.highlighted[ent]);
+
+	Engine.GuiInterfaceCall("SetRangeOverlays", {
+		"entities": selected,
+		"enabled": enabled
+	});
+}
+
+function updateEnabledRangeOverlayTypes()
+{
+	for (let type of ["Attack", "Auras", "Heal"])
+		Engine.GuiInterfaceCall("EnableVisualRangeOverlayType", {
+			"type": type,
+			"enabled": Engine.ConfigDB_GetValue("user", "gui.session." + type.toLowerCase() + "range") == "true"
+		});
 }
 
 // Update the additional list of entities to be highlighted.
@@ -1063,7 +1445,6 @@ function updateAdditionalHighlight()
 		highlighted.push(g_Selection.highlighted[ent]);
 
 	if (g_ShowGuarding)
-	{
 		// flag the guarding entities to add in this additional highlight
 		for (let sel in g_Selection.selected)
 		{
@@ -1075,10 +1456,8 @@ function updateAdditionalHighlight()
 				if (highlighted.indexOf(ent) == -1 && entsAdd.indexOf(ent) == -1)
 					entsAdd.push(ent);
 		}
-	}
 
 	if (g_ShowGuarded)
-	{
 		// flag the guarded entities to add in this additional highlight
 		for (let sel in g_Selection.selected)
 		{
@@ -1089,7 +1468,6 @@ function updateAdditionalHighlight()
 			if (highlighted.indexOf(ent) == -1 && entsAdd.indexOf(ent) == -1)
 				entsAdd.push(ent);
 		}
-	}
 
 	// flag the entities to remove (from the previously added) from this additional highlight
 	for (let ent of g_AdditionalHighlight)
@@ -1103,7 +1481,7 @@ function updateAdditionalHighlight()
 
 function playAmbient()
 {
-	Engine.PlayAmbientSound(g_Ambient[Math.floor(Math.random() * g_Ambient.length)], true);
+	Engine.PlayAmbientSound(pickRandom(g_Ambient), true);
 }
 
 function getBuildString()
@@ -1124,6 +1502,92 @@ function showTimeWarpMessageBox()
 }
 
 /**
+ * Adds the ingame time and ceasefire counter to the global FPS and
+ * realtime counters shown in the top right corner.
+ */
+function appendSessionCounters(counters)
+{
+	let simState = GetSimState();
+
+	if (Engine.ConfigDB_GetValue("user", "gui.session.timeelapsedcounter") === "true")
+	{
+		let currentSpeed = Engine.GetSimRate();
+		if (currentSpeed != 1.0)
+			// Translation: The "x" means "times", with the mathematical meaning of multiplication.
+			counters.push(sprintf(translate("%(time)s (%(speed)sx)"), {
+				"time": timeToString(simState.timeElapsed),
+				"speed": Engine.FormatDecimalNumberIntoString(currentSpeed)
+			}));
+		else
+			counters.push(timeToString(simState.timeElapsed));
+	}
+
+	if (simState.ceasefireActive && Engine.ConfigDB_GetValue("user", "gui.session.ceasefirecounter") === "true")
+		counters.push(timeToString(simState.ceasefireTimeRemaining));
+
+	g_ResearchListTop = 4 + 14 * counters.length;
+}
+
+/**
+ * Send the current list of players, teams, AIs, observers and defeated/won and offline states to the lobby.
+ * The playerData format from g_GameAttributes is kept to reuse the GUI function presenting the data.
+ */
+function sendLobbyPlayerlistUpdate()
+{
+	if (!g_IsController || !Engine.HasXmppClient())
+		return;
+
+	// Extract the relevant player data and minimize packet load
+	let minPlayerData = [];
+	for (let playerID in g_GameAttributes.settings.PlayerData)
+	{
+		if (+playerID == 0)
+			continue;
+
+		let pData = g_GameAttributes.settings.PlayerData[playerID];
+
+		let minPData = { "Name": pData.Name, "Civ": pData.Civ };
+
+		if (g_GameAttributes.settings.LockTeams)
+			minPData.Team = pData.Team;
+
+		if (pData.AI)
+		{
+			minPData.AI = pData.AI;
+			minPData.AIDiff = pData.AIDiff;
+			minPData.AIBehavior = pData.AIBehavior;
+		}
+
+		if (g_Players[playerID].offline)
+			minPData.Offline = true;
+
+		// Whether the player has won or was defeated
+		let state = g_Players[playerID].state;
+		if (state != "active")
+			minPData.State = state;
+
+		minPlayerData.push(minPData);
+	}
+
+	// Add observers
+	let connectedPlayers = 0;
+	for (let guid in g_PlayerAssignments)
+	{
+		let pData = g_GameAttributes.settings.PlayerData[g_PlayerAssignments[guid].player];
+
+		if (pData)
+			++connectedPlayers;
+		else
+			minPlayerData.push({
+				"Name": g_PlayerAssignments[guid].name,
+				"Team": "observer"
+			});
+	}
+
+	Engine.SendChangeStateGame(connectedPlayers, playerDataToStringifiedTeamList(minPlayerData));
+}
+
+/**
  * Send a report on the gamestatus to the lobby.
  */
 function reportGame()
@@ -1139,10 +1603,11 @@ function reportGame()
 		"total",
 		"Infantry",
 		"Worker",
-		"Female",
+		"FemaleCitizen",
 		"Cavalry",
 		"Champion",
 		"Hero",
+		"Siege",
 		"Ship",
 		"Trader"
 	];
@@ -1184,6 +1649,15 @@ function reportGame()
 		"resourcesBought"
 	];
 
+	let misc = [
+		"tradeIncome",
+		"tributesSent",
+		"tributesReceived",
+		"treasuresCollected",
+		"lootCollected",
+		"percentMapExplored"
+	];
+
 	let playerStatistics = {};
 
 	// Unit Stats
@@ -1218,19 +1692,13 @@ function reportGame()
 	}
 	playerStatistics.resourcesGathered.vegetarianFood = "";
 
-	playerStatistics.tradeIncome = "";
-	// Tribute
-	playerStatistics.tributesSent = "";
-	playerStatistics.tributesReceived = "";
+	for (let type of misc)
+		playerStatistics[type] = "";
+
 	// Total
 	playerStatistics.economyScore = "";
 	playerStatistics.militaryScore = "";
 	playerStatistics.totalScore = "";
-	// Various
-	playerStatistics.treasuresCollected = "";
-	playerStatistics.lootCollected = "";
-	playerStatistics.feminisation = "";
-	playerStatistics.percentMapExplored = "";
 
 	let mapName = g_GameAttributes.settings.Name;
 	let playerStates = "";
@@ -1243,6 +1711,7 @@ function reportGame()
 	for (let i = 1; i < extendedSimState.players.length; ++i)
 	{
 		let player = extendedSimState.players[i];
+		let maxIndex = player.sequences.time.length - 1;
 
 		playerStates += player.state + ",";
 		playerCivs += player.civ + ",";
@@ -1250,31 +1719,28 @@ function reportGame()
 		teamsLocked = teamsLocked && player.teamsLocked;
 		for (let resourcesCounterType of resourcesCounterTypes)
 			for (let resourcesType of resourcesTypes)
-				playerStatistics[resourcesCounterType][resourcesType] += player.statistics[resourcesCounterType][resourcesType] + ",";
-		playerStatistics.resourcesGathered.vegetarianFood += player.statistics.resourcesGathered.vegetarianFood + ",";
+				playerStatistics[resourcesCounterType][resourcesType] += player.sequences[resourcesCounterType][resourcesType][maxIndex] + ",";
+		playerStatistics.resourcesGathered.vegetarianFood += player.sequences.resourcesGathered.vegetarianFood[maxIndex] + ",";
 
 		for (let unitCounterType of unitsCountersTypes)
 			for (let unitsClass of unitsClasses)
-				playerStatistics[unitCounterType][unitsClass] += player.statistics[unitCounterType][unitsClass] + ",";
+				playerStatistics[unitCounterType][unitsClass] += player.sequences[unitCounterType][unitsClass][maxIndex] + ",";
 
 		for (let buildingCounterType of buildingsCountersTypes)
 			for (let buildingsClass of buildingsClasses)
-				playerStatistics[buildingCounterType][buildingsClass] += player.statistics[buildingCounterType][buildingsClass] + ",";
+				playerStatistics[buildingCounterType][buildingsClass] += player.sequences[buildingCounterType][buildingsClass][maxIndex] + ",";
 		let total = 0;
-		for (let type in player.statistics.resourcesGathered)
-			total += player.statistics.resourcesGathered[type];
+		for (let type in player.sequences.resourcesGathered)
+			total += player.sequences.resourcesGathered[type][maxIndex];
 
 		playerStatistics.economyScore += total + ",";
-		playerStatistics.militaryScore += Math.round((player.statistics.enemyUnitsKilledValue +
-			player.statistics.enemyBuildingsDestroyedValue) / 10)  + ",";
-		playerStatistics.totalScore += (total + Math.round((player.statistics.enemyUnitsKilledValue +
-			player.statistics.enemyBuildingsDestroyedValue) / 10)) + ",";
-		playerStatistics.tradeIncome += player.statistics.tradeIncome + ",";
-		playerStatistics.tributesSent += player.statistics.tributesSent + ",";
-		playerStatistics.tributesReceived += player.statistics.tributesReceived + ",";
-		playerStatistics.percentMapExplored += player.statistics.percentMapExplored + ",";
-		playerStatistics.treasuresCollected += player.statistics.treasuresCollected + ",";
-		playerStatistics.lootCollected += player.statistics.lootCollected + ",";
+		playerStatistics.militaryScore += Math.round((player.sequences.enemyUnitsKilledValue[maxIndex] +
+			player.sequences.enemyBuildingsDestroyedValue[maxIndex]) / 10) + ",";
+		playerStatistics.totalScore += (total + Math.round((player.sequences.enemyUnitsKilledValue[maxIndex] +
+			player.sequences.enemyBuildingsDestroyedValue[maxIndex]) / 10)) + ",";
+
+		for (let type of misc)
+			playerStatistics[type] += player.sequences[type][maxIndex] + ",";
 	}
 
 	// Send the report with serialized data
@@ -1293,31 +1759,26 @@ function reportGame()
 	reportObject.militaryScore = playerStatistics.militaryScore;
 	reportObject.totalScore = playerStatistics.totalScore;
 	for (let rct of resourcesCounterTypes)
-	{
 		for (let rt of resourcesTypes)
-			reportObject[rt+rct.substr(9)] = playerStatistics[rct][rt];
+			reportObject[rt + rct.substr(9)] = playerStatistics[rct][rt];
 			// eg. rt = food rct.substr = Gathered rct = resourcesGathered
-	}
+
 	reportObject.vegetarianFoodGathered = playerStatistics.resourcesGathered.vegetarianFood;
 	for (let type of unitsClasses)
 	{
 		// eg. type = Infantry (type.substr(0,1)).toLowerCase()+type.substr(1) = infantry
-		reportObject[(type.substr(0,1)).toLowerCase()+type.substr(1)+"UnitsTrained"] = playerStatistics.unitsTrained[type];
-		reportObject[(type.substr(0,1)).toLowerCase()+type.substr(1)+"UnitsLost"] = playerStatistics.unitsLost[type];
-		reportObject["enemy"+type+"UnitsKilled"] = playerStatistics.enemyUnitsKilled[type];
+		reportObject[(type.substr(0, 1)).toLowerCase() + type.substr(1) + "UnitsTrained"] = playerStatistics.unitsTrained[type];
+		reportObject[(type.substr(0, 1)).toLowerCase() + type.substr(1) + "UnitsLost"] = playerStatistics.unitsLost[type];
+		reportObject["enemy" + type + "UnitsKilled"] = playerStatistics.enemyUnitsKilled[type];
 	}
 	for (let type of buildingsClasses)
 	{
-		reportObject[(type.substr(0,1)).toLowerCase()+type.substr(1)+"BuildingsConstructed"] = playerStatistics.buildingsConstructed[type];
-		reportObject[(type.substr(0,1)).toLowerCase()+type.substr(1)+"BuildingsLost"] = playerStatistics.buildingsLost[type];
-		reportObject["enemy"+type+"BuildingsDestroyed"] = playerStatistics.enemyBuildingsDestroyed[type];
+		reportObject[(type.substr(0, 1)).toLowerCase() + type.substr(1) + "BuildingsConstructed"] = playerStatistics.buildingsConstructed[type];
+		reportObject[(type.substr(0, 1)).toLowerCase() + type.substr(1) + "BuildingsLost"] = playerStatistics.buildingsLost[type];
+		reportObject["enemy" + type + "BuildingsDestroyed"] = playerStatistics.enemyBuildingsDestroyed[type];
 	}
-	reportObject.tributesSent = playerStatistics.tributesSent;
-	reportObject.tributesReceived = playerStatistics.tributesReceived;
-	reportObject.percentMapExplored = playerStatistics.percentMapExplored;
-	reportObject.treasuresCollected = playerStatistics.treasuresCollected;
-	reportObject.lootCollected = playerStatistics.lootCollected;
-	reportObject.tradeIncome = playerStatistics.tradeIncome;
+	for (let type of misc)
+		reportObject[type] = playerStatistics[type];
 
 	Engine.SendGameReport(reportObject);
 }

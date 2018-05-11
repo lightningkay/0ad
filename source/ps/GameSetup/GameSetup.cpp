@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -27,16 +27,8 @@
 #include "lib/res/h_mgr.h"
 #include "lib/res/graphics/cursor.h"
 #include "lib/sysdep/cursor.h"
-#include "lib/sysdep/cpu.h"
-#include "lib/sysdep/gfx.h"
-#include "lib/sysdep/os_cpu.h"
-#include "lib/tex/tex.h"
-#if OS_WIN
-#include "lib/sysdep/os/win/wversion.h"
-#endif
 
 #include "graphics/CinemaManager.h"
-#include "graphics/CinemaPath.h"
 #include "graphics/FontMetrics.h"
 #include "graphics/GameView.h"
 #include "graphics/LightEnv.h"
@@ -69,6 +61,7 @@
 #include "ps/Joystick.h"
 #include "ps/Loader.h"
 #include "ps/Mod.h"
+#include "ps/ModIo.h"
 #include "ps/Profile.h"
 #include "ps/ProfileViewer.h"
 #include "ps/Profiler2.h"
@@ -86,6 +79,7 @@
 #include "renderer/ModelRenderer.h"
 #include "scriptinterface/ScriptInterface.h"
 #include "scriptinterface/ScriptStats.h"
+#include "scriptinterface/ScriptConversions.h"
 #include "simulation2/Simulation2.h"
 #include "lobby/IXmppClient.h"
 #include "soundmanager/scripting/JSInterface_Sound.h"
@@ -100,11 +94,7 @@
 #define MUST_INIT_X11 0
 #endif
 
-#if OS_WIN
-extern void wmi_Shutdown();
-#endif
-
-extern void restart_engine();
+extern void RestartEngine();
 
 #include <iostream>
 
@@ -231,6 +221,13 @@ void Render()
 
 	g_Renderer.RenderTextOverlays();
 
+	// If we're in Atlas game view, render special tools
+	if (g_AtlasGameLoop && g_AtlasGameLoop->view)
+	{
+		g_AtlasGameLoop->view->DrawCinemaPathTool();
+		ogl_WarnIfError();
+	}
+
 	if (g_Game && g_Game->IsGameStarted())
 		g_Game->GetView()->GetCinema()->Render();
 
@@ -274,7 +271,7 @@ void Render()
 		CStrW cursorName = g_CursorName;
 		if (cursorName.empty())
 		{
-			cursor_draw(g_VFS, NULL, g_mouse_x, g_yres-g_mouse_y, false);
+			cursor_draw(g_VFS, NULL, g_mouse_x, g_yres-g_mouse_y, g_GuiScale, false);
 		}
 		else
 		{
@@ -299,7 +296,7 @@ void Render()
 #if OS_ANDROID
 #warning TODO: cursors for Android
 #else
-			if (cursor_draw(g_VFS, cursorName.c_str(), g_mouse_x, g_yres-g_mouse_y, forceGL) < 0)
+			if (cursor_draw(g_VFS, cursorName.c_str(), g_mouse_x, g_yres-g_mouse_y, g_GuiScale, forceGL) < 0)
 				LOGWARNING("Failed to draw cursor '%s'", utf8_from_wstring(cursorName));
 #endif
 
@@ -334,56 +331,6 @@ void Render()
 	ogl_WarnIfError();
 }
 
-
-static size_t OperatingSystemFootprint()
-{
-#if OS_WIN
-	switch(wversion_Number())
-	{
-	case WVERSION_2K:
-	case WVERSION_XP:
-		return 150;
-	case WVERSION_XP64:
-		return 200;
-	default:	// newer Windows version: assume the worst, and don't warn
-	case WVERSION_VISTA:
-		return 300;
-	case WVERSION_7:
-		return 250;
-	}
-#else
-	return 200;
-#endif
-}
-
-static size_t ChooseCacheSize()
-{
-	// (all sizes in MiB and signed to allow temporarily negative computations)
-
-	const ssize_t total = (ssize_t)os_cpu_MemorySize();
-	// (NB: os_cpu_MemoryAvailable is useless on Linux because free memory
-	// is marked as "in use" by OS caches.)
-	const ssize_t os = (ssize_t)OperatingSystemFootprint();
-	const ssize_t game = 300;	// estimated working set
-
-	ssize_t cache = 400;	// upper bound: total size of our data
-
-	// the cache reserves contiguous address space, which is a precious
-	// resource on 32-bit systems, so don't use too much:
-	if(ARCH_IA32 || sizeof(void*) == 4)
-		cache = std::min(cache, (ssize_t)200);
-
-	// try to leave over enough memory for the OS and game
-	cache = std::min(cache, total-os-game);
-
-	// always provide at least this much to ensure correct operation
-	cache = std::max(cache, (ssize_t)64);
-
-	debug_printf("Cache: %d (total: %d) MiB\n", (int)cache, (int)total);
-	return size_t(cache)*MiB;
-}
-
-
 ErrorReactionInternal psDisplayError(const wchar_t* UNUSED(text), size_t UNUSED(flags))
 {
 	// If we're fullscreen, then sometimes (at least on some particular drivers on Linux)
@@ -405,7 +352,7 @@ ErrorReactionInternal psDisplayError(const wchar_t* UNUSED(text), size_t UNUSED(
 	return ERI_NOT_IMPLEMENTED;
 }
 
-std::vector<CStr>& GetMods(const CmdLineArgs& args, int flags)
+const std::vector<CStr>& GetMods(const CmdLineArgs& args, int flags)
 {
 	const bool init_mods = (flags & INIT_MODS) == INIT_MODS;
 	const bool add_user = !InDevelopmentCopy() && !args.Has("noUserMod");
@@ -485,9 +432,8 @@ static void InitVfs(const CmdLineArgs& args, int flags)
 		hooks.display_error = psDisplayError;
 	app_hooks_update(&hooks);
 
-	const size_t cacheSize = ChooseCacheSize();
-	g_VFS = CreateVfs(cacheSize);
-	
+	g_VFS = CreateVfs();
+
 	const OsPath readonlyConfig = paths.RData()/"config"/"";
 	g_VFS->Mount(L"config/", readonlyConfig);
 
@@ -550,6 +496,32 @@ static void InitPs(bool setup_gui, const CStrW& gui_page, ScriptInterface* srcSc
 	g_GUI->SwitchPage(gui_page, srcScriptInterface, initData);
 }
 
+void InitPsAutostart(bool networked, JS::HandleValue attrs)
+{
+	// The GUI has not been initialized yet, so use the simulation scriptinterface for this variable
+	ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	JS::RootedValue playerAssignments(cx);
+	scriptInterface.Eval("({})", &playerAssignments);
+
+	if (!networked)
+	{
+		JS::RootedValue localPlayer(cx);
+		scriptInterface.Eval("({})", &localPlayer);
+		scriptInterface.SetProperty(localPlayer, "player", g_Game->GetPlayerID());
+		scriptInterface.SetProperty(playerAssignments, "local", localPlayer);
+	}
+
+	JS::RootedValue sessionInitData(cx);
+	scriptInterface.Eval("({})", &sessionInitData);
+	scriptInterface.SetProperty(sessionInitData, "attribs", attrs);
+	scriptInterface.SetProperty(sessionInitData, "playerAssignments", playerAssignments);
+
+	InitPs(true, L"page_loading.xml", &scriptInterface, sessionInitData);
+}
+
 
 static void InitInput()
 {
@@ -576,8 +548,6 @@ static void InitInput()
 	in_add_handler(gui_handler);
 
 	in_add_handler(touch_input_handler);
-	
-	in_add_handler(cinema_manager_handler);
 
 	// must be registered after (called before) the GUI which relies on these globals
 	in_add_handler(GlobalsInputHandler);
@@ -589,9 +559,9 @@ static void ShutdownPs()
 	SAFE_DELETE(g_GUI);
 
 	UnloadHotkeys();
-	
+
 	// disable the special Windows cursor, or free textures for OGL cursors
-	cursor_draw(g_VFS, 0, g_mouse_x, g_yres-g_mouse_y, false);
+	cursor_draw(g_VFS, 0, g_mouse_x, g_yres-g_mouse_y, 1.0, false);
 }
 
 
@@ -613,8 +583,8 @@ static void InitRenderer()
 	g_Renderer.SetOptionBool(CRenderer::OPT_SHADOWS, g_Shadows);
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "shadows", g_Shadows);
 
-	g_Renderer.SetOptionBool(CRenderer::OPT_WATERUGLY, g_WaterUgly);
-	g_ConfigDB.SetValueBool(CFG_SYSTEM, "waterugly", g_WaterUgly);
+	g_Renderer.SetOptionBool(CRenderer::OPT_WATEREFFECTS, g_WaterEffects);
+	g_ConfigDB.SetValueBool(CFG_SYSTEM, "watereffects", g_WaterEffects);
 	g_Renderer.SetOptionBool(CRenderer::OPT_WATERFANCYEFFECTS, g_WaterFancyEffects);
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "waterfancyeffects", g_WaterFancyEffects);
 	g_Renderer.SetOptionBool(CRenderer::OPT_WATERREALDEPTH, g_WaterRealDepth);
@@ -625,12 +595,14 @@ static void InitRenderer()
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "waterrefraction", g_WaterRefraction);
 	g_Renderer.SetOptionBool(CRenderer::OPT_SHADOWSONWATER, g_WaterShadows);
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "watershadows", g_WaterShadows);
-	
+
 	g_Renderer.SetRenderPath(CRenderer::GetRenderPathByName(g_RenderPath));
 	g_Renderer.SetOptionBool(CRenderer::OPT_SHADOWPCF, g_ShadowPCF);
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "shadowpcf", g_ShadowPCF);
 	g_Renderer.SetOptionBool(CRenderer::OPT_PARTICLES, g_Particles);
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "particles", g_Particles);
+	g_Renderer.SetOptionBool(CRenderer::OPT_FOG, g_Fog);
+	g_ConfigDB.SetValueBool(CFG_SYSTEM, "fog", g_Fog);
 	g_Renderer.SetOptionBool(CRenderer::OPT_SILHOUETTES, g_Silhouettes);
 	g_ConfigDB.SetValueBool(CFG_SYSTEM, "silhouettes", g_Silhouettes);
 	g_Renderer.SetOptionBool(CRenderer::OPT_SHOWSKY, g_ShowSky);
@@ -684,6 +656,9 @@ static void InitSDL()
 	}
 	atexit(SDL_Quit);
 
+	// Text input is active by default, disable it until it is actually needed.
+	SDL_StopTextInput();
+
 #if OS_MACOSX
 	// Some Mac mice only have one button, so they can't right-click
 	// but SDL2 can emulate that with Ctrl+Click
@@ -702,20 +677,27 @@ static void ShutdownSDL()
 
 void EndGame()
 {
+	const bool nonVisual = g_Game && g_Game->IsGraphicsDisabled();
+
 	if (g_Game && g_Game->IsGameStarted() && !g_Game->IsVisualReplay() &&
-	    g_AtlasGameLoop && !g_AtlasGameLoop->running)
+	    g_AtlasGameLoop && !g_AtlasGameLoop->running && !nonVisual)
 		VisualReplay::SaveReplayMetadata(g_GUI->GetActiveGUI()->GetScriptInterface().get());
 
 	SAFE_DELETE(g_NetClient);
 	SAFE_DELETE(g_NetServer);
 	SAFE_DELETE(g_Game);
 
-	ISoundManager::CloseGame();
+	if (!nonVisual)
+	{
+		ISoundManager::CloseGame();
+		g_Renderer.ResetState();
+	}
 }
-
 
 void Shutdown(int flags)
 {
+	const bool nonVisual = g_Game && g_Game->IsGraphicsDisabled();
+
 	if ((flags & SHUTDOWN_FROM_CONFIG))
 		goto from_config;
 
@@ -723,25 +705,24 @@ void Shutdown(int flags)
 
 	SAFE_DELETE(g_XmppClient);
 
+	SAFE_DELETE(g_ModIo);
+
 	ShutdownPs();
 
 	TIMER_BEGIN(L"shutdown TexMan");
 	delete &g_TexMan;
 	TIMER_END(L"shutdown TexMan");
 
-	// destroy renderer
-	TIMER_BEGIN(L"shutdown Renderer");
-	delete &g_Renderer;
-	g_VBMan.Shutdown();
-	TIMER_END(L"shutdown Renderer");
+	// destroy renderer if it was initialised
+	if (!nonVisual)
+	{
+		TIMER_BEGIN(L"shutdown Renderer");
+		delete &g_Renderer;
+		g_VBMan.Shutdown();
+		TIMER_END(L"shutdown Renderer");
+	}
 
 	g_Profiler2.ShutdownGPU();
-
-	#if OS_WIN
-		TIMER_BEGIN(L"shutdown wmi");
-		wmi_Shutdown();
-		TIMER_END(L"shutdown wmi");
-	#endif
 
 	// Free cursors before shutting down SDL, as they may depend on SDL.
 	cursor_shutdown();
@@ -750,11 +731,15 @@ void Shutdown(int flags)
 	ShutdownSDL();
 	TIMER_END(L"shutdown SDL");
 
-	g_VideoMode.Shutdown();
+	if (!nonVisual)
+		g_VideoMode.Shutdown();
 
 	TIMER_BEGIN(L"shutdown UserReporter");
 	g_UserReporter.Deinitialize();
 	TIMER_END(L"shutdown UserReporter");
+
+	// Cleanup curl now that g_ModIo and g_UserReporter have been shutdown.
+	curl_global_cleanup();
 
 	delete &g_L10n;
 
@@ -930,8 +915,8 @@ bool Init(const CmdLineArgs& args, int flags)
 
 	// g_ConfigDB, command line args, globals
 	CONFIG_Init(args);
-	
-	// Using a global object for the runtime is a workaround until Simulation and AI use 
+
+	// Using a global object for the runtime is a workaround until Simulation and AI use
 	// their own threads and also their own runtimes.
 	const int runtimeSize = 384 * 1024 * 1024;
 	const int heapGrowthBytesGCTrigger = 20 * 1024 * 1024;
@@ -953,7 +938,8 @@ bool Init(const CmdLineArgs& args, int flags)
 	CNetHost::Initialize();
 
 #if CONFIG2_AUDIO
-	ISoundManager::CreateSoundManager();
+	if (!args.Has("autostart-nonvisual"))
+		ISoundManager::CreateSoundManager();
 #endif
 
 	// Check if there are mods specified on the command line,
@@ -972,7 +958,7 @@ bool Init(const CmdLineArgs& args, int flags)
 			std::swap(g_modsLoaded, mods);
 
 			// Abort init and restart
-			restart_engine();
+			RestartEngine();
 			return false;
 		}
 	}
@@ -986,6 +972,10 @@ bool Init(const CmdLineArgs& args, int flags)
 	if (profilerHTTPEnable)
 		g_Profiler2.EnableHTTP();
 
+	// Initialise everything except Win32 sockets (because our networking
+	// system already inits those)
+	curl_global_init(CURL_GLOBAL_ALL & ~CURL_GLOBAL_WIN32);
+
 	if (!g_Quickstart)
 		g_UserReporter.Initialize(); // after config
 
@@ -993,7 +983,7 @@ bool Init(const CmdLineArgs& args, int flags)
 	return true;
 }
 
-void InitGraphics(const CmdLineArgs& args, int flags)
+void InitGraphics(const CmdLineArgs& args, int flags, const std::vector<CStr>& installedMods)
 {
 	const bool setup_vmode = (flags & INIT_HAVE_VMODE) == 0;
 
@@ -1097,8 +1087,10 @@ void InitGraphics(const CmdLineArgs& args, int flags)
 			{
 				scriptInterface->Eval("({})", &data);
 				scriptInterface->SetProperty(data, "isStartup", true);
+				if (!installedMods.empty())
+					scriptInterface->SetProperty(data, "installedMods", installedMods);
 			}
-			InitPs(setup_gui, L"page_pregame.xml", g_GUI->GetScriptInterface().get(), data);
+			InitPs(setup_gui, installedMods.empty() ? L"page_pregame.xml" : L"page_modmod.xml", g_GUI->GetScriptInterface().get(), data);
 		}
 	}
 	catch (PSERROR_Game_World_MapLoadFailed& e)
@@ -1112,6 +1104,15 @@ void InitGraphics(const CmdLineArgs& args, int flags)
 		//	(delete game data, switch GUI page, show error, etc.)
 		CancelLoad(CStr(e.what()).FromUTF8());
 	}
+}
+
+void InitNonVisual(const CmdLineArgs& args)
+{
+	// Need some stuff for terrain movement costs:
+	// (TODO: this ought to be independent of any graphics code)
+	new CTerrainTextureManager;
+	g_TexMan.LoadTerrainTextures();
+	Autostart(args);
 }
 
 void RenderGui(bool RenderingState)
@@ -1180,14 +1181,28 @@ CStr8 LoadSettingsOfScenarioMap(const VfsPath &mapPath)
  *
  * -autostart="TYPEDIR/MAPNAME"    enables autostart and sets MAPNAME;
  *                                 TYPEDIR is skirmishes, scenarios, or random
+ * -autostart-seed=SEED            sets randomization seed value (default 0, use -1 for random)
  * -autostart-ai=PLAYER:AI         sets the AI for PLAYER (e.g. 2:petra)
  * -autostart-aidiff=PLAYER:DIFF   sets the DIFFiculty of PLAYER's AI
  *                                 (0: sandbox, 5: very hard)
  * -autostart-aiseed=AISEED        sets the seed used for the AI random
  *                                 generator (default 0, use -1 for random)
+ * -autostart-player=NUMBER        sets the playerID in non-networked games (default 1, use -1 for observer)
  * -autostart-civ=PLAYER:CIV       sets PLAYER's civilisation to CIV
  *                                 (skirmish and random maps only)
  * -autostart-team=PLAYER:TEAM     sets the team for PLAYER (e.g. 2:2).
+ * -autostart-ceasefire=NUM        sets a ceasefire duration NUM
+ *                                 (default 0 minutes)
+ * -autostart-nonvisual            disable any graphics and sounds
+ * -autostart-victory=SCRIPTNAME   sets the victory conditions with SCRIPTNAME
+ *                                 located in simulation/data/settings/victory_conditions/
+ *                                 (default conquest)
+ * -autostart-wonderduration=NUM   sets the victory duration NUM for wonder victory condition
+ *                                 (default 10 minutes)
+ * -autostart-relicduration=NUM    sets the victory duration NUM for relic victory condition
+ *                                 (default 10 minutes)
+ * -autostart-reliccount=NUM       sets the number of relics for relic victory condition
+ *                                 (default 2 relics)
  *
  * Multiplayer:
  * -autostart-playername=NAME      sets local player NAME (default 'anonymous')
@@ -1197,19 +1212,23 @@ CStr8 LoadSettingsOfScenarioMap(const VfsPath &mapPath)
  * -autostart-client=IP            sets multiplayer client to join host at
  *                                 given IP address
  * Random maps only:
- * -autostart-seed=SEED            sets random map SEED value
- *                                 (default 0, use -1 for random)
  * -autostart-size=TILES           sets random map size in TILES (default 192)
  * -autostart-players=NUMBER       sets NUMBER of players on random map
  *                                 (default 2)
  *
  * Examples:
  * 1) "Bob" will host a 2 player game on the Arcadia map:
- * -autostart="scenarios/Arcadia 02" -autostart-host -autostart-host-players=2 -autostart-playername="Bob"
- * 
+ * -autostart="scenarios/Arcadia" -autostart-host -autostart-host-players=2 -autostart-playername="Bob"
+ *  "Alice" joins the match as player 2:
+ * -autostart="scenarios/Arcadia" -autostart-client=127.0.0.1 -autostart-playername="Alice"
+ * The players use the developer overlay to control players.
+ *
  * 2) Load Alpine Lakes random map with random seed, 2 players (Athens and Britons), and player 2 is PetraBot:
  * -autostart="random/alpine_lakes" -autostart-seed=-1 -autostart-players=2 -autostart-civ=1:athen -autostart-civ=2:brit -autostart-ai=2:petra
-*/
+ *
+ * 3) Observe the PetraBot on a triggerscript map:
+ * -autostart="random/jebel_barkal" -autostart-seed=-1 -autostart-players=2 -autostart-civ=1:athen -autostart-civ=2:brit -autostart-ai=1:petra -autostart-ai=2:petra -autostart-player=-1
+ */
 bool Autostart(const CmdLineArgs& args)
 {
 	CStr autoStartName = args.Get("autostart");
@@ -1217,7 +1236,8 @@ bool Autostart(const CmdLineArgs& args)
 	if (autoStartName.empty())
 		return false;
 
-	g_Game = new CGame();
+	const bool nonVisual = args.Has("autostart-nonvisual");
+	g_Game = new CGame(nonVisual, !nonVisual);
 
 	ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
 	JSContext* cx = scriptInterface.GetContext();
@@ -1241,19 +1261,6 @@ bool Autostart(const CmdLineArgs& args)
 
 	if (mapDirectory == L"random")
 	{
-		// Default seed is 0
-		u32 seed = 0;
-		CStr seedArg = args.Get("autostart-seed");
-
-		if (!seedArg.empty())
-		{
-			// Random seed value
-			if (seedArg == "-1")
-				seed = rand();
-			else
-				seed = seedArg.ToULong();
-		}
-		
 		// Random map definition will be loaded from JSON file, so we need to parse it
 		std::wstring scriptPath = L"maps/" + autoStartName.FromUTF8() + L".json";
 		JS::RootedValue scriptData(cx);
@@ -1280,7 +1287,6 @@ bool Autostart(const CmdLineArgs& args)
 			mapSize = size.ToUInt();
 		}
 
-		scriptInterface.SetProperty(settings, "Seed", seed);		// Random seed
 		scriptInterface.SetProperty(settings, "Size", mapSize);		// Random map size (in patches)
 
 		// Get optional number of players (default 2)
@@ -1311,7 +1317,7 @@ bool Autostart(const CmdLineArgs& args)
 		// partially configured
 		CStr8 mapSettingsJSON = LoadSettingsOfScenarioMap("maps/" + autoStartName + ".xml");
 		scriptInterface.ParseJSON(mapSettingsJSON, &settings);
-		
+
 		// Initialize the playerData array being modified by autostart
 		// with the real map data, so sensible values are present:
 		scriptInterface.GetProperty(settings, "PlayerData", &playerData);
@@ -1326,9 +1332,23 @@ bool Autostart(const CmdLineArgs& args)
 		LOGERROR("Autostart: Unrecognized map type '%s'", utf8_from_wstring(mapDirectory));
 		throw PSERROR_Game_World_MapLoadFailed("Unrecognized map type.\nConsult readme.txt for the currently supported types.");
 	}
+
 	scriptInterface.SetProperty(attrs, "mapType", mapType);
 	scriptInterface.SetProperty(attrs, "map", std::string("maps/" + autoStartName));
 	scriptInterface.SetProperty(settings, "mapType", mapType);
+	scriptInterface.SetProperty(settings, "CheatsEnabled", true);
+
+	// The seed is used for both random map generation and simulation
+	u32 seed = 0;
+	if (args.Has("autostart-seed"))
+	{
+		CStr seedArg = args.Get("autostart-seed");
+		if (seedArg == "-1")
+			seed = rand();
+		else
+			seed = seedArg.ToULong();
+	}
+	scriptInterface.SetProperty(settings, "Seed", seed);
 
 	// Set seed for AIs
 	u32 aiseed = 0;
@@ -1356,7 +1376,7 @@ bool Autostart(const CmdLineArgs& args)
 		std::vector<CStr> civArgs = args.GetMultiple("autostart-team");
 		for (size_t i = 0; i < civArgs.size(); ++i)
 		{
-			int playerID = civArgs[i].BeforeFirst(":").ToInt();		
+			int playerID = civArgs[i].BeforeFirst(":").ToInt();
 
 			// Instead of overwriting existing player data, modify the array
 			JS::RootedValue player(cx);
@@ -1376,6 +1396,11 @@ bool Autostart(const CmdLineArgs& args)
 			scriptInterface.SetPropertyInt(playerData, playerID-offset, player);
 		}
 	}
+
+	int ceasefire = 0;
+	if (args.Has("autostart-ceasefire"))
+		ceasefire = args.Get("autostart-ceasefire").ToInt();
+	scriptInterface.SetProperty(settings, "Ceasefire", ceasefire);
 
 	if (args.Has("autostart-ai"))
 	{
@@ -1400,6 +1425,7 @@ bool Autostart(const CmdLineArgs& args)
 			CStr name = aiArgs[i].AfterFirst(":");
 			scriptInterface.SetProperty(player, "AI", std::string(name));
 			scriptInterface.SetProperty(player, "AIDiff", 3);
+			scriptInterface.SetProperty(player, "AIBehavior", std::string("balanced"));
 			scriptInterface.SetPropertyInt(playerData, playerID-offset, player);
 		}
 	}
@@ -1424,7 +1450,7 @@ bool Autostart(const CmdLineArgs& args)
 				scriptInterface.Eval("({})", &player);
 			}
 
-			int difficulty = civArgs[i].AfterFirst(":").ToInt();			
+			int difficulty = civArgs[i].AfterFirst(":").ToInt();
 			scriptInterface.SetProperty(player, "AIDiff", difficulty);
 			scriptInterface.SetPropertyInt(playerData, playerID-offset, player);
 		}
@@ -1451,7 +1477,7 @@ bool Autostart(const CmdLineArgs& args)
 					}
 					scriptInterface.Eval("({})", &player);
 				}
-			
+
 				CStr name = civArgs[i].AfterFirst(":");
 				scriptInterface.SetProperty(player, "Civ", std::string(name));
 				scriptInterface.SetPropertyInt(playerData, playerID-offset, player);
@@ -1467,26 +1493,85 @@ bool Autostart(const CmdLineArgs& args)
 	// Add map settings to game attributes
 	scriptInterface.SetProperty(attrs, "settings", settings);
 
-	JS::RootedValue mpInitData(cx);
-	scriptInterface.Eval("({isNetworked:true, playerAssignments:{}})", &mpInitData);
-	scriptInterface.SetProperty(mpInitData, "attribs", attrs);
-
 	// Get optional playername
 	CStrW userName = L"anonymous";
 	if (args.Has("autostart-playername"))
-	{
 		userName = args.Get("autostart-playername").FromUTF8();
+
+	// Add additional scripts to the TriggerScripts property
+	std::vector<CStrW> triggerScriptsVector;
+	JS::RootedValue triggerScripts(cx);
+
+	if (scriptInterface.HasProperty(settings, "TriggerScripts"))
+	{
+		scriptInterface.GetProperty(settings, "TriggerScripts", &triggerScripts);
+		FromJSVal_vector(cx, triggerScripts, triggerScriptsVector);
 	}
+
+	if (nonVisual)
+	{
+		CStr nonVisualScript = "scripts/NonVisualTrigger.js";
+		triggerScriptsVector.push_back(nonVisualScript.FromUTF8());
+	}
+
+	std::vector<CStr> victoryConditions(1, "conquest");
+	if (args.Has("autostart-victory"))
+		victoryConditions = args.GetMultiple("autostart-victory");
+
+	if (victoryConditions.size() == 1 && victoryConditions[0] == "endless")
+		victoryConditions.clear();
+
+	scriptInterface.SetProperty(settings, "VictoryConditions", victoryConditions);
+
+	for (const CStr& victory : victoryConditions)
+	{
+		JS::RootedValue scriptData(cx);
+		JS::RootedValue data(cx);
+		JS::RootedValue victoryScripts(cx);
+
+		CStrW scriptPath = L"simulation/data/settings/victory_conditions/" + victory.FromUTF8() + L".json";
+		scriptInterface.ReadJSONFile(scriptPath, &scriptData);
+		if (!scriptData.isUndefined() && scriptInterface.GetProperty(scriptData, "Data", &data) && !data.isUndefined()
+			&& scriptInterface.GetProperty(data, "Scripts", &victoryScripts) && !victoryScripts.isUndefined())
+		{
+			std::vector<CStrW> victoryScriptsVector;
+			FromJSVal_vector(cx, victoryScripts, victoryScriptsVector);
+			triggerScriptsVector.insert(triggerScriptsVector.end(), victoryScriptsVector.begin(), victoryScriptsVector.end());
+		}
+		else
+		{
+			LOGERROR("Autostart: Error reading victory script '%s'", utf8_from_wstring(scriptPath));
+			throw PSERROR_Game_World_MapLoadFailed("Error reading victory script.\nCheck application log for details.");
+		}
+	}
+
+	ToJSVal_vector(cx, &triggerScripts, triggerScriptsVector);
+	scriptInterface.SetProperty(settings, "TriggerScripts", triggerScripts);
+
+	int wonderDuration = 10;
+	if (args.Has("autostart-wonderduration"))
+		wonderDuration = args.Get("autostart-wonderduration").ToInt();
+	scriptInterface.SetProperty(settings, "WonderDuration", wonderDuration);
+
+	int relicDuration = 10;
+	if (args.Has("autostart-relicduration"))
+		relicDuration = args.Get("autostart-relicduration").ToInt();
+	scriptInterface.SetProperty(settings, "RelicDuration", relicDuration);
+
+	int relicCount = 2;
+	if (args.Has("autostart-reliccount"))
+		relicCount = args.Get("autostart-reliccount").ToInt();
+	scriptInterface.SetProperty(settings, "RelicCount", relicCount);
 
 	if (args.Has("autostart-host"))
 	{
-		InitPs(true, L"page_loading.xml", &scriptInterface, mpInitData);
+		InitPsAutostart(true, attrs);
 
 		size_t maxPlayers = 2;
 		if (args.Has("autostart-host-players"))
 			maxPlayers = args.Get("autostart-host-players").ToUInt();
 
-		g_NetServer = new CNetServer(maxPlayers);
+		g_NetServer = new CNetServer(false, maxPlayers);
 
 		g_NetServer->UpdateGameAttributes(&attrs, scriptInterface);
 
@@ -1499,7 +1584,7 @@ bool Autostart(const CmdLineArgs& args)
 	}
 	else if (args.Has("autostart-client"))
 	{
-		InitPs(true, L"page_loading.xml", &scriptInterface, mpInitData);
+		InitPsAutostart(true, attrs);
 
 		g_NetClient = new CNetClient(g_Game, false);
 		g_NetClient->SetUserName(userName);
@@ -1513,15 +1598,18 @@ bool Autostart(const CmdLineArgs& args)
 	}
 	else
 	{
-		g_Game->SetPlayerID(1);
+		g_Game->SetPlayerID(args.Has("autostart-player") ? args.Get("autostart-player").ToInt() : 1);
+
 		g_Game->StartGame(&attrs, "");
 
-		LDR_NonprogressiveLoad();
-
-		PSRETURN ret = g_Game->ReallyStartGame();
-		ENSURE(ret == PSRETURN_OK);
-
-		InitPs(true, L"page_session.xml", NULL, JS::UndefinedHandleValue);
+		if (nonVisual)
+		{
+			// TODO: Non progressive load can fail - need a decent way to handle this
+			LDR_NonprogressiveLoad();
+			ENSURE(g_Game->ReallyStartGame() == PSRETURN_OK);
+		}
+		else
+			InitPsAutostart(false, attrs);
 	}
 
 	return true;
@@ -1536,14 +1624,13 @@ bool AutostartVisualReplay(const std::string& replayFile)
 	g_Game->SetPlayerID(-1);
 	g_Game->StartVisualReplay(replayFile);
 
-	// TODO: Non progressive load can fail - need a decent way to handle this
-	LDR_NonprogressiveLoad();
-
-	ENSURE(g_Game->ReallyStartGame() == PSRETURN_OK);
-
 	ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+	JS::RootedValue attrs(cx, g_Game->GetSimulation2()->GetInitAttributes());
 
-	InitPs(true, L"page_session.xml", &scriptInterface, JS::UndefinedHandleValue);
+	InitPsAutostart(false, attrs);
+
 	return true;
 }
 
@@ -1552,18 +1639,15 @@ void CancelLoad(const CStrW& message)
 	shared_ptr<ScriptInterface> pScriptInterface = g_GUI->GetActiveGUI()->GetScriptInterface();
 	JSContext* cx = pScriptInterface->GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	JS::RootedValue global(cx, pScriptInterface->GetGlobalObject());
-	// Cancel loader
+
 	LDR_Cancel();
 
-	// Call the cancelOnError GUI function, defined in ..gui/common/functions_utility_error.js
-	// So all GUI pages that load games should include this script
-	if (g_GUI && g_GUI->HasPages())
-	{
-		if (pScriptInterface->HasProperty(global, "cancelOnError" ))
-			pScriptInterface->CallFunctionVoid(global, "cancelOnError", message);
-	}
+	if (g_GUI &&
+	    g_GUI->HasPages() &&
+	    pScriptInterface->HasProperty(global, "cancelOnLoadGameError"))
+		pScriptInterface->CallFunctionVoid(global, "cancelOnLoadGameError", message);
 }
 
 bool InDevelopmentCopy()

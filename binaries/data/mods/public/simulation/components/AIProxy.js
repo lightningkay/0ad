@@ -39,7 +39,7 @@ AIProxy.prototype.Init = function()
 
 AIProxy.prototype.Serialize = null; // we have no dynamic state to save
 
-AIProxy.prototype.Deserialize = function ()
+AIProxy.prototype.Deserialize = function()
 {
 	this.Init();
 };
@@ -113,11 +113,25 @@ AIProxy.prototype.OnCapturePointsChanged = function(msg)
 	this.changes.capturePoints = msg.capturePoints;
 };
 
+AIProxy.prototype.OnInvulnerabilityChanged = function(msg)
+{
+	if (!this.NotifyChange())
+		return;
+	this.changes.invulnerability = msg.invulnerability;
+};
+
 AIProxy.prototype.OnUnitIdleChanged = function(msg)
 {
 	if (!this.NotifyChange())
 		return;
 	this.changes.idle = msg.idle;
+};
+
+AIProxy.prototype.OnUnitStanceChanged = function(msg)
+{
+	if (!this.NotifyChange())
+		return;
+	this.changes.stance = msg.to;
 };
 
 AIProxy.prototype.OnUnitAIStateChanged = function(msg)
@@ -146,16 +160,16 @@ AIProxy.prototype.OnGarrisonedUnitsChanged = function(msg)
 {
 	if (!this.NotifyChange())
 		return;
-	
+
 	let cmpGarrisonHolder = Engine.QueryInterface(this.entity, IID_GarrisonHolder);
 	this.changes.garrisoned = cmpGarrisonHolder.GetEntities();
 
 	// Send a message telling a unit garrisoned or ungarrisoned.
 	// I won't check if the unit is still alive so it'll be up to the AI.
 	for (let ent of msg.added)
-		this.cmpAIInterface.PushEvent("Garrison", {"entity" : ent, "holder": this.entity});
+		this.cmpAIInterface.PushEvent("Garrison", { "entity": ent, "holder": this.entity });
 	for (let ent of msg.removed)
-		this.cmpAIInterface.PushEvent("UnGarrison", {"entity" : ent, "holder": this.entity});
+		this.cmpAIInterface.PushEvent("UnGarrison", { "entity": ent, "holder": this.entity });
 };
 
 AIProxy.prototype.OnResourceSupplyChanged = function(msg)
@@ -246,6 +260,10 @@ AIProxy.prototype.GetFullRepresentation = function()
 		ret.hitpoints = cmpHealth.GetHitpoints();
 	}
 
+	let cmpDamageReceiver = Engine.QueryInterface(this.entity, IID_DamageReceiver);
+	if (cmpDamageReceiver)
+		ret.invulnerability = cmpDamageReceiver.IsInvulnerable();
+
 	let cmpOwnership = Engine.QueryInterface(this.entity, IID_Ownership);
 	if (cmpOwnership)
 	{
@@ -258,6 +276,8 @@ AIProxy.prototype.GetFullRepresentation = function()
 	{
 		// Updated by OnUnitIdleChanged
 		ret.idle = cmpUnitAI.IsIdle();
+		// Updated by OnUnitStanceChanged
+		ret.stance = cmpUnitAI.GetStanceName();
 		// Updated by OnUnitAIStateChanged
 		ret.unitAIState = cmpUnitAI.GetCurrentState();
 		// Updated by OnUnitAIOrderDataChanged
@@ -329,19 +349,18 @@ AIProxy.prototype.GetFullRepresentation = function()
 AIProxy.prototype.OnOwnershipChanged = function(msg)
 {
 	this.NotifyChange();
-	
-	if (msg.from === -1)
+
+	if (msg.from == INVALID_PLAYER)
 	{
-		this.cmpAIInterface.PushEvent("Create", {"entity" : msg.entity});
+		this.cmpAIInterface.PushEvent("Create", { "entity": msg.entity });
 		return;
 	}
-	else if (msg.to === -1)
+	if (msg.to == INVALID_PLAYER)
 	{
-		this.cmpAIInterface.PushEvent("Destroy", {"entity" : msg.entity});
-		this.needsFullGet = true;
+		this.cmpAIInterface.PushEvent("Destroy", { "entity": msg.entity });
 		return;
 	}
-	
+
 	this.changes.owner = msg.to;
 	this.cmpAIInterface.PushEvent("OwnershipChanged", msg);
 };

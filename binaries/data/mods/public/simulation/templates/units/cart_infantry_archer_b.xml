@@ -6,7 +6,6 @@
       structures/cart_embassy_celtic
       structures/cart_embassy_iberian
       structures/cart_embassy_italiote
-      structures/{civ}_wonder
     </Entities>
   </Builder>
   <Identity>
@@ -14,7 +13,6 @@
     <SelectionGroupName>units/cart_infantry_archer_b</SelectionGroupName>
     <GenericName>Mauritanian Archer</GenericName>
     <SpecificName>Qešet</SpecificName>
-    <VisibleClasses datatype="tokens">Mercenary</VisibleClasses>
     <Icon>units/cart_infantry_archer.png</Icon>
   </Identity>
   <Promotion>

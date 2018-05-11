@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -68,6 +68,8 @@ public:
 	} m_AnchorType;
 
 	bool m_Floating;
+	entity_pos_t m_FloatDepth;
+
 	float m_RotYSpeed; // maximum radians per second, used by InterpolatedRotY to follow RotY
 
 	// Dynamic state:
@@ -107,6 +109,7 @@ public:
 				"<Anchor>upright</Anchor>"
 				"<Altitude>0.0</Altitude>"
 				"<Floating>false</Floating>"
+				"<FloatDepth>0.0</FloatDepth>"
 				"<TurnRate>6.0</TurnRate>"
 			"</a:example>"
 			"<element name='Anchor' a:help='Automatic rotation to follow the slope of terrain'>"
@@ -122,6 +125,9 @@ public:
 			"</element>"
 			"<element name='Floating' a:help='Whether the entity floats on water'>"
 				"<data type='boolean'/>"
+			"</element>"
+			"<element name='FloatDepth' a:help='The depth at which an entity floats on water (needs Floating to be true)'>"
+				"<ref name='nonNegativeDecimal'/>"
 			"</element>"
 			"<element name='TurnRate' a:help='Maximum graphical rotation speed around Y axis, in radians per second'>"
 				"<ref name='positiveDecimal'/>"
@@ -146,6 +152,7 @@ public:
 		m_Y = paramNode.GetChild("Altitude").ToFixed();
 		m_RelativeToGround = true;
 		m_Floating = paramNode.GetChild("Floating").ToBool();
+		m_FloatDepth = paramNode.GetChild("FloatDepth").ToFixed();
 
 		m_RotYSpeed = paramNode.GetChild("TurnRate").ToFixed().ToFloat();
 
@@ -185,6 +192,7 @@ public:
 		serialize.NumberFixed_Unbounded("altitude", m_Y);
 		serialize.Bool("relative", m_RelativeToGround);
 		serialize.Bool("floating", m_Floating);
+		serialize.NumberFixed_Unbounded("float depth", m_FloatDepth);
 		serialize.NumberFixed_Unbounded("constructionprogress", m_ConstructionProgress);
 
 		if (serialize.IsDebug())
@@ -192,21 +200,21 @@ public:
 			const char* anchor = "???";
 			switch (m_AnchorType)
 			{
-			case PITCH: 
-				anchor = "pitch"; 
+			case PITCH:
+				anchor = "pitch";
 				break;
 
-			case PITCH_ROLL: 
-				anchor = "pitch-roll"; 
+			case PITCH_ROLL:
+				anchor = "pitch-roll";
 				break;
-			
+
 			case ROLL:
 				anchor = "roll";
 				break;
 
 			case UPRIGHT: // upright is the default
-			default: 
-				anchor = "upright"; 
+			default:
+				anchor = "upright";
 				break;
 			}
 			serialize.StringASCII("anchor", anchor, 0, 16);
@@ -241,6 +249,7 @@ public:
 		deserialize.NumberFixed_Unbounded("altitude", m_Y);
 		deserialize.Bool("relative", m_RelativeToGround);
 		deserialize.Bool("floating", m_Floating);
+		deserialize.NumberFixed_Unbounded("float depth", m_FloatDepth);
 		deserialize.NumberFixed_Unbounded("constructionprogress", m_ConstructionProgress);
 		// TODO: should there be range checks on all these values?
 
@@ -300,6 +309,7 @@ public:
 
 	virtual void SetTurretParent(entity_id_t id, const CFixedVector3D& offset)
 	{
+		entity_angle_t angle = GetRotation().Y;
 		if (m_TurretParent != INVALID_ENTITY)
 		{
 			CmpPtr<ICmpPosition> cmpPosition(GetSimContext(), m_TurretParent);
@@ -316,15 +326,16 @@ public:
 			if (cmpPosition)
 				cmpPosition->GetTurrets()->insert(GetEntityId());
 		}
+		SetYRotation(angle);
 		UpdateTurretPosition();
 	}
 
-	virtual entity_id_t GetTurretParent()
+	virtual entity_id_t GetTurretParent() const
 	{
 		return m_TurretParent;
 	}
 
-	virtual bool IsInWorld()
+	virtual bool IsInWorld() const
 	{
 		return m_InWorld;
 	}
@@ -353,12 +364,12 @@ public:
 		AdvertisePositionChanges();
 		AdvertiseInterpolatedPositionChanges();
 	}
-	
+
 	virtual void MoveAndTurnTo(entity_pos_t x, entity_pos_t z, entity_angle_t ry)
 	{
 		m_X = x;
 		m_Z = z;
-		
+
 		if (!m_InWorld)
 		{
 			m_InWorld = true;
@@ -366,7 +377,7 @@ public:
 			m_LastZ = m_PrevZ = m_Z;
 			m_LastYDifference = entity_pos_t::Zero();
 		}
-		
+
 		// TurnTo will advertise the position changes
 		TurnTo(ry);
 
@@ -396,11 +407,12 @@ public:
 		AdvertiseInterpolatedPositionChanges();
 	}
 
-	virtual entity_pos_t GetHeightOffset()
+	virtual entity_pos_t GetHeightOffset() const
 	{
 		if (m_RelativeToGround)
 			return m_Y;
 		// not relative to the ground, so the height offset is m_Y - ground height
+		// except when floating, when the height offset is m_Y - water level + float depth
 		entity_pos_t baseY;
 		CmpPtr<ICmpTerrain> cmpTerrain(GetSystemEntity());
 		if (cmpTerrain)
@@ -410,7 +422,7 @@ public:
 		{
 			CmpPtr<ICmpWaterManager> cmpWaterManager(GetSystemEntity());
 			if (cmpWaterManager)
-				baseY = std::max(baseY, cmpWaterManager->GetWaterLevel(m_X, m_Z));
+				baseY = std::max(baseY, cmpWaterManager->GetWaterLevel(m_X, m_Z) - m_FloatDepth);
 		}
 		return m_Y - baseY;
 	}
@@ -423,11 +435,12 @@ public:
 		AdvertiseInterpolatedPositionChanges();
 	}
 
-	virtual entity_pos_t GetHeightFixed()
+	virtual entity_pos_t GetHeightFixed() const
 	{
 		if (!m_RelativeToGround)
 			return m_Y;
 		// relative to the ground, so the fixed height = ground height + m_Y
+		// except when floating, when the fixed height = water level - float depth + m_Y
 		entity_pos_t baseY;
 		CmpPtr<ICmpTerrain> cmpTerrain(GetSystemEntity());
 		if (cmpTerrain)
@@ -437,12 +450,12 @@ public:
 		{
 			CmpPtr<ICmpWaterManager> cmpWaterManager(GetSystemEntity());
 			if (cmpWaterManager)
-				baseY = std::max(baseY, cmpWaterManager->GetWaterLevel(m_X, m_Z));
+				baseY = std::max(baseY, cmpWaterManager->GetWaterLevel(m_X, m_Z) - m_FloatDepth);
 		}
 		return m_Y + baseY;
 	}
 
-	virtual bool IsHeightRelative()
+	virtual bool IsHeightRelative() const
 	{
 		return m_RelativeToGround;
 	}
@@ -456,7 +469,7 @@ public:
 		AdvertiseInterpolatedPositionChanges();
 	}
 
-	virtual bool IsFloating()
+	virtual bool CanFloat() const
 	{
 		return m_Floating;
 	}
@@ -479,7 +492,7 @@ public:
 		AdvertiseInterpolatedPositionChanges();
 	}
 
-	virtual CFixedVector3D GetPosition()
+	virtual CFixedVector3D GetPosition() const
 	{
 		if (!m_InWorld)
 		{
@@ -490,7 +503,7 @@ public:
 		return CFixedVector3D(m_X, GetHeightFixed(), m_Z);
 	}
 
-	virtual CFixedVector2D GetPosition2D()
+	virtual CFixedVector2D GetPosition2D() const
 	{
 		if (!m_InWorld)
 		{
@@ -501,26 +514,26 @@ public:
 		return CFixedVector2D(m_X, m_Z);
 	}
 
-	virtual CFixedVector3D GetPreviousPosition() 
-	{ 
-		if (!m_InWorld) 
-		{ 
-			LOGERROR("CCmpPosition::GetPreviousPosition called on entity when IsInWorld is false"); 
-			return CFixedVector3D(); 
-		} 
+	virtual CFixedVector3D GetPreviousPosition() const
+	{
+		if (!m_InWorld)
+		{
+			LOGERROR("CCmpPosition::GetPreviousPosition called on entity when IsInWorld is false");
+			return CFixedVector3D();
+		}
 
-		return CFixedVector3D(m_PrevX, GetHeightFixed(), m_PrevZ); 
-	} 
+		return CFixedVector3D(m_PrevX, GetHeightFixed(), m_PrevZ);
+	}
 
-	virtual CFixedVector2D GetPreviousPosition2D() 
-	{ 
-		if (!m_InWorld) 
-		{ 
-			LOGERROR("CCmpPosition::GetPreviousPosition2D called on entity when IsInWorld is false"); 
-			return CFixedVector2D(); 
-		} 
+	virtual CFixedVector2D GetPreviousPosition2D() const
+	{
+		if (!m_InWorld)
+		{
+			LOGERROR("CCmpPosition::GetPreviousPosition2D called on entity when IsInWorld is false");
+			return CFixedVector2D();
+		}
 
-		return CFixedVector2D(m_PrevX, m_PrevZ); 
+		return CFixedVector2D(m_PrevX, m_PrevZ);
 	}
 
 	virtual void TurnTo(entity_angle_t y)
@@ -574,7 +587,7 @@ public:
 		}
 	}
 
-	virtual CFixedVector3D GetRotation()
+	virtual CFixedVector3D GetRotation() const
 	{
 		entity_angle_t y = m_RotY;
 		if (m_TurretParent != INVALID_ENTITY)
@@ -586,7 +599,7 @@ public:
 		return CFixedVector3D(m_RotX, y, m_RotZ);
 	}
 
-	virtual fixed GetDistanceTravelled()
+	virtual fixed GetDistanceTravelled() const
 	{
 		if (!m_InWorld)
 		{
@@ -597,7 +610,7 @@ public:
 		return CFixedVector2D(m_X - m_LastX, m_Z - m_LastZ).Length();
 	}
 
-	float GetConstructionProgressOffset(const CVector3D& pos)
+	float GetConstructionProgressOffset(const CVector3D& pos) const
 	{
 		if (m_ConstructionProgress.IsZero())
 			return 0.0f;
@@ -627,7 +640,7 @@ public:
 		return (m_ConstructionProgress.ToFloat() - 1.0f) * dy;
 	}
 
-	virtual void GetInterpolatedPosition2D(float frameOffset, float& x, float& z, float& rotY)
+	virtual void GetInterpolatedPosition2D(float frameOffset, float& x, float& z, float& rotY) const
 	{
 		if (!m_InWorld)
 		{
@@ -641,7 +654,7 @@ public:
 		rotY = m_InterpolatedRotY;
 	}
 
-	virtual CMatrix3D GetInterpolatedTransform(float frameOffset)
+	virtual CMatrix3D GetInterpolatedTransform(float frameOffset) const
 	{
 		if (m_TurretParent != INVALID_ENTITY)
 		{
@@ -680,7 +693,7 @@ public:
 		float x, z, rotY;
 		GetInterpolatedPosition2D(frameOffset, x, z, rotY);
 
-	
+
 		float baseY = 0;
 		if (m_RelativeToGround)
 		{
@@ -692,7 +705,7 @@ public:
 			{
 				CmpPtr<ICmpWaterManager> cmpWaterManager(GetSystemEntity());
 				if (cmpWaterManager)
-					baseY = std::max(baseY, cmpWaterManager->GetExactWaterLevel(x, z));
+					baseY = std::max(baseY, cmpWaterManager->GetExactWaterLevel(x, z) - m_FloatDepth.ToFloat());
 			}
 		}
 
@@ -700,8 +713,8 @@ public:
 
 		CMatrix3D m;
 
-		// linear interpolation is good enough (for RotX/Z). 
-		// As you always stay close to zero angle.	
+		// linear interpolation is good enough (for RotX/Z).
+		// As you always stay close to zero angle.
 		m.SetXRotation(Interpolate(m_LastInterpolatedRotX, m_InterpolatedRotX, frameOffset));
 		m.RotateZ(Interpolate(m_LastInterpolatedRotZ, m_InterpolatedRotZ, frameOffset));
 
@@ -715,7 +728,7 @@ public:
 		return m;
 	}
 
-	void GetInterpolatedPositions(CVector3D& pos0, CVector3D& pos1)
+	void GetInterpolatedPositions(CVector3D& pos0, CVector3D& pos1) const
 	{
 		float baseY0 = 0;
 		float baseY1 = 0;
@@ -737,8 +750,8 @@ public:
 				CmpPtr<ICmpWaterManager> cmpWaterManager(GetSimContext(), SYSTEM_ENTITY);
 				if (cmpWaterManager)
 				{
-					baseY0 = std::max(baseY0, cmpWaterManager->GetExactWaterLevel(x0, z0));
-					baseY1 = std::max(baseY1, cmpWaterManager->GetExactWaterLevel(x1, z1));
+					baseY0 = std::max(baseY0, cmpWaterManager->GetExactWaterLevel(x0, z0) - m_FloatDepth.ToFloat());
+					baseY1 = std::max(baseY1, cmpWaterManager->GetExactWaterLevel(x1, z1) - m_FloatDepth.ToFloat());
 				}
 			}
 		}
@@ -777,7 +790,7 @@ public:
 				// Calculate new orientation, in a peculiar way in order to make sure the
 				// result gets close to m_orientation (rather than being n*2*M_PI out)
 				m_InterpolatedRotY = rotY + deltaClamped - delta;
-				
+
 				// update the visual XZ rotation
 				if (m_InWorld)
 				{
@@ -794,7 +807,7 @@ public:
 		}
 		case MT_TurnStart:
 		{
-			
+
 			m_LastInterpolatedRotX = m_InterpolatedRotX;
 			m_LastInterpolatedRotZ = m_InterpolatedRotZ;
 
@@ -876,7 +889,7 @@ private:
 	 *  - m_X, m_Z
 	 *  - m_RotY
 	 */
-	void AdvertisePositionChanges()
+	void AdvertisePositionChanges() const
 	{
 		for (std::set<entity_id_t>::const_iterator it = m_Turrets.begin(); it != m_Turrets.end(); ++it)
 		{
@@ -906,7 +919,7 @@ private:
 	 *  - If m_RelativeToGround, then the ground under this unit
 	 *  - If m_RelativeToGround && m_Float, then the water level
 	 */
-	void AdvertiseInterpolatedPositionChanges()
+	void AdvertiseInterpolatedPositionChanges() const
 	{
 		if (m_InWorld)
 		{

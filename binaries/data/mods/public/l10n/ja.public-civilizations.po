@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Akihiro Kawakami <akinobu329@yahoo.co.jp>, 2013
+# Asakura, 2017
 # guicho2.71828 <guicho2.71828@gmail.com>, 2014
 # jiroramo <billiken316@yahoo.co.jp>, 2013
 # Kanetaka Suto, 2013
@@ -11,14 +12,15 @@
 # llen_llen, 2013
 # llen_llen, 2014,2016
 # Mephisto Books <martin.route66.blues+transifex@gmail.com>, 2014
+# red hare <www3@hotmail.co.jp>, 2017
 # sgensum, 2014
 # UNJIRO <beer_nondakure@yahoo.co.jp>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-03-12 18:52+0100\n"
-"PO-Revision-Date: 2016-03-02 04:12+0000\n"
-"Last-Translator: llen_llen\n"
+"POT-Creation-Date: 2017-06-05 09:01+0200\n"
+"PO-Revision-Date: 2017-07-23 00:56+0000\n"
+"Last-Translator: Asakura\n"
 "Language-Team: Japanese (http://www.transifex.com/wildfire-games/0ad/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -193,12 +195,13 @@ msgstr "古典的なファランクス陣形は紀元前8世紀頃に考案さ�
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].History
 msgid ""
-"The general whom persuaded the Athenians to invest their income from silver "
+"The general who persuaded the Athenians to invest their income from silver "
 "mines in a war navy of 200 Triremes. A key figure during the Persian Wars, "
 "he commanded the victorious Athenian navy at the decisive battle of Salamis "
 "in 479 B.C. Later, he pursued an active policy against the Persians in the "
-"Aegean, thereby laying the foundations of future Athenian power. Ostracised "
-"by the Athenians, he was forced to flee to the protection of the Persians."
+"Aegean, thereby laying the foundations of future Athenian power. However, he"
+" was eventually ostracised by the Athenians and forced to flee to the "
+"protection of the Persians."
 msgstr "アテナイの人々を説得し、銀鉱の収入で三段櫂船200隻からなる海軍を編成した将軍であり、ペルシア戦争の功労者として、紀元前479年のサラミスの海戦でアテナイ海軍を決定的な勝利に導きました。その後もエーゲ海全体の反ペルシア政策を主導して、後のアテナイの覇権の基礎を築きましたが、陶片追放によってアテナイを追われ、ペルシア領への亡命を余儀なくされました。"
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[1].History
@@ -317,17 +320,14 @@ msgid "Celtic religion and druidry inspired their warlike mindset. "
 msgstr "ケルトの宗教とドルイド教は彼らの好戦的思想を鼓舞しました。"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Description
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
-msgid "Bonus to tech speed."
-msgstr "研究速度ボーナスを得ます。"
+msgid "-20% resources cost for allies healers."
+msgstr "同盟の治療者のためには-20％資源コストが必要です。"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Name
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
-msgid "Druides"
-msgstr "ドルイド"
+msgid "Druids"
+msgstr "ドルイド僧"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].History
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
 msgid ""
 "The Druids of the Celts maintained an organized religion that advanced the "
 "technology of their people even during wartime."
@@ -481,7 +481,7 @@ msgid ""
 "agreed upon a will with his wife and subordinates; his daughters would "
 "inherit the physical running of the territory, under Boudicca's stewardship "
 "until they were adults, and the Emperor of Rome would have overlordship, "
-"collecting taxes and being allowed to request military aide. Much the same "
+"collecting taxes and being allowed to request military aid. Much the same "
 "situation as he already held. The problem lay in that the Romans did not "
 "recognize female heirs, and thus asserted, upon Prasutagus's death, that "
 "only the Emperor's claim to the kingdom of Icenia was valid. They further "
@@ -522,10 +522,10 @@ msgstr "ブリトンは軍犬の飼育で知られました。"
 #: simulation/data/civs/brit.jsonHistory
 msgid ""
 "The Britons were the Celtic tribes of the British Isles. Using chariots, "
-"longswordsmen and powerful melee soldiers, they staged fearesome revolts "
+"longswordsmen and powerful melee soldiers, they staged fearsome revolts "
 "against Rome to protect their customs and interests. Also, they built "
 "thousands of unique structures such as hill forts, crannogs and brochs."
-msgstr "ブリトンはブリテン諸島のケルト部族でした。チャリオットと長剣士、強力な接近戦士を用いて、ローマへ恐るべき反乱を起こし、彼らの慣習と関心を守ろうとしました。また、ヒルフォートや湖上住居、円塔といった多くの独特な建築を建てました。"
+msgstr "ブリトンはブリテン諸島に住むケルトの一族です。戦車を用いるほか、 ロングソード兵と強力な殴打兵があり、彼らはローマに対して幾度も恐るべき反乱を行い、自らの風習と財産を守りました。また、彼らは丘上の砦やクラノグという水上の建物、brochという石の塔など、沢山の独自の建物を立てました。"
 
 #: simulation/data/civs/cart.jsonName
 msgid "Carthaginians"
@@ -565,8 +565,8 @@ msgid ""
 msgstr "イベリア半島と同様に、北アフリカは馬の国として知られ、毎年10万頭の生産が可能でした。北アフリカはマルミミゾウの産地でもありました。"
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Description
-msgid "+33% trade profit international routes."
-msgstr "国際交易収入が33%増加します。"
+msgid "10% bonus of trade profit for allies' international routes."
+msgstr "同盟国との国際交易収入に10%ボーナスが付きます。"
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Name
 msgid "Trademasters"
@@ -771,14 +771,28 @@ msgstr "カルタゴは、現代のチュニジアにあった都市国家で、
 msgid "Gauls"
 msgstr "ガリア"
 
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
+msgid "-10% research time for technologies of allies."
+msgstr "同盟国のテクノロジー研究時間が10%減少します。"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
+msgid "Druidic Wisdom"
+msgstr "ドルイド教の知恵"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
+msgid ""
+"The Druids of the Gauls maintained an organized religion that advanced the "
+"technology of their people even during wartime."
+msgstr "ガリアのドルイドは組織的な宗教を維持して、戦時においてもテクノロジーを発展させました。"
+
 #: simulation/data/civs/gaul.jsonAINames[0]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].Name
-msgid "Britomartos"
-msgstr "ブリトマルトス"
+msgid "Viridomarus"
+msgstr "ウィリドマルス"
 
 #: simulation/data/civs/gaul.jsonAINames[1]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].Name
-msgid "Brennos"
+msgid "Brennus"
 msgstr "ブレンヌス"
 
 #: simulation/data/civs/gaul.jsonAINames[2]
@@ -791,7 +805,7 @@ msgstr "キンゲトリクス"
 
 #: simulation/data/civs/gaul.jsonAINames[4]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].Name
-msgid "Uerkingetorix"
+msgid "Vercingetorix"
 msgstr "ウェルキンゲトリクス"
 
 #: simulation/data/civs/gaul.jsonAINames[5]
@@ -807,8 +821,8 @@ msgid "Liscus"
 msgstr "リスクス"
 
 #: simulation/data/civs/gaul.jsonAINames[8]
-msgid "Valetiacos"
-msgstr "ワレティアコス"
+msgid "Valetiacus"
+msgstr "ウァレティアクス"
 
 #: simulation/data/civs/gaul.jsonAINames[9]
 msgid "Viridovix"
@@ -820,14 +834,17 @@ msgid ""
 msgstr "建物を破壊または占領するたびに一定量の金属と食料を得ます。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Name
-msgid "Uae Uictos"
-msgstr "Uae Uictos"
+msgid "Vae Victis"
+msgstr "打ち負かされた者たちに災いあれ"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].History
 msgid ""
-"Means Woe to the Defeated. It was the words that the Gallic Leader, Brennos,"
-" spoke at the Capitol at Rome after they took their plunder."
-msgstr "「敗者に災いあれ」の意味。これはガリアの族長ブレンヌスが、ローマのカンピドリアで略奪品を手にして発した言葉です。"
+"Woe to the Defeated! The Gallic chieftain Brennus seized Rome (with the "
+"exception of a garrison on Capitoline Hill). When Camillus besieged him with"
+" a relief force from Veii, he negotiated his surrender for 1000 pounds of "
+"gold, and adding the weight of his sword on the scale when the Romans "
+"complained that he used false weights he uttered those famous words."
+msgstr "征服された者に災いあれ!  ガリア人の族長ブレンヌスはローマを占領しました（カンピドリア守備隊は免れた）。カミルスはウェイイから救援隊と共に駆けつけ停戦交渉を行い、停戦と引き換えに金1000ポンドを支払うことで合意しましたた。その金を量る重りが通常と異なることにローマ人が抗議したとき、ブレンヌスは自身の剣を重りに載せ、かの有名な言葉が発せられました。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[1].Description
 msgid "Gallic druids gain a small melee attack."
@@ -846,20 +863,20 @@ msgstr "カルヌテスはアウレルキアのドルイドです。彼らは必
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].History
 msgid ""
-"When celt armies met the enemy, before the battle would start, the celt "
+"When Celtic armies met the enemy, before the battle would start, the Celtic "
 "leader would go to the first line and challenge the bravest of the enemy "
 "warriors to a single combat. The story of how Marcus Claudius Marcellus "
 "killed a Gallic leader at Clastidium (222 B.C.) is typical of such "
-"encounters. Advancing with a smallish army, Marcellus met a combined force "
-"of Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with"
-" the usual rush and terrifying cries, and their king, Britomartos, picking "
+"encounters. Advancing with a small army, Marcellus met a combined force of "
+"Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with "
+"the usual rush and terrifying cries, and their king, Viridomarus, picking "
 "out Marcellus by means of his badges of rank, made for him, shouting a "
-"challenge and brandishing his spear. Britomartos was an outstanding figure "
+"challenge and brandishing his spear. Viridomarus was an outstanding figure "
 "not only for his size but also for his adornments; for he was resplendent in"
 " bright colors and his armor shone with gold and silver. This armor, thought"
 " Marcellus, would be a fitting offering to the gods. He charged the Gaul, "
 "pierced his bright breastplate and cast him to the ground. It was an easy "
-"task to kill Britomartos and strip him of his armor."
+"task to kill Viridomarus and strip him of his armor."
 msgstr "ケルト軍が敵と対面すると、戦いが始まる前にケルトの大将が最前線へ行き、敵兵の一番の勇者に一騎打ちを挑んだものでした。マルクス・クラウディウス・マルケッルスがガリア王をクラスティディウム （紀元前222年）で殺した逸話はそうした遭遇の典型です。小さめな軍隊で前進し、マルケッルスはインスブリアのガリア人とガエサタエの混成軍とクラスティディウムで遭遇しました。ガリア軍はいつもどおり雄叫びを上げて突進しました。そしてその王ブリトマルトスは, マルケッルスを階級バッジによって見わけ、大声で決闘を挑み、槍を得意げに振り回しました。 ブリトマルトスの外観は体格のみならず、装飾品でも際立っていました。鮮やかな色できらびやかに身を包み、鎧は金や銀で輝いていたのです。この鎧は神への奉納品にふさわしいと、マルケッルスは思いました。彼はそのガリア人 に突進し、鮮やかな胸当てを貫いて身を地面に打ち捨てました。ブリトマルトスを倒して鎧をはぎ取ることなど彼にとっては簡単な仕事でした。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].History
@@ -871,19 +888,19 @@ msgid ""
 "that Britons had conquered Rome, the greatest civilization in the world, "
 "long before Rome conquered the Britons. We know from many ancient sources "
 "which predate Geoffrey that Rome was indeed sacked, but in 387 not 390, and "
-"that the raid was led by a man named Brennos (which was latinized to "
-"Brennus), but he and his invading horde were Gallic Senones, not British. In"
-" this episode several features of Geoffrey's editing method can be seen: he "
-"modified the historical Brennus/Brennos, created the brother Belinus, "
-"borrowed the Gallic invasion, but omitted the parts where the Celts seemed "
-"weak or foolish. His technique is both additive and subtractive. Like the "
-"tale of Trojan origin, the story of the sack of Rome is not pure "
-"fabrication; it is a creative rearrangement of the available facts, with "
-"details added as necessary. By virtue of their historical association, Beli "
-"and Bran are often muddled with the earlier brothers Belinus and Brennus "
-"(the sons of Dunvallo Molmutius) who contended for power in northern Britain"
-" in around 390 B.C., and were regarded as gods in old Celtic tradition."
-msgstr "ブレンヌスはローマの歴史家がつけた名で、カミルスの時代にローマを占領したガリアの有名な指導者です。ジェフリー・オブ・モンマスという聖職者が著した「ブリタニア列王史」によると、ブレンヌスとベリヌスの兄弟がガリアを侵略し、紀元前390年にローマを略奪したことが、ブリトンが世界最高の文明ローマを、ローマがブリトンを征服するはるか前に征服した証だとします。ジェフリー以前の多くの古代の文献によると、ローマは確かに略奪されたが、390年ではなく387年であり、略奪はブレノス（ラテン語化するとブレンヌス）という指導者が率いていたとされます。しかし、彼と侵略者の大群はガリア・セノネス族で、イギリス人ではありません。このエピソードでジェフリーの編集技法の特徴のいくつかがわかります。彼は歴史上のブレンヌス/ブレノスを改変し、ベリヌスという兄弟を創作し、ガリアの侵略を借りつつも、ケルトが弱く愚かに見える部分は省きました。彼の技法は付加と省略の両方です。トロイ起源説のように、ローマの略奪は完全な創作ではありません。つまり、使える事実を創造的に再構成し、必要に応じて詳細を足したものです。歴史的な連想から、ベリとブランはしばしば、北ブリテンで紀元前390年頃に覇権を競っていた（ドゥンワロ・モルムティウスの息子の）ベリヌスとブレンヌス兄弟と混同されますが、古いケルトの伝統で神とされていました。"
+"that the raid was led by a man named Brennus, but he and his invading horde "
+"were Gallic Senones, not British. In this episode several features of "
+"Geoffrey's editing method can be seen: he modified the historical Brennus, "
+"created the brother Belinus, borrowed the Gallic invasion, but omitted the "
+"parts where the Celts seemed weak or foolish. His technique is both additive"
+" and subtractive. Like the tale of Trojan origin, the story of the sack of "
+"Rome is not pure fabrication; it is a creative rearrangement of the "
+"available facts, with details added as necessary. By virtue of their "
+"historical association, Beli and Bran are often muddled with the earlier "
+"brothers Belinus and Brennus (the sons of Dunvallo Molmutius) who contended "
+"for power in northern Britain in around 390 B.C., and were regarded as gods "
+"in old Celtic tradition."
+msgstr ""
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -1070,7 +1087,7 @@ msgstr "カロス（カルス）はケルティベリア人の居住域の中で
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[2].History
 msgid ""
-"Indibil was king of the Ilegetes, a large federation ranged principally "
+"Indibil was king of the Ilergetes, a large federation ranged principally "
 "along the Ebro River in the northwest of the Iberian Peninsula. During the "
 "Barcid expansion, from 212 B.C. he had initially been talked into allying "
 "himself with the Carthaginians who had taken control of a lot of territory "
@@ -1163,8 +1180,8 @@ msgid ""
 msgstr "ギリシア人は様々な異民族をギリシア化することに大きな成功を収めました。ヘレニズム時代においては、ギリシア語は古代世界の共通語として、広くスペインからインドまで通用しました。"
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Description
-msgid "+15% tribute and trade bonus on metal."
-msgstr "金属の貢ぎ物と交易に+15%ボーナスがつきます。"
+msgid "+20% sell prices at market."
+msgstr "市場販売価格が20%上昇する。"
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Name
 msgid "Standardized Currency"
@@ -1424,12 +1441,12 @@ msgid ""
 msgstr "クシャトリヤまたはカシュトリヤとは、戦士を意味し、ヒンドゥー教の4つのヴァルナ（社会階層）の中の1つです。伝統的にクシャトリヤは軍人や支配エリート層として、ヴェーダとマヌ法典に基づいたヴェーダ・ヒンドゥー教の社会システムを構成してきました。"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Description
-msgid "Allied Temple techs -50% cost and research time."
-msgstr "同盟の神殿テクノロジーはコストと研究時間が50%減ります。"
+msgid "Allied temples and temple technologies -50% cost and research time."
+msgstr "同盟の寺院と寺院テクノロジーはコストと研究時間が50%減少します。"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Name
-msgid "Evangelism."
-msgstr "伝道。"
+msgid "Ashoka's Religious Support"
+msgstr "アショーカ王信仰の支え"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].History
 msgid ""
@@ -1602,8 +1619,8 @@ msgid ""
 msgstr "ペルシアは戦時に大人数の歩兵の召集を、アケメネス朝帝国の巨大さとそれを実現する手法によって可能にし、実際しました。一般にペルシアの歩兵は良く鍛えられていて、粘り強く戦いました。しかし、その一方で、歩兵はつかみ合いの接近戦に弱かったのでした。また、精鋭部隊を除き、ペルシア歩兵は専任の常備軍ではありませんでした。"
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Description
-msgid "+25% trade profit land routes."
-msgstr "陸路の交易収入が+25%増加します。"
+msgid "Higher income (+15%) from land trade routes for ally's traders."
+msgstr "同盟国間での陸路の交易収入がアップ (+15%) します。　"
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Name
 msgid "Royal Road"
@@ -1698,11 +1715,11 @@ msgstr "ペルシア建築"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].History
 msgid ""
-"The Persians built the wonderful 1677 mile-long Royal Highway from Sardis to"
-" Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
-"Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
-"Elamite capital of Susa."
-msgstr "ペルシアは1677マイルにおよぶ素晴らしい王の道をサルディスからスーサまで建設しました。また、ダレイオス大王とクセルクセスは壮麗なペルセポリスも建設しました。、キュロス大王はエクバタナを大きく改良し、エラム人の古都スーサを実質再建しました。"
+"The Persians built the wonderful 2700 kilometer-long Royal Highway from "
+"Sardis to Susa; Darius the Great and Xerxes also built the magnificent "
+"Persepolis; Cyrus the Great greatly improved Ecbatana and virtually "
+"'rebuilt' the old Elamite capital of Susa."
+msgstr "ペルシャはサルディスからスーサまでの 2700kmにも及ぶ驚くべき王の道を建設しました。また、ダレイオス大王とクセルクセスは壮麗なペルセポリスも建設しました。キュロス大王はエクバタナを大きく改良し、エラム人の古都スーサを事実上再建しました。 "
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Description
 msgid "Reduces train time for Anusiya champion infantry by half."
@@ -1817,13 +1834,12 @@ msgid "Mercenary Army"
 msgstr "雇兵部隊"
 
 #: simulation/data/civs/ptol.jsonCivBonuses[0].History
-#: simulation/data/civs/ptol.jsonStructures[1].History
 msgid ""
 "The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
 "foreign mercenaries for the bulk of its military force, mainly because the "
 "loyalty of native Egyptian units was often suspect. Indeed, during one "
 "native uprising, Upper Egypt was lost to the Ptolemies for decades. "
-"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"Mercenaries were often battle-hardened and their loyalty could be bought, "
 "sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
 " under the Ptolemies was so prosperous as to be the richest of Alexander's "
 "successor states."
@@ -2004,6 +2020,18 @@ msgid ""
 "Trains all 'mercenary' units."
 msgstr "中立地帯に建設しなければなりません。領地半径効果を持ちません。全種の「傭兵」ユニットを養成します。"
 
+#: simulation/data/civs/ptol.jsonStructures[1].History
+msgid ""
+"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
+"foreign mercenaries for the bulk of its military force, mainly because the "
+"loyalty of native Egyptian units was often suspect. Indeed, during one "
+"native uprising, Upper Egypt was lost to the Ptolemies for decades. "
+"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
+" under the Ptolemies was so prosperous as to be the richest of Alexander's "
+"successor states."
+msgstr "ギリシア・マケドニア系のプトレマイオス王朝は大勢のギリシア人および外国人の傭兵に軍の兵力を依存していました。これはおもに国内のエジプト人部隊の忠誠が疑われていたためでした。実際に、ある国内の反乱の間、上エジプトは数十年にわたってプトレマイオス朝の手を離れました。傭兵は多くの場合戦場慣れしていて、忠誠を、あるときは安い金で、またあるときは安からぬ金で買えました。このことは問題とはなりませんでした。エジプトはプトレマイオス朝の下でたいそう繁栄し、アレクサンドロスの後継の中で最富裕国だったからです。"
+
 #: simulation/data/civs/ptol.jsonStructures[2].Name
 msgid "Lighthouse"
 msgstr "灯台"
@@ -2069,17 +2097,23 @@ msgid ""
 msgstr "ローマ市民権は古代世界で大変貴重なものでした。他の被征服民には認められない基本的な権利と特権がローマ市民には与えられました。ローマ市民を傷つけることは、ローマそのものを傷つけることと同等であり、またローマの全権力が加害者に行使されることになりかねないと言われました。"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Description
-msgid "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-msgstr "ローマ領内にいる同盟国の市民兵士は+15%の攻撃ボーナスを得ます。"
+msgid "-20% training time for allied infantry."
+msgstr "同盟兵士の生産時間が 20% 減少します。"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Name
-msgid "Socii"
-msgstr "同盟市"
+msgid "Conscription"
+msgstr "徴兵"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].History
 msgid ""
-"Being allied with Rome came with great benefits (as well as great peril)."
-msgstr "ローマと同盟を結ぶことは、大きな利益（と大きな危険）をもたらしました。"
+"Many Roman soldiers were conscripted into service. While volunteers were "
+"preferred, the Roman state did maintain an annual military draft. During an "
+"emergency the draft and the terms of service were enlarged. The importance "
+"of military service in Republican Rome was so great it was a prerequisite "
+"for a political career. Members of the Senate were called Conscript Fathers "
+"because of this, reflected in how the ordo equester was said to have been "
+"\"conscripted\" into the Senate."
+msgstr "多くのローマ人兵士が徴兵されて兵役に就きました。 志願兵が好まれていた時期に、ローマは毎年の徴兵制度を維持しました。 有事の際には、徴兵と勤務条件が拡大されました。 共和国ローマにおいて兵役の重要性はとても大きかったので、政治的キャリアのための必要条件でもありました。 このため、上院議員は元老と呼ばれ、ordo equesterが上院に「徴集」されたといわれることに反映されています。"
 
 #: simulation/data/civs/rome.jsonAINames[0]
 msgid "Lucius Junius Brutus"
@@ -2460,14 +2494,14 @@ msgstr "Seleukos A' Nikator"
 msgid ""
 "Antiochus inherited a troubled kingdom upon the beginning of his reign. From"
 " the verge of collapse he managed to weld back together the empire Seleukus "
-"I so hard to found. The rebellious eastern satraps of Bactria and Parthia "
-"were brought to heel , temporarily securing his eastern borders. He then "
-"turned his attention to mother Greece, attempting to fulfill the dreams of "
-"his fathers by invading Greece under the pretext of liberation. The Achaean "
-"League and the Kingdom of Pergamon banded together with the Romans to defeat"
-" him at the Battle of Magnesia, forever burying the dream of reuniting "
-"Alexander's empire."
-msgstr "アンティオコスは王国の混乱の最中に即位しました。崩壊の瀬戸際から、彼はセレウコス1世が苦心して築いた帝国をどうにかまとめ上げました。反抗的な東のバクトリアとパルティアの総督を恭順させ一時的に東の国境地帯を安定させました。すると彼は母なるギリシアに注意を向け、父の夢の成就を目指し、解放の口実でギリシアへ侵攻しました。アカイア同盟とペルガモン王国はローマと連帯して、マグネシアの戦いで彼を破り、アレクサンドロスの帝国の再興の夢を永遠に葬りました。"
+"I fought so hard to found. The rebellious eastern satraps of Bactria and "
+"Parthia were brought to heel , temporarily securing his eastern borders. He "
+"then turned his attention to mother Greece, attempting to fulfill the dreams"
+" of his fathers by invading Greece under the pretext of liberation. The "
+"Achaean League and the Kingdom of Pergamon banded together with the Romans "
+"to defeat him at the Battle of Magnesia, forever burying the dream of "
+"reuniting Alexander's empire."
+msgstr ""
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[1].Name
 msgid "Antiokhos G' Megas"
@@ -2563,8 +2597,10 @@ msgid ""
 msgstr "伝説的立法者のリュクルゴスが定めた国制のもと、スパルタ教育の制度が確立されました。スパルタ人はスパルタ防衛の優れた戦士となるため、6歳から訓練を受けました。"
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Description
-msgid "Allies can train Spartiates."
-msgstr "同盟でスパルタ市民が養成できます。"
+msgid ""
+"Increases the health for citizen-soldier infantry spearmen by 10% for allies"
+" of Spartan players."
+msgstr "スパルタプレイヤーの同盟国に対して、市民兵の槍兵の体力を10％増加させます。"
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Name
 msgid "Peloponnesian League"

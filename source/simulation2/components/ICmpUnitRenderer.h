@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ public:
 	{
 		tag_t() : n(0) {}
 		explicit tag_t(u32 n) : n(n) {}
-		bool valid() { return n != 0; }
+		bool valid() const { return n != 0; }
 
 		u32 n;
 	};
@@ -53,24 +53,24 @@ public:
 	virtual void UpdateUnit(tag_t tag, CUnit* unit, const CBoundingSphere& boundsApprox) = 0;
 
 	virtual void UpdateUnitPos(tag_t tag, bool inWorld, const CVector3D& pos0, const CVector3D& pos1) = 0;
-	
+
 	/**
 	 * Return a list of visual entities along with their center point.
-	 * Visual means they have an associated actor and a visual component, 
-	 * but they could still be hiden in the fog of war for a specific player, 
+	 * Visual means they have an associated actor and a visual component,
+	 * but they could still be hiden in the fog of war for a specific player,
 	 * for example.
-	 * NOTE: It's generally faster to do a lot of ray intersection tests than 
+	 * NOTE: It's generally faster to do a lot of ray intersection tests than
 	 * querying a lot of entities for component interfaces and doing these types
 	 * of tests first.
 	 */
-	virtual void PickAllEntitiesAtPoint(std::vector<std::pair<CEntityHandle, CVector3D> >& outEntities, 
-		const CVector3D& origin, const CVector3D& dir, 
-		bool allowEditorSelectables) = 0;
+	virtual void PickAllEntitiesAtPoint(std::vector<std::pair<CEntityHandle, CVector3D> >& outEntities,
+		const CVector3D& origin, const CVector3D& dir,
+		bool allowEditorSelectables) const = 0;
 
 	/**
 	 * Returns the frame offset from the last Interpolate message.
 	 */
-	virtual float GetFrameOffset() = 0;
+	virtual float GetFrameOffset() const = 0;
 
 	/**
 	 * Toggle the rendering of debug info.

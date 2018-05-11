@@ -4,34 +4,34 @@ var g_DebugCommands = false;
 
 function ProcessCommand(player, cmd)
 {
+	let cmpPlayer = QueryPlayerIDInterface(player);
+	if (!cmpPlayer)
+		return;
+
 	let data = {
-		"cmpPlayerManager": Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager)
+		"cmpPlayer": cmpPlayer,
+		"controlAllUnits": cmpPlayer.CanControlAllUnits()
 	};
-
-	if (!data.cmpPlayerManager || player < 0)
-		return;
-
-	data.playerEnt = data.cmpPlayerManager.GetPlayerByID(player);
-
-	if (data.playerEnt == INVALID_ENTITY)
-		return;
-
-	data.cmpPlayer = Engine.QueryInterface(data.playerEnt, IID_Player);
-	if (!data.cmpPlayer)
-		return;
-
-	data.controlAllUnits = data.cmpPlayer.CanControlAllUnits();
 
 	if (cmd.entities)
 		data.entities = FilterEntityList(cmd.entities, player, data.controlAllUnits);
 
 	// Allow focusing the camera on recent commands
-	let cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-	cmpGuiInterface.PushNotification({
+	let commandData = {
 		"type": "playercommand",
 		"players": [player],
 		"cmd": cmd
-	});
+	};
+
+	// Save the position, since the GUI event is received after the unit died
+	if (cmd.type == "delete-entities")
+	{
+		let cmpPosition = cmd.entities[0] && Engine.QueryInterface(cmd.entities[0], IID_Position);
+		commandData.position = cmpPosition && cmpPosition.IsInWorld() && cmpPosition.GetPosition2D();
+	}
+
+	let cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
+	cmpGuiInterface.PushNotification(commandData);
 
 	// Note: checks of UnitAI targets are not robust enough here, as ownership
 	//	can change after the order is issued, they should be checked by UnitAI
@@ -76,13 +76,6 @@ var g_Commands = {
 		Cheat(cmd);
 	},
 
-	"quit": function(player, cmd, data)
-	{
-		// Let the AI exit the game for testing purposes
-		var cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-		cmpGuiInterface.PushNotification({ "type": "quit", "players": [player] });
-	},
-
 	"diplomacy": function(player, cmd, data)
 	{
 		let cmpCeasefireManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_CeasefireManager);
@@ -121,6 +114,9 @@ var g_Commands = {
 
 	"control-all": function(player, cmd, data)
 	{
+		if (!data.cmpPlayer.GetCheatsEnabled())
+			return;
+
 		var cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 		cmpGuiInterface.PushNotification({
 			"type": "aichat",
@@ -133,6 +129,16 @@ var g_Commands = {
 
 	"reveal-map": function(player, cmd, data)
 	{
+		if (!data.cmpPlayer.GetCheatsEnabled())
+			return;
+
+		var cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
+		cmpGuiInterface.PushNotification({
+			"type": "aichat",
+			"players": [player],
+			"message": markForTranslation("(Cheat - reveal map)")
+		});
+
 		// Reveal the map for all players, not just the current player,
 		// primarily to make it obvious to everyone that the player is cheating
 		var cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
@@ -144,6 +150,14 @@ var g_Commands = {
 		GetFormationUnitAIs(data.entities, player).forEach(cmpUnitAI => {
 			cmpUnitAI.Walk(cmd.x, cmd.z, cmd.queued);
 		});
+	},
+
+	"walk-custom": function(player, cmd, data)
+	{
+		for (let ent in data.entities)
+			GetFormationUnitAIs([data.entities[ent]], player).forEach(cmpUnitAI => {
+				cmpUnitAI.Walk(cmd.targetPositions[ent].x, cmd.targetPositions[ent].y, cmd.queued);
+			});
 	},
 
 	"walk-to-range": function(player, cmd, data)
@@ -159,21 +173,42 @@ var g_Commands = {
 
 	"attack-walk": function(player, cmd, data)
 	{
+		let allowCapture = cmd.allowCapture || cmd.allowCapture == null;
+
 		GetFormationUnitAIs(data.entities, player).forEach(cmpUnitAI => {
-			cmpUnitAI.WalkAndFight(cmd.x, cmd.z, cmd.targetClasses, cmd.queued);
+			cmpUnitAI.WalkAndFight(cmd.x, cmd.z, cmd.targetClasses, allowCapture, cmd.queued);
 		});
+	},
+
+	"attack-walk-custom": function(player, cmd, data)
+	{
+		let allowCapture = cmd.allowCapture || cmd.allowCapture == null;
+		for (let ent in data.entities)
+			GetFormationUnitAIs([data.entities[ent]], player).forEach(cmpUnitAI => {
+				cmpUnitAI.WalkAndFight(cmd.targetPositions[ent].x, cmd.targetPositions[ent].y, cmd.targetClasses, allowCapture, cmd.queued);
+			});
 	},
 
 	"attack": function(player, cmd, data)
 	{
-		if (g_DebugCommands && !(IsOwnedByEnemyOfPlayer(player, cmd.target) || IsOwnedByNeutralOfPlayer(player, cmd.target)))
-			warn("Invalid command: attack target is not owned by enemy of player "+player+": "+uneval(cmd));
-
 		let allowCapture = cmd.allowCapture || cmd.allowCapture == null;
 
+		if (g_DebugCommands && !allowCapture &&
+		   !(IsOwnedByEnemyOfPlayer(player, cmd.target) || IsOwnedByNeutralOfPlayer(player, cmd.target)))
+			warn("Invalid command: attack target is not owned by enemy of player "+player+": "+uneval(cmd));
+
 		GetFormationUnitAIs(data.entities, player).forEach(cmpUnitAI => {
-			cmpUnitAI.Attack(cmd.target, cmd.queued, allowCapture);
+			cmpUnitAI.Attack(cmd.target, allowCapture, cmd.queued);
 		});
+	},
+
+	"patrol": function(player, cmd, data)
+	{
+		let allowCapture = cmd.allowCapture || cmd.allowCapture == null;
+
+		GetFormationUnitAIs(data.entities, player).forEach(cmpUnitAI =>
+			cmpUnitAI.Patrol(cmd.x, cmd.z, cmd.targetClasses, allowCapture, cmd.queued)
+		);
 	},
 
 	"heal": function(player, cmd, data)
@@ -246,9 +281,14 @@ var g_Commands = {
 
 	"train": function(player, cmd, data)
 	{
+		if (!Number.isInteger(cmd.count) || cmd.count <= 0)
+		{
+			warn("Invalid command: can't train " + uneval(cmd.count) + " units");
+			return;
+		}
+
 		// Check entity limits
-		var cmpTempMan = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
-		var template = cmpTempMan.GetTemplate(cmd.template);
+		var template = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager).GetTemplate(cmd.template);
 		var unitCategory = null;
 		if (template.TrainingRestrictions)
 			unitCategory = template.TrainingRestrictions.Category;
@@ -256,7 +296,7 @@ var g_Commands = {
 		// Verify that the building(s) can be controlled by the player
 		if (data.entities.length <= 0)
 		{
-			 if (g_DebugCommands)
+			if (g_DebugCommands)
 				warn("Invalid command: training building(s) cannot be controlled by player "+player+": "+uneval(cmd));
 			return;
 		}
@@ -358,10 +398,10 @@ var g_Commands = {
 	{
 		for (let ent of data.entities)
 		{
-			let cmpHealth = QueryMiragedInterface(ent, IID_Health);
 			if (!data.controlAllUnits)
 			{
-				if (cmpHealth && cmpHealth.IsUndeletable())
+				let cmpIdentity = Engine.QueryInterface(ent, IID_Identity);
+				if (cmpIdentity && cmpIdentity.IsUndeletable())
 					continue;
 
 				let cmpCapturable = QueryMiragedInterface(ent, IID_Capturable);
@@ -384,8 +424,11 @@ var g_Commands = {
 					Engine.DestroyEntity(cmpMirage.parent);
 
 				Engine.DestroyEntity(ent);
+				continue;
 			}
-			else if (cmpHealth)
+
+			let cmpHealth = Engine.QueryInterface(ent, IID_Health);
+			if (cmpHealth)
 				cmpHealth.Kill();
 			else
 				Engine.DestroyEntity(ent);
@@ -418,11 +461,9 @@ var g_Commands = {
 		}
 	},
 
-	"defeat-player": function(player, cmd, data)
+	"resign": function(player, cmd, data)
 	{
-		let cmpPlayer = QueryPlayerIDInterface(player);
-		if (cmpPlayer)
-			cmpPlayer.SetState("defeated", !!cmd.resign);
+		data.cmpPlayer.SetState("defeated", markForTranslation("%(player)s has resigned."));
 	},
 
 	"garrison": function(player, cmd, data)
@@ -489,10 +530,6 @@ var g_Commands = {
 
 	"unload-template": function(player, cmd, data)
 	{
-		var index = cmd.template.indexOf("&");  // Templates for garrisoned units are extended
-		if (index == -1)
-			return;
-
 		var entities = FilterEntityListWithAllies(cmd.garrisonHolders, player, data.controlAllUnits);
 		for (let garrisonHolder of entities)
 		{
@@ -501,10 +538,10 @@ var g_Commands = {
 			{
 				// Only the owner of the garrisonHolder may unload entities from any owners
 				if (!IsOwnedByPlayer(player, garrisonHolder) && !data.controlAllUnits
-				    && player != +cmd.template.slice(1,index))
+				    && player != +cmd.owner)
 						continue;
 
-				if (!cmpGarrisonHolder.UnloadTemplate(cmd.template, cmd.all))
+				if (!cmpGarrisonHolder.UnloadTemplate(cmd.template, cmd.owner, cmd.all))
 					notifyUnloadFailure(player, garrisonHolder);
 			}
 		}
@@ -532,13 +569,13 @@ var g_Commands = {
 		}
 	},
 
-	"increase-alert-level": function(player, cmd, data)
+	"alert-raise": function(player, cmd, data)
 	{
 		for (let ent of data.entities)
 		{
 			var cmpAlertRaiser = Engine.QueryInterface(ent, IID_AlertRaiser);
-			if (!cmpAlertRaiser || !cmpAlertRaiser.IncreaseAlertLevel())
-				notifyAlertFailure(player);
+			if (cmpAlertRaiser)
+				cmpAlertRaiser.RaiseAlert();
 		}
 	},
 
@@ -561,6 +598,9 @@ var g_Commands = {
 
 	"promote": function(player, cmd, data)
 	{
+		if (!data.cmpPlayer.GetCheatsEnabled())
+			return;
+
 		var cmpGuiInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 		cmpGuiInterface.PushNotification({
 			"type": "aichat",
@@ -617,11 +657,15 @@ var g_Commands = {
 	"barter": function(player, cmd, data)
 	{
 		var cmpBarter = Engine.QueryInterface(SYSTEM_ENTITY, IID_Barter);
-		cmpBarter.ExchangeResources(data.playerEnt, cmd.sell, cmd.buy, cmd.amount);
+		cmpBarter.ExchangeResources(player, cmd.sell, cmd.buy, cmd.amount);
 	},
 
 	"set-shading-color": function(player, cmd, data)
 	{
+		// Prevent multiplayer abuse
+		if (!data.cmpPlayer.IsAI())
+			return;
+
 		// Debug command to make an entity brightly colored
 		for (let ent of cmd.entities)
 		{
@@ -674,7 +718,7 @@ var g_Commands = {
 			{
 				var cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 				cmpGUIInterface.PushNotification({
-					"players": [data.cmpPlayer.GetPlayerID()],
+					"players": [player],
 					"message": markForTranslation("Cannot upgrade as distance requirements are not verified or terrain is obstructed.")
 				});
 				continue;
@@ -684,18 +728,15 @@ var g_Commands = {
 			{
 				var cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 				cmpGUIInterface.PushNotification({
-					"players": [data.cmpPlayer.GetPlayerID()],
+					"players": [player],
 					"message": markForTranslation("Cannot upgrade a garrisoned entity.")
 				});
 				continue;
 			}
 
 			// Check entity limits
-			var cmpTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
-			var template = cmpTemplateManager.GetTemplate(cmd.template);
 			var cmpEntityLimits = QueryPlayerIDInterface(player, IID_EntityLimits);
-			if (template.TrainingRestrictions && !cmpEntityLimits.AllowedToTrain(template.TrainingRestrictions.Category, 1) ||
-				template.BuildRestrictions && !cmpEntityLimits.AllowedToBuild(template.BuildRestrictions.Category))
+			if (cmpEntityLimits && !cmpEntityLimits.AllowedToReplace(ent, cmd.template))
 			{
 				if (g_DebugCommands)
 					warn("Invalid command: build limits check failed for player " + player + ": " + uneval(cmd));
@@ -720,7 +761,7 @@ var g_Commands = {
 		{
 			let cmpUpgrade = Engine.QueryInterface(ent, IID_Upgrade);
 			if (cmpUpgrade)
-				cmpUpgrade.CancelUpgrade(data.cmpPlayer.playerID);
+				cmpUpgrade.CancelUpgrade(player);
 		}
 	},
 
@@ -733,13 +774,61 @@ var g_Commands = {
 			"players": [player],
 			"message": "/allies " + markForTranslation("Attack against %(_player_)s requested."),
 			"translateParameters": ["_player_"],
-			"parameters": { "_player_": cmd.target }
+			"parameters": { "_player_": cmd.player }
 		});
 
 		// And send an attackRequest event to the AIs
 		let cmpAIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_AIInterface);
 		if (cmpAIInterface)
 			cmpAIInterface.PushEvent("AttackRequest", cmd);
+	},
+
+	"spy-request": function(player, cmd, data)
+	{
+		let cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
+		let ent = pickRandom(cmpRangeManager.GetEntitiesByPlayer(cmd.player).filter(ent => {
+			let cmpVisionSharing = Engine.QueryInterface(ent, IID_VisionSharing);
+			return cmpVisionSharing && cmpVisionSharing.IsBribable() && !cmpVisionSharing.ShareVisionWith(player);
+		}));
+
+		let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
+		cmpGUIInterface.PushNotification({
+			"type": "spy-response",
+			"players": [player],
+			"target": cmd.player,
+			"entity": ent
+		});
+		if (ent)
+			Engine.QueryInterface(ent, IID_VisionSharing).AddSpy(cmd.source);
+		else
+		{
+			let template = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager).GetTemplate("special/spy");
+			IncurBribeCost(template, player, cmd.player, true);
+			// update statistics for failed bribes
+			let cmpBribesStatisticsTracker = QueryPlayerIDInterface(player, IID_StatisticsTracker);
+			if (cmpBribesStatisticsTracker)
+				cmpBribesStatisticsTracker.IncreaseFailedBribesCounter();
+			cmpGUIInterface.PushNotification({
+				"type": "text",
+				"players": [player],
+				"message": markForTranslation("There are no bribable units"),
+				"translateMessage": true
+			});
+		}
+	},
+
+	"diplomacy-request": function(player, cmd, data)
+	{
+		let cmpAIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_AIInterface);
+		if (cmpAIInterface)
+			cmpAIInterface.PushEvent("DiplomacyRequest", cmd);
+	},
+
+	"tribute-request": function(player, cmd, data)
+	{
+		let cmpAIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_AIInterface);
+		if (cmpAIInterface)
+			cmpAIInterface.PushEvent("TributeRequest", cmd);
 	},
 
 	"dialog-answer": function(player, cmd, data)
@@ -783,20 +872,6 @@ function notifyBackToWorkFailure(player)
 		"type": "text",
 		"players": [player],
 		"message": markForTranslation("Some unit(s) can't go back to work"),
-		"translateMessage": true
-	});
-}
-
-/**
- * Sends a GUI notification about Alerts that failed to be raised
- */
-function notifyAlertFailure(player)
-{
-	var cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-	cmpGUIInterface.PushNotification({
-		"type": "text",
-		"players": [player],
-		"message": "You can't raise the alert to a higher level!",
 		"translateMessage": true
 	});
 }
@@ -953,10 +1028,9 @@ function TryConstructBuilding(player, cmpPlayer, controlAllUnits, cmd)
 	}
 
 	// If it's a dock, get the right angle.
-	var cmpTemplateMgr = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
-	var template = cmpTemplateMgr.GetTemplate(cmd.template);
+	var template = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager).GetTemplate(cmd.template);
 	var angle = cmd.angle;
-	if (template.BuildRestrictions.Category === "Dock")
+	if (template.BuildRestrictions.PlacementType === "shore")
 	{
 		let angleDock = GetDockAngle(template, cmd.x, cmd.z);
 		if (angleDock !== undefined)
@@ -1377,20 +1451,21 @@ function GetFormationUnitAIs(ents, player, formationTemplate)
 		// TODO: We only check if the formation is usable by some units
 		// if we move them to it. We should check if we can use formations
 		// for the other cases.
-		var nullFormation = (formationTemplate || cmpUnitAI.GetLastFormationTemplate()) == "formations/null";
-		if (!nullFormation && cmpIdentity && cmpIdentity.CanUseFormation(formationTemplate || "formations/null"))
+		var nullFormation = (formationTemplate || cmpUnitAI.GetFormationTemplate()) == "special/formations/null";
+		if (!nullFormation && cmpIdentity && cmpIdentity.CanUseFormation(formationTemplate || "special/formations/null"))
 			formedEnts.push(ent);
 		else
 		{
 			if (nullFormation)
-				cmpUnitAI.SetLastFormationTemplate("formations/null");
+				RemoveFromFormation([ent]);
+
 			nonformedUnitAIs.push(cmpUnitAI);
 		}
 	}
 
 	if (formedEnts.length == 0)
 	{
-		// No units support the foundation - return all the others
+		// No units support the formation - return all the others
 		return nonformedUnitAIs;
 	}
 
@@ -1419,14 +1494,6 @@ function GetFormationUnitAIs(ents, player, formationTemplate)
 	{
 		// We need to give the selected units a new formation controller
 
-		// Remove selected units from their current formation
-		for (var fid in formation.members)
-		{
-			var cmpFormation = Engine.QueryInterface(+fid, IID_Formation);
-			if (cmpFormation)
-				cmpFormation.RemoveMembers(formation.members[fid]);
-		}
-
 		// TODO replace the fixed 60 with something sensible, based on vision range f.e.
 		var formationSeparation = 60;
 		var clusters = ClusterEntities(formation.entities, formationSeparation);
@@ -1435,14 +1502,14 @@ function GetFormationUnitAIs(ents, player, formationTemplate)
 		{
 			if (!formationTemplate || !CanMoveEntsIntoFormation(cluster, formationTemplate))
 			{
-				// get the most recently used formation, or default to line closed
+				// Use the last formation template if everyone was using it
 				var lastFormationTemplate = undefined;
 				for (let ent of cluster)
 				{
 					var cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 					if (cmpUnitAI)
 					{
-						var template = cmpUnitAI.GetLastFormationTemplate();
+						var template = cmpUnitAI.GetFormationTemplate();
 						if (lastFormationTemplate === undefined)
 						{
 							lastFormationTemplate = template;
@@ -1457,7 +1524,17 @@ function GetFormationUnitAIs(ents, player, formationTemplate)
 				if (lastFormationTemplate && CanMoveEntsIntoFormation(cluster, lastFormationTemplate))
 					formationTemplate = lastFormationTemplate;
 				else
-					formationTemplate = "formations/null";
+					formationTemplate = "special/formations/null";
+			}
+
+			RemoveFromFormation(cluster);
+
+			if (formationTemplate == "special/formations/null")
+			{
+				for (let ent of cluster)
+					nonformedUnitAIs.push(Engine.QueryInterface(ent, IID_UnitAI));
+
+				continue;
 			}
 
 			// Create the new controller
@@ -1552,8 +1629,7 @@ function ClusterEntities(ents, separationDistance)
 
 function GetFormationRequirements(formationTemplate)
 {
-	var cmpTempManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
-	var template = cmpTempManager.GetTemplate(formationTemplate);
+	var template = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager).GetTemplate(formationTemplate);
 	if (!template.Formation)
 		return false;
 
@@ -1620,8 +1696,32 @@ function FilterEntityListWithAllies(entities, player, controlAll)
 	return entities.filter(ent => CanControlUnitOrIsAlly(ent, player, controlAll));
 }
 
+/**
+ * Incur the player with the cost of a bribe, optionally multiply the cost with
+ * the additionalMultiplier
+ */
+function IncurBribeCost(template, player, playerBribed, failedBribe)
+{
+	let cmpPlayerBribed = QueryPlayerIDInterface(playerBribed);
+	if (!cmpPlayerBribed)
+		return false;
+
+	let costs = {};
+	// Additional cost for this owner
+	let multiplier = cmpPlayerBribed.GetSpyCostMultiplier();
+	if (failedBribe)
+		multiplier *= template.VisionSharing.FailureCostRatio;
+
+	for (let res in template.Cost.Resources)
+		costs[res] = Math.floor(multiplier * ApplyValueModificationsToTemplate("Cost/Resources/" + res, +template.Cost.Resources[res], player, template));
+
+	let cmpPlayer = QueryPlayerIDInterface(player);
+	return cmpPlayer && cmpPlayer.TrySubtractResources(costs);
+}
+
 Engine.RegisterGlobal("GetFormationRequirements", GetFormationRequirements);
 Engine.RegisterGlobal("CanMoveEntsIntoFormation", CanMoveEntsIntoFormation);
 Engine.RegisterGlobal("GetDockAngle", GetDockAngle);
 Engine.RegisterGlobal("ProcessCommand", ProcessCommand);
 Engine.RegisterGlobal("g_Commands", g_Commands);
+Engine.RegisterGlobal("IncurBribeCost", IncurBribeCost);

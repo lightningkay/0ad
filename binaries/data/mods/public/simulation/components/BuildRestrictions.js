@@ -32,7 +32,7 @@ BuildRestrictions.prototype.Schema =
 			"</oneOrMore>" +
 		"</list>" +
 	"</element>" +
-	"<element name='Category' a:help='Specifies the category of this building, for satisfying special constraints. Choices include: CivilCentre, House, DefenseTower, Farmstead, Market, Barracks, Dock, Fortress, Field, Temple, Wall, Fence, Storehouse, Stoa, Resource, Special, Wonder, Apadana, Embassy, Monument'>" +
+	"<element name='Category' a:help='Specifies the category of this building, for satisfying special constraints. Choices include: Apadana, ArmyCamp, Barracks, CivilCentre, Colony, Council, DefenseTower, Dock, Embassy, Farmstead, Fence, Field, Fortress, Hall, House, Kennel, Library, Market, Monument, Outpost, Pillar, Resource, Special, Stoa, Storehouse, Temple, Theater, UniqueBuilding, Wall, Wonder'>" +
 		"<text/>" +
 	"</element>" +
 	"<optional>" +
@@ -221,39 +221,19 @@ BuildRestrictions.prototype.CheckPlacement = function()
 	}
 
 	// Check special requirements
-	if (this.template.Category == "Dock")
+	if (this.template.PlacementType == "shore")
 	{
-		// TODO: Probably should check unit passability classes here, to determine if:
-		//		1. ships can be spawned "nearby"
-		//		2. builders can pass the terrain where the dock is placed (don't worry about paths)
-		//	so it's correct even if the criteria changes for these units
-		var cmpFootprint = Engine.QueryInterface(this.entity, IID_Footprint);
-		if (!cmpFootprint)
-			return result;	// Fail
-
-		// Get building's footprint
-		var shape = cmpFootprint.GetShape();
-		var halfSize = 0;
-		if (shape.type == "square")
-			halfSize = shape.depth/2;
-		else if (shape.type == "circle")
-			halfSize = shape.radius;
-
-		var cmpTerrain = Engine.QueryInterface(SYSTEM_ENTITY, IID_Terrain);
-		var cmpWaterManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_WaterManager);
-		if (!cmpTerrain || !cmpWaterManager)
-			return result;	// Fail
-
-		var ang = cmpPosition.GetRotation().y;
-		var sz = halfSize * Math.sin(ang);
-		var cz = halfSize * Math.cos(ang);
-		if ((cmpWaterManager.GetWaterLevel(pos.x + sz, pos.y + cz) - cmpTerrain.GetGroundLevel(pos.x + sz, pos.y + cz)) < 1.0 // front
-			|| (cmpWaterManager.GetWaterLevel(pos.x - sz, pos.y - cz) - cmpTerrain.GetGroundLevel(pos.x - sz, pos.y - cz)) > 2.0) // back
+		if (!cmpObstruction.CheckShorePlacement())
 		{
 			result.message = markForTranslation("%(name)s must be built on a valid shoreline");
 			return result;	// Fail
 		}
 	}
+
+	let cmpTemplateManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager);
+
+	let templateName = cmpTemplateManager.GetCurrentTemplateName(this.entity);
+	let template = cmpTemplateManager.GetTemplate(removeFiltersFromTemplateName(templateName));
 
 	// Check distance restriction
 	if (this.template.Distance)
@@ -267,46 +247,44 @@ BuildRestrictions.prototype.CheckPlacement = function()
 			var cmpIdentity = Engine.QueryInterface(id, IID_Identity);
 			return cmpIdentity.GetClassesList().indexOf(cat) > -1;
 		};
-		
-		if (this.template.Distance.MinDistance)
+
+		if (this.template.Distance.MinDistance !== undefined)
 		{
-			var dist = +this.template.Distance.MinDistance;
-			var nearEnts = cmpRangeManager.ExecuteQuery(this.entity, 0, dist, [cmpPlayer.GetPlayerID()], IID_BuildRestrictions).filter(filter);
-			if (nearEnts.length)
+			let minDistance = ApplyValueModificationsToTemplate("BuildRestrictions/Distance/MinDistance", +this.template.Distance.MinDistance, cmpPlayer.GetPlayerID(), template);
+			if (cmpRangeManager.ExecuteQuery(this.entity, 0, minDistance, [cmpPlayer.GetPlayerID()], IID_BuildRestrictions).some(filter))
 			{
-				var result = markForPluralTranslation(
+				let result = markForPluralTranslation(
 					"%(name)s too close to a %(category)s, must be at least %(distance)s meter away",
 					"%(name)s too close to a %(category)s, must be at least %(distance)s meters away",
-					+this.template.Distance.MinDistance);
+					minDistance);
 
 				result.success = false;
 				result.translateMessage = true;
 				result.parameters = {
 					"name": name,
 					"category": cat,
-					"distance": this.template.Distance.MinDistance
+					"distance": minDistance
 				};
 				result.translateParameters = ["name", "category"];
 				return result;  // Fail
 			}
 		}
-		if (this.template.Distance.MaxDistance)
+		if (this.template.Distance.MaxDistance !== undefined)
 		{
-			var dist = +this.template.Distance.MaxDistance;
-			var nearEnts = cmpRangeManager.ExecuteQuery(this.entity, 0, dist, [cmpPlayer.GetPlayerID()], IID_BuildRestrictions).filter(filter);
-			if (!nearEnts.length)
+			let maxDistance = ApplyValueModificationsToTemplate("BuildRestrictions/Distance/MaxDistance", +this.template.Distance.MaxDistance, cmpPlayer.GetPlayerID(), template);
+			if (!cmpRangeManager.ExecuteQuery(this.entity, 0, maxDistance, [cmpPlayer.GetPlayerID()], IID_BuildRestrictions).some(filter))
 			{
-				var result = markForPluralTranslation(
+				let result = markForPluralTranslation(
 					"%(name)s too far from a %(category)s, must be within %(distance)s meter",
 					"%(name)s too far from a %(category)s, must be within %(distance)s meters",
-					+this.template.Distance.MinDistance);
+					maxDistance);
 
 				result.success = false;
 				result.translateMessage = true;
 				result.parameters = {
 					"name": name,
 					"category": cat,
-					"distance": this.template.Distance.MaxDistance
+					"distance": maxDistance
 				};
 				result.translateParameters = ["name", "category"];
 				return result;	// Fail

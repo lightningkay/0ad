@@ -10,7 +10,7 @@ var API3 = function(m)
 m.Map = function Map(sharedScript, type, originalMap, actualCopy)
 {
 	// get the correct dimensions according to the map type
-	let map = (type === "territory" || type === "resource") ? sharedScript.territoryMap : sharedScript.passabilityMap;
+	let map = type == "territory" || type == "resource" ? sharedScript.territoryMap : sharedScript.passabilityMap;
 	this.width = map.width;
 	this.height = map.height;
 	this.cellSize = map.cellSize;
@@ -19,7 +19,7 @@ m.Map = function Map(sharedScript, type, originalMap, actualCopy)
 	this.maxVal = 255;
 
 	// sanity check
-	if (originalMap && originalMap.length !== this.length)
+	if (originalMap && originalMap.length != this.length)
 		warn("AI map size incompatibility with type " + type + ": original " + originalMap.length + " new " + this.length);
 
 	if (originalMap && actualCopy)
@@ -47,8 +47,8 @@ m.Map.prototype.gamePosToMapPos = function(p)
 m.Map.prototype.point = function(p)
 {
 	let q = this.gamePosToMapPos(p);
-	q[0] = q[0] >= this.width ? this.width-1 : (q[0] < 0 ? 0 : q[0]);
-	q[1] = q[1] >= this.width ? this.width-1 : (q[1] < 0 ? 0 : q[1]);
+	q[0] = q[0] >= this.width ? this.width-1 : q[0] < 0 ? 0 : q[0];
+	q[1] = q[1] >= this.width ? this.width-1 : q[1] < 0 ? 0 : q[1];
 	return this.map[q[0] + this.width * q[1]];
 };
 
@@ -63,49 +63,37 @@ m.Map.prototype.addInfluence = function(cx, cy, maxDist, strength, type = "linea
 	let maxDist2 = maxDist * maxDist;
 
 	// code duplicating for speed
-	if (type === "linear")
+	if (type == "linear")
 	{
-		let str = strength / maxDist;	
+		let str = strength / maxDist;
 		for (let y = y0; y < y1; ++y)
 		{
-			let dy = y - cy;		
+			let dy = y - cy;
 			for (let x = x0; x < x1; ++x)
 			{
 				let dx = x - cx;
 				let r2 = dx*dx + dy*dy;
 				if (r2 >= maxDist2)
 					continue;
-				let quant = str * (maxDist - Math.sqrt(r2));
 				let w = x + y * this.width;
-				if (this.map[w] + quant < 0)
-					this.map[w] = 0;
-				else if (this.map[w] + quant > this.maxVal)
-					this.map[w] = this.maxVal;	// avoids overflow.
-				else
-					this.map[w] += quant;
+				this.set(w, this.map[w] + str * (maxDist - Math.sqrt(r2)));
 			}
 		}
 	}
-	else if (type === "quadratic")
+	else if (type == "quadratic")
 	{
 		let str = strength / maxDist2;
 		for (let y = y0; y < y1; ++y)
 		{
-			let dy = y - cy;		
+			let dy = y - cy;
 			for (let x = x0; x < x1; ++x)
 			{
 				let dx = x - cx;
 				let r2 = dx*dx + dy*dy;
 				if (r2 >= maxDist2)
 					continue;
-				let quant = str * (maxDist2 - r2);
-				let w = x + y * this.width;				    
-				if (this.map[w] + quant < 0)
-					this.map[w] = 0;
-				else if (this.map[w] + quant > this.maxVal)
-					this.map[w] = this.maxVal;	// avoids overflow.
-				else
-					this.map[w] += quant;
+				let w = x + y * this.width;
+				this.set(w, this.map[w] + str * (maxDist2 - r2));
 			}
 		}
 	}
@@ -120,13 +108,8 @@ m.Map.prototype.addInfluence = function(cx, cy, maxDist, strength, type = "linea
 				let r2 = dx*dx + dy*dy;
 				if (r2 >= maxDist2)
 					continue;
-				let w = x + y * this.width;				
-				if (this.map[w] + strength < 0)
-					this.map[w] = 0;
-				else if (this.map[w] + strength > this.maxVal)
-					this.map[w] = this.maxVal;	// avoids overflow.
-				else
-					this.map[w] += strength;
+				let w = x + y * this.width;
+				this.set(w, this.map[w] + strength);
 			}
 		}
 	}
@@ -142,47 +125,37 @@ m.Map.prototype.multiplyInfluence = function(cx, cy, maxDist, strength, type = "
 	let y1 = Math.min(this.height, cy + maxDist);
 	let maxDist2 = maxDist * maxDist;
 
-	if (type === "linear")
+	if (type == "linear")
 	{
 		let str = strength / maxDist;
 		for (let y = y0; y < y1; ++y)
 		{
+			let dy = y - cy;
 			for (let x = x0; x < x1; ++x)
 			{
 				let dx = x - cx;
-				let dy = y - cy;
 				let r2 = dx*dx + dy*dy;
 				if (r2 >= maxDist2)
 					continue;
-				let quant = str * (maxDist - Math.sqrt(r2)) * this.map[x + y * this.width];
-				if (quant < 0)
-					this.map[x + y * this.width] = 0;
-				else if (quant > this.maxVal)
-					this.map[x + y * this.width] = this.maxVal;
-				else
-					this.map[x + y * this.width] = quant;
+				let w = x + y * this.width;
+				this.set(w, str * (maxDist - Math.sqrt(r2)) * this.map[w]);
 			}
 		}
 	}
-	else if (type === "quadratic")
+	else if (type == "quadratic")
 	{
 		let str = strength / maxDist2;
 		for (let y = y0; y < y1; ++y)
 		{
+			let dy = y - cy;
 			for (let x = x0; x < x1; ++x)
 			{
 				let dx = x - cx;
-				let dy = y - cy;
 				let r2 = dx*dx + dy*dy;
 				if (r2 >= maxDist2)
 					continue;
-				let quant = str * (maxDist2 - r2) * this.map[x + y * this.width];
-				if (quant < 0)
-					this.map[x + y * this.width] = 0;
-				else if (quant > this.maxVal)
-					this.map[x + y * this.width] = this.maxVal;
-				else
-					this.map[x + y * this.width] = quant;
+				let w = x + y * this.width;
+				this.set(w, str * (maxDist2 - r2) * this.map[w]);
 			}
 		}
 	}
@@ -190,162 +163,38 @@ m.Map.prototype.multiplyInfluence = function(cx, cy, maxDist, strength, type = "
 	{
 		for (let y = y0; y < y1; ++y)
 		{
+			let dy = y - cy;
 			for (let x = x0; x < x1; ++x)
 			{
 				let dx = x - cx;
-				let dy = y - cy;
 				let r2 = dx*dx + dy*dy;
 				if (r2 >= maxDist2)
 					continue;
-				let quant = this.map[x + y * this.width] * strength;
-				if (quant < 0)
-					this.map[x + y * this.width] = 0;
-				else if (quant > this.maxVal)
-					this.map[x + y * this.width] = this.maxVal;
-				else
-					this.map[x + y * this.width] = quant;
+				let w = x + y * this.width;
+				this.set(w, this.map[w] * strength);
 			}
 		}
 	}
-};
-
-/** doesn't check for overflow. */
-m.Map.prototype.setInfluence = function(cx, cy, maxDist, value = 0)
-{
-	let x0 = Math.max(0, cx - maxDist);
-	let y0 = Math.max(0, cy - maxDist);
-	let x1 = Math.min(this.width, cx + maxDist);
-	let y1 = Math.min(this.height, cy + maxDist);
-	let maxDist2 = maxDist * maxDist;
-
-	for (let y = y0; y < y1; ++y)
-	{
-		for (let x = x0; x < x1; ++x)
-		{
-			let dx = x - cx;
-			let dy = y - cy;
-			if (dx*dx + dy*dy < maxDist2)
-				this.map[x + y * this.width] = value;
-		}
-	}
-};
-
-m.Map.prototype.sumInfluence = function(cx, cy, radius)
-{
-	let x0 = Math.max(0, cx - radius);
-	let y0 = Math.max(0, cy - radius);
-	let x1 = Math.min(this.width, cx + radius);
-	let y1 = Math.min(this.height, cy + radius);
-	let radius2 = radius * radius;
-
-	let sum = 0;
-	for (let y = y0; y < y1; ++y)
-	{
-		for (let x = x0; x < x1; ++x)
-		{
-			let dx = x - cx;
-			let dy = y - cy;
-			if (dx*dx + dy*dy < radius2)
-				sum += this.map[x + y * this.width];
-		}
-	}
-	return sum;
-};
-/**
- * Make each cell's 16-bit/8-bit value at least one greater than each of its
- * neighbours' values. (If the grid is initialised with 0s and 65535s or 255s, the
- * result of each cell is its Manhattan distance to the nearest 0.)
- */
-m.Map.prototype.expandInfluences = function(maximum = this.maxVal, grid = this.map)
-{
-	let w = this.width;
-	let h = this.height;
-
-	for (let y = 0; y < h; ++y)
-	{
-		let min = maximum;
-		let x0 = y * w;
-		for (let x = 0; x < w; ++x)
-		{
-			let g = grid[x + x0];
-			if (g > min)
-				grid[x + x0] = min;
-			else if (g < min)
-				min = g;
-			++min;
-			if (min > maximum)
-				min = maximum;
-		}
-
-		for (let x = w - 2; x >= 0; --x)
-		{
-			let g = grid[x + x0];
-			if (g > min)
-				grid[x + x0] = min;
-			else if (g < min)
-				min = g;
-			++min;
-			if (min > maximum)
-				min = maximum;
-		}
-	}
-
-	for (let x = 0; x < w; ++x)
-	{
-		let min = maximum;
-		for (let y = 0; y < h; ++y)
-		{
-			let g = grid[x + y * w];
-			if (g > min)
-				grid[x + y * w] = min;
-			else if (g < min)
-				min = g;
-			++min;
-			if (min > maximum)
-				min = maximum;
-		}
-
-		for (let y = h - 2; y >= 0; --y)
-		{
-			let g = grid[x + y * w];
-			if (g > min)
-				grid[x + y * w] = min;
-			else if (g < min)
-				min = g;
-			++min;
-			if (min > maximum)
-				min = maximum;
-		}
-	}
-};
-
-/** Multiplies current map by the parameter map pixelwise */
-m.Map.prototype.multiply = function(map, onlyBetter, divider, maxMultiplier)
-{
-	for (let i = 0; i < this.length; ++i)
-		if (map.map[i]/divider > 1)
-			this.map[i] = Math.min(maxMultiplier*this.map[i], this.map[i] * (map.map[i]/divider));
 };
 
 /** add to current map by the parameter map pixelwise */
 m.Map.prototype.add = function(map)
 {
 	for (let i = 0; i < this.length; ++i)
-	{
-		if (this.map[i] + map.map[i] < 0)
-			this.map[i] = 0;
-		else if (this.map[i] + map.map[i] > this.maxVal)
-			this.map[i] = this.maxVal;
-		else
-			this.map[i] += map.map[i];
-	}
+		this.set(i, this.map[i] + map.map[i]);
+};
+
+/** Set the value taking overflow into account */
+m.Map.prototype.set = function(i, value)
+{
+	this.map[i] = value < 0 ? 0 : value > this.maxVal ? this.maxVal : value;
 };
 
 /** Find the best non-obstructed tile */
 m.Map.prototype.findBestTile = function(radius, obstruction)
 {
 	let bestIdx;
-	let bestVal = -1;
+	let bestVal = 0;
 	for (let j = 0; j < this.length; ++j)
 	{
 		if (this.map[j] <= bestVal)
@@ -357,7 +206,7 @@ m.Map.prototype.findBestTile = function(radius, obstruction)
 		bestIdx = i;
 	}
 
-	return [bestIdx, bestVal];
+	return { "idx": bestIdx, "val": bestVal };
 };
 
 /** return any non obstructed (small) tile inside the (big) tile i from obstruction map */
@@ -367,6 +216,8 @@ m.Map.prototype.getNonObstructedTile = function(i, radius, obstruction)
 	let ix = (i % this.width) * ratio;
 	let iy = Math.floor(i / this.width) * ratio;
 	let w = obstruction.width;
+	let r2 = radius * radius;
+	let lastPoint;
 	for (let kx = ix; kx < ix + ratio; ++kx)
 	{
 		if (kx < radius || kx >= w - radius)
@@ -375,9 +226,11 @@ m.Map.prototype.getNonObstructedTile = function(i, radius, obstruction)
 		{
 			if (ky < radius || ky >= w - radius)
 				continue;
-			if (obstruction.isObstructedTile(kx, ky, radius))
+			if (lastPoint && (kx - lastPoint.x)*(kx - lastPoint.x) + (ky - lastPoint.y)*(ky - lastPoint.y) < r2)
 				continue;
-			return kx + ky*w;
+			lastPoint = obstruction.isObstructedTile(kx, ky, radius);
+			if (!lastPoint)
+				return kx + ky*w;
 		}
 	}
 	return -1;
@@ -387,67 +240,33 @@ m.Map.prototype.getNonObstructedTile = function(i, radius, obstruction)
 m.Map.prototype.isObstructedTile = function(kx, ky, radius)
 {
 	let w = this.width;
-	if (kx < radius || kx >= w - radius || ky < radius || ky >= w - radius || this.map[kx+ky*w] === 0)
-		return true;
+	if (kx < radius || kx >= w - radius || ky < radius || ky >= w - radius || this.map[kx+ky*w] == 0)
+		return { "x": kx, "y": ky };
+	if (!this.pattern || this.pattern[0] != radius)
+	{
+		this.pattern = [radius];
+		let r2 = radius * radius;
+		for (let i = 1; i <= radius; ++i)
+			this.pattern.push(Math.floor(Math.sqrt(r2 - (i-0.5)*(i-0.5)) + 0.5));
+	}
 	for (let dy = 0; dy <= radius; ++dy)
 	{
-		let dxmax = dy === 0 ? radius : Math.ceil(Math.sqrt(radius*radius - (dy-0.5)*(dy-0.5)));
+		let dxmax = this.pattern[dy];
 		let xp = kx + (ky + dy)*w;
 		let xm = kx + (ky - dy)*w;
-		for (let dx = -dxmax; dx <= dxmax; ++dx)
-			if (this.map[xp + dx] === 0 || this.map[xm + dx] === 0)
-				return true;
-	}
-	return false;
-};
-
-/**
- * returns the nearest obstructed point
- * TODO check that the landpassmap index is the same
- */
-m.Map.prototype.findNearestObstructed = function(k, radius)
-{
-	let w = this.width;
-	let ix = k % w;
-	let iy = Math.floor(k / w);
-	let n = this.cellSize > 8 ? 1 : Math.floor(8 / this.cellSize);
-	for (let i = 1; i <= n; ++i)
-	{
-		let kx = ix - i;
-		let ky = iy + i;
-		for (let j = 1; j <= 8*i; ++j)
+		for (let dx = 0; dx <= dxmax; ++dx)
 		{
-			if (this.isObstructedTile(kx, ky, radius))
-			{
-				let akx = Math.abs(kx-ix);
-				let aky = Math.abs(ky-iy);
-				if (akx >= aky)
-				{
-					if (kx > ix)
-						--kx;
-					else
-						++kx;
-				}
-				if (aky >= akx)
-				{
-					if (ky > iy)
-						--ky;
-					else
-						++ky;
-				}
-				return kx + w*ky;
-			}
-			if (j < 2*i+1)
-				++kx;
-			else if (j < 4*i+1)
-				--ky;
-			else if (j < 6*i+1)
-				--kx;
-			else
-				++ky;
+			if (this.map[xp + dx] == 0)
+				return { "x": kx + dx, "y": ky + dy };
+			if (this.map[xm + dx] == 0)
+				return { "x": kx + dx, "y": ky - dy };
+			if (this.map[xp - dx] == 0)
+				return { "x": kx - dx, "y": ky + dy };
+			if (this.map[xm - dx] == 0)
+				return { "x": kx - dx, "y": ky - dy };
 		}
 	}
-	return -1;
+	return null;
 };
 
 m.Map.prototype.dumpIm = function(name = "default.png", threshold = this.maxVal)

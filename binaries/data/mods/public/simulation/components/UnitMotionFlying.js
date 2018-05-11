@@ -36,6 +36,9 @@ UnitMotionFlying.prototype.Schema =
 	"</element>" +
 	"<element name='DiesInWater'>" +
 		"<data type='boolean'/>" +
+	"</element>" +
+	"<element name='PassabilityClass'>" +
+		"<text/>" +
 	"</element>";
 
 UnitMotionFlying.prototype.Init = function()
@@ -52,6 +55,7 @@ UnitMotionFlying.prototype.Init = function()
 	this.pitch = 0;
 	this.roll = 0;
 	this.waterDeath = false;
+	this.passabilityClass = Engine.QueryInterface(SYSTEM_ENTITY, IID_Pathfinder).GetPassabilityClass(this.template.PassabilityClass);
 };
 
 UnitMotionFlying.prototype.OnUpdate = function(msg)
@@ -63,7 +67,7 @@ UnitMotionFlying.prototype.OnUpdate = function(msg)
 	var cmpHealth = Engine.QueryInterface(this.entity, IID_Health);
 	var cmpPosition = Engine.QueryInterface(this.entity, IID_Position);
 	var pos = cmpPosition.GetPosition();
-	var angle = cmpPosition.GetRotation().y;	
+	var angle = cmpPosition.GetRotation().y;
 	var cmpTerrain = Engine.QueryInterface(SYSTEM_ENTITY, IID_Terrain);
 	var cmpWaterManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_WaterManager);
 	var ground = Math.max(cmpTerrain.GetGroundLevel(pos.x, pos.z), cmpWaterManager.GetWaterLevel(pos.x, pos.z));
@@ -82,11 +86,11 @@ UnitMotionFlying.prototype.OnUpdate = function(msg)
 			else
 				this.speed = Math.max(0, this.speed - turnLength * this.template.BrakingRate);
 			canTurn = false;
-			// Clamp to ground if below it, or descend if above 		
+			// Clamp to ground if below it, or descend if above
 			if (pos.y < ground)
 				pos.y = ground;
 			else if (pos.y > ground)
-				pos.y = Math.max(ground, pos.y - turnLength * this.template.ClimbRate);	
+				pos.y = Math.max(ground, pos.y - turnLength * this.template.ClimbRate);
 		}
 		else if (this.speed == 0 && this.onGround)
 		{
@@ -100,9 +104,9 @@ UnitMotionFlying.prototype.OnUpdate = function(msg)
 					cmpGarrisonHolder.AllowGarrisoning(true,"UnitMotionFlying");
 				canTurn = false;
 				this.hasTarget = false;
-				this.landing = false;					
+				this.landing = false;
 				// summon planes back from the edge of the map
-				var terrainSize = cmpTerrain.GetTilesPerSide() * 4;
+				var terrainSize = cmpTerrain.GetMapSize();
 				var cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
 				if (cmpRangeManager.GetLosCircular())
 				{
@@ -130,7 +134,7 @@ UnitMotionFlying.prototype.OnUpdate = function(msg)
 			// Final Approach
 			// We need to slow down to land!
 			this.speed = Math.max(this.template.LandingSpeed, this.speed - turnLength * this.template.SlowingRate);
-			canTurn = false;			
+			canTurn = false;
 			var targetHeight = ground;
 			// Steep, then gradual descent.
 			if ((pos.y - targetHeight) / this.template.FlyingHeight > 1 / SHORT_FINAL)
@@ -144,11 +148,11 @@ UnitMotionFlying.prototype.OnUpdate = function(msg)
 				pos.y = Math.max(targetHeight, pos.y - turnLength * descentRate);
 			if (targetHeight == pos.y)
 			{
-				this.onGround = true;	
+				this.onGround = true;
 				if (targetHeight == cmpWaterManager.GetWaterLevel(pos.x, pos.z) && this.template.DiesInWater)
-					this.waterDeath = true;				
+					this.waterDeath = true;
 			}
-		}		
+		}
 	}
 	else
 	{
@@ -187,15 +191,15 @@ UnitMotionFlying.prototype.OnUpdate = function(msg)
 				pos.y = Math.min(targetHeight, pos.y + turnLength * this.template.ClimbRate);
 			else if (pos.y > targetHeight)
 			{
-				pos.y = Math.max(targetHeight, pos.y - turnLength * this.template.ClimbRate);	
+				pos.y = Math.max(targetHeight, pos.y - turnLength * this.template.ClimbRate);
 				this.pitch = -1 * this.pitch;
-			}			
+			}
 		}
 	}
-	
+
 	// If we're in range of the target then tell people that we've reached it
 	// (TODO: quantisation breaks this)
-	var distFromTarget = Math.sqrt(Math.pow(this.targetX - pos.x, 2) + Math.pow(this.targetZ - pos.z, 2));
+	var distFromTarget = Math.euclidDistance2D(pos.x, pos.z, this.targetX, this.targetZ);
 	if (!this.reachedTarget && this.targetMinRange <= distFromTarget && distFromTarget <= this.targetMaxRange)
 	{
 		this.reachedTarget = true;
@@ -277,7 +281,7 @@ UnitMotionFlying.prototype.IsInPointRange = function(x, y, minRange, maxRange)
 	var cmpPosition = Engine.QueryInterface(this.entity, IID_Position);
 	var pos = cmpPosition.GetPosition2D();
 
-	var distFromTarget = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
+	var distFromTarget = Math.euclidDistance2D(x, y, pos.x, pos.y);
 	if (minRange <= distFromTarget && distFromTarget <= maxRange)
 		return true;
 
@@ -313,6 +317,16 @@ UnitMotionFlying.prototype.GetRunSpeed = function()
 UnitMotionFlying.prototype.GetCurrentSpeed = function()
 {
 	return this.speed;
+};
+
+UnitMotionFlying.prototype.GetPassabilityClassName = function()
+{
+	return this.template.PassabilityClass;
+};
+
+UnitMotionFlying.prototype.GetPassabilityClass = function()
+{
+	return this.passabilityClass;
 };
 
 UnitMotionFlying.prototype.FaceTowardsPoint = function(x, z)

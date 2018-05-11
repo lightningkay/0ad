@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -67,6 +67,8 @@ public:
 		Init(paramNode);
 
 		deserialize.NumberFixed_Unbounded("height", m_WaterHeight);
+
+		RecomputeWaterData();
 	}
 
 	virtual void HandleMessage(const CMessage& msg, bool UNUSED(global))
@@ -97,10 +99,8 @@ public:
 	{
 		if (CRenderer::IsInitialised())
 		{
-			g_Renderer.GetWaterManager()->RecomputeBlurredNormalMap();
-			g_Renderer.GetWaterManager()->RecomputeDistanceHeightmap();
-			g_Renderer.GetWaterManager()->RecomputeWindStrength();
-			g_Renderer.GetWaterManager()->CreateWaveMeshes();
+			g_Renderer.GetWaterManager()->RecomputeWaterData();
+			g_Renderer.GetWaterManager()->m_WaterHeight = m_WaterHeight.ToFloat();
 		}
 
 		// Tell the terrain it'll need to recompute its cached render data
@@ -114,22 +114,18 @@ public:
 
 		m_WaterHeight = h;
 
-		// Tell the terrain it'll need to recompute its cached render data
-		GetSimContext().GetTerrain().MakeDirty(RENDERDATA_UPDATE_VERTICES);
-
-		if (CRenderer::IsInitialised())
-			g_Renderer.GetWaterManager()->m_WaterHeight = h.ToFloat();
+		RecomputeWaterData();
 
 		CMessageWaterChanged msg;
 		GetSimContext().GetComponentManager().BroadcastMessage(msg);
 	}
 
-	virtual entity_pos_t GetWaterLevel(entity_pos_t UNUSED(x), entity_pos_t UNUSED(z))
+	virtual entity_pos_t GetWaterLevel(entity_pos_t UNUSED(x), entity_pos_t UNUSED(z)) const
 	{
 		return m_WaterHeight;
 	}
 
-	virtual float GetExactWaterLevel(float UNUSED(x), float UNUSED(z))
+	virtual float GetExactWaterLevel(float UNUSED(x), float UNUSED(z)) const
 	{
 		return m_WaterHeight.ToFloat();
 	}

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -294,7 +294,7 @@ public:
 		ScriptInterface script("Test", "Test", g_ScriptRuntime);
 		JSContext* cx = script.GetContext();
 		JSAutoRequest rq(cx);
-		
+
 		JS::RootedValue obj(cx);
 		TSM_ASSERT(msg, script.Eval(input, &obj));
 
@@ -467,7 +467,7 @@ public:
 			"var arr=new Uint32Array(8);"
 			"for(var i=0; i<arr.length; ++i)"
 			"  arr[i]=(i+1)*536870912;"
-			"arr", 
+			"arr",
 		/* expected: */
 			"({0:536870912, 1:1073741824, 2:1610612736, 3:2147483648, 4:2684354560, 5:3221225472, 6:3758096384, 7:0})"
 		);
@@ -476,7 +476,7 @@ public:
 			"var arr=new Float32Array(2);"
 			"arr[0]=3.4028234e38;"
 			"arr[1]=Infinity;"
-			"arr", 
+			"arr",
 		/* expected: */
 			"({0:3.4028234663852886e+38, 1:Infinity})"
 		);
@@ -485,7 +485,7 @@ public:
 			"var arr=new Float64Array(2);"
 			"arr[0]=1.7976931348623157e308;"
 			"arr[1]=-Infinity;"
-			"arr", 
+			"arr",
 		/* expected: */
 			"({0:1.7976931348623157e+308, 1:-Infinity})"
 		);
@@ -594,7 +594,7 @@ public:
 			"\x00\x00\x00\x00" // size
 		);
 
-		helper_script_roundtrip("Set with elements and property", 
+		helper_script_roundtrip("Set with elements and property",
 			"var a = new Set(); a.add(12); a.add(\"bar\"); a.foo = 27; a",
 		/* expected: */
 			"({})",
@@ -673,7 +673,7 @@ public:
 		);
 
 		helper_script_roundtrip("Nested maps using backrefs",
-			"var a = new Map(); var b = new Map(); b.set(1, a); b.set(2, a); b",
+			"var a = new Map(); var b = new Map(); a.set(1, b); a.set(2, b); a",
 		/* expected: */
 			"({})",
 		/* expected stream: */
@@ -689,7 +689,7 @@ public:
 			"\x05" // SCRIPT_TYPE_INT
 			"\x02\0\0\0" // 2
 			"\x08" // SCRIPT_TYPE_BACKREF
-			"\x02\0\0\0" // ref. to object #2, i.e. "a", with #1 being "b"
+			"\x02\0\0\0" // ref. to object #2, i.e. "b", with #1 being "a"
 		);
 	}
 
@@ -757,7 +757,7 @@ public:
 		ScriptInterface script("Test", "Test", g_ScriptRuntime);
 		JSContext* cx = script.GetContext();
 		JSAutoRequest rq(cx);
-		
+
 		JS::RootedValue obj(cx);
 
 		std::stringstream stream;
@@ -792,7 +792,7 @@ public:
 		ScriptInterface script("Test", "Test", g_ScriptRuntime);
 		JSContext* cx = script.GetContext();
 		JSAutoRequest rq(cx);
-		
+
 		JS::RootedValue obj(cx);
 		TS_ASSERT(script.Eval(input, &obj));
 
@@ -824,9 +824,9 @@ public:
 	{
 		CXeromyces::Startup();
 
-		g_VFS = CreateVfs(20 * MiB);
+		g_VFS = CreateVfs();
 		TS_ASSERT_OK(g_VFS->Mount(L"", DataDir()/"mods"/"public", VFS_MOUNT_MUST_EXIST));
-		TS_ASSERT_OK(g_VFS->Mount(L"cache/", DataDir()/"cache"));
+		TS_ASSERT_OK(g_VFS->Mount(L"cache", DataDir()/"_testcache"));
 
 		// Need some stuff for terrain movement costs:
 		// (TODO: this ought to be independent of any graphics code)
@@ -839,7 +839,7 @@ public:
 		sim2.LoadDefaultScripts();
 		sim2.ResetState();
 
-		CMapReader* mapReader = new CMapReader(); // it'll call "delete this" itself
+		std::unique_ptr<CMapReader> mapReader(new CMapReader());
 
 		LDR_BeginRegistering();
 		mapReader->LoadMap(L"maps/skirmishes/Greek Acropolis (2).pmp",
@@ -879,6 +879,7 @@ public:
 		// Shut down the world
 		delete &g_TexMan;
 		g_VFS.reset();
+		DeleteDirectory(DataDir()/"_testcache");
 		CXeromyces::Terminate();
 	}
 

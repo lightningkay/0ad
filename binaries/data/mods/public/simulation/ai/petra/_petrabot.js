@@ -3,12 +3,6 @@ Engine.IncludeModule("common-api");
 var PETRA = (function() {
 var m = {};
 
-/**
- * "local" global variables for stuffs that will need a unique ID
- * Note that since order of loading is alphabetic, this means this file must go before any other file using them.
- */
-m.playerGlobals = [];
-
 m.PetraBot = function PetraBot(settings)
 {
 	API3.BaseAI.call(this, settings);
@@ -17,20 +11,20 @@ m.PetraBot = function PetraBot(settings)
 	this.elapsedTime = 0;
 
 	this.uniqueIDs = {
-		"armies": 0,
+		"armies": 1,	// starts at 1 to allow easier tests on armies ID existence
 		"bases": 1,	// base manager ID starts at one because "0" means "no base" on the map
 		"plans": 0,	// training/building/research plans
 		"transports": 1	// transport plans start at 1 because 0 might be used as none
 	};
 
-	this.Config = new m.Config(settings.difficulty);
+	this.Config = new m.Config(settings.difficulty, settings.behavior);
 
 	this.savedEvents = {};
 };
 
 m.PetraBot.prototype = new API3.BaseAI();
 
-m.PetraBot.prototype.CustomInit = function(gameState, sharedScript)
+m.PetraBot.prototype.CustomInit = function(gameState)
 {
 	if (this.isDeserialized)
 	{

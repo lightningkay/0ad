@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ class CMatrix3D
 public:
 	// the matrix data itself - accessible as either longhand names
 	// or via a flat or 2d array
-	// NOTE: _xy means row x, column y in the mathematical notation of this matrix, so don't be 
+	// NOTE: _xy means row x, column y in the mathematical notation of this matrix, so don't be
 	// fooled by the way they're listed below
 	union {
 		struct {
@@ -76,8 +76,8 @@ public:
 	}
 
 	// accessors to individual elements of matrix
-	// NOTE: in this function definition, 'col' and 'row' represent the column and row into the 
-	// internal element matrix which is the transposed of the mathematical notation, so the first 
+	// NOTE: in this function definition, 'col' and 'row' represent the column and row into the
+	// internal element matrix which is the transposed of the mathematical notation, so the first
 	// and second arguments here are actually the row and column into the mathematical notation.
 	float& operator()(int col, int row)
 	{
@@ -182,7 +182,9 @@ public:
 	// set this matrix to the zero matrix
 	void SetZero();
 	// set this matrix to the orthogonal projection matrix (as with glOrtho)
-	void SetOrtho(float l, float r, float b, float t, float n, float f);
+	void SetOrtho(float left, float right, float bottom, float top, float near, float far);
+	// set this matrix to the perspective projection matrix
+	void SetPerspective(float fov, float aspect, float near, float far);
 
 	// concatenate arbitrary matrix onto this matrix
 	void Concatenate(const CMatrix3D& m)

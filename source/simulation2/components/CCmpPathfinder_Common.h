@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ struct Vertex
 		OPEN,
 		CLOSED,
 	};
-	
+
 	CFixedVector2D p;
 	fixed g, h;
 	u16 pred;
@@ -151,18 +151,18 @@ public:
 	Grid<NavcellData>* m_Grid; // terrain/passability information
 	Grid<NavcellData>* m_TerrainOnlyGrid; // same as m_Grid, but only with terrain, to avoid some recomputations
 
-	// Update data, used for clever updates and then stored for the AI manager
-	GridUpdateInformation m_ObstructionsDirty;
+	// Keep clever updates in memory to avoid memory fragmentation from the grid.
+	// This should be used only in UpdateGrid(), there is no guarantee the data is properly initialized anywhere else.
+	GridUpdateInformation m_DirtinessInformation;
+	// The data from clever updates is stored for the AI manager
+	GridUpdateInformation m_AIPathfinderDirtinessInformation;
 	bool m_TerrainDirty;
-	// When other components request the passability grid and trigger an update, 
-	// the following regular update should not clean the dirtiness state.
-	bool m_PreserveUpdateInformations;
 
 	// Interface to the long-range pathfinder.
 	LongPathfinder m_LongPathfinder;
 
 	// For responsiveness we will process some moves in the same turn they were generated in
-	
+
 	u16 m_MaxSameTurnMoves; // max number of moves that can be created and processed in the same turn
 
 	// memory optimizations: those vectors are created once, reused for all calculations;
@@ -171,7 +171,7 @@ public:
 	std::vector<EdgeAA> edgesRight;
 	std::vector<EdgeAA> edgesBottom;
 	std::vector<EdgeAA> edgesTop;
-	
+
 	// List of obstruction vertexes (plus start/end points); we'll try to find paths through
 	// the graph defined by these vertexes
 	std::vector<Vertex> vertexes;
@@ -179,7 +179,7 @@ public:
 	// (Edges are one-sided so intersections are fine in one direction, but not the other direction.)
 	std::vector<Edge> edges;
 	std::vector<Square> edgeSquares; // axis-aligned squares; equivalent to 4 edges
-	
+
 	bool m_DebugOverlay;
 	std::vector<SOverlayLine> m_DebugOverlayShortPathLines;
 	AtlasOverlay* m_AtlasOverlay;
@@ -193,13 +193,16 @@ public:
 
 	virtual void Deinit();
 
+	template<typename S>
+	void SerializeCommon(S& serialize);
+
 	virtual void Serialize(ISerializer& serialize);
 
 	virtual void Deserialize(const CParamNode& paramNode, IDeserializer& deserialize);
 
 	virtual void HandleMessage(const CMessage& msg, bool global);
 
-	virtual pass_class_t GetPassabilityClass(const std::string& name);
+	virtual pass_class_t GetPassabilityClass(const std::string& name) const;
 
 	virtual void GetPassabilityClasses(std::map<std::string, pass_class_t>& passClasses) const;
 	virtual void GetPassabilityClasses(
@@ -230,7 +233,15 @@ public:
 
 	virtual const Grid<NavcellData>& GetPassabilityGrid();
 
-	virtual const GridUpdateInformation& GetDirtinessData() const;
+	virtual const GridUpdateInformation& GetAIPathfinderDirtinessInformation() const
+	{
+		return m_AIPathfinderDirtinessInformation;
+	}
+
+	virtual void FlushAIPathfinderDirtinessInformation()
+	{
+		m_AIPathfinderDirtinessInformation.Clean();
+	}
 
 	virtual Grid<u16> ComputeShoreGrid(bool expandOnWater = false);
 
@@ -261,25 +272,25 @@ public:
 		m_LongPathfinder.SetHierDebugOverlay(enabled, &GetSimContext());
 	}
 
-	virtual void GetDebugData(u32& steps, double& time, Grid<u8>& grid)
+	virtual void GetDebugData(u32& steps, double& time, Grid<u8>& grid) const
 	{
 		m_LongPathfinder.GetDebugData(steps, time, grid);
 	}
 
 	virtual void SetAtlasOverlay(bool enable, pass_class_t passClass = 0);
 
-	virtual bool CheckMovement(const IObstructionTestFilter& filter, entity_pos_t x0, entity_pos_t z0, entity_pos_t x1, entity_pos_t z1, entity_pos_t r, pass_class_t passClass);
+	virtual bool CheckMovement(const IObstructionTestFilter& filter, entity_pos_t x0, entity_pos_t z0, entity_pos_t x1, entity_pos_t z1, entity_pos_t r, pass_class_t passClass) const;
 
-	virtual ICmpObstruction::EFoundationCheck CheckUnitPlacement(const IObstructionTestFilter& filter, entity_pos_t x, entity_pos_t z, entity_pos_t r, pass_class_t passClass, bool onlyCenterPoint);
+	virtual ICmpObstruction::EFoundationCheck CheckUnitPlacement(const IObstructionTestFilter& filter, entity_pos_t x, entity_pos_t z, entity_pos_t r, pass_class_t passClass, bool onlyCenterPoint) const;
 
-	virtual ICmpObstruction::EFoundationCheck CheckBuildingPlacement(const IObstructionTestFilter& filter, entity_pos_t x, entity_pos_t z, entity_pos_t a, entity_pos_t w, entity_pos_t h, entity_id_t id, pass_class_t passClass);
+	virtual ICmpObstruction::EFoundationCheck CheckBuildingPlacement(const IObstructionTestFilter& filter, entity_pos_t x, entity_pos_t z, entity_pos_t a, entity_pos_t w, entity_pos_t h, entity_id_t id, pass_class_t passClass) const;
 
-	virtual ICmpObstruction::EFoundationCheck CheckBuildingPlacement(const IObstructionTestFilter& filter, entity_pos_t x, entity_pos_t z, entity_pos_t a, entity_pos_t w, entity_pos_t h, entity_id_t id, pass_class_t passClass, bool onlyCenterPoint);
+	virtual ICmpObstruction::EFoundationCheck CheckBuildingPlacement(const IObstructionTestFilter& filter, entity_pos_t x, entity_pos_t z, entity_pos_t a, entity_pos_t w, entity_pos_t h, entity_id_t id, pass_class_t passClass, bool onlyCenterPoint) const;
 
 	virtual void FinishAsyncRequests();
 
 	void ProcessLongRequests(const std::vector<AsyncLongPathRequest>& longRequests);
-	
+
 	void ProcessShortRequests(const std::vector<AsyncShortPathRequest>& shortRequests);
 
 	virtual void ProcessSameTurnMoves();

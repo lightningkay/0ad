@@ -8,7 +8,7 @@ Identity.prototype.Schema =
 		"<SpecificName>Hoplī́tēs Athēnaïkós</SpecificName>" +
 		"<Icon>units/athen_infantry_spearman.png</Icon>" +
 	"</a:example>" +
-	"<element name='Civ' a:help='Civilisation that this unit is primarily associated with, typically a 4-letter code. Choices include: gaia (world objects), athen (Athenians), brit (Britons), cart (Carthaginians), gaul (Gauls), iber (Iberians), mace (Macedonians), pers (Persians), ptol (Ptolemies), rome (Romans), sele (Seleucids), spart (Spartans)'>" +
+	"<element name='Civ' a:help='Civilisation that this unit is primarily associated with, typically a 4-letter code. Choices include: gaia (world objects), athen (Athenians), brit (Britons), cart (Carthaginians), gaul (Gauls), iber (Iberians), mace (Macedonians), maur (Mauryans), pers (Persians), ptol (Ptolemies), rome (Romans), sele (Seleucids), spart (Spartans)'>" +
 		"<text/>" +
 	"</element>" +
 	"<optional>" +
@@ -21,26 +21,21 @@ Identity.prototype.Schema =
 			"<text/>" +
 		"</element>" +
 	"</optional>" +
-	"<element name='GenericName' a:help='Generic English-language name for this class of unit'>" +
+	"<element name='GenericName' a:help='Generic English-language name for this class of unit.'>" +
 		"<text/>" +
 	"</element>" +
 	"<optional>" +
-		"<element name='SpecificName' a:help='Specific native-language name for this unit type'>" +
+		"<element name='SpecificName' a:help='Specific native-language name for this unit type.'>" +
 			"<text/>" +
 		"</element>" +
 	"</optional>" +
 	"<optional>" +
-		"<element name='SelectionGroupName' a:help='Name used to group ranked entities'>" +
+		"<element name='SelectionGroupName' a:help='Name used to group ranked entities.'>" +
 			"<text/>" +
 		"</element>" +
 	"</optional>" +
 	"<optional>" +
 		"<element name='Tooltip'>" +
-			"<text/>" +
-		"</element>" +
-	"</optional>" +
-	"<optional>" +
-		"<element name='Rollover'>" +
 			"<text/>" +
 		"</element>" +
 	"</optional>" +
@@ -59,7 +54,7 @@ Identity.prototype.Schema =
 		"</element>" +
 	"</optional>" +
 	"<optional>" +
-		"<element name='Classes' a:help='Optional list of space-separated classes applying to this entity. Choices include: Animal, Apadana, ArmyCamp, Ashoka, BarterMarket, Celt, CitizenSoldier, CivCentre, Colony, ConquestCritical, Defensive, Domestic, DropsiteFood, DropsiteMetal, DropsiteStone, DropsiteWood, Elephant, Female, FishingBoat, ForestPlant, Fortress, GarrisonFortress, GarrisonTower, Gates, Human, Iberian, Immortal, Italian, Juggernaut, Kennel, Lighthouse, LongWall, MercenaryCamp, Naval, NavalMarket, Organic, Palace, Palisade, Player, PtolemyIV, SeaCreature, SiegeWall, SpecialBuilding, StoneWall, Structure, Syssiton, Theater, Tower, Unit, WoodenTower'>" +
+		"<element name='Classes' a:help='Optional list of space-separated classes applying to this entity. Choices include: Animal, Apadana, ArmyCamp, Ashoka, BarterMarket, Celt, CitizenSoldier, CivCentre, Colony, ConquestCritical, Defensive, Domestic, DropsiteFood, DropsiteMetal, DropsiteStone, DropsiteWood, FemaleCitizen, FishingBoat, ForestPlant, Fortress, GarrisonFortress, GarrisonTower, Gates, Human, Iberian, Immortal, Italian, Juggernaut, Kennel, Lighthouse, LongWall, MercenaryCamp, Naval, NavalMarket, Organic, Palace, Palisade, Player, PtolemyIV, SeaCreature, SiegeWall, SpecialBuilding, StoneWall, Structure, Syssiton, Theater, Tower, Unit'>" +
 			"<attribute name='datatype'>" +
 				"<value>tokens</value>" +
 			"</attribute>" +
@@ -67,7 +62,7 @@ Identity.prototype.Schema =
 		"</element>" +
 	"</optional>" +
 	"<optional>" +
-		"<element name='VisibleClasses' a:help='Optional list of space-separated classes applying to this entity. These classes will also be visible in various GUI elements. If the classes need spaces, underscores will be replaced with spaces. Choices include: Archer, Barracks, Blacksmith, BoltShooter, Camel, Catapult, Cavalry, Champion, Chariot, Citizen, City, Civic, CivilCentre, Corral, DefenseTower, Dock, Dog, Economic, Embassy, Farmstead, Field, Fireship, Healer, Hero, House, Infantry, Javelin, Market, Mechanical, Melee, Mercenary, Military, Outpost, Pike, Ram, Ranged, Resource, Ship, Shipyard, Siege, SiegeTower, Slave, Sling, Soldier, Spear, Stables, Storehouse, Support, Sword, Temple, Town, Trader, Village, Warship, Wonder, Worker'>" +
+		"<element name='VisibleClasses' a:help='Optional list of space-separated classes applying to this entity. These classes will also be visible in various GUI elements. If the classes need spaces, underscores will be replaced with spaces. Choices include: Archer, Barracks, Blacksmith, BoltShooter, Camel, Catapult, Cavalry, Champion, Chariot, Citizen, City, Civic, CivilCentre, Corral, DefenseTower, Dock, Dog, Economic, Elephant, ElephantStables, Embassy, Farmstead, Field, Fireship, Healer, Hero, House, Infantry, Javelin, Maceman, Market, Mechanical, Melee, Mercenary, Military, Outpost, Pike, Ram, Ranged, Relic, Resource, SentryTower, Ship, Shipyard, Siege, SiegeTower, Slave, Sling, Soldier, Spear, Stables, Storehouse, Support, Sword, Temple, Town, Trader, Village, Warship, Wonder, Worker, Workshop'>" +
 			"<attribute name='datatype'>" +
 				"<value>tokens</value>" +
 			"</attribute>" +
@@ -88,15 +83,16 @@ Identity.prototype.Schema =
 		"</element>" +
 	"</optional>" +
 	"<optional>" +
-		"<element name='RequiredTechnology' a:help='Optional name of a technology which must be researched before the entity can be produced'>" +
+		"<element name='RequiredTechnology' a:help='Optional name of a technology which must be researched before the entity can be produced.'>" +
 			"<text/>" +
 		"</element>" +
-	"</optional>";
-
+	"</optional>" +
+	"<element name='Undeletable' a:help='Prevent players from deleting this entity.'>" +
+		"<data type='boolean'/>" +
+	"</element>";
 
 Identity.prototype.Init = function()
 {
-	// caching
 	this.classesList = GetIdentityClasses(this.template);
 	this.visibleClassesList = GetVisibleIdentityClasses(this.template);
 };
@@ -125,7 +121,7 @@ Identity.prototype.GetGender = function()
 
 Identity.prototype.GetRank = function()
 {
-	return (this.template.Rank || "");
+	return this.template.Rank || "";
 };
 
 Identity.prototype.GetClassesList = function()
@@ -145,11 +141,8 @@ Identity.prototype.HasClass = function(name)
 
 Identity.prototype.GetFormationsList = function()
 {
-	if (this.template.Formations && "_string" in this.template.Formations)
-	{
-		var string = this.template.Formations._string;
-		return string.split(/\s+/);
-	}
+	if (this.template.Formations && this.template.Formations._string)
+		return this.template.Formations._string.split(/\s+/);
 	return [];
 };
 
@@ -160,12 +153,17 @@ Identity.prototype.CanUseFormation = function(template)
 
 Identity.prototype.GetSelectionGroupName = function()
 {
-	return (this.template.SelectionGroupName || "");
+	return this.template.SelectionGroupName || "";
 };
 
 Identity.prototype.GetGenericName = function()
 {
 	return this.template.GenericName;
+};
+
+Identity.prototype.IsUndeletable = function()
+{
+	return this.template.Undeletable == "true";
 };
 
 Engine.RegisterComponentType(IID_Identity, "Identity", Identity);

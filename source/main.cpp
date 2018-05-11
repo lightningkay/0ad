@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -31,6 +31,8 @@ that of Atlas depending on commandline parameters.
 #define MINIMAL_PCH 2
 #include "lib/precompiled.h"
 
+#include <chrono>
+
 #include "lib/debug.h"
 #include "lib/status.h"
 #include "lib/secure_crt.h"
@@ -49,6 +51,7 @@ that of Atlas depending on commandline parameters.
 #include "ps/Globals.h"
 #include "ps/Hotkey.h"
 #include "ps/Loader.h"
+#include "ps/ModInstaller.h"
 #include "ps/Profile.h"
 #include "ps/Profiler2.h"
 #include "ps/Pyrogenesis.h"
@@ -75,14 +78,40 @@ that of Atlas depending on commandline parameters.
 #include "renderer/Renderer.h"
 #include "scriptinterface/ScriptEngine.h"
 #include "simulation2/Simulation2.h"
+#include "simulation2/system/TurnManager.h"
 
 #if OS_UNIX
 #include <unistd.h> // geteuid
 #endif // OS_UNIX
 
-extern bool g_GameRestarted;
+#if MSC_VERSION
+#include <process.h>
+#define getpid _getpid // Use the non-deprecated function name
+#endif
 
-void kill_mainloop();
+extern CmdLineArgs g_args;
+extern CStrW g_UniqueLogPostfix;
+
+// Marks terrain as modified so the minimap can repaint (is there a cleaner way of handling this?)
+bool g_GameRestarted = false;
+
+// Determines the lifetime of the mainloop
+enum ShutdownType
+{
+	// The application shall continue the main loop.
+	None,
+
+	// The process shall terminate as soon as possible.
+	Quit,
+
+	// The engine should be restarted in the same process, for instance to activate different mods.
+	Restart,
+
+	// Atlas should be started in the same process.
+	RestartAsAtlas
+};
+
+static ShutdownType g_Shutdown = ShutdownType::None;
 
 // to avoid redundant and/or recursive resizing, we save the new
 // size after VIDEORESIZE messages and only update the video mode
@@ -91,6 +120,28 @@ void kill_mainloop();
 // updated the video mode
 static int g_ResizedW;
 static int g_ResizedH;
+
+static std::chrono::high_resolution_clock::time_point lastFrameTime;
+
+bool IsQuitRequested()
+{
+	return g_Shutdown == ShutdownType::Quit;
+}
+
+void QuitEngine()
+{
+	g_Shutdown = ShutdownType::Quit;
+}
+
+void RestartEngine()
+{
+	g_Shutdown = ShutdownType::Restart;
+}
+
+void StartAtlas()
+{
+	g_Shutdown = ShutdownType::RestartAsAtlas;
+}
 
 // main app message handler
 static InReaction MainInputHandler(const SDL_Event_* ev)
@@ -116,14 +167,14 @@ static InReaction MainInputHandler(const SDL_Event_* ev)
 		break;
 
 	case SDL_QUIT:
-		kill_mainloop();
+		QuitEngine();
 		break;
 
 	case SDL_HOTKEYDOWN:
 		std::string hotkey = static_cast<const char*>(ev->ev.user.data1);
 		if (hotkey == "exit")
 		{
-			kill_mainloop();
+			QuitEngine();
 			return IN_HANDLED;
 		}
 		else if (hotkey == "screenshot")
@@ -158,7 +209,7 @@ static void PumpEvents()
 {
 	JSContext* cx = g_GUI->GetScriptInterface()->GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	PROFILE3("dispatch events");
 
 	SDL_Event_ ev;
@@ -178,6 +229,31 @@ static void PumpEvents()
 	g_TouchInput.Frame();
 }
 
+/**
+ * Optionally throttle the render frequency in order to
+ * prevent 100% workload of the currently used CPU core.
+ */
+inline static void LimitFPS()
+{
+	if (g_VSync)
+		return;
+
+	double fpsLimit = 0.0;
+	CFG_GET_VAL(g_Game && g_Game->IsGameStarted() ? "adaptivefps.session" : "adaptivefps.menu", fpsLimit);
+
+	// Keep in sync with options.json
+	if (fpsLimit < 20.0 || fpsLimit >= 100.0)
+		return;
+
+	double wait = 1000.0 / fpsLimit -
+		std::chrono::duration_cast<std::chrono::microseconds>(
+			std::chrono::high_resolution_clock::now() - lastFrameTime).count() / 1000.0;
+
+	if (wait > 0.0)
+		SDL_Delay(wait);
+
+	lastFrameTime = std::chrono::high_resolution_clock::now();
+}
 
 static int ProgressiveLoad()
 {
@@ -239,9 +315,6 @@ static void RendererIncrementalLoad()
 	while (more && timer_Time() - startTime < maxTime);
 }
 
-
-static bool quit = false;	// break out of main loop
-
 static void Frame()
 {
 	g_Profiler2.RecordFrameStart();
@@ -268,36 +341,19 @@ static void Frame()
 #endif
 	ENSURE(realTimeSinceLastFrame > 0.0f);
 
-	// decide if update/render is necessary
-	bool need_render = !g_app_minimized;
+	// Decide if update is necessary
 	bool need_update = true;
 
 	// If we are not running a multiplayer game, disable updates when the game is
-	// minimized or out of focus and relinquish the CPU a bit, in order to make 
+	// minimized or out of focus and relinquish the CPU a bit, in order to make
 	// debugging easier.
-	if(g_PauseOnFocusLoss && !g_NetClient && !g_app_has_focus)
+	if (g_PauseOnFocusLoss && !g_NetClient && !g_app_has_focus)
 	{
 		PROFILE3("non-focus delay");
 		need_update = false;
 		// don't use SDL_WaitEvent: don't want the main loop to freeze until app focus is restored
 		SDL_Delay(10);
 	}
-
-	// Throttling: limit update and render frequency to the minimum to 50 FPS
-	// in the "inactive" state, so that other windows get enough CPU time, 
-	// (and it's always nice for power+thermal management).
-	// TODO: when the game performance is high enough, implementing a limit for
-	// in-game framerate might be sensible.
-	const float maxFPSMenu = 50.0;
-	bool limit_fps = false;
-	CFG_GET_VAL("gui.menu.limitfps", limit_fps);
-	if (limit_fps && (!g_Game || !g_Game->IsGameStarted()))
-	{
-		float remainingFrameTime = (1000.0 / maxFPSMenu) - realTimeSinceLastFrame;
-		if (remainingFrameTime > 0)
-			SDL_Delay(remainingFrameTime);
-	}
-
 
 	// this scans for changed files/directories and reloads them, thus
 	// allowing hotloading (changes are immediately assimilated in-game).
@@ -312,7 +368,7 @@ static void Frame()
 	// if the user quit by closing the window, the GL context will be broken and
 	// may crash when we call Render() on some drivers, so leave this loop
 	// before rendering
-	if (quit)
+	if (g_Shutdown != ShutdownType::None)
 		return;
 
 	// respond to pumped resize events
@@ -349,9 +405,11 @@ static void Frame()
 	g_UserReporter.Update();
 
 	g_Console->Update(realTimeSinceLastFrame);
-
 	ogl_WarnIfError();
-	if(need_render)
+
+	// We do not have to render an inactive fullscreen frame, because it can
+	// lead to errors for some graphic card families.
+	if (!g_app_minimized && (g_app_has_focus || !g_VideoMode.IsInFullscreen()))
 	{
 		Render();
 
@@ -363,8 +421,27 @@ static void Frame()
 	g_Profiler.Frame();
 
 	g_GameRestarted = false;
+
+	LimitFPS();
 }
 
+static void NonVisualFrame()
+{
+	g_Profiler2.RecordFrameStart();
+	PROFILE2("frame");
+	g_Profiler2.IncrementFrameNumber();
+	PROFILE2_ATTR("%d", g_Profiler2.GetFrameNumber());
+
+	static u32 turn = 0;
+	debug_printf("Turn %u (%u)...\n", turn++, DEFAULT_TURN_LENGTH_SP);
+
+	g_Game->GetSimulation2()->Update(DEFAULT_TURN_LENGTH_SP);
+
+	g_Profiler.Frame();
+
+	if (g_Game->IsGameFinished())
+		QuitEngine();
+}
 
 static void MainControllerInit()
 {
@@ -374,40 +451,10 @@ static void MainControllerInit()
 	in_add_handler(MainInputHandler);
 }
 
-
-
 static void MainControllerShutdown()
 {
 	in_reset_handlers();
 }
-
-
-// stop the main loop and trigger orderly shutdown. called from several
-// places: the event handler (SDL_QUIT and hotkey) and JS exitProgram.
-void kill_mainloop()
-{
-	quit = true;
-}
-
-
-static bool restart_in_atlas = false;
-// called by game code to indicate main() should restart in Atlas mode
-// instead of terminating
-void restart_mainloop_in_atlas()
-{
-	quit = true;
-	restart_in_atlas = true;
-}
-
-static bool restart = false;
-// trigger an orderly shutdown and restart the game.
-void restart_engine()
-{
-	quit = true;
-	restart = true;
-}
-
-extern CmdLineArgs g_args;
 
 // moved into a helper function to ensure args is destroyed before
 // exit(), which may result in a memory leak.
@@ -417,29 +464,63 @@ static void RunGameOrAtlas(int argc, const char* argv[])
 
 	g_args = args;
 
-	if (args.Has("version") || args.Has("-version"))
+	if (args.Has("version"))
 	{
 		debug_printf("Pyrogenesis %s\n", engine_version);
 		return;
 	}
 
-	const bool isReplay = args.Has("replay");
-	const bool isVisualReplay = args.Has("replay-visual");
-	const std::string replayFile = isReplay ? args.Get("replay") : (isVisualReplay ? args.Get("replay-visual") : "");
-
-	// Ensure the replay file exists
-	if (isReplay || isVisualReplay)
+	if (args.Has("autostart-nonvisual") && args.Get("autostart").empty())
 	{
-		if (!FileExists(OsPath(replayFile)))
+		LOGERROR("-autostart-nonvisual cant be used alone. A map with -autostart=\"TYPEDIR/MAPNAME\" is needed.");
+		return;
+	}
+
+	if (args.Has("unique-logs"))
+		g_UniqueLogPostfix = L"_" + std::to_wstring(std::time(nullptr)) + L"_" + std::to_wstring(getpid());
+
+	const bool isVisualReplay = args.Has("replay-visual");
+	const bool isNonVisualReplay = args.Has("replay");
+	const bool isNonVisual = args.Has("autostart-nonvisual");
+
+	const OsPath replayFile(
+		isVisualReplay ? args.Get("replay-visual") :
+		isNonVisualReplay ? args.Get("replay") : "");
+
+	if (isVisualReplay || isNonVisualReplay)
+	{
+		if (!FileExists(replayFile))
 		{
-			debug_printf("ERROR: The requested replay file '%s' does not exist!\n", replayFile.c_str());
+			debug_printf("ERROR: The requested replay file '%s' does not exist!\n", replayFile.string8().c_str());
 			return;
 		}
-		if (DirectoryExists(OsPath(replayFile)))
+		if (DirectoryExists(replayFile))
 		{
-			debug_printf("ERROR: The requested replay file '%s' is a directory!\n", replayFile.c_str());
+			debug_printf("ERROR: The requested replay file '%s' is a directory!\n", replayFile.string8().c_str());
 			return;
 		}
+	}
+
+	std::vector<OsPath> modsToInstall;
+	for (const CStr& arg : args.GetArgsWithoutName())
+	{
+		const OsPath modPath(arg);
+		if (!CModInstaller::IsDefaultModExtension(modPath.Extension()))
+		{
+			debug_printf("Skipping file '%s' which does not have a mod file extension.\n", modPath.string8().c_str());
+			continue;
+		}
+		if (!FileExists(modPath))
+		{
+			debug_printf("ERROR: The mod file '%s' does not exist!\n", modPath.string8().c_str());
+			continue;
+		}
+		if (DirectoryExists(modPath))
+		{
+			debug_printf("ERROR: The mod file '%s' is a directory!\n", modPath.string8().c_str());
+			continue;
+		}
+		modsToInstall.emplace_back(std::move(modPath));
 	}
 
 	// We need to initialize SpiderMonkey and libxml2 in the main thread before
@@ -453,8 +534,7 @@ static void RunGameOrAtlas(int argc, const char* argv[])
 		return;
 	}
 
-	// run non-visual simulation replay if requested
-	if (isReplay)
+	if (isNonVisualReplay)
 	{
 		if (!args.Has("mod"))
 		{
@@ -464,14 +544,17 @@ static void RunGameOrAtlas(int argc, const char* argv[])
 		}
 
 		Paths paths(args);
-		g_VFS = CreateVfs(20 * MiB);
+		g_VFS = CreateVfs();
 		g_VFS->Mount(L"cache/", paths.Cache(), VFS_MOUNT_ARCHIVABLE);
 		MountMods(paths, GetMods(args, INIT_MODS));
 
 		{
 			CReplayPlayer replay;
 			replay.Load(replayFile);
-			replay.Replay(args.Has("serializationtest"), args.Has("ooslog"));
+			replay.Replay(
+				args.Has("serializationtest"),
+				args.Has("rejointest") ? args.Get("rejointest").ToInt() : -1,
+				args.Has("ooslog"));
 		}
 
 		g_VFS.reset();
@@ -513,24 +596,52 @@ static void RunGameOrAtlas(int argc, const char* argv[])
 	int flags = INIT_MODS;
 	do
 	{
-		restart = false;
-		quit = false;
+		g_Shutdown = ShutdownType::None;
+
 		if (!Init(args, flags))
 		{
 			flags &= ~INIT_MODS;
 			Shutdown(SHUTDOWN_FROM_CONFIG);
 			continue;
 		}
-		InitGraphics(args, 0);
-		MainControllerInit();
-		while (!quit)
-			Frame();
+
+		std::vector<CStr> installedMods;
+		if (!modsToInstall.empty())
+		{
+			Paths paths(args);
+			CModInstaller installer(paths.UserData() / "mods", paths.Cache());
+
+			// Install the mods without deleting the pyromod files
+			for (const OsPath& modPath : modsToInstall)
+				installer.Install(modPath, g_ScriptRuntime, true);
+
+			installedMods = installer.GetInstalledMods();
+		}
+
+		if (isNonVisual)
+		{
+			InitNonVisual(args);
+			while (g_Shutdown == ShutdownType::None)
+				NonVisualFrame();
+		}
+		else
+		{
+			InitGraphics(args, 0, installedMods);
+			MainControllerInit();
+			while (g_Shutdown == ShutdownType::None)
+				Frame();
+		}
+
+		// Do not install mods again in case of restart (typically from the mod selector)
+		modsToInstall.clear();
+
 		Shutdown(0);
 		MainControllerShutdown();
 		flags &= ~INIT_MODS;
-	} while (restart);
 
-	if (restart_in_atlas)
+	} while (g_Shutdown == ShutdownType::Restart);
+
+	if (g_Shutdown == ShutdownType::RestartAsAtlas)
 		ATLAS_RunIfOnCmdLine(args, true);
 
 	CXeromyces::Terminate();

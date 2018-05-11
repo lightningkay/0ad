@@ -2,7 +2,7 @@
 <Entity parent="template_structure_military_barracks">
   <Cost>
     <Resources>
-      <wood>200</wood>
+      <wood>100</wood>
       <stone>200</stone>
     </Resources>
   </Cost>
@@ -10,7 +10,7 @@
     <Square width="23" depth="23"/>
   </Footprint>
   <Health>
-    <SpawnEntityOnDeath>rubble/rubble_stone_5x5</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_5x5</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>ptol</Civ>

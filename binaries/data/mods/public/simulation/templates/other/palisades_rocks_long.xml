@@ -19,7 +19,7 @@
   <GarrisonHolder disable=""/>
   <Health>
     <Max op="mul">0.25</Max>
-    <SpawnEntityOnDeath>rubble/rubble_1x3pal</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_2x2</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>gaia</Civ>
@@ -30,9 +30,14 @@
     <Icon>gaia/special_palisade.png</Icon>
     <RequiredTechnology>phase_village</RequiredTechnology>
   </Identity>
+  <Loot>
+    <wood>10</wood>
+    <stone>0</stone>
+  </Loot>
   <Obstruction>
     <Static width="14" depth="2.0"/>
   </Obstruction>
+  <RallyPoint disable=""/>
   <StatusBars>
     <HeightOffset>9.0</HeightOffset>
   </StatusBars>
@@ -52,6 +57,6 @@
     <FoundationActor>structures/fndn_1x3pal.xml</FoundationActor>
   </VisualActor>
   <WallPiece>
-    <Length>11.0</Length>
+    <Length>14.0</Length>
   </WallPiece>
 </Entity>

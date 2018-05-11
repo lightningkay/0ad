@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -53,10 +53,7 @@ void CTerritoryTexture::DeleteTexture()
 bool CTerritoryTexture::UpdateDirty()
 {
 	CmpPtr<ICmpTerritoryManager> cmpTerritoryManager(m_Simulation, SYSTEM_ENTITY);
-	if (!cmpTerritoryManager)
-		return false;
-
-	return cmpTerritoryManager->NeedUpdate(&m_DirtyID);
+	return cmpTerritoryManager && cmpTerritoryManager->NeedUpdateTexture(&m_DirtyID);
 }
 
 void CTerritoryTexture::BindTexture(int unit)
@@ -156,16 +153,12 @@ void CTerritoryTexture::RecomputeTexture(int unit)
 
 	PROFILE("recompute territory texture");
 
-	std::vector<u8> bitmap;
-	bitmap.resize(m_MapSize * m_MapSize * 4);
-
 	CmpPtr<ICmpTerritoryManager> cmpTerritoryManager(m_Simulation, SYSTEM_ENTITY);
 	if (!cmpTerritoryManager)
 		return;
 
-	const Grid<u8> territories = cmpTerritoryManager->GetTerritoryGrid();
-
-	GenerateBitmap(territories, &bitmap[0], m_MapSize, m_MapSize);
+	std::vector<u8> bitmap(m_MapSize * m_MapSize * 4);
+	GenerateBitmap(cmpTerritoryManager->GetTerritoryGrid(), &bitmap[0], m_MapSize, m_MapSize);
 
 	g_Renderer.BindTexture(unit, m_Texture);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_MapSize, m_MapSize, GL_RGBA, GL_UNSIGNED_BYTE, &bitmap[0]);
@@ -185,42 +178,34 @@ void CTerritoryTexture::GenerateBitmap(const Grid<u8>& territories, u8* bitmap, 
 		CColor color(1, 0, 1, 1);
 		CmpPtr<ICmpPlayer> cmpPlayer(m_Simulation, cmpPlayerManager->GetPlayerByID(p));
 		if (cmpPlayer)
-			color = cmpPlayer->GetColor();
+			color = cmpPlayer->GetDisplayedColor();
 		colors.push_back(color);
 	}
 
 	u8* p = bitmap;
 	for (ssize_t j = 0; j < h; ++j)
-	{
 		for (ssize_t i = 0; i < w; ++i)
 		{
 			u8 val = territories.get(i, j) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK;
 
 			CColor color(1, 0, 1, 1);
-			// Force neutral territories to pure white, so that later we can omit them from the texture
-			if (val == 0)
-				color = CColor(1, 1, 1, 0);
-			else if (val < colors.size())
+			if (val < colors.size())
 				color = colors[val];
 
-			*p++ = (int)(color.r*255.f);
-			*p++ = (int)(color.g*255.f);
-			*p++ = (int)(color.b*255.f);
+			*p++ = (int)(color.r * 255.f);
+			*p++ = (int)(color.g * 255.f);
+			*p++ = (int)(color.b * 255.f);
 
-			if ((i > 0 && (territories.get(i-1, j) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val)
-			 || (i < w-1 && (territories.get(i+1, j) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val)
-			 || (j > 0 && (territories.get(i, j-1) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val)
-			 || (j < h-1 && (territories.get(i, j+1) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val)
-			)
-			{
+			// Use alphaMax for borders and gaia territory; these tiles will be deleted later
+			if (val == 0 ||
+			   (i > 0   && (territories.get(i-1, j) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val) ||
+			   (i < w-1 && (territories.get(i+1, j) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val) ||
+			   (j > 0   && (territories.get(i, j-1) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val) ||
+			   (j < h-1 && (territories.get(i, j+1) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK) != val))
 				*p++ = alphaMax;
-			}
 			else
-			{
 				*p++ = 0x00;
-			}
 		}
-	}
 
 	// Do a low-quality cheap blur effect
 
@@ -264,22 +249,7 @@ void CTerritoryTexture::GenerateBitmap(const Grid<u8>& territories, u8* bitmap, 
 
 	// Add a gap between the boundaries, by deleting the max-alpha tiles
 	for (ssize_t j = 0; j < h; ++j)
-	{
 		for (ssize_t i = 0; i < w; ++i)
-		{
 			if (bitmap[(j*w+i)*4 + 3] == alphaMax)
 				bitmap[(j*w+i)*4 + 3] = 0;
-		}
-	}
-
-	// Don't show neutral territory boundaries
-	for (ssize_t j = 0; j < h; ++j)
-	{
-		for (ssize_t i = 0; i < w; ++i)
-		{
-			ssize_t idx = (j*w+i)*4;
-			if (bitmap[idx] == 255 && bitmap[idx+1] == 255 && bitmap[idx+2] == 255)
-				bitmap[idx+3] = 0;
-		}
-	}
 }

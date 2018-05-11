@@ -9,6 +9,21 @@ AuraManager.prototype.Init = function()
 	this.modifications = new Map();
 	this.templateModificationsCache = new Map();
 	this.templateModifications = new Map();
+
+	this.globalAuraSources = [];
+};
+
+AuraManager.prototype.RegisterGlobalAuraSource = function(ent)
+{
+	if (this.globalAuraSources.indexOf(ent) == -1)
+		this.globalAuraSources.push(ent);
+};
+
+AuraManager.prototype.UnregisterGlobalAuraSource = function(ent)
+{
+	let idx = this.globalAuraSources.indexOf(ent);
+	if (idx != -1)
+		this.globalAuraSources.splice(idx, 1);
 };
 
 AuraManager.prototype.ensureExists = function(name, value, id, key, defaultData)
@@ -90,16 +105,25 @@ AuraManager.prototype.ApplyTemplateBonus = function(value, player, classes, newD
 	data.count = 1;
 
 	let cache = this.templateModificationsCache.get(value).get(player);
-	if (!cache.get(classes))
-		cache.set(classes, new Map());
 
-	if (!cache.get(classes).get(key))
-		cache.get(classes).set(key, { "add": 0, "multiply": 1 });
+	// Do not use the classes array from the JSON file directly, since that is not synchronized
+	// See MatchesClassList for supported classes formats
+	for (let className of classes)
+	{
+		if (Array.isArray(className))
+			className = className.join("+");
 
-	if (data.add)
-		cache.get(classes).get(key).add += data.add;
-	if (data.multiply)
-		cache.get(classes).get(key).multiply *= data.multiply;
+		if (!cache.get(className))
+			cache.set(className, new Map());
+
+		if (!cache.get(className).get(key))
+			cache.get(className).set(key, { "add": 0, "multiply": 1 });
+
+		if (data.add)
+			cache.get(className).get(key).add += data.add;
+		if (data.multiply)
+			cache.get(className).get(key).multiply *= data.multiply;
+	}
 
 	Engine.PostMessage(SYSTEM_ENTITY, MT_TemplateModification, {
 		"player": player,
@@ -166,9 +190,16 @@ AuraManager.prototype.RemoveTemplateBonus = function(value, player, classes, key
 	if (data.count > 0)
 		return;
 
-	this.templateModificationsCache.get(value).get(player).get(classes).delete(key);
-	if (this.templateModificationsCache.get(value).get(player).get(classes).size == 0)
-		this.templateModificationsCache.get(value).get(player).delete(classes);
+	for (let className of classes)
+	{
+		if (Array.isArray(className))
+			className = className.join("+");
+
+		this.templateModificationsCache.get(value).get(player).get(className).delete(key);
+
+		if (this.templateModificationsCache.get(value).get(player).get(className).size == 0)
+			this.templateModificationsCache.get(value).get(player).delete(className);
+	}
 
 	// clean up the object
 	p.delete(key);
@@ -212,9 +243,10 @@ AuraManager.prototype.ApplyTemplateModifications = function(valueName, value, pl
 	var usedKeys = new Set();
 	var add = 0;
 	var multiply = 1;
+
 	for (let [className, mods] of cache)
 	{
-		if (!MatchesClassList(classes, className))
+		if (!MatchesClassList(classes, [className]))
 			continue;
 
 		for (let [key, mod] of mods)
@@ -228,6 +260,16 @@ AuraManager.prototype.ApplyTemplateModifications = function(valueName, value, pl
 		}
 	}
 	return value * multiply + add;
+};
+
+AuraManager.prototype.OnGlobalOwnershipChanged = function(msg)
+{
+	for (let ent of this.globalAuraSources)
+	{
+		let cmpAuras = Engine.QueryInterface(ent, IID_Auras);
+		if (cmpAuras)
+			cmpAuras.RegisterGlobalOwnershipChanged(msg);
+	}
 };
 
 Engine.RegisterSystemComponentType(IID_AuraManager, "AuraManager", AuraManager);

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -55,6 +55,7 @@ public:
 	static void ClassInit(CComponentManager& componentManager)
 	{
 		componentManager.SubscribeToMessageType(MT_OwnershipChanged);
+		componentManager.SubscribeToMessageType(MT_PlayerColorChanged);
 		componentManager.SubscribeToMessageType(MT_PositionChanged);
 		componentManager.SubscribeToMessageType(MT_TerrainChanged);
 		componentManager.SubscribeToMessageType(MT_WaterChanged);
@@ -63,7 +64,7 @@ public:
 	DEFAULT_COMPONENT_ALLOCATOR(Selectable)
 
 	CCmpSelectable()
-		: m_DebugBoundingBoxOverlay(NULL), m_DebugSelectionBoxOverlay(NULL), 
+		: m_DebugBoundingBoxOverlay(NULL), m_DebugSelectionBoxOverlay(NULL),
 		  m_BuildingOverlay(NULL), m_UnitOverlay(NULL),
 		  m_FadeBaselineAlpha(0.f), m_FadeDeltaAlpha(0.f), m_FadeProgress(0.f),
 		  m_Selected(false), m_Cached(false), m_Visible(false)
@@ -126,23 +127,21 @@ public:
 		const CParamNode& textureNode = paramNode.GetChild("Overlay").GetChild("Texture");
 		const CParamNode& outlineNode = paramNode.GetChild("Overlay").GetChild("Outline");
 
-		const char* textureBasePath = "art/textures/selection/";
-
 		// Save some memory by using interned file paths in these descriptors (almost all actors and
 		// entities have this component, and many use the same textures).
 		if (textureNode.IsOk())
 		{
 			// textured quad mode (dynamic, for units)
-			m_OverlayDescriptor.m_Type = ICmpSelectable::DYNAMIC_QUAD;
-			m_OverlayDescriptor.m_QuadTexture = CStrIntern(textureBasePath + textureNode.GetChild("MainTexture").ToUTF8());
-			m_OverlayDescriptor.m_QuadTextureMask = CStrIntern(textureBasePath + textureNode.GetChild("MainTextureMask").ToUTF8());
+			m_OverlayDescriptor.m_Type = DYNAMIC_QUAD;
+			m_OverlayDescriptor.m_QuadTexture = CStrIntern(TEXTUREBASEPATH + textureNode.GetChild("MainTexture").ToUTF8());
+			m_OverlayDescriptor.m_QuadTextureMask = CStrIntern(TEXTUREBASEPATH + textureNode.GetChild("MainTextureMask").ToUTF8());
 		}
 		else if (outlineNode.IsOk())
 		{
 			// textured outline mode (static, for buildings)
-			m_OverlayDescriptor.m_Type = ICmpSelectable::STATIC_OUTLINE;
-			m_OverlayDescriptor.m_LineTexture = CStrIntern(textureBasePath + outlineNode.GetChild("LineTexture").ToUTF8());
-			m_OverlayDescriptor.m_LineTextureMask = CStrIntern(textureBasePath + outlineNode.GetChild("LineTextureMask").ToUTF8());
+			m_OverlayDescriptor.m_Type = STATIC_OUTLINE;
+			m_OverlayDescriptor.m_LineTexture = CStrIntern(TEXTUREBASEPATH + outlineNode.GetChild("LineTexture").ToUTF8());
+			m_OverlayDescriptor.m_LineTextureMask = CStrIntern(TEXTUREBASEPATH + outlineNode.GetChild("LineTextureMask").ToUTF8());
 			m_OverlayDescriptor.m_LineThickness = outlineNode.GetChild("LineThickness").ToFloat();
 		}
 
@@ -211,7 +210,7 @@ public:
 		UpdateMessageSubscriptions();
 	}
 
-	virtual bool IsEditorOnly()
+	virtual bool IsEditorOnly() const
 	{
 		return m_EditorOnly;
 	}
@@ -219,11 +218,9 @@ public:
 	void RenderSubmit(SceneCollector& collector);
 
 	/**
-	 * Called from RenderSubmit if using a static outline; responsible for ensuring that the static overlay 
-	 * is up-to-date before it is rendered. Has no effect unless the static overlay is explicitly marked as
-	 * invalid first (see InvalidateStaticOverlay).
+	 * Draw a textured line overlay. The selection overlays for structures are based solely on footprint shape.
 	 */
-	void UpdateStaticOverlay();
+	void UpdateTexturedLineOverlay(const SOverlayDescriptor* overlayDescriptor, SOverlayTexturedLine& overlay, float frameOffset);
 
 	/**
 	 * Called from the interpolation handler; responsible for ensuring the dynamic overlay (provided we're
@@ -243,6 +240,11 @@ public:
 	 * Must be called after changing m_Visible, m_FadeDeltaAlpha, m_Color.a
 	 */
 	void UpdateMessageSubscriptions();
+
+	/**
+	 * Set the color of the current owner.
+	 */
+	virtual void UpdateColor();
 
 private:
 	SOverlayDescriptor m_OverlayDescriptor;
@@ -279,9 +281,11 @@ private:
 	/// Total duration of a single fade, in seconds. Assumed constant for now; feel free to change this into
 	/// a member variable if you need to adjust it per component.
 	static const double FADE_DURATION;
+	static const char* TEXTUREBASEPATH;
 };
 
 const double CCmpSelectable::FADE_DURATION = 0.3;
+const char* CCmpSelectable::TEXTUREBASEPATH = "art/textures/selection/";
 
 void CCmpSelectable::HandleMessage(const CMessage& msg, bool UNUSED(global))
 {
@@ -320,43 +324,31 @@ void CCmpSelectable::HandleMessage(const CMessage& msg, bool UNUSED(global))
 
 		break;
 	}
-	case MT_OwnershipChanged: 
+	case MT_OwnershipChanged:
 	{
 		const CMessageOwnershipChanged& msgData = static_cast<const CMessageOwnershipChanged&> (msg);
 
-		// don't update color if there's no new owner (e.g. the unit died)
-		if (msgData.to == INVALID_PLAYER)
+		// Ignore newly constructed entities, as they receive their color upon first selection
+		// Ignore deleted entities because they won't be rendered
+		if (msgData.from == INVALID_PLAYER || msgData.to == INVALID_PLAYER)
 			break;
 
-		// update the selection highlight color
-		CmpPtr<ICmpPlayerManager> cmpPlayerManager(GetSystemEntity());
-		if (!cmpPlayerManager)
-			break;
-
-		CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(msgData.to));
-		if (!cmpPlayer)
-			break;
-
-		// Update the highlight color, while keeping the current alpha target value intact
-		// (i.e. baseline + delta), so that any ongoing fades simply continue with the new color.
-		CColor color = cmpPlayer->GetColor();
-		SetSelectionHighlight(CColor(color.r, color.g, color.b, m_FadeBaselineAlpha + m_FadeDeltaAlpha), m_Selected);
-
+		UpdateColor();
 		InvalidateStaticOverlay();
+		break;
+	}
+	case MT_PlayerColorChanged:
+	{
+		const CMessagePlayerColorChanged& msgData = static_cast<const CMessagePlayerColorChanged&> (msg);
+
+		CmpPtr<ICmpOwnership> cmpOwnership(GetEntityHandle());
+		if (!cmpOwnership || msgData.player != cmpOwnership->GetOwner())
+			break;
+
+		UpdateColor();
 		break;
 	}
 	case MT_PositionChanged:
-	{
-		if (m_AlwaysVisible)
-		{
-			const CMessagePositionChanged& msgData = static_cast<const CMessagePositionChanged&> (msg);
-			m_AlphaMin = msgData.inWorld ? MIN_ALPHA_ALWAYS_VISIBLE : MIN_ALPHA_UNSELECTED;
-			m_Color.a = m_AlphaMin;
-		}
-
-		InvalidateStaticOverlay();
-		break;
-	}
 	case MT_TerrainChanged:
 	case MT_WaterChanged:
 		InvalidateStaticOverlay();
@@ -371,6 +363,31 @@ void CCmpSelectable::HandleMessage(const CMessage& msg, bool UNUSED(global))
 		break;
 	}
 	}
+}
+
+void CCmpSelectable::UpdateColor()
+{
+	CmpPtr<ICmpOwnership> cmpOwnership(GetEntityHandle());
+
+	CmpPtr<ICmpPlayerManager> cmpPlayerManager(GetSystemEntity());
+	if (!cmpPlayerManager)
+		return;
+
+	// Default to white if there's no owner (e.g. decorative, editor-only actors)
+	CColor color(1.0, 1.0, 1.0, 1.0);
+
+	if (cmpOwnership)
+	{
+		CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(cmpOwnership->GetOwner()));
+		if (cmpPlayer)
+			color = cmpPlayer->GetDisplayedColor();
+	}
+
+	// Update the highlight color, while keeping the current alpha target value intact
+	// (i.e. baseline + delta), so that any ongoing fades simply continue with the new color.
+	color.a = m_FadeBaselineAlpha + m_FadeDeltaAlpha;
+
+	SetSelectionHighlight(color, m_Selected);
 }
 
 void CCmpSelectable::UpdateMessageSubscriptions()
@@ -402,15 +419,8 @@ void CCmpSelectable::InvalidateStaticOverlay()
 	SAFE_DELETE(m_BuildingOverlay);
 }
 
-void CCmpSelectable::UpdateStaticOverlay()
+void CCmpSelectable::UpdateTexturedLineOverlay(const SOverlayDescriptor* overlayDescriptor, SOverlayTexturedLine& overlay, float frameOffset)
 {
-	// Static overlays are allocated once and not updated until they are explicitly deleted again
-	// (see InvalidateStaticOverlay). Since they are expected to change rarely (if ever) during
-	// normal gameplay, this saves us doing all the work below on each frame.
-	
-	if (m_BuildingOverlay || m_OverlayDescriptor.m_Type != STATIC_OUTLINE)
-		return;
-	
 	if (!CRenderer::IsInitialised())
 		return;
 
@@ -419,84 +429,22 @@ void CCmpSelectable::UpdateStaticOverlay()
 	if (!cmpFootprint || !cmpPosition || !cmpPosition->IsInWorld())
 		return;
 
-	CmpPtr<ICmpTerrain> cmpTerrain(GetSystemEntity());
-	if (!cmpTerrain)
-		return; // should never happen
-
-	// grab position/footprint data
-	CFixedVector2D position = cmpPosition->GetPosition2D();
-	CFixedVector3D rotation = cmpPosition->GetRotation();
-
 	ICmpFootprint::EShape fpShape;
 	entity_pos_t fpSize0_fixed, fpSize1_fixed, fpHeight_fixed;
 	cmpFootprint->GetShape(fpShape, fpSize0_fixed, fpSize1_fixed, fpHeight_fixed);
 
-	CTextureProperties texturePropsBase(m_OverlayDescriptor.m_LineTexture.c_str()); 
-	texturePropsBase.SetWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_EDGE); 
-	texturePropsBase.SetMaxAnisotropy(4.f);
+	float rotY;
+	CVector2D origin;
+	cmpPosition->GetInterpolatedPosition2D(frameOffset, origin.X, origin.Y, rotY);
 
-	CTextureProperties texturePropsMask(m_OverlayDescriptor.m_LineTextureMask.c_str());
-	texturePropsMask.SetWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_EDGE); 
-	texturePropsMask.SetMaxAnisotropy(4.f);
+	overlay.m_SimContext = &GetSimContext();
+	overlay.m_Color = m_Color;
+	overlay.CreateOverlayTexture(overlayDescriptor);
 
-	// -------------------------------------------------------------------------------------
-
-	m_BuildingOverlay = new SOverlayTexturedLine;
-	m_BuildingOverlay->m_AlwaysVisible = false;
-	m_BuildingOverlay->m_Closed = true;
-	m_BuildingOverlay->m_SimContext = &GetSimContext();
-	m_BuildingOverlay->m_Thickness = m_OverlayDescriptor.m_LineThickness;
-	m_BuildingOverlay->m_TextureBase = g_Renderer.GetTextureManager().CreateTexture(texturePropsBase);
-	m_BuildingOverlay->m_TextureMask = g_Renderer.GetTextureManager().CreateTexture(texturePropsMask);
-
-	CVector2D origin(position.X.ToFloat(), position.Y.ToFloat());
-
-	switch (fpShape)
-	{
-	case ICmpFootprint::SQUARE:
-		{
-			float s = sinf(-rotation.Y.ToFloat());
-			float c = cosf(-rotation.Y.ToFloat());
-			CVector2D unitX(c, s);
-			CVector2D unitZ(-s, c);
-
-			// add half the line thickness to the radius so that we get an 'outside' stroke of the footprint shape
-			const float halfSizeX = fpSize0_fixed.ToFloat()/2.f + m_BuildingOverlay->m_Thickness/2.f;
-			const float halfSizeZ = fpSize1_fixed.ToFloat()/2.f + m_BuildingOverlay->m_Thickness/2.f;
-
-			std::vector<CVector2D> points;
-			points.push_back(CVector2D(origin + unitX *  halfSizeX    + unitZ *(-halfSizeZ)));
-			points.push_back(CVector2D(origin + unitX *(-halfSizeX)   + unitZ *(-halfSizeZ)));
-			points.push_back(CVector2D(origin + unitX *(-halfSizeX)   + unitZ *  halfSizeZ));
-			points.push_back(CVector2D(origin + unitX *  halfSizeX    + unitZ *  halfSizeZ));
-
-			SimRender::SubdividePoints(points, TERRAIN_TILE_SIZE/3.f, m_BuildingOverlay->m_Closed);
-			m_BuildingOverlay->PushCoords(points);
-		}
-		break;
-	case ICmpFootprint::CIRCLE:
-		{
-			const float radius = fpSize0_fixed.ToFloat() + m_BuildingOverlay->m_Thickness/3.f;
-			if (radius > 0) // prevent catastrophic failure
-			{
-				float stepAngle;
-				unsigned numSteps;
-				SimRender::AngularStepFromChordLen(TERRAIN_TILE_SIZE/3.f, radius, stepAngle, numSteps);
-
-				for (unsigned i = 0; i < numSteps; i++) // '<' is sufficient because the line is closed automatically
-				{
-					float angle = i * stepAngle;
-					float px = origin.X + radius * sinf(angle);
-					float pz = origin.Y + radius * cosf(angle);
-
-					m_BuildingOverlay->PushCoords(px, pz);
-				}
-			}
-		}
-		break;
-	}
-
-	ENSURE(m_BuildingOverlay);
+	if (fpShape == ICmpFootprint::SQUARE)
+		SimRender::ConstructTexturedLineBox(overlay, origin, cmpPosition->GetRotation(), fpSize0_fixed.ToFloat(), fpSize1_fixed.ToFloat());
+	else
+		SimRender::ConstructTexturedLineCircle(overlay, origin, fpSize0_fixed.ToFloat());
 }
 
 void CCmpSelectable::UpdateDynamicOverlay(float frameOffset)
@@ -504,7 +452,7 @@ void CCmpSelectable::UpdateDynamicOverlay(float frameOffset)
 	// Dynamic overlay lines are allocated once and never deleted. Since they are expected to change frequently,
 	// they are assumed dirty on every call to this function, and we should therefore use this function more
 	// thoughtfully than calling it right before every frame render.
-	
+
 	if (m_OverlayDescriptor.m_Type != DYNAMIC_QUAD)
 		return;
 
@@ -538,12 +486,12 @@ void CCmpSelectable::UpdateDynamicOverlay(float frameOffset)
 		m_UnitOverlay = new SOverlayQuad;
 
 		// Assuming we don't need the capability of swapping textures on-demand.
-		CTextureProperties texturePropsBase(m_OverlayDescriptor.m_QuadTexture.c_str()); 
-		texturePropsBase.SetWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_EDGE); 
+		CTextureProperties texturePropsBase(m_OverlayDescriptor.m_QuadTexture.c_str());
+		texturePropsBase.SetWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_EDGE);
 		texturePropsBase.SetMaxAnisotropy(4.f);
 
 		CTextureProperties texturePropsMask(m_OverlayDescriptor.m_QuadTextureMask.c_str());
-		texturePropsMask.SetWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_EDGE); 
+		texturePropsMask.SetWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_EDGE);
 		texturePropsMask.SetMaxAnisotropy(4.f);
 
 		m_UnitOverlay->m_Texture = g_Renderer.GetTextureManager().CreateTexture(texturePropsBase);
@@ -552,7 +500,7 @@ void CCmpSelectable::UpdateDynamicOverlay(float frameOffset)
 
 	m_UnitOverlay->m_Color = m_Color;
 
-	// TODO: some code duplication here :< would be nice to factor out getting the corner points of an 
+	// TODO: some code duplication here :< would be nice to factor out getting the corner points of an
 	// entity based on its footprint sizes (and regardless of whether it's a circle or a square)
 
 	float s = sinf(-rotY);
@@ -595,29 +543,7 @@ void CCmpSelectable::RenderSubmit(SceneCollector& collector)
 	{
 		if (!m_Cached)
 		{
-			// Default to white if there's no owner (e.g. decorative, editor-only actors)
-			CColor color = CColor(1.0, 1.0, 1.0, 1.0);
-			CmpPtr<ICmpOwnership> cmpOwnership(GetEntityHandle());
-			if (cmpOwnership)
-			{
-				player_id_t owner = cmpOwnership->GetOwner();
-				if (owner == INVALID_PLAYER)
-					return;
-
-				// Try to initialize m_Color to the owning player's color.
-				CmpPtr<ICmpPlayerManager> cmpPlayerManager(GetSystemEntity());
-				if (!cmpPlayerManager)
-					return;
-
-				CmpPtr<ICmpPlayer> cmpPlayer(GetSimContext(), cmpPlayerManager->GetPlayerByID(owner));
-				if (!cmpPlayer)
-					return;
-
-				color = cmpPlayer->GetColor();
-			}
-			color.a = m_FadeBaselineAlpha + m_FadeDeltaAlpha;
-
-			SetSelectionHighlight(color, m_Selected);
+			UpdateColor();
 			m_Cached = true;
 		}
 
@@ -625,7 +551,14 @@ void CCmpSelectable::RenderSubmit(SceneCollector& collector)
 		{
 			case STATIC_OUTLINE:
 				{
-					UpdateStaticOverlay();
+					if (!m_BuildingOverlay)
+					{
+						// Static overlays are allocated once and not updated until they are explicitly deleted again
+						// (see InvalidateStaticOverlay). Since they are expected to change rarely (if ever) during
+						// normal gameplay, this saves us doing all the work below on each frame.
+						m_BuildingOverlay = new SOverlayTexturedLine;
+						UpdateTexturedLineOverlay(&m_OverlayDescriptor, *m_BuildingOverlay, 0);
+					}
 					m_BuildingOverlay->m_Color = m_Color; // done separately so alpha changes don't require a full update call
 					collector.Submit(m_BuildingOverlay);
 				}
@@ -652,10 +585,10 @@ void CCmpSelectable::RenderSubmit(SceneCollector& collector)
 			if (!m_DebugSelectionBoxOverlay) m_DebugSelectionBoxOverlay = new SOverlayLine;
 
 			CmpPtr<ICmpVisual> cmpVisual(GetEntityHandle());
-			if (cmpVisual) 
+			if (cmpVisual)
 			{
 				SimRender::ConstructBoxOutline(cmpVisual->GetBounds(), *m_DebugBoundingBoxOverlay);
-				m_DebugBoundingBoxOverlay->m_Thickness = 2; 
+				m_DebugBoundingBoxOverlay->m_Thickness = 2;
 				m_DebugBoundingBoxOverlay->m_Color = CColor(1.f, 0.f, 0.f, 1.f);
 
 				SimRender::ConstructBoxOutline(cmpVisual->GetSelectionBox(), *m_DebugSelectionBoxOverlay);

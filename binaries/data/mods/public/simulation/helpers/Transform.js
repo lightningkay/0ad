@@ -32,13 +32,7 @@ function ChangeEntityTemplate(oldEnt, newTemplate)
 		cmpNewOwnership.SetOwner(cmpOwnership.GetOwner());
 
 	// Copy control groups
-	var cmpObstruction = Engine.QueryInterface(oldEnt, IID_Obstruction);
-	var cmpNewObstruction = Engine.QueryInterface(newEnt, IID_Obstruction);
-	if (cmpObstruction && cmpNewObstruction)
-	{
-		cmpNewObstruction.SetControlGroup(cmpObstruction.GetControlGroup());
-		cmpNewObstruction.SetControlGroup2(cmpObstruction.GetControlGroup2());
-	}
+	CopyControlGroups(oldEnt, newEnt);
 
 	// Rescale capture points
 	var cmpCapturable = Engine.QueryInterface(oldEnt, IID_Capturable);
@@ -56,7 +50,7 @@ function ChangeEntityTemplate(oldEnt, newTemplate)
 	if (cmpHealth && cmpNewHealth)
 	{
 		var healthLevel = Math.max(0, Math.min(1, cmpHealth.GetHitpoints() / cmpHealth.GetMaxHitpoints()));
-		cmpNewHealth.SetHitpoints(Math.round(cmpNewHealth.GetMaxHitpoints() * healthLevel));
+		cmpNewHealth.SetHitpoints(cmpNewHealth.GetMaxHitpoints() * healthLevel);
 	}
 
 	var cmpUnitAI = Engine.QueryInterface(oldEnt, IID_UnitAI);
@@ -69,19 +63,42 @@ function ChangeEntityTemplate(oldEnt, newTemplate)
 		if (cmpUnitAI.GetStanceName())
 			cmpNewUnitAI.SwitchToStance(cmpUnitAI.GetStanceName());
 		cmpNewUnitAI.AddOrders(cmpUnitAI.GetOrders());
-		cmpNewUnitAI.SetGuardOf(cmpUnitAI.IsGuardOf());
+		if (cmpUnitAI.IsGuardOf())
+		{
+			let guarded = cmpUnitAI.IsGuardOf();
+			let cmpGuard = Engine.QueryInterface(guarded, IID_Guard);
+			if (cmpGuard)
+			{
+				cmpGuard.RenameGuard(oldEnt, newEnt);
+				cmpNewUnitAI.SetGuardOf(guarded);
+			}
+		}
 	}
 
 	// Maintain the list of guards
-	var cmpGuard = Engine.QueryInterface(oldEnt, IID_Guard);
-	var cmpNewGuard = Engine.QueryInterface(newEnt, IID_Guard);
+	let cmpGuard = Engine.QueryInterface(oldEnt, IID_Guard);
+	let cmpNewGuard = Engine.QueryInterface(newEnt, IID_Guard);
 	if (cmpGuard && cmpNewGuard)
-		cmpNewGuard.SetEntities(cmpGuard.GetEntities());
+	{
+		let entities = cmpGuard.GetEntities();
+		if (entities.length)
+		{
+			cmpNewGuard.SetEntities(entities);
+			for (let ent of entities)
+			{
+				let cmpEntUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
+				if (cmpEntUnitAI)
+					cmpEntUnitAI.SetGuardOf(newEnt);
+			}
+		}
+	}
 
 	TransferGarrisonedUnits(oldEnt, newEnt);
 
-	Engine.BroadcastMessage(MT_EntityRenamed, { "entity": oldEnt, "newentity": newEnt });
+	Engine.PostMessage(oldEnt, MT_EntityRenamed, { "entity": oldEnt, "newentity": newEnt });
 
+	if (cmpPosition && cmpPosition.IsInWorld())
+		cmpPosition.MoveOutOfWorld();
 	Engine.DestroyEntity(oldEnt);
 
 	return newEnt;
@@ -100,6 +117,17 @@ function CanGarrisonedChangeTemplate(ent, template)
 	return true;
 }
 
+function CopyControlGroups(oldEnt, newEnt)
+{
+	let cmpObstruction = Engine.QueryInterface(oldEnt, IID_Obstruction);
+	let cmpNewObstruction = Engine.QueryInterface(newEnt, IID_Obstruction);
+	if (cmpObstruction && cmpNewObstruction)
+	{
+		cmpNewObstruction.SetControlGroup(cmpObstruction.GetControlGroup());
+		cmpNewObstruction.SetControlGroup2(cmpObstruction.GetControlGroup2());
+	}
+}
+
 function ObstructionsBlockingTemplateChange(ent, templateArg)
 {
 	var previewEntity = Engine.AddEntity("preview|"+templateArg);
@@ -107,6 +135,7 @@ function ObstructionsBlockingTemplateChange(ent, templateArg)
 	if (previewEntity == INVALID_ENTITY)
 		return true;
 
+	CopyControlGroups(ent, previewEntity);
 	var cmpBuildRestrictions = Engine.QueryInterface(previewEntity, IID_BuildRestrictions);
 	var cmpPosition = Engine.QueryInterface(ent, IID_Position);
 	var cmpOwnership = Engine.QueryInterface(ent, IID_Ownership);
@@ -161,8 +190,11 @@ function ObstructionsBlockingTemplateChange(ent, templateArg)
 			var cmpNewObstruction = Engine.QueryInterface(previewEntity, IID_Obstruction);
 			if (cmpNewObstruction && cmpNewObstruction.GetBlockMovementFlag())
 			{
-				// Check for units
-				var collisions = cmpNewObstruction.GetEntityCollisions(false, true);
+				// Remove all obstructions at the new entity, especially animal corpses
+				for (let ent of cmpNewObstruction.GetEntitiesDeletedUponConstruction())
+					Engine.DestroyEntity(ent);
+
+				let collisions = cmpNewObstruction.GetEntitiesBlockingConstruction();
 				if (collisions.length)
 					return DeleteEntityAndReturn(previewEntity, cmpPosition, pos, angle, cmpNewPosition, true);
 			}
@@ -189,16 +221,20 @@ function DeleteEntityAndReturn(ent, cmpPosition, position, angle, cmpNewPosition
 function TransferGarrisonedUnits(oldEnt, newEnt)
 {
 	// Transfer garrisoned units if possible, or unload them
-	var cmpOldGarrison = Engine.QueryInterface(oldEnt, IID_GarrisonHolder);
-	var cmpNewGarrison = Engine.QueryInterface(newEnt, IID_GarrisonHolder);
-	if (!cmpNewGarrison || !cmpOldGarrison || !cmpOldGarrison.GetEntities().length)
-		return;	// nothing to do as the code will by default unload all.
+	let cmpOldGarrison = Engine.QueryInterface(oldEnt, IID_GarrisonHolder);
+	if (!cmpOldGarrison || !cmpOldGarrison.GetEntities().length)
+		return;
 
-	var garrisonedEntities = cmpOldGarrison.GetEntities().slice();
-	for (let ent of garrisonedEntities)
+	let cmpNewGarrison = Engine.QueryInterface(newEnt, IID_GarrisonHolder);
+	let entities = cmpOldGarrison.GetEntities().slice();
+	for (let ent of entities)
 	{
-		let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 		cmpOldGarrison.Eject(ent);
+		if (!cmpNewGarrison)
+			continue;
+		let cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
+		if (!cmpUnitAI)
+			continue;
 		cmpUnitAI.Autogarrison(newEnt);
 		cmpNewGarrison.Garrison(ent);
 	}

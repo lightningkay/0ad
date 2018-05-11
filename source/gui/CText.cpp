@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2016 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -34,10 +34,12 @@ CText::CText()
 	AddSetting(GUIST_bool,					"scrollbar");
 	AddSetting(GUIST_CStr,					"scrollbar_style");
 	AddSetting(GUIST_bool,					"scroll_bottom");
+	AddSetting(GUIST_bool,					"scroll_top");
 	AddSetting(GUIST_CGUISpriteInstance,	"sprite");
 	AddSetting(GUIST_EAlign,				"text_align");
 	AddSetting(GUIST_EVAlign,				"text_valign");
 	AddSetting(GUIST_CColor,				"textcolor");
+	AddSetting(GUIST_CColor,				"textcolor_disabled");
 	AddSetting(GUIST_CStrW,					"tooltip");
 	AddSetting(GUIST_CStr,					"tooltip_style");
 
@@ -96,15 +98,16 @@ void CText::SetupText()
 	// Setup scrollbar
 	if (scrollbar)
 	{
-		bool scrollbottom = false;
-		GUI<bool>::GetSetting(this, "scroll_bottom", scrollbottom);
+		bool scroll_top = false, scroll_bottom = false;
+		GUI<bool>::GetSetting(this, "scroll_bottom", scroll_bottom);
+		GUI<bool>::GetSetting(this, "scroll_top", scroll_top);
 
 		// If we are currently scrolled to the bottom of the text,
 		// then add more lines of text, update the scrollbar so we
 		// stick to the bottom.
 		// (Use 1.5px delta so this triggers the first time caption is set)
 		bool bottom = false;
-		if (scrollbottom && GetScrollBar(0).GetPos() > GetScrollBar(0).GetMaxPos() - 1.5f)
+		if (scroll_bottom && GetScrollBar(0).GetPos() > GetScrollBar(0).GetMaxPos() - 1.5f)
 			bottom = true;
 
 		GetScrollBar(0).SetScrollRange(m_GeneratedTexts[0]->m_Size.cy);
@@ -117,6 +120,8 @@ void CText::SetupText()
 
 		if (bottom)
 			GetScrollBar(0).SetPos(GetScrollBar(0).GetMaxPos());
+		if (scroll_top)
+			GetScrollBar(0).SetPos(0.0f);
 	}
 }
 
@@ -229,8 +234,11 @@ void CText::Draw()
 		}
 	}
 
+	bool enabled;
+	GUI<bool>::GetSetting(this, "enabled", enabled);
+
 	CColor color;
-	GUI<CColor>::GetSetting(this, "textcolor", color);
+	GUI<CColor>::GetSetting(this, enabled ? "textcolor" : "textcolor_disabled", color);
 
 	if (scrollbar)
 		DrawText(0, color, m_CachedActualSize.TopLeft() - CPos(0.f, scroll), bz+0.1f, cliparea);

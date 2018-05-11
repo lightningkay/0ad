@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -93,6 +93,11 @@ public:
 	Status ReloadChangedFile(const VfsPath& path);
 
 	/**
+	 * Sets the default mouse pointer.
+	 */
+	void ResetCursor();
+
+	/**
 	 * Called when we should reload all pages (e.g. translation hotloading update).
 	 */
 	Status ReloadAllPages();
@@ -137,7 +142,7 @@ public:
  	 */
 	std::string GetSavedGameData();
 
-	void RestoreSavedGameData(std::string jsonData);
+	void RestoreSavedGameData(const std::string& jsonData);
 
 	/**
 	 * Check if a template with this name exists

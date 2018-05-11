@@ -2,33 +2,46 @@
 <actor version="1">
   <castshadow/>
   <group>
-    <variant frequency="100" name="Base">
-      <animations>
-        <animation file="quadraped/horse_idle_a.psa" name="idle" speed="120"/>
-        <animation file="quadraped/horse_idle_a.psa" name="idle" speed="180"/>
-        <animation file="quadraped/horse_death.psa" name="death" speed="240"/>
-      </animations>
-      <mesh>skeletal/horse.pmd</mesh>
+    <variant frequency="1" file="quadraped/base_horse_fauna.xml" name="fauna horse">
+      <mesh>skeletal/horse.dae</mesh>
     </variant>
   </group>
   <group>
-    <variant frequency="16" name="ablack">
-      <textures><texture file="skeletal/horse_black_a.dds" name="baseTex"/></textures>
+    <variant frequency="16" name="black1">
+      <textures>
+        <texture file="skeletal/horse_black_a.dds" name="baseTex"/>
+      </textures>
     </variant>
-    <variant frequency="17" name="abrown">
-      <textures><texture file="skeletal/horse_brown_a.dds" name="baseTex"/></textures>
+    <variant frequency="17" name="brown1">
+      <textures>
+        <texture file="skeletal/horse_brown_a.dds" name="baseTex"/>
+      </textures>
     </variant>
-    <variant frequency="16" name="achestnut">
-      <textures><texture file="skeletal/horse_chestnut_a.dds" name="baseTex"/></textures>
+    <variant frequency="16" name="chestnut1">
+      <textures>
+        <texture file="skeletal/horse_chestnut_a.dds" name="baseTex"/>
+      </textures>
     </variant>
-    <variant frequency="17" name="adun">
-      <textures><texture file="skeletal/horse_dun_a.dds" name="baseTex"/></textures>
+    <variant frequency="17" name="dun1">
+      <textures>
+        <texture file="skeletal/horse_dun_a.dds" name="baseTex"/>
+      </textures>
     </variant>
-    <variant frequency="17" name="agray">
-      <textures><texture file="skeletal/horse_gray_a.dds" name="baseTex"/></textures>
+    <variant frequency="17" name="gray1">
+      <textures>
+        <texture file="skeletal/horse_gray_a.dds" name="baseTex"/>
+      </textures>
     </variant>
-    <variant frequency="17" name="atan">
-      <textures><texture file="skeletal/horse_tan_a.dds" name="baseTex"/></textures>
+    <variant frequency="17" name="tan1">
+      <textures>
+        <texture file="skeletal/horse_tan_a.dds" name="baseTex"/>
+      </textures>
     </variant>
   </group>
+  <group>
+    <variant frequency="1" name="Idle"/>
+    <variant file="quadraped/base_horse_death.xml"/>
+    <variant file="quadraped/base_horse_run.xml"/>
+  </group>
+  <material>basic_trans.xml</material>
 </actor>

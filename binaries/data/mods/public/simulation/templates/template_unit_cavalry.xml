@@ -10,19 +10,20 @@
       <Value>2</Value>
       <MaxRange>4</MaxRange>
       <RepeatTime>1000</RepeatTime>
+      <RestrictedClasses datatype="tokens">Field Palisade SiegeWall StoneWall</RestrictedClasses>
     </Capture>
     <Slaughter>
       <Hack>100.0</Hack>
       <Pierce>0.0</Pierce>
       <Crush>0.0</Crush>
-      <MaxRange>4.0</MaxRange>
+      <MaxRange>2</MaxRange>
     </Slaughter>
   </Attack>
   <Cost>
     <Population>1</Population>
-    <BuildTime>12</BuildTime>
+    <BuildTime>15</BuildTime>
     <Resources>
-      <food>80</food>
+      <food>100</food>
     </Resources>
   </Cost>
   <Footprint replace="">
@@ -38,13 +39,13 @@
     <GenericName>Cavalry</GenericName>
     <Rank>Basic</Rank>
     <Formations datatype="tokens">
-      formations/wedge
+      special/formations/wedge
     </Formations>
   </Identity>
   <Loot>
     <xp>130</xp>
     <food>10</food>
-    <wood>0</wood>
+    <wood>5</wood>
     <stone>0</stone>
     <metal>0</metal>
   </Loot>
@@ -84,7 +85,9 @@
       <order_garrison>voice/{lang}/civ/civ_{gender}_garrison.xml</order_garrison>
       <walk>actor/mounted/movement/walk.xml</walk>
       <run>actor/mounted/movement/walk.xml</run>
-      <attack>attack/weapon/sword.xml</attack>
+      <attack_impact_ranged>attack/impact/arrow_metal.xml</attack_impact_ranged>
+      <attack_melee>attack/weapon/sword.xml</attack_melee>
+      <attack_ranged>attack/weapon/arrowfly.xml</attack_ranged>
       <death>actor/fauna/death/death_horse.xml</death>
       <trained>interface/alarm/alarm_create_cav.xml</trained>
     </SoundGroups>
@@ -93,11 +96,9 @@
     <HeightOffset>6.5</HeightOffset>
   </StatusBars>
   <UnitMotion>
-    <WalkSpeed>16.5</WalkSpeed>
+    <WalkSpeed op="mul">1.95</WalkSpeed>
     <Run>
-      <Speed>26.0</Speed>
-      <Range>600.0</Range>
-      <RangeMin>5.0</RangeMin>
+      <Speed op="mul">1.95</Speed>
     </Run>
   </UnitMotion>
   <Vision>

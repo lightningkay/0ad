@@ -4,20 +4,25 @@
 # 
 # Translators:
 # Anique van Berne <avanberne@gmail.com>, 2016
+# bb jansen <b.jansen5@students.uu.nl>, 2018
 # Charon De Beukelaer <charondb@gmail.com>, 2015
 # Christof Verhoeven <christof.verhoeven@gmail.com>, 2016
 # Ellen Roels, 2015
+# Ismail Sahin <ismailsahin1994@hotmail.com>, 2017
 # Johannes Collosus <the_pc_pilot@live.nl>, 2015
+# Marijn Billiet <marijnbilliet@gmail.com>, 2018
+# Mark Martines <mark-martines@hotmail.com>, 2017
 # Max Klaversma <maxklaversma@gmail.com>, 2014
-# niektb <niektb95@gmail.com>, 2014-2015
+# niektb <niektb95@gmail.com>, 2014-2016
 # Sander Deryckere, 2014-2016
 # Stef Jansen <stefgijsberts.sg@gmail.com>, 2014
+# SuperVipers <camerongeuzinge@hotmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-07-22 09:01+0200\n"
-"PO-Revision-Date: 2016-07-26 17:52+0000\n"
-"Last-Translator: Christof Verhoeven <christof.verhoeven@gmail.com>\n"
+"POT-Creation-Date: 2018-04-04 14:47+0200\n"
+"PO-Revision-Date: 2018-04-27 19:17+0000\n"
+"Last-Translator: bb jansen <b.jansen5@students.uu.nl>\n"
 "Language-Team: Dutch (http://www.transifex.com/wildfire-games/0ad/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,540 +30,342 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:203
-msgctxt "withinSentence"
-msgid "Food"
-msgstr "Voedsel"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:205
-msgctxt "withinSentence"
-msgid "Wood"
-msgstr "Hout"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:207
-msgctxt "withinSentence"
-msgid "Metal"
-msgstr "Metaal"
-
-#. Translation: Word as used in the middle of a sentence (which may require
-#. using lowercase for your language).
-#: simulation/ai/common-api/shared.js:209
-msgctxt "withinSentence"
-msgid "Stone"
-msgstr "Steen"
-
-#: simulation/ai/petra/chatHelper.js:9
+#: simulation/ai/petra/chatHelper.js:6
 #, javascript-format
 msgid ""
 "I am starting a massive military campaign against %(_player_)s, come and "
 "join me."
 msgstr "Ik ga een grote militaire campagne tegen %(_player_)s beginnen, kom en doe mee."
 
-#: simulation/ai/petra/chatHelper.js:11
+#: simulation/ai/petra/chatHelper.js:7
+#, javascript-format
+msgid ""
+"I have set up a huge army to crush %(_player_)s. Join me and you will have "
+"your share of the loot."
+msgstr "Ik heb een groots leger om %(_player_)s te vermorzelen. Doe mee en we verdelen de opbrengst."
+
+#: simulation/ai/petra/chatHelper.js:10
 #, javascript-format
 msgid "I am launching an attack against %(_player_)s."
 msgstr "Ik start een aanval op %(_player_)s."
 
-#: simulation/ai/petra/chatHelper.js:13
+#: simulation/ai/petra/chatHelper.js:11
 #, javascript-format
 msgid "I have just sent an army against %(_player_)s."
 msgstr "Ik heb zojuist een leger gestuurd naar %(_player_)s."
 
+#: simulation/ai/petra/chatHelper.js:17
+#, javascript-format
+msgid "Let me regroup my army and I will then join you against %(_player_)s."
+msgstr "Laat me hergroeperen met mijn leger daarna verenig ik met je tegen %(_player_)s"
+
+#: simulation/ai/petra/chatHelper.js:18
+#, javascript-format
+msgid "I am finishing preparations to attack %(_player_)s."
+msgstr "Ik ben mijn voorbereidingen tegen  %(_player_)s aan het afronden"
+
+#: simulation/ai/petra/chatHelper.js:21
+#, javascript-format
+msgid ""
+"Sorry, I do not have enough soldiers currently; but my next attack will "
+"target %(_player_)s."
+msgstr "Sorry, ik heb niet genoeg soldaten op het moment; maar mijn volgende aanval zal ik tegen  %(_player_)s inzetten"
+
+#: simulation/ai/petra/chatHelper.js:22
+#, javascript-format
+msgid ""
+"Sorry, I still need to strengthen my army. However, I will attack "
+"%(_player_)s next."
+msgstr "Sorry, ik heb tijd nodig om mijn leger sterker te maken maar  %(_player_)s zal het volgende doelwit zijn"
+
+#: simulation/ai/petra/chatHelper.js:25
+#, javascript-format
+msgid ""
+"I cannot help you against %(_player_)s for the time being, I am planning to "
+"attack %(_player_2)s first."
+msgstr "Ik kan je niet helpen tegen  %(_player_)s op het moment. Ik ben eerst een aanval tegen  %(_player_2)s aan het plannen"
+
+#: simulation/ai/petra/chatHelper.js:30
+#, javascript-format
+msgid "Here is a gift for you, %(_player_)s. Make good use of it."
+msgstr "Hier is een cadeau voor jou,  %(_player_)s maak er goed gebruik van"
+
 #: simulation/ai/petra/chatHelper.js:31
 #, javascript-format
-msgid "Let me regroup my army and I am with you against %(_player_)s."
-msgstr "Ik zal mijn leger hergroeperen en samen met jou %(_player_)s aanvallen."
+msgid "I see you are in a bad situation, %(_player_)s. I hope this helps."
+msgstr "Ik zie dat je het zwaar hebt,  %(_player_)s ik hoop dat dit helpt"
 
-#: simulation/ai/petra/chatHelper.js:33
-#, javascript-format
-msgid "I am doing the final preparation and I will attack %(_player_)s."
-msgstr "Ik ben bezig met de laatste voorbereidingen en zal dan %(_player_)s aanvallen."
-
-#: simulation/ai/petra/chatHelper.js:38
+#: simulation/ai/petra/chatHelper.js:32
 #, javascript-format
 msgid ""
-"I cannot help you against %(_player_)s for the time being, as I have another"
-" attack foreseen against %(_player_2)s."
-msgstr "Ik kan momenteel niet helpen met de aanval tegen %(_player_)s want ik heb een geplande aanval tegen %(_player_2)s."
+"I can help you this time, %(_player_)s, but you should manage your resources"
+" more carefully in the future."
+msgstr "%(_player_)s, ik kan je deze keer helpen, maar je moet je grondstoffen in de toekomst beter beheren."
 
-#: simulation/ai/petra/chatHelper.js:40
-#, javascript-format
-msgid ""
-"Sorry, I do not have enough soldiers currently, but my next attack will "
-"target %(_player_)s."
-msgstr "Sorry, mijn leger is nog niet groot genoeg, maar mijn volgende aanval zal tegen %(_player_)s zijn."
-
-#: simulation/ai/petra/chatHelper.js:63
-#, javascript-format
-msgid "Here is a gift for %(_player_)s, make a good use of it."
-msgstr "Hier is een cadeau voor %(_player_)s, maak er goed gebruik van."
-
-#: simulation/ai/petra/chatHelper.js:65
-#, javascript-format
-msgid "I see you are in a bad situation %(_player_)s, I hope this will help."
-msgstr "Ik zie dat je in een slechte situatie zit, %(_player_)s. Hopelijk zal dit helpen."
-
-#: simulation/ai/petra/chatHelper.js:67
-#, javascript-format
-msgid ""
-"I can help you this time %(_player_)s, but try to assemble more resources in"
-" the future."
-msgstr "%(_player_)s, ik kan je deze keer helpen, maar probeer in de toekomst meer grondstoffen te verzamelen."
-
-#: simulation/ai/petra/chatHelper.js:83
+#: simulation/ai/petra/chatHelper.js:36
 #, javascript-format
 msgid "I am in need of %(resource)s, can you help? I will make it up to you."
 msgstr "Ik heb %(resource)s nodig, kan jij me helpen? Ik zal het achteraf goedmaken."
 
-#: simulation/ai/petra/chatHelper.js:85
+#: simulation/ai/petra/chatHelper.js:37
 #, javascript-format
 msgid ""
 "I would participate more efficiently in our common war effort if you could "
 "provide me some %(resource)s."
 msgstr "Ik zou efficiënter zijn in ons gezamenlijk oorlogsplan als je me wat %(resource)s zou kunnen schenken."
 
-#: simulation/ai/petra/chatHelper.js:87
+#: simulation/ai/petra/chatHelper.js:38
 #, javascript-format
 msgid ""
-"If you have some %(resource)s excess, that would help me strengthen my army."
-msgstr "Als je wat %(resource)s over hebt, zou me dat helpen bij het uitbreiden van mijn leger."
+"If you can spare me some %(resource)s, I will be able to strengthen my army."
+msgstr "Als je me wat  %(resource)s kan geven, kan ik mijn leger sterker maken"
 
-#: simulation/ai/petra/chatHelper.js:103
+#: simulation/ai/petra/chatHelper.js:42
 #, javascript-format
 msgid ""
 "I have set up a new route with %(_player_)s. Trading will be profitable for "
 "all of us."
 msgstr "Ik heb een nieuwe handelsroute opgezet met %(_player_)s. Handel zal voor ons allen lucratief zijn."
 
-#: simulation/ai/petra/chatHelper.js:105
+#: simulation/ai/petra/chatHelper.js:43
 #, javascript-format
 msgid ""
 "A new trade route is set up with %(_player_)s. Take your share of the "
-"profits"
-msgstr "Een nieuwe handelsroute is opgezet met %(_player_)s. Neem je deel van de opbrengst."
+"profits."
+msgstr "Een nieuwe handelsroute is opgezet met %(_player_)s. Neem jouw deel van de opbrengst."
 
-#: simulation/ai/petra/chatHelper.js:120
+#: simulation/ai/petra/chatHelper.js:48
 #, javascript-format
-msgid "I am advancing to the %(phase)s."
-msgstr "Ik ben naar de %(phase)s aan het overgaan."
+msgid "%(_player_)s and I are now allies."
+msgstr "%(_player_)s is nu bevriend met jou."
+
+#: simulation/ai/petra/chatHelper.js:51
+#, javascript-format
+msgid "%(_player_)s and I are now neutral."
+msgstr "%(_player_)s en ik zijn nu neutraal"
+
+#: simulation/ai/petra/chatHelper.js:54
+#, javascript-format
+msgid "%(_player_)s and I are now enemies."
+msgstr "%(_player_)s is nu een vijand van jou."
+
+#: simulation/ai/petra/chatHelper.js:61
+#, javascript-format
+msgid "I cannot accept your offer to become allies, %(_player_)s."
+msgstr "I kan je bod om vrienden te worden niet accepteren, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:64
+#, javascript-format
+msgid ""
+"I will not be your ally, %(_player_)s. However, I will consider a neutrality"
+" pact."
+msgstr "Ik zal je bondgenoot niet zijn, %(_player_)s, maar ik kan wel een neutraliteitspact overwegen."
+
+#: simulation/ai/petra/chatHelper.js:65
+#, javascript-format
+msgid ""
+"I reject your request for alliance, %(_player_)s, but we could become "
+"neutral."
+msgstr "%(_player_)s, ik wijs jouw verzoek tot een alliantie af, maar we kunnen een vredesbestand afsluiten."
+
+#: simulation/ai/petra/chatHelper.js:66
+#, javascript-format
+msgid "%(_player_)s, only a neutrality agreement is conceivable to me."
+msgstr "%(_player_)s, alleen een neutraliteitsovereenkomst is bereikbaar voor mij."
+
+#: simulation/ai/petra/chatHelper.js:69
+#, javascript-format
+msgid ""
+"Our previous alliance did not work out, %(_player_)s. I must decline your "
+"offer."
+msgstr "Ons vorige bondgenootschap werkte niet, %(_player_)s. Ik moet je aanbod afwijzen."
+
+#: simulation/ai/petra/chatHelper.js:70
+#, javascript-format
+msgid "I won’t ally you again, %(_player_)s!"
+msgstr "Ik ben nooit meer je bondgenoot, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:71
+#, javascript-format
+msgid "No more alliances between us, %(_player_)s!"
+msgstr "Geen bondgenootschappen meer tussen ons, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:72
+#, javascript-format
+msgid "Your request for peace means nothing to me anymore, %(_player_)s!"
+msgstr "Je verzoek om vrede betekend niets voor mij, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:73
+#, javascript-format
+msgid ""
+"My answer to your repeated peace proposal will remain war, %(_player_)s!"
+msgstr "Mijn antwoord voor je herhaalde vredesverzoeken blijft oorlog, %(_player_)s!"
+
+#: simulation/ai/petra/chatHelper.js:76
+#, javascript-format
+msgid ""
+"I will accept your offer to become allies, %(_player_)s. We will both "
+"benefit from this partnership."
+msgstr "Ik accepteer je aanbod voor bondgenootschap, %(_player_)s. Beiden zullen we profiteren van onze samenwerking."
+
+#: simulation/ai/petra/chatHelper.js:77
+#, javascript-format
+msgid "An alliance between us is a good idea, %(_player_)s."
+msgstr "Een bondgenootschap tussen ons is een god idee, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:78
+#, javascript-format
+msgid ""
+"Let both of our people prosper from a peaceful association, %(_player_)s."
+msgstr "Moge beiden onze volken profiteren van een vredig bondgenootschap, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:79
+#, javascript-format
+msgid "We have found common ground, %(_player_)s. I accept the alliance."
+msgstr "We hebben gemeenschappelijke belangen, %(_player_)s. Ik accepteer een bondgenootschap."
+
+#: simulation/ai/petra/chatHelper.js:80
+#, javascript-format
+msgid "%(_player_)s, consider us allies from now on."
+msgstr "%(_player_)s, beschouw ons bondgenoten vanaf nu."
+
+#: simulation/ai/petra/chatHelper.js:83
+#, javascript-format
+msgid ""
+"I will ally with you, %(_player_)s, but only if you send me a tribute of "
+"%(_amount_)s %(_resource_)s."
+msgstr "Ik wil je bondgenoot worden, %(_player_)s, maar alleen als je me%(_amount_)s%(_resource_)s als geschenk stuurt."
+
+#: simulation/ai/petra/chatHelper.js:84
+#, javascript-format
+msgid ""
+"%(_player_)s, you must send me a tribute of %(_amount_)s %(_resource_)s "
+"before I accept an alliance with you."
+msgstr "%(_player_)s, je moet eerst %(_amount_)s%(_resource_)s als geschenk sturen voordat ik een bondgenootschap met je accepteer."
+
+#: simulation/ai/petra/chatHelper.js:85
+#, javascript-format
+msgid ""
+"Unless you send me %(_amount_)s %(_resource_)s, an alliance won’t be formed,"
+" %(_player_)s,"
+msgstr "Als je me geen %(_amount_)s%(_resource_)s stuurt, wordt een bondgenootschap niet gevormd, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:88
+#, javascript-format
+msgid ""
+"%(_player_)s, my offer still stands. I will ally with you only if you send "
+"me a tribute of %(_amount_)s %(_resource_)s."
+msgstr "%(_player_)s, mijn aanbod staat nog steeds. Ik zal je bondgenoot zijn alleen als je met %(_amount_)s %(_resource_)s als geschenk stuurt."
+
+#: simulation/ai/petra/chatHelper.js:89
+#, javascript-format
+msgid ""
+"I’m still waiting for %(_amount_)s %(_resource_)s before accepting your "
+"alliance, %(_player_)s."
+msgstr "Ik wacht no op %(_amount_)s%(_resource_)s voor ik het bondgenootschap accepteer."
+
+#: simulation/ai/petra/chatHelper.js:90 simulation/ai/petra/chatHelper.js:111
+#, javascript-format
+msgid ""
+"%(_player_)s, if you do not send me part of the %(_amount_)s %(_resource_)s "
+"tribute soon, I will break off our negotiations."
+msgstr "%(_player_)s, als je niet snel een deel van de %(_amount_)s%(_resource_)s geeft, breek ik de onderhandelingen af."
+
+#: simulation/ai/petra/chatHelper.js:95
+#, javascript-format
+msgid "I will not become neutral with you, %(_player_)s."
+msgstr "Ik wordt niet neutraal met jou, %(_player_)s."
+
+#: simulation/ai/petra/chatHelper.js:96
+#, javascript-format
+msgid "%(_player_)s, I must decline your request for a neutrality pact."
+msgstr "%(_player_)s, ik moet je voorstel tot een vredespact afwijzen"
+
+#: simulation/ai/petra/chatHelper.js:99
+#, javascript-format
+msgid ""
+"Our previous neutrality agreement ended in failure, %(_player_)s; I will not"
+" consider another one."
+msgstr "Ons vorige neutraliteitsovereenkomst werkte niet, %(_player_)s; Ik overweeg een nieuwe niet."
+
+#: simulation/ai/petra/chatHelper.js:102
+#, javascript-format
+msgid ""
+"I welcome your request for peace between our civilizations, %(_player_)s. I "
+"will accept."
+msgstr "Ik verwelkom je verzoek voor vrede tussen onze volkeren, %(_player_)s. Ik accepteer."
+
+#: simulation/ai/petra/chatHelper.js:103
+#, javascript-format
+msgid ""
+"%(_player_)s, I will accept your neutrality request. May both our "
+"civilizations benefit."
+msgstr "%(_player_)s, ik accepteer je neutraliteitsverzoek. Moge beide onze volken profiteren."
+
+#: simulation/ai/petra/chatHelper.js:106
+#, javascript-format
+msgid ""
+"If you send me a tribute of %(_amount_)s %(_resource_)s, I will accept your "
+"neutrality request, %(_player_)s."
+msgstr "Als je me %(_amount_)s %(_resource_)s als geschenk stuurt, zal ik je neutraliteitsverzoek accepteren, %(_player_)s. "
+
+#: simulation/ai/petra/chatHelper.js:107
+#, javascript-format
+msgid ""
+"%(_player_)s, if you send me %(_amount_)s %(_resource_)s, I will accept a "
+"neutrality pact."
+msgstr "%(_player_)s, als je me %(_amount_)s %(_resource_)s stuurt, zal ik een neutraliteitspact accepteren."
+
+#: simulation/ai/petra/chatHelper.js:110
+#, javascript-format
+msgid ""
+"%(_player_)s, I will not accept your neutrality request unless you tribute "
+"me %(_amount_)s %(_resource_)s soon."
+msgstr ""
+
+#: simulation/ai/petra/chatHelper.js:119
+#, javascript-format
+msgid ""
+"%(_player_)s, it would help both of our civilizations if we formed an "
+"alliance. If you become allies with me, I will respond in kind."
+msgstr ""
 
 #: simulation/ai/petra/chatHelper.js:122
 #, javascript-format
-msgid "I have reached the %(phase)s."
-msgstr "Ik heb de %(phase)s bereikt."
+msgid "%(_player_)s, my offer for an alliance has expired."
+msgstr "%(_player_)s, mijn verzoek tot bondgenootschap is verlopen."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:3
+#: simulation/ai/petra/chatHelper.js:123
+#, javascript-format
 msgid ""
-"Warning: This is an advanced tutorial and goes quite fast. If you don't keep"
-" up just restart and try again. Practise makes perfect!"
-msgstr "Waarschuwing, dit is een geavanceerde zelfstudie, en gaat tamelijk snel. Als je het tempo niet kan bijhouden, doe dan de zelfstudie gewoon opnieuw door het spel opnieuw te laden. Oefening baart kunst!"
+"%(_player_)s, I have rescinded my previous offer for an alliance between us."
+msgstr ""
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:8
+#: simulation/ai/petra/chatHelper.js:128
+#, javascript-format
 msgid ""
-"Lets get started, first train a batch (shift click) of 5 female citizens "
-"from the CC (Civil Center)."
-msgstr "Laten we beginnen. Rekruteer eerst een groep van 5 vrouwen (shift-klik) van het BC (beschavingscentrum)."
+"%(_player_)s, I would like to request a neutrality pact between our "
+"civilizations. If you become neutral with me, I will respond in kind."
+msgstr ""
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:13
+#: simulation/ai/petra/chatHelper.js:129
+#, javascript-format
 msgid ""
-"Now, assign your female citizens to gather berries, your cavalryman to hunt "
-"the chickens and the citizen soldiers to gather wood."
-msgstr "Laat je bestaande vrouwen nu de bessen verzamelen, en laat je ruiter de kippen verzamelen. De burgersoldaten kunnen beginnen met het verzamelen van hout."
+"%(_player_)s, it would be both to our benefit if we negotiated a neutrality "
+"pact. I will become neutral with you if you do the same."
+msgstr ""
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:18
-msgid "Now set the rally point of your civil center on the berries."
-msgstr "Zet nu het doel van je BC op de bessen."
+#: simulation/ai/petra/chatHelper.js:132
+#, javascript-format
+msgid "%(_player_)s, I have decided to revoke my offer for a neutrality pact."
+msgstr "%(_player_)s, ik heb besloten mijn aanbod voor een neutraliteitspact in te trekken."
 
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:23
+#: simulation/ai/petra/chatHelper.js:133
+#, javascript-format
 msgid ""
-"Queue some slingers to train after the female citizens, you won't have "
-"enough resources for a batch."
-msgstr "Stop enkele slingeraars in je rekruteerrij, zodat die verschijnen als je vrouwen gerekruteerd zijn. Je zal niet genoeg grondstoffen hebben om er 5 te rekruteren."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:28
-msgid ""
-"When your female citizens have finished training, use 4 to build a house "
-"nearby."
-msgstr "Wanneer je vrouwen gerekruteerd zijn, gebruik er dan 4 van om een huis te bouwen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:33
-msgid ""
-"Set the CC's rally point on the nearby trees, queue more slingers, you want "
-"to train 6 right now."
-msgstr "Zet het doel van je BC op de nabije bomen. Probeer 6 extra slingeraars in je wachtrij te krijgen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:38
-msgid "Queue a batch of 5 female citizens."
-msgstr "Stop een groep van 5 extra vrouwen in je wachtrij."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:43
-msgid "Use shift-click to queue another house for the 4 builders."
-msgstr "Gebruik shift-klik om een tweede huis te bouwen met de 4 werkers. Ze zullen eerst hun eerste huis afwerken."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:48
-msgid ""
-"Set the rally point back to the berries once all of the citizen soldiers "
-"have finished training."
-msgstr "Zet het doel terug op de bessen eenmaal alle burgersoldaten gerekruteerd zijn."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:53
-msgid ""
-"Send one citizen soldier to gather stone, send 2 others to build a "
-"storehouse near the southern trees."
-msgstr "Stuur enkele soldaten om steen te verzamelen, stuur 2 andere om een pakhuis te maken bij de zuidelijke bomen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:58
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:78
-msgid "Queue another 5 female citizens."
-msgstr "Stop nog een groep van 5 vrouwen in de wachtrij."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:63
-msgid "Use a female citizen to construct a field next to your CC."
-msgstr "Gebruik een vrouwelijke burger om een veld te construeren naast het BC."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:68
-msgid ""
-"Your cavalryman has probably run out of chickens by now, there are some "
-"goats to the left of your base."
-msgstr "Je ruiter heeft nu waarschijnlijk al alle kippen verzameld. Er zijn nog enkele geiten over aan de linkerkant van je basis."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:73
-msgid "Use 2-3 more female citizens to construct the field."
-msgstr "Gebruik een 2-3 extra vrouwelijke burgers om het veld te construeren."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:83
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:128
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:138
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:163
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:188
-msgid "Queue another house."
-msgstr "Plaats de fundamenten van een ander huis voor dezelfde werkers."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:88
-msgid ""
-"The berry bushes are getting crowded, send some female citizens to work the "
-"field, set the rally point there."
-msgstr "De bessen worden drukbevolkt, stuur enkele vrouwen naar het veld, en zet het doel van het BC ook op het veld."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:93
-msgid "Queue another 5 female citizens, these should gather stone."
-msgstr "Stop nog 5 vrouwen in de wachtrij, deze moeten steen verzamelen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:98
-msgid ""
-"Move your woodcutters to the trees near the storehouse so they don’t have to"
-" walk as far."
-msgstr "Stuur je houthakkers naar de bomen bij het pakhuis, zodat ze niet zo ver moeten lopen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:103
-msgid ""
-"Make sure the workers from the berry bushes are used to gather from the "
-"field rather than standing idle when they run out."
-msgstr "Verzeker je er van dat de verzamelaars van bessen op een veld kunnen werken i.p.v. nutteloos te staan als de bessen op zijn."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:108
-msgid "Queue another house to be built."
-msgstr "Plaats de fundamenten van een nieuw huis."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:113
-msgid "Queue 5 more female citizens. These will gather wood."
-msgstr "Stop 5 extra vrouwen in je wachtrij die hout moeten verzamelen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:118
-msgid ""
-"Build another field, this decreases the amount of walking for your female "
-"citizens."
-msgstr "Bouw een ander veld, dit zorgt er voor dat je vrouwen minder ver moeten wandelen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:123
-msgid ""
-"Train some more slingers, send them to gather stone. Train about 5, you may "
-"not have enough resources for a batch right now."
-msgstr "Rekruteer enkele slingeraars, stuur ze naar de steenmijn. Probeer er 5 te rekruteren, misschien heb je niet genoeg voor een groep."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:133
-msgid "Queue another batch of 5 female citizens. These will gather wood."
-msgstr "Rekruteer nog 5 vrouwen, deze moeten hout verzamelen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:143
-msgid "Queue a batch of spearmen."
-msgstr "Rekruteer een groep van 5 speervechters."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:148
-msgid "Research the stone mining technology from the storehouse."
-msgstr "Onderzoek de steenmijn technologie van het pakhuis."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:153
-msgid "Queue a batch of slingers."
-msgstr "Stop een groep slingeraars in je wachtrij."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:158
-msgid ""
-"Move 3 women from wood and 3 from stone to farming. Women are cheap to train"
-" initially but later in the game it is best to maximize efficiency as you "
-"are able to train more citizen soldiers."
-msgstr "Stuur 3 vrouwen van het hout en 3 van de steenmijn naar het veld.\nVrouwen zijn goedkoop om te rekruteren, maar later in het spel is het beter om de efficiëntie te maximaliseren door meer burgersoldaten te rekruteren."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:168
-msgid ""
-"The slingers that you queued earlier should gather stone once they are "
-"trained."
-msgstr "Deze slingeraars die je eerder gerekruteerd hebt zouden steen moeten gaan verzamelen eenmaal ze er zijn."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:173
-msgid "Queue a batch of spearmen, they should gather wood."
-msgstr "Rekruteer een groep speervechters, deze zouden hout moeten verzamelen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:178
-msgid "Next queue a batch of slingers."
-msgstr "Rekruteer een groep slingeraars."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:183
-msgid ""
-"Send some of the stone miners to mine metal, getting ready for the next age."
-msgstr "Stuur enkele steenwerkers naar de metaalmijn, verzamel grondstoffen om naar de volgende fase te gaan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:193
-msgid "Start researching Phase 2."
-msgstr "Start met het onderzoeken van de tweede fase."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:198
-msgid "Queue some slingers."
-msgstr "Stop enkele slingeraars in je wachtrij."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:203
-msgid ""
-"When you have advanced, use a single citizen soldier to place a barracks "
-"foundation. Then use the rest of the non food or house building female "
-"citizens to construct it."
-msgstr "Wanneer je in de tweede fase bent, gebruik dan een enkele soldaat om de fundamenten van de kazerne te plaatsen. Gebruik dan de rest van de vrouwen die geen voedsel aan het verzamelen zijn om de kazerne te bouwen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:208
-msgid "Queue 5 more females for construction work."
-msgstr "Stop 5 extra vrouwen in de wachtrij voor constructiewerken."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:213
-msgid ""
-"Queue a batch of slingers to gather the trees on the north side of your "
-"base."
-msgstr "Stop een groep van slingeraars in de wachtrij om hout te verzamelen van de bomen aan de noordkant van je basis."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:218
-msgid ""
-"This is the end of the walkthrough. This should give you a good idea of how "
-"to build up a nice economy rapidly."
-msgstr "Dit is het einde van de zelfstudie. Het zou je een goed idee moeten geven over hoe je best een goede economie opbouwt."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:223
-msgid ""
-"At this point you should be able to fully use both training facilities, keep"
-" putting units into economic work, to keep growing faster and faster."
-msgstr "Op dit moment zou je beide rekruteerfaciliteiten optimaal moeten kunnen benutten, en eenheden altijd aan het werk kunnen houden, om zo sneller en sneller te groeien."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:228
-msgid ""
-"From this point you have a good base to build an army and wipe out the "
-"opposition."
-msgstr "Vanaf nu heb je een goeie basis om je leger te bouwen, en de vijand te verslaan."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:233
-msgid "The key points to remember are:"
-msgstr "De punten die je moet onthouden zijn:"
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:238
-msgid ""
-" - Don't have any idle units. Shift click queuing and rally points are very "
-"useful."
-msgstr "- Zorg er voor dat er geen ongebruikte eenheden zijn. Shift-rechts-klik en het zetten van doelen zijn daarvoor heel nuttig."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:243
-msgid ""
-" - Use all of your resources, stockpiled resources are waste, having too "
-"much of a resource is waste."
-msgstr "- Gebruik alle grondstoffen, ongebruikte grondstoffen zijn verloren. Teveel van dezelfde grondstof is verloren moeite."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:248
-msgid ""
-" - Use the right units for the right task, female citizens gather food, "
-"cavalry hunt, citizen soldiers do the rest."
-msgstr "- Gebruik de goede eenheden voor de goede taken. Vrouwen verzamelen voedsel, ruiters jagen, burgersoldaten doen de rest."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:253
-msgid ""
-" - Don't be afraid to swap units from one resource to another, see point 2. "
-"Make sure they deposit what they are carrying first though."
-msgstr "- Wees niet bang om eenheden van de ene naar de andere grondstof te wisselen. Zorg dat ze eerst afgeven wat ze aan het dragen zijn."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:258
-msgid ""
-" - Build enough houses, your CC should be kept busy as much as possible."
-msgstr "- Bouw genoeg huizen. De wachtrij in je beschavingscentrum moet zo actief mogelijk gehouden worden."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:263
-msgid ""
-" - Female citizens are cheap, so you can build more of them and gather more "
-"resources."
-msgstr "- Vrouwen zijn goedkoop, dus kan je er veel van bouwen en zo sneller grondstoffen verzamelen."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:268
-msgid ""
-" - Don't get carried away on the last point or you will get raided and have "
-"no defense."
-msgstr "- Produceer naast vrouwen ook soldaten, om een raid te kunnen overleven."
-
-#: simulation/ai/tutorial-ai/economic_walkthrough.js:273
-msgid ""
-"Each map is different, so you will need to play slightly differently on "
-"each. This should give an outline for a high resource map."
-msgstr "Iedere kaart is verschillend. Een goede speler past zijn speelstijl aan volgens de kaart. Dit moet een overzicht bieden van wat je kan doen op een kaart waar er geen tekort aan grondstoffen is."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:4
-msgid ""
-"Welcome to the 0 A.D. tutorial. First left-click on a female citizen, then "
-"Right-click on a berry bush nearby to make the unit collect food. Female "
-"citizens gather food faster than other units."
-msgstr "Welkom bij de 0 A.D. zelfstudie. Begin met links te klikken op een vrouwelijke burger, klik dan rechts op de fruitstruiken om de eenheden voedsel te laten verzamelen. Vrouwen kunnen sneller voedsel verzamelen dan mannen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:7
-msgid ""
-"Select the citizen-soldier, right-click on a tree near the Civil Center to "
-"begin collecting wood. Citizen-soldiers gather wood faster than female "
-"citizens."
-msgstr "Selecteer de burgersoldaat, klik rechts op een boom bij het beschavingscentrum om hout te verzamelen. Burgersoldaten kunnen sneller hout verzamelen dan vrouwen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:11
-msgid ""
-"Select the Civil Center building, and shift-click on the Hoplite icon (2nd "
-"in the row) once to begin training 5 Hoplites."
-msgstr "Selecteer het beschavingscentrum en shift-klik op het hopliet icoontje (2de in de rij) om 5 hoplieten te rekruteren."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:15
-msgid ""
-"Select the two idle female citizens and build a house nearby by selecting "
-"the house icon. Place the house by left-clicking on a piece of land."
-msgstr "Selecteer twee ongebruikte vrouwelijke burgers om een huis te bouwen door op het huis icoontje te klikken. Plaats het huis door op een leeg stuk grond te klikken."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:21
-msgid ""
-"Select the newly trained Hoplites and assign them to build a storehouse "
-"beside some nearby trees. They will begin to gather wood when it's "
-"constructed."
-msgstr "Selecteer de nieuwe hoplieten en stuur ze naar de bomen om daar een pakhuis te bouwen. Ze zullen beginnen met het verzamelen van hout eenmaal het pakhuis gebouwd is."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:27
-msgid ""
-"Build a set of 5 skirmishers by shift-clicking on the skirmisher icon (3rd "
-"in the row) in the Civil Center."
-msgstr "Rekruteer een groep van 5 tirailleurs via een shift-klik op het tirailleur icoontje (3de prentje in de rij) in het beschavingscentrum."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:33
-msgid ""
-"Build a farmstead in an open space beside the Civil Center using any idle "
-"builders."
-msgstr "Bouw een boerderij in een open stuk grond bij het beschavingscentrum met enkele ongebruikte werkers."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:39
-msgid ""
-"Once the farmstead is constructed, its builders will automatically begin "
-"gathering food if there is any nearby. Select the builders and instead make "
-"them construct a field beside the farmstead."
-msgstr "Eenmaal de boerderij gebouwd is zullen de werkers automatisch beginnen met het verzamelen van voedsel als er dichtbij te vinden is. Selecteer de werkers in plaats van hen te laten werken, en laat ze een veld maken bij de boerderij. "
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:45
-msgid ""
-"The field's builders will now automatically begin collecting food from the "
-"field. Using the newly created group of skirmishers, get them to build "
-"another house nearby."
-msgstr "De werkers aan het veld zullen nu onmiddellijk beginnen met oogsten. Gebruik de nieuwe groep tirailleurs om een nieuw huis te bouwen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:51
-msgid ""
-"Train 5 Hoplites from the Civil Center. Select the Civil Center and with it "
-"selected right click on a tree nearby. Units from the Civil Center will now "
-"automatically gather wood."
-msgstr "Rekruteer 5 hoplieten van het beschavingscentrum. Selecteer het beschavingscentrum en klik rechts op een nabije boom. De eenheden van het beschavingscentrum zullen automatisch beginnen met het verzamelen van hout."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:57
-msgid ""
-"Order the idle Skirmishers to build an outpost to the north east at the edge"
-" of your territory.  This will be the fifth Village Phase structure that you"
-" have built, allowing you to advance to the Town Phase."
-msgstr "Stuur de ongebruikte tirailleurs naar het noordelijk deel van je territorium om daar een voorpost te bouwen. Dit zal het vijfde dorpsgebouw zijn op je territorium en dus zal je kunnen verdergaan naar stadsfase."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:63
-msgid ""
-"Select the Civil Center again and advance to Town Phase by clicking on the "
-"'II' icon. This will allow Town Phase buildings to be constructed."
-msgstr "Selecteer het beschavingscentrum opnieuw en ga verder naar stadsfase door op 'II' te klikken. Dit zal er voor zorgen dat je meer soorten gebouwen kan bouwen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:69
-msgid ""
-"Start building 5 female citizens in the Civil Center and set its rally point"
-" to the farm (right click on it)."
-msgstr "Start met 5 vrouwelijke burgers te rekruteren in het beschavingscentrum en zet hun doel op het veld (rechts klikken op het veld)."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:74
-msgid ""
-"Build a Barracks nearby. Whenever your population limit is reached, build an"
-" extra house using any available builder units."
-msgstr "Bouw een kazerne. Telkens wanneer je bevolkingslimiet bereikt is moet je extra huizen bouwen met een beschikbare werkkracht om je limiet te verhogen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:80
-msgid ""
-"Prepare for an attack by an enemy player. Build more soldiers using the "
-"Barracks, and get idle soldiers to build a Defense Tower near your Outpost."
-msgstr "Hou je klaar voor een aanval van een vijandige speler. Bouw meer soldaten met de kazerne, en laat ongebruikte soldaten een defensietoren bouwen bij je voorpost."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:86
-msgid ""
-"Build a Blacksmith and research the Infantry Training technology (sword "
-"icon) to improve infantry hack attack."
-msgstr "Bouw een smidse en onderzoek de Infantrie Training technologie (icoontje met het zwaard) om de slagkracht van infantrie-eenheden te verbeteren."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:92
-msgid "The enemy is coming. Build more soldiers to fight off the enemies."
-msgstr "De vijand komt er aan. Rekruteer meer soldaten om de vijand te verslaan."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:99
-msgid ""
-"The enemy's attack has been defeated. Now build a market and temple while "
-"assigning new units to gather any required resources."
-msgstr "De vijandelijke aanval is afgeslagen. Bouw nu een markt en een tempel terwijl je nieuwe eenheden gebruikt om benodigde grondstoffen te verzamelen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:104
-msgid ""
-"Now that City Phase requirements have been reached, select your Civil Center"
-" and advance to City Phase."
-msgstr "Nu aan de vereisten voor de grootstadsfase voldaan is, selectter je beschavingscentrum om naar grootstadsfase verder te gaan."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:110
-msgid ""
-"Now that you are in City Phase, build a fortress nearby and use it to build "
-"2 Battering Rams."
-msgstr "Nu je in grootstadsfase bent kan je een vesting bouwen en in de vesting 2 stormrammen construeren."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:115
-msgid ""
-"Stop all your soldiers gathering resources and instead task small groups to "
-"find the enemy Civil Center on the map. Female citizens should continue to "
-"gather resources."
-msgstr "Stop alle soldaten met het verzamelen van grondstoffen en stuur ze uit in kleine groepen om het vijandelijke beschavingscentrum te vinden.\nVrouwen moeten verder gaan met het verzamelen van grondstoffen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:122
-msgid ""
-"The enemy's base has been spotted, send your siege weapons and all remaining"
-" soldiers to destroy it."
-msgstr "De vijand is gevonden. Stuur je belegeringstuigen en alle overblijvende soldaten er naar toe om hem te vernietigen."
-
-#: simulation/ai/tutorial-ai/introductory_tutorial.js:126
-msgid "The enemy has been defeated. All tutorial tasks are now completed…"
-msgstr "De vijand is verslagen, alle opdrachten zijn nu beëindigd..."
+"%(_player_)s, as you have failed to respond to my request for peace between "
+"us, I have abrogated my offer."
+msgstr ""
 
 #: simulation/components/BuildRestrictions.js:87
 #, javascript-format
@@ -629,12 +436,12 @@ msgid ""
 "%(validTerritories)s"
 msgstr "%(name)s kan niet gebouwd worden in %(territoryType)s territorium. Geldige territoria: %(validTerritories)s"
 
-#: simulation/components/BuildRestrictions.js:253
+#: simulation/components/BuildRestrictions.js:228
 #, javascript-format
 msgid "%(name)s must be built on a valid shoreline"
 msgstr "%(name)s moet op een geldige kustlijn gebouwd worden"
 
-#: simulation/components/BuildRestrictions.js:277
+#: simulation/components/BuildRestrictions.js:256
 #, javascript-format
 msgid ""
 "%(name)s too close to a %(category)s, must be at least %(distance)s meter "
@@ -645,7 +452,7 @@ msgid_plural ""
 msgstr[0] "%(name)s staat te dicht bij een %(category)s, er moet zeker %(distance)s meter afstand zijn"
 msgstr[1] "%(name)s staat te dicht bij een %(category)s, er moet zeker %(distance)s meter afstand zijn"
 
-#: simulation/components/BuildRestrictions.js:299
+#: simulation/components/BuildRestrictions.js:277
 #, javascript-format
 msgid ""
 "%(name)s too far from a %(category)s, must be within %(distance)s meter"
@@ -656,96 +463,87 @@ msgstr[1] "%(name)s staat te ver van een %(category)s, het moet binnen %(distanc
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:339
+#: simulation/components/BuildRestrictions.js:317
 msgctxt "Territory type list"
 msgid "own"
 msgstr "eigen"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:341
+#: simulation/components/BuildRestrictions.js:319
 msgctxt "Territory type list"
 msgid "ally"
-msgstr "geallieerd"
+msgstr "bevriend"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:343
+#: simulation/components/BuildRestrictions.js:321
 msgctxt "Territory type list"
 msgid "neutral"
 msgstr "neutraal"
 
 #. Translation: Territory types being displayed as part of a list like "Valid
 #. territories: own, ally".
-#: simulation/components/BuildRestrictions.js:345
+#: simulation/components/BuildRestrictions.js:323
 msgctxt "Territory type list"
 msgid "enemy"
 msgstr "vijandig"
 
-#: simulation/components/CeasefireManager.js:100
+#: simulation/components/CeasefireManager.js:99
 #, javascript-format
 msgid "You can attack in %(time)s"
 msgstr "Je kan vijanden aanvallen binnen %(time)s"
 
-#: simulation/components/CeasefireManager.js:113
+#: simulation/components/CeasefireManager.js:112
 msgid "You can attack now!"
 msgstr "Je kan nu aanvallen!"
 
-#: simulation/components/EndGameManager.js:114
+#: simulation/components/EndGameManager.js:171
+#, javascript-format
+msgid "%(lastPlayer)s has won (last player alive)."
+msgid_plural "%(players)s and %(lastPlayer)s have won (last players alive)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: simulation/components/EndGameManager.js:179
 msgid "Last remaining player wins."
 msgstr "Vecht tot de laatste speler."
 
-#: simulation/components/EntityLimits.js:166
+#: simulation/components/EntityLimits.js:165
 #, javascript-format
 msgid "%(category)s build limit of %(limit)s reached"
 msgstr "%(category)s bouwlimiet van %(limit)s bereikt"
 
-#: simulation/components/EntityLimits.js:168
+#: simulation/components/EntityLimits.js:167
 #, javascript-format
 msgid "%(category)s training limit of %(limit)s reached"
 msgstr "%(category)s rekruteerlimiet van %(limit)s bereikt"
 
-#: simulation/components/EntityLimits.js:172
+#: simulation/components/EntityLimits.js:171
 #, javascript-format
 msgid "%(category)s limit of %(limit)s reached"
 msgstr "%(category)s limiet van %(limit)s bereikt"
 
-#: simulation/components/Player.js:48
-msgid "Food"
-msgstr "Voedsel"
-
-#: simulation/components/Player.js:49
-msgid "Wood"
-msgstr "Hout"
-
-#: simulation/components/Player.js:50
-msgid "Metal"
-msgstr "Metaal"
-
-#: simulation/components/Player.js:51
-msgid "Stone"
-msgstr "Steen"
-
-#: simulation/components/Player.js:271
+#: simulation/components/Player.js:352
 #, javascript-format
 msgid "Insufficient resources - %(resourceAmount1)s %(resourceType1)s"
 msgstr "Onvoldoende grondstoffen - %(resourceAmount1)s %(resourceType1)s"
 
-#: simulation/components/Player.js:273
+#: simulation/components/Player.js:354
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
 "%(resourceAmount2)s %(resourceType2)s"
 msgstr "Onvoldoende grondstoffen - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s"
 
-#: simulation/components/Player.js:275
+#: simulation/components/Player.js:356
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
 "%(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s"
 msgstr "Onvoldoende grondstoffen - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s"
 
-#: simulation/components/Player.js:277
+#: simulation/components/Player.js:358
 #, javascript-format
 msgid ""
 "Insufficient resources - %(resourceAmount1)s %(resourceType1)s, "
@@ -753,7 +551,7 @@ msgid ""
 "%(resourceType3)s, %(resourceAmount4)s %(resourceType4)s"
 msgstr "Onvoldoende grondstoffen - %(resourceAmount1)s %(resourceType1)s, %(resourceAmount2)s %(resourceType2)s, %(resourceAmount3)s %(resourceType3)s, %(resourceAmount4)s %(resourceType4)s"
 
-#: simulation/components/ProductionQueue.js:391
+#: simulation/components/ProductionQueue.js:394
 msgid "The production queue is full."
 msgstr "De productierij is vol."
 
@@ -761,42 +559,60 @@ msgstr "De productierij is vol."
 msgid "Can't find free space to spawn trained units"
 msgstr "Kan geen vrije ruimte vinden om gerekruteerde eenheden te plaatsen."
 
+#: simulation/helpers/Cheat.js:53
+#, javascript-format
+msgid "%(player)s has been defeated (cheat)."
+msgstr "%(player)s is verslagen (cheat)."
+
 #: simulation/helpers/Cheat.js:62
 msgid "You need to select a building that trains units."
 msgstr "Je moet een gebouw selecteren om eenheden te rekruteren."
 
-#: simulation/helpers/Commands.js:128
+#: simulation/helpers/Commands.js:124
 msgid "(Cheat - control all units)"
 msgstr "(Valsspelen - Bestuur alle eenheden)"
 
-#: simulation/helpers/Commands.js:568
+#: simulation/helpers/Commands.js:139
+msgid "(Cheat - reveal map)"
+msgstr "(Valsspelen - Toon de volledige kaart)"
+
+#: simulation/helpers/Commands.js:466
+#, javascript-format
+msgid "%(player)s has resigned."
+msgstr "%(player)s heeft zich overgegeven."
+
+#: simulation/helpers/Commands.js:608
 msgid "(Cheat - promoted units)"
 msgstr "(Valsspelen - promoveer eenheden)"
 
-#: simulation/helpers/Commands.js:678
+#: simulation/helpers/Commands.js:722
 msgid ""
 "Cannot upgrade as distance requirements are not verified or terrain is "
 "obstructed."
 msgstr "Kan niet upgraden omdat de afstandsvereiste niet geverifieerd is of het terrein belemmerd is."
 
-#: simulation/helpers/Commands.js:688
+#: simulation/helpers/Commands.js:732
 msgid "Cannot upgrade a garrisoned entity."
 msgstr "Kan geen bemande entiteit upgraden."
 
-#: simulation/helpers/Commands.js:734
+#: simulation/helpers/Commands.js:775
 #, javascript-format
 msgid "Attack against %(_player_)s requested."
 msgstr "Aanvraag voor een aanval tegen %(_player_)s."
 
-#: simulation/helpers/Commands.js:771
+#: simulation/helpers/Commands.js:814
+msgid "There are no bribable units"
+msgstr "Er zijn geen omkoopbare eenheden"
+
+#: simulation/helpers/Commands.js:860
 msgid "Unable to ungarrison unit(s)"
 msgstr "Kan de extra bemanning niet toevoegen."
 
-#: simulation/helpers/Commands.js:785
+#: simulation/helpers/Commands.js:874
 msgid "Some unit(s) can't go back to work"
 msgstr "Sommige eenheden kunnen niet terug aan het werk"
 
-#: simulation/helpers/Commands.js:1041
+#: simulation/helpers/Commands.js:1114
 msgid "The building's technology requirements are not met."
 msgstr "Er is niet voldaan aan de technologie vereisten voor dit gebouw."
 
@@ -880,41 +696,56 @@ msgstr "Versnel (10x)"
 msgid "Fast Forward (20x)"
 msgstr "Versnel (20x)"
 
+#: simulation/data/settings/victory_conditions/capture_the_relic.jsonData.Description
+msgid ""
+"Capture all relics spread across the map and keep them for a certain time to"
+" win the game."
+msgstr ""
+
+#: simulation/data/settings/victory_conditions/capture_the_relic.jsonData.Title
+msgid "Capture the Relic"
+msgstr "Verover de relikwieën "
+
 #: simulation/data/settings/victory_conditions/conquest.jsonData.Description
-msgid "Defeat all opponents"
-msgstr "Versla alle tegenstanders"
+msgid ""
+"Defeat opponents by killing all their units and destroying all their "
+"structures."
+msgstr "Versla vijanden door al hun eenheden te doden en gebouwen te verwoesten."
 
 #: simulation/data/settings/victory_conditions/conquest.jsonData.Title
 msgid "Conquest"
 msgstr "Verover"
 
 #: simulation/data/settings/victory_conditions/conquest_structures.jsonData.Description
-msgid "Destroy all structures of enemies"
-msgstr "Verniel of verover alle gebouwen van de vijanden"
+msgid "Defeat opponents by destroying all their structures."
+msgstr "Versla vijanden door al hun gebouwen te verwoesten."
 
 #: simulation/data/settings/victory_conditions/conquest_structures.jsonData.Title
 msgid "Conquest Structures"
 msgstr "Verover Gebouwen"
 
 #: simulation/data/settings/victory_conditions/conquest_units.jsonData.Description
-msgid "Kill all enemy units"
-msgstr "Vernietig alle vijandelijke troepen"
+msgid "Defeat opponents by killing all their units."
+msgstr "Versla vijanden door al hun eenheden te doden."
 
 #: simulation/data/settings/victory_conditions/conquest_units.jsonData.Title
 msgid "Conquest Units"
 msgstr "Verover Eenheden"
 
 #: simulation/data/settings/victory_conditions/regicide.jsonData.Description
-msgid "Defeat opponents by killing their hero"
-msgstr "Versla tegenstanders door hun held te doden"
+msgid "Defeat opponents by killing their hero."
+msgstr "Versla tegenstanders door hun held te doden."
 
 #: simulation/data/settings/victory_conditions/regicide.jsonData.Title
 msgid "Regicide"
 msgstr "Koningsmoord"
 
 #: simulation/data/settings/victory_conditions/wonder.jsonData.Description
-msgid "Build and protect a wonder to win"
-msgstr "Bouw en verdedig een wereldwonder om to winnen"
+msgid ""
+"Be the first to build or capture a Wonder and keep it for a certain time to "
+"win the game. The timer will be reset when the Wonder is destroyed or "
+"captured or in allied victory when the owners alliances change."
+msgstr ""
 
 #: simulation/data/settings/victory_conditions/wonder.jsonData.Title
 msgid "Wonder"
@@ -950,53 +781,104 @@ msgctxt "startingResources"
 msgid "Deathmatch"
 msgstr "Dodenmatch"
 
+#: simulation/data/settings/trigger_difficulties.jsonData[0].Tooltip
+msgid "Choose this difficulty if you are discovering 0 A.D."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[0].Title
+msgid "Very Easy"
+msgstr "Heel Makkelijk "
+
+#: simulation/data/settings/trigger_difficulties.jsonData[1].Tooltip
+msgid "Choose this difficulty if you do not like being knocked down."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[1].Title
+msgid "Easy"
+msgstr "Makkelijk"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[2].Tooltip
+msgid ""
+"Choose this difficulty if you have already a good experience with 0 A.D."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[2].Title
+#: simulation/data/settings/map_sizes.jsonData[2].Name
+msgid "Medium"
+msgstr "Medium"
+
+#: simulation/data/settings/trigger_difficulties.jsonData[3].Tooltip
+msgid "Choose this difficulty if you want to be really challenged."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[3].Title
+msgid "Hard"
+msgstr "Moeilijk "
+
+#: simulation/data/settings/trigger_difficulties.jsonData[4].Tooltip
+msgid "Choose this difficulty if you do not mind being swept out."
+msgstr ""
+
+#: simulation/data/settings/trigger_difficulties.jsonData[4].Title
+msgid "Very Hard"
+msgstr "Heel Moeilijk"
+
 #: simulation/data/settings/map_sizes.jsonData[0].Name
-#: simulation/data/settings/map_sizes.jsonData[0].LongName
 msgid "Tiny"
 msgstr "Mini"
+
+#: simulation/data/settings/map_sizes.jsonData[0].Tooltip
+msgid "This map size has barely any room for even the most basic resources."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[1].Name
 msgid "Small"
 msgstr "Klein"
 
-#: simulation/data/settings/map_sizes.jsonData[1].LongName
-msgid "Small (2 players)"
-msgstr "Klein (2 spelers)"
+#: simulation/data/settings/map_sizes.jsonData[1].Tooltip
+msgid ""
+"Small maps are suitable for 1v1 matches, as players can reach the enemy "
+"quickly while still having some room to expand."
+msgstr ""
 
-#: simulation/data/settings/map_sizes.jsonData[2].Name
-msgid "Medium"
-msgstr "Medium"
-
-#: simulation/data/settings/map_sizes.jsonData[2].LongName
-msgid "Medium (3 players)"
-msgstr "Medium (3 spelers)"
+#: simulation/data/settings/map_sizes.jsonData[2].Tooltip
+msgid ""
+"Medium-sized maps provide plenty of space for two players, but even eight "
+"players fit."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[3].Name
 msgid "Normal"
 msgstr "Normaal"
 
-#: simulation/data/settings/map_sizes.jsonData[3].LongName
-msgid "Normal (4 players)"
-msgstr "Normaal (4 spelers)"
+#: simulation/data/settings/map_sizes.jsonData[3].Tooltip
+msgid ""
+"This is the ideal mapsize for 4 to 8 players, because there is plenty of "
+"space to expand while the neighbors are quickly reachable."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[4].Name
 msgid "Large"
 msgstr "Groot"
 
-#: simulation/data/settings/map_sizes.jsonData[4].LongName
-msgid "Large (6 players)"
-msgstr "Groot (6 spelers)"
+#: simulation/data/settings/map_sizes.jsonData[4].Tooltip
+msgid ""
+"The large mapsize is recommended when great portions of the map are covered "
+"with water or inaccessible mountains."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[5].Name
 msgid "Very Large"
 msgstr "Erg Groot"
 
-#: simulation/data/settings/map_sizes.jsonData[5].LongName
-msgid "Very Large (8 players)"
-msgstr "Erg Groot (8 spelers)"
+#: simulation/data/settings/map_sizes.jsonData[5].Tooltip
+#: simulation/data/settings/map_sizes.jsonData[6].Tooltip
+msgid ""
+"Very large maps are not recommended as it takes very long to reach the enemy"
+" and the game performance can be reduced."
+msgstr ""
 
 #: simulation/data/settings/map_sizes.jsonData[6].Name
-#: simulation/data/settings/map_sizes.jsonData[6].LongName
 msgid "Giant"
 msgstr "Gigantisch"
 
@@ -1008,15 +890,5 @@ msgstr "Petra Bot"
 msgid ""
 "Petra is the default 0 A.D. AI bot. Please report issues to Wildfire Games (see the link in the main menu).\n"
 "\n"
-"The AI has a bonus/penalty on resource stockpiling (either gathering rate or trade gain) varying from 0.5 for Sandbox to 1.6 for Very Hard (Medium = 1.0). In addition, the Sandbox level does not expand nor attack."
-msgstr "Petra is de standaard 0 A.D. bot. Geef problemen alsjeblieft door aan Wildfire Games (zie de link in het hoofdmenu).\n\nDe AI heeft een voor- of nadeel op het opslaan van grondstoffen (verzamelsnelheid of handelswinst) die varieert van 0.5 bij Zandbak tot 1.6 bij Heel Moeilijk (Medium = 1.0). Daarnaast breidt ze op Zandbak niveau niet uit en valt ze niet aan."
-
-#: simulation/ai/tutorial-ai/data.jsonname
-msgid "Tutorial AI"
-msgstr "Tutorial AI"
-
-#: simulation/ai/tutorial-ai/data.jsondescription
-msgid ""
-"The Tutorial AI should only be used on the \"Introductory Tutorial\" "
-"scenario."
-msgstr "De Tutorial AI behoort alleen in de introductie tutorial gebruikt te worden."
+"The AI has a bonus/penalty on resource stockpiling (either gathering rate or trade gain) varying from -60% for Sandbox to +60% for Very Hard (Medium 0%) and the easiest levels have a slower production and building rate. In addition, the Sandbox level does not expand nor attack."
+msgstr ""

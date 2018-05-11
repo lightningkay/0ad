@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ class CNetClientSession;
 class CNetClientTurnManager;
 class CNetServer;
 class ScriptInterface;
+
+typedef struct _ENetHost ENetHost;
 
 // NetClient session FSM states
 enum
@@ -89,6 +91,12 @@ public:
 	void SetUserName(const CStrW& username);
 
 	/**
+	 * Set the name of the hosting player.
+	 * This is needed for the secure lobby authentication.
+	 */
+	void SetHostingPlayerName(const CStr& hostingPlayerName);
+
+	/**
 	 * Returns the GUID of the local client.
 	 * Used for distinguishing observers.
 	 */
@@ -99,7 +107,7 @@ public:
 	 * @param server IP address or host name to connect to
 	 * @return true on success, false on connection failure
 	 */
-	bool SetupConnection(const CStr& server, const u16 port);
+	bool SetupConnection(const CStr& server, const u16 port, ENetHost* enetClient = NULL);
 
 	/**
 	 * Destroy the connection to the server.
@@ -157,7 +165,7 @@ public:
 	 * Get the script interface associated with this network client,
 	 * which is equivalent to the one used by the CGame in the constructor.
 	 */
-	ScriptInterface& GetScriptInterface();
+	const ScriptInterface& GetScriptInterface();
 
 	/**
 	 * Send a message to the server.
@@ -187,7 +195,7 @@ public:
 	 */
 	void LoadFinished();
 
-	void SendGameSetupMessage(JS::MutableHandleValue attrs, ScriptInterface& scriptInterface);
+	void SendGameSetupMessage(JS::MutableHandleValue attrs, const ScriptInterface& scriptInterface);
 
 	void SendAssignPlayerMessage(const int playerID, const CStr& guid);
 
@@ -216,10 +224,14 @@ public:
 	void SendPausedMessage(bool pause);
 
 private:
+
+	void SendAuthenticateMessage();
+
 	// Net message / FSM transition handlers
 	static bool OnConnect(void* context, CFsmEvent* event);
 	static bool OnHandshake(void* context, CFsmEvent* event);
 	static bool OnHandshakeResponse(void* context, CFsmEvent* event);
+	static bool OnAuthenticateRequest(void* context, CFsmEvent* event);
 	static bool OnAuthenticate(void* context, CFsmEvent* event);
 	static bool OnChat(void* context, CFsmEvent* event);
 	static bool OnReady(void* context, CFsmEvent* event);
@@ -233,6 +245,7 @@ private:
 	static bool OnKicked(void* context, CFsmEvent* event);
 	static bool OnClientTimeout(void* context, CFsmEvent* event);
 	static bool OnClientPerformance(void* context, CFsmEvent* event);
+	static bool OnClientsLoading(void* context, CFsmEvent* event);
 	static bool OnClientPaused(void* context, CFsmEvent* event);
 	static bool OnLoadedGame(void* context, CFsmEvent* event);
 
@@ -248,6 +261,7 @@ private:
 
 	CGame *m_Game;
 	CStrW m_UserName;
+	CStr m_HostingPlayerName;
 
 	/// Current network session (or NULL if not connected)
 	CNetClientSession* m_Session;

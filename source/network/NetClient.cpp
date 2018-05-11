@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -19,18 +19,19 @@
 
 #include "NetClient.h"
 
+#include "NetClientTurnManager.h"
 #include "NetMessage.h"
 #include "NetSession.h"
-#include "NetTurnManager.h"
 
 #include "lib/byte_order.h"
+#include "lib/external_libraries/enet.h"
 #include "lib/sysdep/sysdep.h"
+#include "lobby/IXmppClient.h"
 #include "ps/CConsole.h"
 #include "ps/CLogger.h"
 #include "ps/Compress.h"
 #include "ps/CStr.h"
 #include "ps/Game.h"
-#include "ps/GUID.h"
 #include "ps/Loader.h"
 #include "scriptinterface/ScriptInterface.h"
 #include "simulation2/Simulation2.h"
@@ -69,7 +70,7 @@ private:
 CNetClient::CNetClient(CGame* game, bool isLocalClient) :
 	m_Session(NULL),
 	m_UserName(L"anonymous"),
-	m_GUID(ps_generate_guid()), m_HostID((u32)-1), m_ClientTurnManager(NULL), m_Game(game),
+	m_HostID((u32)-1), m_ClientTurnManager(NULL), m_Game(game),
 	m_GameAttributes(game->GetSimulation2()->GetScriptInterface().GetContext()),
 	m_IsLocalClient(isLocalClient),
 	m_LastConnectionCheck(0),
@@ -88,6 +89,7 @@ CNetClient::CNetClient(CGame* game, bool isLocalClient) :
 
 	AddTransition(NCS_HANDSHAKE, (uint)NMT_SERVER_HANDSHAKE_RESPONSE, NCS_AUTHENTICATE, (void*)&OnHandshakeResponse, context);
 
+	AddTransition(NCS_AUTHENTICATE, (uint)NMT_AUTHENTICATE, NCS_AUTHENTICATE, (void*)&OnAuthenticateRequest, context);
 	AddTransition(NCS_AUTHENTICATE, (uint)NMT_AUTHENTICATE_RESULT, NCS_INITIAL_GAMESETUP, (void*)&OnAuthenticate, context);
 
 	AddTransition(NCS_INITIAL_GAMESETUP, (uint)NMT_GAME_SETUP, NCS_PREGAME, (void*)&OnGameSetup, context);
@@ -105,6 +107,7 @@ CNetClient::CNetClient(CGame* game, bool isLocalClient) :
 	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_CHAT, NCS_JOIN_SYNCING, (void*)&OnChat, context);
 	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_GAME_SETUP, NCS_JOIN_SYNCING, (void*)&OnGameSetup, context);
 	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_PLAYER_ASSIGNMENT, NCS_JOIN_SYNCING, (void*)&OnPlayerAssignment, context);
+	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_KICKED, NCS_JOIN_SYNCING, (void*)&OnKicked, context);
 	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_CLIENT_TIMEOUT, NCS_JOIN_SYNCING, (void*)&OnClientTimeout, context);
 	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_CLIENT_PERFORMANCE, NCS_JOIN_SYNCING, (void*)&OnClientPerformance, context);
 	AddTransition(NCS_JOIN_SYNCING, (uint)NMT_GAME_START, NCS_JOIN_SYNCING, (void*)&OnGameStart, context);
@@ -115,14 +118,17 @@ CNetClient::CNetClient(CGame* game, bool isLocalClient) :
 	AddTransition(NCS_LOADING, (uint)NMT_CHAT, NCS_LOADING, (void*)&OnChat, context);
 	AddTransition(NCS_LOADING, (uint)NMT_GAME_SETUP, NCS_LOADING, (void*)&OnGameSetup, context);
 	AddTransition(NCS_LOADING, (uint)NMT_PLAYER_ASSIGNMENT, NCS_LOADING, (void*)&OnPlayerAssignment, context);
+	AddTransition(NCS_LOADING, (uint)NMT_KICKED, NCS_LOADING, (void*)&OnKicked, context);
 	AddTransition(NCS_LOADING, (uint)NMT_CLIENT_TIMEOUT, NCS_LOADING, (void*)&OnClientTimeout, context);
 	AddTransition(NCS_LOADING, (uint)NMT_CLIENT_PERFORMANCE, NCS_LOADING, (void*)&OnClientPerformance, context);
+	AddTransition(NCS_LOADING, (uint)NMT_CLIENTS_LOADING, NCS_LOADING, (void*)&OnClientsLoading, context);
 	AddTransition(NCS_LOADING, (uint)NMT_LOADED_GAME, NCS_INGAME, (void*)&OnLoadedGame, context);
 
 	AddTransition(NCS_INGAME, (uint)NMT_REJOINED, NCS_INGAME, (void*)&OnRejoined, context);
 	AddTransition(NCS_INGAME, (uint)NMT_KICKED, NCS_INGAME, (void*)&OnKicked, context);
 	AddTransition(NCS_INGAME, (uint)NMT_CLIENT_TIMEOUT, NCS_INGAME, (void*)&OnClientTimeout, context);
 	AddTransition(NCS_INGAME, (uint)NMT_CLIENT_PERFORMANCE, NCS_INGAME, (void*)&OnClientPerformance, context);
+	AddTransition(NCS_INGAME, (uint)NMT_CLIENTS_LOADING, NCS_INGAME, (void*)&OnClientsLoading, context);
 	AddTransition(NCS_INGAME, (uint)NMT_CLIENT_PAUSED, NCS_INGAME, (void*)&OnClientPaused, context);
 	AddTransition(NCS_INGAME, (uint)NMT_CHAT, NCS_INGAME, (void*)&OnChat, context);
 	AddTransition(NCS_INGAME, (uint)NMT_GAME_SETUP, NCS_INGAME, (void*)&OnGameSetup, context);
@@ -154,10 +160,15 @@ void CNetClient::SetUserName(const CStrW& username)
 	m_UserName = username;
 }
 
-bool CNetClient::SetupConnection(const CStr& server, const u16 port)
+void CNetClient::SetHostingPlayerName(const CStr& hostingPlayerName)
+{
+	m_HostingPlayerName = hostingPlayerName;
+}
+
+bool CNetClient::SetupConnection(const CStr& server, const u16 port, ENetHost* enetClient)
 {
 	CNetClientSession* session = new CNetClientSession(*this);
-	bool ok = session->Connect(server, port, m_IsLocalClient);
+	bool ok = session->Connect(server, port, m_IsLocalClient, enetClient);
 	SetAndOwnSession(session);
 	return ok;
 }
@@ -265,7 +276,7 @@ std::string CNetClient::TestReadGuiMessages()
 	return r;
 }
 
-ScriptInterface& CNetClient::GetScriptInterface()
+const ScriptInterface& CNetClient::GetScriptInterface()
 {
 	return m_Game->GetSimulation2()->GetScriptInterface();
 }
@@ -324,7 +335,7 @@ void CNetClient::HandleDisconnect(u32 reason)
 	SetCurrState(NCS_UNCONNECTED);
 }
 
-void CNetClient::SendGameSetupMessage(JS::MutableHandleValue attrs, ScriptInterface& scriptInterface)
+void CNetClient::SendGameSetupMessage(JS::MutableHandleValue attrs, const ScriptInterface& scriptInterface)
 {
 	CGameSetupMessage gameSetup(scriptInterface);
 	gameSetup.m_Data = attrs;
@@ -472,6 +483,15 @@ void CNetClient::LoadFinished()
 	SendMessage(&loaded);
 }
 
+void CNetClient::SendAuthenticateMessage()
+{
+	CAuthenticateMessage authenticate;
+	authenticate.m_Name = m_UserName;
+	authenticate.m_Password = L""; // TODO
+	authenticate.m_IsLocalClient = m_IsLocalClient;
+	SendMessage(&authenticate);
+}
+
 bool CNetClient::OnConnect(void* context, CFsmEvent* event)
 {
 	ENSURE(event->GetType() == (uint)NMT_CONNECT_COMPLETE);
@@ -509,13 +529,37 @@ bool CNetClient::OnHandshakeResponse(void* context, CFsmEvent* event)
 
 	CNetClient* client = (CNetClient*)context;
 
-	CAuthenticateMessage authenticate;
-	authenticate.m_GUID = client->m_GUID;
-	authenticate.m_Name = client->m_UserName;
-	authenticate.m_Password = L""; // TODO
-	authenticate.m_IsLocalClient = client->m_IsLocalClient;
-	client->SendMessage(&authenticate);
+	CSrvHandshakeResponseMessage* message = (CSrvHandshakeResponseMessage*)event->GetParamRef();
+	client->m_GUID = message->m_GUID;
 
+	if (message->m_Flags & PS_NETWORK_FLAG_REQUIRE_LOBBYAUTH)
+	{
+		if (g_XmppClient && !client->m_HostingPlayerName.empty())
+			g_XmppClient->SendIqLobbyAuth(client->m_HostingPlayerName, client->m_GUID);
+		else
+		{
+			JSContext* cx = client->GetScriptInterface().GetContext();
+			JSAutoRequest rq(cx);
+
+			JS::RootedValue msg(cx);
+			client->GetScriptInterface().Eval("({'type':'netstatus','status':'disconnected'})", &msg);
+			client->GetScriptInterface().SetProperty(msg, "reason", (int)NDR_LOBBY_AUTH_FAILED, false);
+			client->PushGuiMessage(msg);
+			LOGMESSAGE("Net client: Couldn't send lobby auth xmpp message");
+		}
+		return true;
+	}
+
+	client->SendAuthenticateMessage();
+	return true;
+}
+
+bool CNetClient::OnAuthenticateRequest(void* context, CFsmEvent* event)
+{
+	ENSURE(event->GetType() == (uint)NMT_AUTHENTICATE);
+
+	CNetClient* client = (CNetClient*)context;
+	client->SendAuthenticateMessage();
 	return true;
 }
 
@@ -773,6 +817,28 @@ bool CNetClient::OnClientPerformance(void *context, CFsmEvent* event)
 		client->PushGuiMessage(msg);
 	}
 
+	return true;
+}
+
+bool CNetClient::OnClientsLoading(void *context, CFsmEvent *event)
+{
+	ENSURE(event->GetType() == (uint)NMT_CLIENTS_LOADING);
+
+	CClientsLoadingMessage* message = (CClientsLoadingMessage*)event->GetParamRef();
+
+	std::vector<CStr> guids;
+	guids.reserve(message->m_Clients.size());
+	for (const CClientsLoadingMessage::S_m_Clients& client : message->m_Clients)
+		guids.push_back(client.m_GUID);
+
+	CNetClient* client = (CNetClient*)context;
+	JSContext* cx = client->GetScriptInterface().GetContext();
+	JSAutoRequest rq(cx);
+
+	JS::RootedValue msg(cx);
+	client->GetScriptInterface().Eval("({ 'type':'clients-loading' })", &msg);
+	client->GetScriptInterface().SetProperty(msg, "guids", guids);
+	client->PushGuiMessage(msg);
 	return true;
 }
 

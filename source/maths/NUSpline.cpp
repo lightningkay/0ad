@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -16,22 +16,25 @@
  */
 
 #include "precompiled.h"
+
+#include <algorithm>
+
 #include "NUSpline.h"
 #include "Matrix3D.h"
 
-//Note: column major order!  Each set of 4 constitutes a column. 
-CMatrix3D HermiteSpline(2.f, -3.f, 0.f, 1.f, 
-                        -2.f, 3.f, 0.f, 0.f, 
-                        1.f, -2.f, 1.f, 0.f, 
+//Note: column major order!  Each set of 4 constitutes a column.
+CMatrix3D HermiteSpline(2.f, -3.f, 0.f, 1.f,
+                        -2.f, 3.f, 0.f, 0.f,
+                        1.f, -2.f, 1.f, 0.f,
                         1.f, -1.f, 0.f, 0.f);  // Matrix H in article
 
 
 // cubic curve defined by 2 positions and 2 velocities
 CVector3D GetPositionOnCubic(const CVector3D& startPos, const CVector3D& startVel, const CVector3D& endPos, const CVector3D& endVel, float time)
 {
-	CMatrix3D m(startPos.X, endPos.X, startVel.X, endVel.X, 
+	CMatrix3D m(startPos.X, endPos.X, startVel.X, endVel.X,
 	            startPos.Y, endPos.Y, startVel.Y, endVel.Y,
-	            startPos.Z, endPos.Z, startVel.Z, endVel.Z, 
+	            startPos.Z, endPos.Z, startVel.Z, endVel.Z,
 	            0.0f, 0.0f, 0.0f, 1.0f);
 
 	m = m * HermiteSpline; // multiply by the mixer
@@ -136,7 +139,7 @@ const std::vector<SplineData>& RNSpline::GetAllNodes() const
 	return Node;
 }
 
-// internal. Based on Equation 14 
+// internal. Based on Equation 14
 CVector3D RNSpline::GetStartVelocity(int index)
 {
 	if (index >= NodeCount - 1 || index < 0)
@@ -145,7 +148,7 @@ CVector3D RNSpline::GetStartVelocity(int index)
 	return (temp - Node[index+1].Velocity)*0.5f;
 }
 
-// internal. Based on Equation 15 
+// internal. Based on Equation 15
 CVector3D RNSpline::GetEndVelocity(int index)
 {
 	if (index >= NodeCount || index < 1)
@@ -216,21 +219,22 @@ void TNSpline::AddNode(const CFixedVector3D& pos, const CFixedVector3D& rotation
 }
 
 //Inserts node before position
-void TNSpline::InsertNode(const int index, const CFixedVector3D& pos, const CFixedVector3D& rotation, fixed timePeriod)
+void TNSpline::InsertNode(const int index, const CFixedVector3D& pos, const CFixedVector3D& UNUSED(rotation), fixed timePeriod)
 {
-	if (NodeCount >= MAX_SPLINE_NODES || index < NodeCount - 1)
+	if (NodeCount >= MAX_SPLINE_NODES || index < 0 || index > NodeCount)
 		return;
+
 	if (NodeCount == 0)
 		MaxDistance = fixed::Zero();
 	else
-	{
-		Node[NodeCount-1].Distance = timePeriod;
-		Node[NodeCount-1].Rotation = rotation;
-		MaxDistance += Node[NodeCount-1].Distance;
-	}
+		MaxDistance += timePeriod;
+
 	SplineData temp;
 	temp.Position = pos;
+	temp.Distance = timePeriod;
 	Node.insert(Node.begin() + index, temp);
+	if (index > 0)
+		std::swap(Node[index].Distance, Node[index - 1].Distance);
 	++NodeCount;
 }
 
@@ -241,9 +245,7 @@ void TNSpline::RemoveNode(const int index)
 		return;
 
 	MaxDistance -= Node[index].Distance;
-	MaxDistance -= Node[index-1].Distance;
-	Node[index-1].Distance = fixed::Zero();
-	Node.erase(Node.begin() + index, Node.begin() + index + 1);
+	Node.erase(Node.begin() + index);
 	--NodeCount;
 }
 

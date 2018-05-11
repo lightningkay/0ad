@@ -11,10 +11,10 @@
       <Crush>0</Crush>
       <MaxRange>72.0</MaxRange>
       <MinRange>0.0</MinRange>
-      <ProjectileSpeed>120.0</ProjectileSpeed>
-      <PrepareTime>1000</PrepareTime>
+      <ProjectileSpeed>75.0</ProjectileSpeed>
+      <PrepareTime>600</PrepareTime>
       <RepeatTime>1000</RepeatTime>
-      <Spread>2.0</Spread>
+      <Spread>3.0</Spread>
     </Ranged>
   </Attack>
   <Cost>
@@ -26,20 +26,14 @@
   <Identity>
     <VisibleClasses datatype="tokens">Archer</VisibleClasses>
     <GenericName>Archer</GenericName>
-    <History>They tended to be lightly armored. They usually only participated in the first stage of a battle, sending a volley of arrows raining down the enemy. Of course they would have to stop shooting once the melee units closed in. This means their job was largely over once the 'true battle' was underway. They spent hours training with a bow, but if you were hit by an arrow it was more likely an act of random chance than being specifically targeted by an archer.</History>
   </Identity>
   <Loot>
-    <wood>6</wood>
+    <wood>5</wood>
   </Loot>
-  <Sound>
-    <SoundGroups>
-      <attack_impact>attack/impact/arrow_metal.xml</attack_impact>
-    </SoundGroups>
-  </Sound>
   <UnitMotion>
-    <WalkSpeed>8.0</WalkSpeed>
+    <WalkSpeed op="mul">1.1</WalkSpeed>
     <Run>
-      <Speed>18.0</Speed>
+      <Speed op="mul">1.1</Speed>
     </Run>
   </UnitMotion>
 </Entity>

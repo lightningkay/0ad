@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -91,7 +91,18 @@ public:
 	 */
 	void ReloadUnit(CModel* model, const CObjectEntry* object);
 
+	/**
+	 * Reload animation so any changes take immediate effect.
+	 */
+	void ReloadAnimation();
+
 private:
+
+	/**
+	 * Picks a new animation ID from our current state
+	 */
+	void UpdateAnimationID();
+
 	struct SModelAnimState
 	{
 		CModel* model;
@@ -117,7 +128,7 @@ private:
 	CModel* m_Model;
 	const CObjectEntry* m_Object;
 	CStr m_State;
-	CStr m_AnimationName;
+	CStr m_AnimationID = "";
 	bool m_Looping;
 	float m_OriginalSpeed;
 	float m_Speed;

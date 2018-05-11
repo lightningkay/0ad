@@ -8,7 +8,6 @@
   <BuildRestrictions>
     <Category>Field</Category>
   </BuildRestrictions>
-  <Capturable disable=""/>
   <Cost>
     <BuildTime>50</BuildTime>
     <Resources>
@@ -21,21 +20,17 @@
   </Footprint>
   <Health>
     <Max>250</Max>
-    <SpawnEntityOnDeath>rubble/rubble_field</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_field</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <GenericName>Field</GenericName>
     <VisibleClasses datatype="tokens">Field</VisibleClasses>
     <Tooltip>Harvest vegetables for food. Max gatherers: 5.</Tooltip>
-    <History>Farming originated around 9500 BC in India and the Middle East. The history of agriculture is a central element of human history, as agricultural progress has been a crucial factor in worldwide socio-economic change. Wealth-building and militaristic specializations rarely seen in hunter-gatherer cultures are commonplace in agricultural and agro-industrial societies - when farmers became capable of producing food beyond the needs of their own families, others in the tribe/nation/empire were freed to devote themselves to projects other than food acquisition.</History>
     <Icon>structures/field.png</Icon>
   </Identity>
   <Loot>
-    <xp>100</xp>
-    <food>100</food>
+    <food>50</food>
     <wood>0</wood>
-    <stone>0</stone>
-    <metal>0</metal>
   </Loot>
   <Minimap>
     <Color r="119" g="82" b="46"/>
@@ -52,11 +47,7 @@
     <Amount>Infinity</Amount>
     <Type>food.grain</Type>
     <MaxGatherers>5</MaxGatherers>
-    <!--
-         See the comment of the function GetTargetGatherRate
-         of the ResourceGatherer component.
-    -->
-    <DiminishingReturns>14</DiminishingReturns>
+    <DiminishingReturns>0.90</DiminishingReturns>
   </ResourceSupply>
   <Sound>
     <SoundGroups>
@@ -69,7 +60,7 @@
     <HeightOffset>8.0</HeightOffset>
   </StatusBars>
   <TerritoryDecay>
-    <DecayRate>Infinity</DecayRate>
+    <DecayRate>5.0</DecayRate>
   </TerritoryDecay>
   <Vision>
     <Range>0</Range>

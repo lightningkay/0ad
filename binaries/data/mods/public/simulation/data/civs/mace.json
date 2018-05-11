@@ -7,6 +7,7 @@
 	"Music":[
 			{"File":"Rise_of_Macedon.ogg", "Type":"peace"},
 			{"File":"In_the_Shadow_of_Olympus.ogg", "Type":"peace"},
+			{"File":"Elysian_Fields.ogg", "Type":"peace"},
 			{"File":"The_Hellespont.ogg", "Type":"peace"}
 		],
 	"Factions":
@@ -81,7 +82,7 @@
 		{
 			"Name":"Standardized Currency",
 			"History":"The Macedonians and the Diadochi minted coins of very high quality. On their currency the Diadochi in particular frequently depicted themselves as the rightful successor to Alexander the Great, attempting to legitimize their rule.",
-			"Description":"+15% tribute and trade bonus on metal."
+			"Description":"+20% sell prices at market."
 		}
 	],
 	"Structures":
@@ -114,6 +115,11 @@
 			"Special":"Constructs and upgrades all Macedonian siege engines."
 		}
 	],
+	"WallSets":
+	[
+		"other/wallset_palisade",
+		"structures/mace_wallset_stone"
+	],
 	"StartEntities":
 	[
 		{
@@ -132,23 +138,23 @@
 			"Count": 2
 		},
 		{
-			"Template": "units/mace_cavalry_javelinist_b"
+			"Template": "units/mace_cavalry_spearman_b"
 		}
 	],
 	"Formations":
 	[
-		"formations/null",
-		"formations/box",
-		"formations/column_closed",
-		"formations/line_closed",
-		"formations/column_open",
-		"formations/line_open",
-		"formations/flank",
-		"formations/skirmish",
-		"formations/wedge",
-		"formations/battle_line",
-		"formations/phalanx",
-		"formations/syntagma"
+		"special/formations/null",
+		"special/formations/box",
+		"special/formations/column_closed",
+		"special/formations/line_closed",
+		"special/formations/column_open",
+		"special/formations/line_open",
+		"special/formations/flank",
+		"special/formations/skirmish",
+		"special/formations/wedge",
+		"special/formations/battle_line",
+		"special/formations/phalanx",
+		"special/formations/syntagma"
 	],
 	"AINames":
 	[
@@ -168,6 +174,7 @@
 	],
 	"SkirmishReplacements":
 	{
+		"skirmish/units/default_cavalry" : "units/mace_cavalry_spearman_b",
 		"skirmish/units/default_infantry_melee_b": "units/mace_infantry_pikeman_b",
 		"skirmish/structures/default_house_10": "structures/{civ}_house"
 	},

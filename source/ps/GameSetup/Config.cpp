@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -27,7 +27,9 @@
 
 // (these variables are documented in the header.)
 
-CStrW g_CursorName = L"test";
+const wchar_t g_DefaultCursor[] = L"default-arrow";
+
+CStrW g_CursorName = g_DefaultCursor;
 
 bool g_NoGLS3TC = false;
 bool g_NoGLAutoMipmap = false;
@@ -40,7 +42,7 @@ bool g_RenderActors = true;
 bool g_Shadows = false;
 bool g_ShadowPCF = false;
 
-bool g_WaterUgly = false;
+bool g_WaterEffects = true;
 bool g_WaterFancyEffects = false;
 bool g_WaterRealDepth = false;
 bool g_WaterRefraction = false;
@@ -48,6 +50,7 @@ bool g_WaterReflection = false;
 bool g_WaterShadows = false;
 
 bool g_Particles = false;
+bool g_Fog = true;
 bool g_Silhouettes = false;
 bool g_ShowSky = false;
 
@@ -94,7 +97,7 @@ static void LoadGlobals()
 	CFG_GET_VAL("shadows", g_Shadows);
 	CFG_GET_VAL("shadowpcf", g_ShadowPCF);
 
-	CFG_GET_VAL("waterugly", g_WaterUgly);
+	CFG_GET_VAL("watereffects", g_WaterEffects);
 	CFG_GET_VAL("waterfancyeffects", g_WaterFancyEffects);
 	CFG_GET_VAL("waterrealdepth", g_WaterRealDepth);
 	CFG_GET_VAL("waterrefraction", g_WaterRefraction);
@@ -103,6 +106,7 @@ static void LoadGlobals()
 
 	CFG_GET_VAL("renderpath", g_RenderPath);
 	CFG_GET_VAL("particles", g_Particles);
+	CFG_GET_VAL("fog", g_Fog);
 	CFG_GET_VAL("silhouettes", g_Silhouettes);
 	CFG_GET_VAL("showsky", g_ShowSky);
 	CFG_GET_VAL("preferglsl", g_PreferGLSL);
@@ -169,6 +173,9 @@ static void ProcessCommandLineArgs(const CmdLineArgs& args)
 
 	if (args.Has("serializationtest"))
 		g_ConfigDB.SetValueString(CFG_COMMAND, "serializationtest", "true");
+
+	if (args.Has("rejointest"))
+		g_ConfigDB.SetValueString(CFG_COMMAND, "rejointest", args.Get("rejointest"));
 }
 
 

@@ -9,20 +9,18 @@
  */
 function LoadPlayerSettings(settings, newPlayers)
 {
+	var playerDefaults = Engine.ReadJSONFile("simulation/data/settings/player_defaults.json").PlayerData;
+
 	// Default settings
 	if (!settings)
 		settings = {};
 
-	// Get default player data
-	var rawData = Engine.ReadJSONFile("settings/player_defaults.json");
-	if (!(rawData && rawData.PlayerData))
-		throw("Player.js: Error reading player_defaults.json");
-
 	// Add gaia to simplify iteration
-	if (settings.PlayerData && settings.PlayerData[0])
+	// (if gaia is not already the first civ such as when called from Atlas' ActorViewer)
+	if (settings.PlayerData && settings.PlayerData[0] &&
+		(!settings.PlayerData[0].Civ || settings.PlayerData[0].Civ != "gaia"))
 		settings.PlayerData.unshift(null);
 
-	var playerDefaults = rawData.PlayerData;
 	var playerData = settings.PlayerData;
 
 	var cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);
@@ -42,12 +40,10 @@ function LoadPlayerSettings(settings, newPlayers)
 		while (settingsNumPlayers > numPlayers)
 		{
 			// Add player entity to engine
-			var civ = getSetting(playerData, playerDefaults, numPlayers, "Civ");
-			var template = cmpTemplateManager.TemplateExists("special/player_"+civ) ? "special/player_"+civ : "special/player";
-			var entID = Engine.AddEntity(template);
+			var entID = Engine.AddEntity(GetPlayerTemplateName(getSetting(playerData, playerDefaults, numPlayers, "Civ")));
 			var cmpPlayer = Engine.QueryInterface(entID, IID_Player);
 			if (!cmpPlayer)
-				throw("Player.js: Error creating player entity " + numPlayers);
+				throw new Error("Player.js: Error creating player entity " + numPlayers);
 
 			cmpPlayerManager.AddPlayer(entID);
 			++numPlayers;
@@ -63,8 +59,7 @@ function LoadPlayerSettings(settings, newPlayers)
 	// Even when no new player, we must check the template compatibility as player template may be civ dependent
 	for (var i = 0; i < numPlayers; ++i)
 	{
-		var civ = getSetting(playerData, playerDefaults, i, "Civ");
-		var template = cmpTemplateManager.TemplateExists("special/player_"+civ) ? "special/player_"+civ : "special/player";
+		var template = GetPlayerTemplateName(getSetting(playerData, playerDefaults, i, "Civ"));
 		var entID = cmpPlayerManager.GetPlayerByID(i);
 		if (cmpTemplateManager.GetCurrentTemplateName(entID) === template)
 			continue;
@@ -113,13 +108,19 @@ function LoadPlayerSettings(settings, newPlayers)
 		if (getSetting(playerData, playerDefaults, i, "DisabledTechnologies") !== undefined)
 			cmpPlayer.SetDisabledTechnologies(getSetting(playerData, playerDefaults, i, "DisabledTechnologies"));
 
-		let disabledTemplates = []; 
+		let disabledTemplates = [];
 		if (settings.DisabledTemplates !== undefined)
 			disabledTemplates = settings.DisabledTemplates;
 		if (getSetting(playerData, playerDefaults, i, "DisabledTemplates") !== undefined)
 			disabledTemplates = disabledTemplates.concat(getSetting(playerData, playerDefaults, i, "DisabledTemplates"));
 		if (disabledTemplates.length)
 			cmpPlayer.SetDisabledTemplates(disabledTemplates);
+
+		if (settings.DisableSpies)
+		{
+			cmpPlayer.AddDisabledTechnology("unlock_spies");
+			cmpPlayer.AddDisabledTemplate("special/spy");
+		}
 
 		// If diplomacy explicitly defined, use that; otherwise use teams
 		if (getSetting(playerData, playerDefaults, i, "Diplomacy") !== undefined)
@@ -140,18 +141,9 @@ function LoadPlayerSettings(settings, newPlayers)
 			cmpPlayer.SetTeam(myTeam === undefined ? -1 : myTeam);
 		}
 
-		// If formations explicitly defined, use that; otherwise use civ defaults
-		var formations = getSetting(playerData, playerDefaults, i, "Formations");
-		if (formations !== undefined)
-			cmpPlayer.SetFormations(formations);
-		else
-		{
-			var rawFormations = Engine.ReadCivJSONFile(cmpPlayer.GetCiv()+".json");
-			if (!(rawFormations && rawFormations.Formations))
-				throw("Player.js: Error reading "+cmpPlayer.GetCiv()+".json");
-
-			cmpPlayer.SetFormations(rawFormations.Formations);
-		}
+		cmpPlayer.SetFormations(
+			getSetting(playerData, playerDefaults, i, "Formations") ||
+			Engine.ReadJSONFile("simulation/data/civs/" + cmpPlayer.GetCiv() + ".json").Formations);
 
 		var startCam = getSetting(playerData, playerDefaults, i, "StartingCamera");
 		if (startCam !== undefined)
@@ -161,11 +153,8 @@ function LoadPlayerSettings(settings, newPlayers)
 	// NOTE: We need to do the team locking here, as otherwise
 	// SetTeam can't ally the players.
 	if (settings.LockTeams)
-		for (var i = 0; i < numPlayers; ++i)
-		{
-			let cmpPlayer = QueryPlayerIDInterface(i);
-			cmpPlayer.SetLockTeams(true);
-		}
+		for (let i = 0; i < numPlayers; ++i)
+			QueryPlayerIDInterface(i).SetLockTeams(true);
 
 	// Disable the AIIinterface when no AI players are present
 	if (playerData && !playerData.some(v => v && !!v.AI))
@@ -185,6 +174,16 @@ function getSetting(settings, defaults, idx, property)
 	return undefined;
 }
 
+function GetPlayerTemplateName(civ)
+{
+	let path = "special/player/player";
+
+	if (Engine.QueryInterface(SYSTEM_ENTITY, IID_TemplateManager).TemplateExists(path + "_" + civ))
+		return path + "_" + civ;
+
+	return path;
+}
+
 /**
  * Similar to Engine.QueryInterface but applies to the player entity
  * that owns the given entity.
@@ -197,7 +196,7 @@ function QueryOwnerInterface(ent, iid = IID_Player)
 		return null;
 
 	var owner = cmpOwnership.GetOwner();
-	if (owner == -1)
+	if (owner == INVALID_PLAYER)
 		return null;
 
 	return QueryPlayerIDInterface(owner, iid);

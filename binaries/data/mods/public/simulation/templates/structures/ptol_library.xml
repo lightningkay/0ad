@@ -4,4 +4,7 @@
     <Civ>ptol</Civ>
     <SpecificName>Bibliothḗkē</SpecificName>
   </Identity>
+  <VisualActor>
+    <Actor>structures/ptolemies/library.xml</Actor>
+  </VisualActor>
 </Entity>

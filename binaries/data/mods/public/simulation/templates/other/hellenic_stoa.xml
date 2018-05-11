@@ -24,13 +24,9 @@
     <Civ>gaia</Civ>
     <GenericName>Stoa</GenericName>
     <SpecificName>Hellenic Stoa</SpecificName>
-    <History>A structure built for civic purposes. Stoa eventually became meeting places for philosophy and commerce. They were usually built within the Agora, or city center, of a Greek city.</History>
     <Icon>gaia/special_stoa.png</Icon>
   </Identity>
   <Loot>
-    <xp>10</xp>
-    <food>0</food>
-    <wood>0</wood>
     <stone>50</stone>
     <metal>50</metal>
   </Loot>
@@ -49,6 +45,6 @@
   </Vision>
   <VisualActor>
     <Actor>special/greek_stoa.xml</Actor>
-    <FoundationActor>structures/fndn_wall.xml</FoundationActor>
+    <FoundationActor>structures/fndn_6x4.xml</FoundationActor>
   </VisualActor>
 </Entity>

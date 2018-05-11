@@ -21,8 +21,6 @@
 				<Waviness>3.5</Waviness>
 				<Murkiness>0.825195</Murkiness>
 				<Tint r="0" g="1" b="1"/>
-				<ReflectionTint r="0" g="1" b="1"/>
-				<ReflectionTintStrength>0.0996094</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -42,7 +40,6 @@
 {
   "CircularMap": true,
   "Description": "The large Mediterranean island of Sicily is open for conquest.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": true,
   "Name": "Sicilia (2)",
@@ -67,7 +64,10 @@
     }
   ],
   "Preview": "sicilia.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>

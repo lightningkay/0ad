@@ -2,7 +2,6 @@
 
 <Scenario version="6">
 	<Environment>
-		<LightingModel>standard</LightingModel>
 		<SkySet>sunny</SkySet>
 		<SunColor r="0.737255" g="0.721569" b="0.639216"/>
 		<SunElevation angle="0.717903"/>
@@ -14,12 +13,9 @@
 				<Type>lake</Type>
 				<Color r="0.294118" g="0.34902" b="0.694118"/>
 				<Height>17.6262</Height>
-				<Shininess>150</Shininess>
 				<Waviness>5.0</Waviness>
 				<Murkiness>0.458008</Murkiness>
 				<Tint r="0.447059" g="0.411765" b="0.321569"/>
-				<ReflectionTint r="0.619608" g="0.584314" b="0.47451"/>
-				<ReflectionTintStrength>0.298828</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -31,7 +27,6 @@
 	<ScriptSettings><![CDATA[
 {
   "Description": "Demo map showing how to simulate bridges in the Atlas map editor.",
-  "GameType": "endless",
   "Keywords": [
     "demo"
   ],
@@ -59,7 +54,8 @@
       "Name": "Other",
       "Team": -1
     }
-  ]
+  ],
+  "VictoryConditions": []
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -21382,13 +21378,13 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="4491">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="358.26566" z="316.29844"/>
 			<Orientation y="-1.77085"/>
 		</Entity>
 		<Entity uid="4501">
-			<Template>gaia/special_treasure_pegasus</Template>
+			<Template>gaia/treasure/pegasus</Template>
 			<Player>0</Player>
 			<Position x="22.57499" z="650.9889"/>
 			<Orientation y="1.84865"/>
@@ -21442,7 +21438,7 @@
 			<Orientation y="0.1832"/>
 		</Entity>
 		<Entity uid="4585">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="696.20521" z="206.17661"/>
 			<Orientation y="-2.35447"/>

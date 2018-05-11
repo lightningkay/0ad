@@ -60,12 +60,9 @@
 				<Type>lake</Type>
 				<Color r="0.3" g="0.35" b="0.7"/>
 				<Height>5</Height>
-				<Shininess>150</Shininess>
 				<Waviness>3.0</Waviness>
 				<Murkiness>0.45</Murkiness>
 				<Tint r="0.28" g="0.3" b="0.59"/>
-				<ReflectionTint r="0.28" g="0.3" b="0.59"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -76,8 +73,8 @@
 	</Camera>
 	<ScriptSettings><![CDATA[
 	{
-		"Name":"Combat Demo (Huge)",
-		"Description":"1296 units. Extremely slow (we need more optimisation).",
+		"Name": "Combat Demo (Huge)",
+		"Description": "1296 units. Extremely slow (we need more optimisation).",
 		"Keywords": ["demo"],
 		"PlayerData":
 		[
@@ -89,7 +86,10 @@
 				"AI": ""
 			}
 		],
-		"RevealMap":true
+		"RevealMap": true,
+		"VictoryCondition": [
+			"conquest"
+		]
 	}
 	]]></ScriptSettings>
 	<Entities/>

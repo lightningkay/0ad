@@ -21,8 +21,6 @@
 				<Waviness>2.0</Waviness>
 				<Murkiness>0.697266</Murkiness>
 				<Tint r="0" g="1" b="1"/>
-				<ReflectionTint r="0" g="0.501961" b="1"/>
-				<ReflectionTintStrength>0.105469</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -42,7 +40,6 @@
 {
   "CircularMap": true,
   "Description": "Each player starts the match atop a large flat plateau, otherwise known as an acropolis.\u000a\u000aTo the East lies a large bay with fishing opportunities. To the West is a rugged hinterland with an unclaimed acropolis commanding the valley below.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Acropolis Bay (2)",
@@ -55,7 +52,10 @@
     }
   ],
   "Preview": "acropolis_bay.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -9400,19 +9400,19 @@
 			<Orientation y="2.60706"/>
 		</Entity>
 		<Entity uid="3361">
-			<Template>gaia/special_treasure_food_barrel</Template>
+			<Template>gaia/treasure/food_barrel</Template>
 			<Player>0</Player>
 			<Position x="608.37354" z="430.8404"/>
 			<Orientation y="0.67112"/>
 		</Entity>
 		<Entity uid="3362">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="610.3512" z="432.7335"/>
 			<Orientation y="2.78093"/>
 		</Entity>
 		<Entity uid="3363">
-			<Template>gaia/special_treasure_food_crate</Template>
+			<Template>gaia/treasure/food_crate</Template>
 			<Player>0</Player>
 			<Position x="607.80268" z="433.49549"/>
 			<Orientation y="2.58265"/>
@@ -9430,13 +9430,13 @@
 			<Orientation y="-0.83228"/>
 		</Entity>
 		<Entity uid="3376">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="692.02607" z="139.0087"/>
 			<Orientation y="2.55057"/>
 		</Entity>
 		<Entity uid="3377">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="417.78672" z="654.16352"/>
 			<Orientation y="2.35621"/>
@@ -9454,19 +9454,19 @@
 			<Orientation y="-2.49918"/>
 		</Entity>
 		<Entity uid="3402">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="438.94431" z="538.95667"/>
 			<Orientation y="0.8022"/>
 		</Entity>
 		<Entity uid="3403">
-			<Template>gaia/special_treasure_food_bin</Template>
+			<Template>gaia/treasure/food_bin</Template>
 			<Player>0</Player>
 			<Position x="815.56904" z="707.62684"/>
 			<Orientation y="-2.86367"/>
 		</Entity>
 		<Entity uid="3405">
-			<Template>gaia/special_treasure_wood</Template>
+			<Template>gaia/treasure/wood</Template>
 			<Player>0</Player>
 			<Position x="830.62732" z="169.19703"/>
 			<Orientation y="-2.45223"/>

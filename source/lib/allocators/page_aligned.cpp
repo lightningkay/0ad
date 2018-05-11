@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Wildfire Games
+/* Copyright (C) 2018 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -94,7 +94,7 @@ Status mem_Protect(u8* p, size_t size, int prot)
 
 void* page_aligned_alloc(size_t size)
 {
-	const size_t alignedSize = Align<pageSize>(size);
+	const size_t alignedSize = Align<g_PageSize>(size);
 	u8* p = 0;
 	RETURN_0_IF_ERR(mem_Reserve(alignedSize, &p));
 	RETURN_0_IF_ERR(mem_Commit(p, alignedSize, PROT_READ|PROT_WRITE));
@@ -106,7 +106,7 @@ void page_aligned_free(void* p, size_t size)
 {
 	if(!p)
 		return;
-	ENSURE(IsAligned(p, pageSize));
-	const size_t alignedSize = Align<pageSize>(size);
+	ENSURE(IsAligned(p, g_PageSize));
+	const size_t alignedSize = Align<g_PageSize>(size);
 	(void)mem_Release((u8*)p, alignedSize);
 }

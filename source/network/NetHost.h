@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -67,7 +67,8 @@ enum NetDisconnectReason
 	NDR_KICKED,
 	NDR_BANNED,
 	NDR_PLAYERNAME_IN_USE,
-	NDR_SERVER_FULL
+	NDR_SERVER_FULL,
+	NDR_LOBBY_AUTH_FAILED
 };
 
 class CNetHost

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -40,13 +40,16 @@
  */
 const u8 minimumReplayDuration = 3;
 
+static const OsPath tempCacheFileName = VisualReplay::GetDirectoryName() / L"replayCache_temp.json";
+static const OsPath cacheFileName = VisualReplay::GetDirectoryName() / L"replayCache.json";
+
 OsPath VisualReplay::GetDirectoryName()
 {
 	const Paths paths(g_args);
 	return OsPath(paths.UserData() / "replays" / engine_version);
 }
 
-void VisualReplay::StartVisualReplay(const CStrW& directory)
+bool VisualReplay::StartVisualReplay(const OsPath& directory)
 {
 	ENSURE(!g_NetServer);
 	ENSURE(!g_NetClient);
@@ -55,39 +58,185 @@ void VisualReplay::StartVisualReplay(const CStrW& directory)
 	const OsPath replayFile = VisualReplay::GetDirectoryName() / directory / L"commands.txt";
 
 	if (!FileExists(replayFile))
-		return;
+		return false;
 
 	g_Game = new CGame(false, false);
-	g_Game->StartVisualReplay(replayFile.string8());
+	return g_Game->StartVisualReplay(replayFile);
 }
 
-/**
- * Load all replays found in the directory.
- *
- * Since files are spread across the harddisk,
- * loading hundreds of them can consume a lot of time.
- */
-JS::Value VisualReplay::GetReplays(ScriptInterface& scriptInterface)
+bool VisualReplay::ReadCacheFile(const ScriptInterface& scriptInterface, JS::MutableHandleObject cachedReplaysObject)
+{
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	if (!FileExists(cacheFileName))
+		return false;
+
+	std::ifstream cacheStream(OsString(cacheFileName).c_str());
+	CStr cacheStr((std::istreambuf_iterator<char>(cacheStream)), std::istreambuf_iterator<char>());
+	cacheStream.close();
+
+	JS::RootedValue cachedReplays(cx);
+	if (scriptInterface.ParseJSON(cacheStr, &cachedReplays))
+	{
+		cachedReplaysObject.set(&cachedReplays.toObject());
+		if (JS_IsArrayObject(cx, cachedReplaysObject))
+			return true;
+	}
+
+	LOGWARNING("The replay cache file is corrupted, it will be deleted");
+	wunlink(cacheFileName);
+	return false;
+}
+
+void VisualReplay::StoreCacheFile(const ScriptInterface& scriptInterface, JS::HandleObject replays)
+{
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	JS::RootedValue replaysRooted(cx, JS::ObjectValue(*replays));
+	std::ofstream cacheStream(OsString(tempCacheFileName).c_str(), std::ofstream::out | std::ofstream::trunc);
+	cacheStream << scriptInterface.StringifyJSON(&replaysRooted);
+	cacheStream.close();
+
+	wunlink(cacheFileName);
+	if (wrename(tempCacheFileName, cacheFileName))
+		LOGERROR("Could not store the replay cache");
+}
+
+JS::HandleObject VisualReplay::ReloadReplayCache(const ScriptInterface& scriptInterface, bool compareFiles)
+{
+	TIMER(L"ReloadReplayCache");
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	// Maps the filename onto the index and size
+	typedef std::map<OsPath, std::pair<u32, off_t>> replayCacheMap;
+
+	replayCacheMap fileList;
+
+	JS::RootedObject cachedReplaysObject(cx);
+	if (ReadCacheFile(scriptInterface, &cachedReplaysObject))
+	{
+		// Create list of files included in the cache
+		u32 cacheLength = 0;
+		JS_GetArrayLength(cx, cachedReplaysObject, &cacheLength);
+		for (u32 j = 0; j < cacheLength; ++j)
+		{
+			JS::RootedValue replay(cx);
+			JS_GetElement(cx, cachedReplaysObject, j, &replay);
+
+			JS::RootedValue file(cx);
+			OsPath fileName;
+			double fileSize;
+			scriptInterface.GetProperty(replay, "directory", fileName);
+			scriptInterface.GetProperty(replay, "fileSize", fileSize);
+
+			fileList[fileName] = std::make_pair(j, fileSize);
+		}
+	}
+
+	JS::RootedObject replays(cx, JS_NewArrayObject(cx, 0));
+	DirectoryNames directories;
+
+	if (GetDirectoryEntries(GetDirectoryName(), nullptr, &directories) != INFO::OK)
+		return replays;
+
+	bool newReplays = false;
+	std::vector<u32> copyFromOldCache;
+	// Specifies where the next replay should be kept
+	u32 i = 0;
+
+	for (const OsPath& directory : directories)
+	{
+		// This cannot use IsQuitRequested(), because the current loop and that function both run in the main thread.
+		// So SDL events are not processed unless called explicitly here.
+		if (SDL_QuitRequested())
+			// Don't return, because we want to save our progress
+			break;
+
+		const OsPath replayFile = GetDirectoryName() / directory / L"commands.txt";
+
+		bool isNew = true;
+		replayCacheMap::iterator it = fileList.find(directory);
+		if (it != fileList.end())
+		{
+			if (compareFiles)
+			{
+				if (!FileExists(replayFile))
+					continue;
+				CFileInfo fileInfo;
+				GetFileInfo(replayFile, &fileInfo);
+				if (fileInfo.Size() == it->second.second)
+					isNew = false;
+			}
+			else
+				isNew = false;
+		}
+
+		if (isNew)
+		{
+			JS::RootedValue replayData(cx, LoadReplayData(scriptInterface, directory));
+			if (replayData.isNull())
+			{
+				if (!FileExists(replayFile))
+					continue;
+				CFileInfo fileInfo;
+				GetFileInfo(replayFile, &fileInfo);
+				scriptInterface.Eval("({})", &replayData);
+				scriptInterface.SetProperty(replayData, "directory", directory.string());
+				scriptInterface.SetProperty(replayData, "fileSize", (double)fileInfo.Size());
+			}
+			JS_SetElement(cx, replays, i++, replayData);
+			newReplays = true;
+		}
+		else
+			copyFromOldCache.push_back(it->second.first);
+	}
+
+	debug_printf(
+		"Loading %lu cached replays, removed %lu outdated entries, loaded %i new entries\n",
+		(unsigned long)fileList.size(), (unsigned long)(fileList.size() - copyFromOldCache.size()), i);
+
+	if (!newReplays && fileList.empty())
+		return replays;
+
+	// No replay was changed, so just return the cache
+	if (!newReplays && fileList.size() == copyFromOldCache.size())
+		return cachedReplaysObject;
+
+	{
+		// Copy the replays from the old cache that are not deleted
+		if (!copyFromOldCache.empty())
+			for (u32 j : copyFromOldCache)
+			{
+				JS::RootedValue replay(cx);
+				JS_GetElement(cx, cachedReplaysObject, j, &replay);
+				JS_SetElement(cx, replays, i++, replay);
+			}
+	}
+	StoreCacheFile(scriptInterface, replays);
+	return replays;
+}
+
+JS::Value VisualReplay::GetReplays(const ScriptInterface& scriptInterface, bool compareFiles)
 {
 	TIMER(L"GetReplays");
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-
-	u32 i = 0;
-	DirectoryNames directories;
-	JS::RootedObject replays(cx, JS_NewArrayObject(cx, 0));
-
-	if (GetDirectoryEntries(GetDirectoryName(), NULL, &directories) == INFO::OK)
-		for (OsPath& directory : directories)
-		{
-			if (SDL_QuitRequested())
-				return JSVAL_NULL;
-
-			JS::RootedValue replayData(cx, LoadReplayData(scriptInterface, directory));
-			if (!replayData.isNull())
-				JS_SetElement(cx, replays, i++, replayData);
-		}
-	return JS::ObjectValue(*replays);
+	JS::RootedObject replays(cx, ReloadReplayCache(scriptInterface, compareFiles));
+	// Only take entries with data
+	JS::RootedObject replaysWithoutNullEntries(cx, JS_NewArrayObject(cx, 0));
+	u32 replaysLength = 0;
+	JS_GetArrayLength(cx, replays, &replaysLength);
+	for (u32 j = 0, i = 0; j < replaysLength; ++j)
+	{
+		JS::RootedValue replay(cx);
+		JS_GetElement(cx, replays, j, &replay);
+		if (scriptInterface.HasProperty(replay, "attribs"))
+			JS_SetElement(cx, replaysWithoutNullEntries, i++, replay);
+	}
+	return JS::ObjectValue(*replaysWithoutNullEntries);
 }
 
 /**
@@ -96,7 +245,7 @@ JS::Value VisualReplay::GetReplays(ScriptInterface& scriptInterface)
  *
  * @return The current cursor position or -1 on error.
  */
-inline int goBackToLineBeginning(std::istream* replayStream, const CStr& fileName, const u64& fileSize)
+inline off_t goBackToLineBeginning(std::istream* replayStream, const OsPath& fileName, off_t fileSize)
 {
 	int currentPos;
 	char character;
@@ -110,7 +259,7 @@ inline int goBackToLineBeginning(std::istream* replayStream, const CStr& fileNam
 
 		if (!replayStream->good())
 		{
-			LOGERROR("Unknown error when returning to the last line (%i of %lu) of %s", currentPos, fileSize, fileName.c_str());
+			LOGERROR("Unknown error when returning to the last line (%i of %lu) of %s", currentPos, fileSize, fileName.string8().c_str());
 			return -1;
 		}
 
@@ -124,17 +273,17 @@ inline int goBackToLineBeginning(std::istream* replayStream, const CStr& fileNam
 		replayStream->seekg(-2, std::ios_base::cur);
 	}
 
-	LOGERROR("Infinite loop when going back to a line beginning in %s", fileName.c_str());
+	LOGERROR("Infinite loop when going back to a line beginning in %s", fileName.string8().c_str());
 	return -1;
 }
 
 /**
- * Compute game duration. Assume constant turn length.
+ * Compute game duration in seconds. Assume constant turn length.
  * Find the last line that starts with "turn" by reading the file backwards.
  *
  * @return seconds or -1 on error
  */
-inline int getReplayDuration(std::istream* replayStream, const CStr& fileName, const u64& fileSize)
+inline int getReplayDuration(std::istream* replayStream, const OsPath& fileName, off_t fileSize)
 {
 	CStr type;
 
@@ -145,7 +294,7 @@ inline int getReplayDuration(std::istream* replayStream, const CStr& fileName, c
 	// There should be about 5 lines to read until a turn is found.
 	for (int linesRead = 1; linesRead < 1000; ++linesRead)
 	{
-		int currentPosition = goBackToLineBeginning(replayStream, fileName, fileSize);
+		off_t currentPosition = goBackToLineBeginning(replayStream, fileName, fileSize);
 
 		// Read error or reached file beginning. No turns exist.
 		if (currentPosition < 1)
@@ -153,12 +302,12 @@ inline int getReplayDuration(std::istream* replayStream, const CStr& fileName, c
 
 		if (!replayStream->good())
 		{
-			LOGERROR("Read error when determining replay duration at %i of %llu in %s", currentPosition - 2, fileSize, fileName.c_str());
+			LOGERROR("Read error when determining replay duration at %i of %llu in %s", currentPosition - 2, fileSize, fileName.string8().c_str());
 			return -1;
 		}
 
 		// Found last turn, compute duration.
-		if ((u64) currentPosition + 4 < fileSize && (*replayStream >> type).good() && type == "turn")
+		if (currentPosition + 4 < fileSize && (*replayStream >> type).good() && type == "turn")
 		{
 			u32 turn = 0, turnLength = 0;
 			*replayStream >> turn >> turnLength;
@@ -169,11 +318,11 @@ inline int getReplayDuration(std::istream* replayStream, const CStr& fileName, c
 		replayStream->seekg(currentPosition - 2, std::ios_base::beg);
 	}
 
-	LOGERROR("Infinite loop when determining replay duration for %s", fileName.c_str());
+	LOGERROR("Infinite loop when determining replay duration for %s", fileName.string8().c_str());
 	return -1;
 }
 
-JS::Value VisualReplay::LoadReplayData(ScriptInterface& scriptInterface, OsPath& directory)
+JS::Value VisualReplay::LoadReplayData(const ScriptInterface& scriptInterface, const OsPath& directory)
 {
 	// The directory argument must not be constant, otherwise concatenating will fail
 	const OsPath replayFile = GetDirectoryName() / directory / L"commands.txt";
@@ -184,27 +333,24 @@ JS::Value VisualReplay::LoadReplayData(ScriptInterface& scriptInterface, OsPath&
 	// Get file size and modification date
 	CFileInfo fileInfo;
 	GetFileInfo(replayFile, &fileInfo);
-	const u64 fileTime = (u64)fileInfo.MTime() & ~1; // skip lowest bit, since zip and FAT don't preserve it (according to CCacheLoader::LooseCachePath)
-	const u64 fileSize = (u64)fileInfo.Size();
+	const off_t fileSize = fileInfo.Size();
 
 	if (fileSize == 0)
 		return JSVAL_NULL;
 
-	// Open file
-	const CStr fileName = replayFile.string8();
-	std::ifstream* replayStream = new std::ifstream(fileName.c_str());
+	std::ifstream* replayStream = new std::ifstream(OsString(replayFile).c_str());
 
-	// File must begin with "start"
 	CStr type;
 	if (!(*replayStream >> type).good())
 	{
-		LOGERROR("Couldn't open %s. Non-latin characters are not supported yet.", fileName.c_str());
+		LOGERROR("Couldn't open %s.", replayFile.string8().c_str());
 		SAFE_DELETE(replayStream);
 		return JSVAL_NULL;
 	}
+
 	if (type != "start")
 	{
-		LOGWARNING("The replay %s is broken!", fileName.c_str());
+		LOGWARNING("The replay %s doesn't begin with 'start'!", replayFile.string8().c_str());
 		SAFE_DELETE(replayStream);
 		return JSVAL_NULL;
 	}
@@ -217,7 +363,7 @@ JS::Value VisualReplay::LoadReplayData(ScriptInterface& scriptInterface, OsPath&
 	JS::RootedValue attribs(cx);
 	if (!scriptInterface.ParseJSON(header, &attribs))
 	{
-		LOGERROR("Couldn't parse replay header of %s", fileName.c_str());
+		LOGERROR("Couldn't parse replay header of %s", replayFile.string8().c_str());
 		SAFE_DELETE(replayStream);
 		return JSVAL_NULL;
 	}
@@ -238,7 +384,7 @@ JS::Value VisualReplay::LoadReplayData(ScriptInterface& scriptInterface, OsPath&
 		return JSVAL_NULL;
 	}
 
-	int duration = getReplayDuration(replayStream, fileName, fileSize);
+	int duration = getReplayDuration(replayStream, replayFile, fileSize);
 
 	SAFE_DELETE(replayStream);
 
@@ -249,15 +395,14 @@ JS::Value VisualReplay::LoadReplayData(ScriptInterface& scriptInterface, OsPath&
 	// Return the actual data
 	JS::RootedValue replayData(cx);
 	scriptInterface.Eval("({})", &replayData);
-	scriptInterface.SetProperty(replayData, "file", replayFile);
-	scriptInterface.SetProperty(replayData, "directory", directory);
-	scriptInterface.SetProperty(replayData, "filemod_timestamp", std::to_string(fileTime));
+	scriptInterface.SetProperty(replayData, "directory", directory.string());
+	scriptInterface.SetProperty(replayData, "fileSize", (double)fileSize);
 	scriptInterface.SetProperty(replayData, "attribs", attribs);
 	scriptInterface.SetProperty(replayData, "duration", duration);
 	return replayData;
 }
 
-bool VisualReplay::DeleteReplay(const CStrW& replayDirectory)
+bool VisualReplay::DeleteReplay(const OsPath& replayDirectory)
 {
 	if (replayDirectory.empty())
 		return false;
@@ -266,8 +411,7 @@ bool VisualReplay::DeleteReplay(const CStrW& replayDirectory)
 	return DirectoryExists(directory) && DeleteDirectory(directory) == INFO::OK;
 }
 
-
-JS::Value VisualReplay::GetReplayAttributes(ScriptInterface::CxPrivate* pCxPrivate, const CStrW& directoryName)
+JS::Value VisualReplay::GetReplayAttributes(ScriptInterface::CxPrivate* pCxPrivate, const OsPath& directoryName)
 {
 	// Create empty JS object
 	JSContext* cx = pCxPrivate->pScriptInterface->GetContext();
@@ -281,7 +425,7 @@ JS::Value VisualReplay::GetReplayAttributes(ScriptInterface::CxPrivate* pCxPriva
 		return attribs;
 
 	// Open file
-	std::istream* replayStream = new std::ifstream(replayFile.string8().c_str());
+	std::istream* replayStream = new std::ifstream(OsString(replayFile).c_str());
 	CStr type, line;
 	ENSURE((*replayStream >> type).good() && type == "start");
 
@@ -290,6 +434,27 @@ JS::Value VisualReplay::GetReplayAttributes(ScriptInterface::CxPrivate* pCxPriva
 	pCxPrivate->pScriptInterface->ParseJSON(line, &attribs);
 	SAFE_DELETE(replayStream);;
 	return attribs;
+}
+
+void VisualReplay::AddReplayToCache(const ScriptInterface& scriptInterface, const CStrW& directoryName)
+{
+	TIMER(L"AddReplayToCache");
+	JSContext* cx = scriptInterface.GetContext();
+	JSAutoRequest rq(cx);
+
+	JS::RootedValue replayData(cx, LoadReplayData(scriptInterface, OsPath(directoryName)));
+	if (replayData.isNull())
+		return;
+
+	JS::RootedObject cachedReplaysObject(cx);
+	if (!ReadCacheFile(scriptInterface, &cachedReplaysObject))
+		cachedReplaysObject = JS_NewArrayObject(cx, 0);
+
+	u32 cacheLength = 0;
+	JS_GetArrayLength(cx, cachedReplaysObject, &cacheLength);
+	JS_SetElement(cx, cachedReplaysObject, cacheLength, replayData);
+
+	StoreCacheFile(scriptInterface, cachedReplaysObject);
 }
 
 void VisualReplay::SaveReplayMetadata(ScriptInterface* scriptInterface)
@@ -310,13 +475,13 @@ void VisualReplay::SaveReplayMetadata(ScriptInterface* scriptInterface)
 	const OsPath fileName = g_Game->GetReplayLogger().GetDirectory() / L"metadata.json";
 	CreateDirectories(fileName.Parent(), 0700);
 
-	std::ofstream stream (fileName.string8().c_str(), std::ofstream::out | std::ofstream::trunc);
+	std::ofstream stream (OsString(fileName).c_str(), std::ofstream::out | std::ofstream::trunc);
 	stream << scriptInterface->StringifyJSON(&metadata, false);
 	stream.close();
 	debug_printf("Saved replay metadata to %s\n", fileName.string8().c_str());
 }
 
-bool VisualReplay::HasReplayMetadata(const CStrW& directoryName)
+bool VisualReplay::HasReplayMetadata(const OsPath& directoryName)
 {
 	const OsPath filePath(GetDirectoryName() / directoryName / L"metadata.json");
 
@@ -329,7 +494,7 @@ bool VisualReplay::HasReplayMetadata(const CStrW& directoryName)
 	return fileInfo.Size() > 0;
 }
 
-JS::Value VisualReplay::GetReplayMetadata(ScriptInterface::CxPrivate* pCxPrivate, const CStrW& directoryName)
+JS::Value VisualReplay::GetReplayMetadata(ScriptInterface::CxPrivate* pCxPrivate, const OsPath& directoryName)
 {
 	if (!HasReplayMetadata(directoryName))
 		return JSVAL_NULL;
@@ -338,7 +503,7 @@ JS::Value VisualReplay::GetReplayMetadata(ScriptInterface::CxPrivate* pCxPrivate
 	JSAutoRequest rq(cx);
 	JS::RootedValue metadata(cx);
 
-	std::ifstream* stream = new std::ifstream(OsPath(GetDirectoryName() / directoryName / L"metadata.json").string8());
+	std::ifstream* stream = new std::ifstream(OsString(GetDirectoryName() / directoryName / L"metadata.json").c_str());
 	ENSURE(stream->good());
 	CStr line;
 	std::getline(*stream, line);

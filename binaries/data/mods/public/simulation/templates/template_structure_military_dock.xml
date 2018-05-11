@@ -18,7 +18,7 @@
   </Footprint>
   <Health>
     <Max>2500</Max>
-    <SpawnEntityOnDeath>rubble/rubble_4x4_dock</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_4x4</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <GenericName>Dock</GenericName>
@@ -28,11 +28,8 @@
     <Icon>structures/dock.png</Icon>
   </Identity>
   <Loot>
-    <xp>100</xp>
-    <food>0</food>
+    <food>30</food>
     <wood>30</wood>
-    <stone>0</stone>
-    <metal>0</metal>
   </Loot>
   <Market>
     <TradeType>land naval</TradeType>
@@ -43,6 +40,7 @@
   </Obstruction>
   <Position>
     <Floating>true</Floating>
+    <FloatDepth>0.0</FloatDepth>
   </Position>
   <ProductionQueue>
     <BatchTimeModifier>0.8</BatchTimeModifier>

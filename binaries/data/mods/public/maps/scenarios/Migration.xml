@@ -2,7 +2,6 @@
 
 <Scenario version="6">
 	<Environment>
-		<LightingModel>standard</LightingModel>
 		<SkySet>cirrus</SkySet>
 		<SunColor r="0.835294" g="0.815686" b="0.678431"/>
 		<SunElevation angle="0.711767"/>
@@ -14,12 +13,9 @@
 				<Type>ocean</Type>
 				<Color r="0.294118" g="0.34902" b="0.694118"/>
 				<Height>10.8066</Height>
-				<Shininess>4.39453</Shininess>
 				<Waviness>3.0</Waviness>
 				<Murkiness>0.813477</Murkiness>
 				<Tint r="0.203922" g="0.254902" b="0.356863"/>
-				<ReflectionTint r="0.129412" g="0.54902" b="0.866667"/>
-				<ReflectionTintStrength>0.199219</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 	</Environment>
@@ -33,7 +29,6 @@
   "CircularMap": true,
   "Preview" : "migration_scenario.png",
   "Description": "Multiplayer map. Each player starts out on a small island with minimal resources situated off the coast of a large land mass.\u000a\u000aThis is a WFG community-designed map by: SMST, NOXAS1, and Yodaspirine.",
-  "GameType": "conquest",
   "Keywords": [
     "naval"
   ],
@@ -89,7 +84,10 @@
       "Team": -1
     }
   ],
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>
@@ -4605,19 +4603,19 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1000">
-			<Template>gaia/special_ruins</Template>
+			<Template>gaia/ruins/column_doric</Template>
 			<Player>0</Player>
 			<Position x="766.01514" z="744.31965"/>
 			<Orientation y="0.26304"/>
 		</Entity>
 		<Entity uid="1001">
-			<Template>gaia/special_ruins</Template>
+			<Template>gaia/ruins/column_doric</Template>
 			<Player>0</Player>
 			<Position x="775.43384" z="756.29023"/>
 			<Orientation y="-1.32433"/>
 		</Entity>
 		<Entity uid="1002">
-			<Template>gaia/special_ruins</Template>
+			<Template>gaia/ruins/column_doric</Template>
 			<Player>0</Player>
 			<Position x="746.9665" z="742.4491"/>
 			<Orientation y="1.68725"/>
@@ -4641,43 +4639,43 @@
 			<Orientation y="-2.72584"/>
 		</Entity>
 		<Entity uid="1006">
-			<Template>other/special_treasure_shipwreck</Template>
+			<Template>gaia/treasure/shipwreck</Template>
 			<Player>0</Player>
 			<Position x="701.05555" z="560.17933"/>
 			<Orientation y="-2.00618"/>
 		</Entity>
 		<Entity uid="1007">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="715.1861" z="580.15375"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1008">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="690.76935" z="580.56904"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1009">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="699.34192" z="580.62238"/>
 			<Orientation y="-0.10175"/>
 		</Entity>
 		<Entity uid="1010">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="713.36329" z="560.65925"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1011">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="687.29883" z="566.84382"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1012">
-			<Template>other/unfinished_greek_temple</Template>
+			<Template>gaia/ruins/unfinished_greek_temple</Template>
 			<Player>0</Player>
 			<Position x="785.79395" z="738.08033"/>
 			<Orientation y="1.51607"/>
@@ -5649,22 +5647,26 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1198">
-			<Template>actor|fauna/fox_red.xml</Template>
+			<Template>gaia/fauna_fox_red</Template>
+			<Player>0</Player>
 			<Position x="557.19782" z="463.69501"/>
 			<Orientation y="2.32308"/>
 		</Entity>
 		<Entity uid="1199">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="566.35877" z="570.0688"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1200">
-			<Template>actor|flora/trees/dead_a_1.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="591.93982" z="617.19227"/>
 			<Orientation y="-3.08684"/>
 		</Entity>
 		<Entity uid="1201">
-			<Template>actor|flora/trees/dead_a_1.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="576.23835" z="577.73993"/>
 			<Orientation y="1.0298"/>
 		</Entity>
@@ -6474,37 +6476,44 @@
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1370">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="564.27668" z="611.36268"/>
 			<Orientation y="1.07212"/>
 		</Entity>
 		<Entity uid="1371">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="533.49457" z="614.96308"/>
 			<Orientation y="-1.3719"/>
 		</Entity>
 		<Entity uid="1372">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="557.8755" z="635.52503"/>
 			<Orientation y="-2.57139"/>
 		</Entity>
 		<Entity uid="1373">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="582.31922" z="604.22553"/>
 			<Orientation y="-0.48072"/>
 		</Entity>
 		<Entity uid="1374">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="539.02076" z="586.41816"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1375">
-			<Template>actor|flora/trees/dead_a_2.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="556.97663" z="599.4917"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1376">
-			<Template>actor|flora/trees/dead_a_1.xml</Template>
+			<Template>gaia/flora_tree_dead</Template>
+			<Player>0</Player>
 			<Position x="554.2555" z="610.0865"/>
 			<Orientation y="0.8885"/>
 		</Entity>
@@ -6713,31 +6722,31 @@
 			<Orientation y="0.97709"/>
 		</Entity>
 		<Entity uid="1414">
-			<Template>other/special_treasure_shipwreck</Template>
+			<Template>gaia/treasure/shipwreck</Template>
 			<Player>0</Player>
 			<Position x="642.49402" z="449.52082"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1415">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="636.89448" z="437.85291"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1416">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="655.24604" z="445.15412"/>
 			<Orientation y="0.89512"/>
 		</Entity>
 		<Entity uid="1417">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="637.95386" z="478.23731"/>
 			<Orientation y="-0.70965"/>
 		</Entity>
 		<Entity uid="1418">
-			<Template>other/special_treasure_shipwreck_debris</Template>
+			<Template>gaia/treasure/shipwreck_debris</Template>
 			<Player>0</Player>
 			<Position x="619.07166" z="439.05396"/>
 			<Orientation y="2.35621"/>
@@ -7173,13 +7182,13 @@
 			<Orientation y="-1.5926"/>
 		</Entity>
 		<Entity uid="1503">
-			<Template>gaia/special_treasure_food_crate</Template>
+			<Template>gaia/treasure/food_crate</Template>
 			<Player>0</Player>
 			<Position x="496.83597" z="957.09571"/>
 			<Orientation y="2.35621"/>
 		</Entity>
 		<Entity uid="1504">
-			<Template>gaia/special_treasure_food_barrel</Template>
+			<Template>gaia/treasure/food_barrel</Template>
 			<Player>0</Player>
 			<Position x="489.17316" z="957.7768"/>
 			<Orientation y="2.35621"/>

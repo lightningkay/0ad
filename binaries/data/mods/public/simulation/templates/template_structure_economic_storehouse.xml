@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Entity parent="template_structure_economic">
+  <AlertRaiser>
+    <List datatype="tokens">FemaleCitizen</List>
+    <RaiseAlertRange>60</RaiseAlertRange>
+    <EndOfAlertRange>100</EndOfAlertRange>
+    <SearchRange>100</SearchRange>
+  </AlertRaiser>
   <BuildRestrictions>
     <Category>Storehouse</Category>
   </BuildRestrictions>
@@ -18,22 +24,15 @@
   </Footprint>
   <Health>
     <Max>800</Max>
-    <SpawnEntityOnDeath>rubble/rubble_stone_3x3</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_3x3</SpawnEntityOnDeath>
   </Health>
   <Identity>
+    <Classes datatype="tokens">DropsiteWood DropsiteMetal DropsiteStone</Classes>
     <GenericName>Storehouse</GenericName>
-    <Tooltip>Dropsite for wood, stone, and metal resources. Research gathering improvements for these resources.</Tooltip>
-    <Classes datatype="tokens">DropsiteWood DropsiteMetal DropsiteStone -ConquestCritical</Classes>
-    <VisibleClasses datatype="tokens">Village Storehouse</VisibleClasses>
     <Icon>structures/storehouse.png</Icon>
+    <Tooltip>Dropsite for wood, stone, and metal resources. Research gathering improvements for these resources.</Tooltip>
+    <VisibleClasses datatype="tokens">Village Storehouse</VisibleClasses>
   </Identity>
-  <Loot>
-    <xp>100</xp>
-    <food>0</food>
-    <wood>10</wood>
-    <stone>0</stone>
-    <metal>0</metal>
-  </Loot>
   <Obstruction>
     <Static width="13.0" depth="13.0"/>
   </Obstruction>
@@ -64,6 +63,8 @@
       <select>interface/select/building/sel_storehouse.xml</select>
       <constructed>interface/complete/building/complete_storehouse.xml</constructed>
       <death>attack/destruction/building_collapse_large.xml</death>
+      <alert_raise>interface/alarm/alarm_alert_0.xml</alert_raise>
+      <alert_end>interface/alarm/alarm_alert_1.xml</alert_end>
     </SoundGroups>
   </Sound>
   <TerritoryInfluence>

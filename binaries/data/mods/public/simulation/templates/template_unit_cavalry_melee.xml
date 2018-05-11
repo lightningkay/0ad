@@ -9,9 +9,10 @@
       <Hack>13</Hack>
       <Pierce>0</Pierce>
       <Crush>0.0</Crush>
-      <MaxRange>6.0</MaxRange>
+      <MaxRange>3.5</MaxRange>
+      <PrepareTime>375</PrepareTime>
       <RepeatTime>750</RepeatTime>
-      <PreferredClasses datatype="tokens">Siege</PreferredClasses>
+      <PreferredClasses datatype="tokens">Human</PreferredClasses>
     </Melee>
   </Attack>
   <Identity>

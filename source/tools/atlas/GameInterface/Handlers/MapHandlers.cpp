@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -23,14 +23,15 @@
 
 #include "graphics/GameView.h"
 #include "graphics/LOSTexture.h"
+#include "graphics/MapIO.h"
 #include "graphics/MapWriter.h"
 #include "graphics/Patch.h"
 #include "graphics/Terrain.h"
 #include "graphics/TerrainTextureEntry.h"
 #include "graphics/TerrainTextureManager.h"
 #include "lib/bits.h"
-#include "lib/file/file.h"
-#include "lib/tex/tex.h"
+#include "lib/file/vfs/vfs_path.h"
+#include "lib/status.h"
 #include "maths/MathUtil.h"
 #include "ps/CLogger.h"
 #include "ps/Filesystem.h"
@@ -89,7 +90,7 @@ QUERYHANDLER(GenerateMap)
 		InitGame();
 
 		// Random map
-		ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
+		const ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
 		JSContext* cx = scriptInterface.GetContext();
 		JSAutoRequest rq(cx);
 
@@ -116,7 +117,7 @@ QUERYHANDLER(GenerateMap)
 
 		InitGame();
 
-		ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
+		const ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
 		JSContext* cx = scriptInterface.GetContext();
 		JSAutoRequest rq(cx);
 
@@ -149,7 +150,7 @@ MESSAGEHANDLER(LoadMap)
 {
 	InitGame();
 
-	ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
+	const ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
 
@@ -167,80 +168,29 @@ MESSAGEHANDLER(LoadMap)
 
 MESSAGEHANDLER(ImportHeightmap)
 {
-	CStrW src = *msg->filename;
-
-	size_t fileSize;
-	shared_ptr<u8> fileData;
-
-	// read in image file
-	File file;
-	if (file.Open(src, O_RDONLY) < 0)
-	{
-		LOGERROR("Failed to load heightmap.");
-		return;
-	}
-
-	fileSize = lseek(file.Descriptor(), 0, SEEK_END);
-	lseek(file.Descriptor(), 0, SEEK_SET);
-
-	fileData = shared_ptr<u8>(new u8[fileSize]);
-
-	if (read(file.Descriptor(), fileData.get(), fileSize) < 0)
-	{
-		LOGERROR("Failed to read heightmap image.");
-		file.Close();
-		return;
-	}
-
-	file.Close();
-
-	// decode to a raw pixel format
-	Tex tex;
-	if (tex.decode(fileData, fileSize) < 0)
+	std::vector<u16> heightmap_source;
+	if (LoadHeightmapImageOs(*msg->filename, heightmap_source) != INFO::OK)
 	{
 		LOGERROR("Failed to decode heightmap.");
 		return;
 	}
 
-	// Convert to uncompressed BGRA with no mipmaps
-	if (tex.transform_to((tex.m_Flags | TEX_BGR | TEX_ALPHA) & ~(TEX_DXT | TEX_MIPMAPS)) < 0)
-	{
-		LOGERROR("Failed to transform heightmap.");
-		return;
-	}
-
-	// pick smallest side of texture; truncate if not divisible by PATCH_SIZE
-	ssize_t terrainSize = std::min(tex.m_Width, tex.m_Height);
-	terrainSize -= terrainSize % PATCH_SIZE;
-
 	// resize terrain to heightmap size
+	// Notice that the number of tiles/pixels per side of the heightmap image is
+	// one less than the number of vertices per side of the heightmap.
 	CTerrain* terrain = g_Game->GetWorld()->GetTerrain();
-	terrain->Resize(terrainSize / PATCH_SIZE);
+	terrain->Resize((sqrt(heightmap_source.size()) - 1) / PATCH_SIZE);
 
 	// copy heightmap data into map
 	u16* heightmap = g_Game->GetWorld()->GetTerrain()->GetHeightMap();
-	ssize_t hmSize = g_Game->GetWorld()->GetTerrain()->GetVerticesPerSide();
-
-	u8* mapdata = tex.get_data();
-	ssize_t bytesPP = tex.m_Bpp / 8;
-	ssize_t mapLineSkip = tex.m_Width * bytesPP;
-
-	for (ssize_t y = 0; y < terrainSize; ++y)
-	{
-		for (ssize_t x = 0; x < terrainSize; ++x)
-		{
-			int offset = y * mapLineSkip + x * bytesPP;
-
-			// pick color channel with highest value
-			u16 value = std::max(mapdata[offset+bytesPP*2], std::max(mapdata[offset], mapdata[offset+bytesPP]));
-
-			heightmap[(terrainSize-y-1) * hmSize + x] = clamp(value * 256, 0, 65535);
-		}
-	}
+	ENSURE(heightmap_source.size() == (std::size_t) SQR(g_Game->GetWorld()->GetTerrain()->GetVerticesPerSide()));
+	std::copy(heightmap_source.begin(), heightmap_source.end(), heightmap);
 
 	// update simulation
 	CmpPtr<ICmpTerrain> cmpTerrain(*g_Game->GetSimulation2(), SYSTEM_ENTITY);
-	if (cmpTerrain) cmpTerrain->ReloadTerrain();
+	if (cmpTerrain)
+		cmpTerrain->ReloadTerrain();
+
 	g_Game->GetView()->GetLOSTexture().MakeDirty();
 }
 
@@ -373,6 +323,16 @@ QUERYHANDLER(VFSFileExists)
 	msg->exists = VfsFileExists(*msg->path);
 }
 
+QUERYHANDLER(VFSFileRealPath)
+{
+	VfsPath pathname(*msg->path);
+	if (pathname.empty())
+		return;
+	OsPath realPathname;
+	if (g_VFS->GetRealPath(pathname, realPathname) == INFO::OK)
+		msg->realPath = realPathname.string();
+}
+
 static Status AddToFilenames(const VfsPath& pathname, const CFileInfo& UNUSED(fileInfo), const uintptr_t cbData)
 {
 	std::vector<std::wstring>& filenames = *(std::vector<std::wstring>*)cbData;
@@ -382,13 +342,15 @@ static Status AddToFilenames(const VfsPath& pathname, const CFileInfo& UNUSED(fi
 
 QUERYHANDLER(GetMapList)
 {
-	std::vector<std::wstring> scenarioFilenames;
-	vfs::ForEachFile(g_VFS, L"maps/scenarios/", AddToFilenames, (uintptr_t)&scenarioFilenames, L"*.xml", vfs::DIR_RECURSIVE);
-	msg->scenarioFilenames = scenarioFilenames;
+#define GET_FILE_LIST(path, list) \
+	std::vector<std::wstring> list; \
+	vfs::ForEachFile(g_VFS, path, AddToFilenames, (uintptr_t)&list, L"*.xml", vfs::DIR_RECURSIVE); \
+	msg->list = list;
 
-	std::vector<std::wstring> skirmishFilenames;
-	vfs::ForEachFile(g_VFS, L"maps/skirmishes/", AddToFilenames, (uintptr_t)&skirmishFilenames, L"*.xml", vfs::DIR_RECURSIVE);
-	msg->skirmishFilenames = skirmishFilenames;
+	GET_FILE_LIST(L"maps/scenarios/", scenarioFilenames);
+	GET_FILE_LIST(L"maps/skirmishes/", skirmishFilenames);
+	GET_FILE_LIST(L"maps/tutorials/", tutorialFilenames);
+#undef GET_FILE_LIST
 }
 
 }

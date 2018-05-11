@@ -15,13 +15,12 @@
   <GarrisonHolder disable=""/>
   <Health>
     <Max>2000</Max>
-    <SpawnEntityOnDeath>rubble/rubble_stone_4x4</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_4x4</SpawnEntityOnDeath>
   </Health>
   <Identity>
     <Civ>rome</Civ>
     <SpecificName>Triumphal Arch</SpecificName>
     <Tooltip>Special Imperial Roman building.</Tooltip>
-    <History>The Triumphal Arch was built to commemorate a great victory or achievement by the emporer. They were highly decorated and large enough to march under by the Emperor's legions.</History>
     <Icon>structures/arch.png</Icon>
   </Identity>
   <Obstruction>

@@ -71,37 +71,42 @@ m.ResearchPlan.prototype.start = function(gameState)
 	this.onStart(gameState);
 };
 
+m.ResearchPlan.prototype.onStart = function(gameState)
+{
+	if (this.queueToReset)
+		gameState.ai.queueManager.changePriority(this.queueToReset, gameState.ai.Config.priorities[this.queueToReset]);
+
+	for (let i = gameState.getNumberOfPhases(); i > 0; --i)
+	{
+		if (this.type != gameState.getPhaseName(i))
+			continue;
+		gameState.ai.HQ.phasing = 0;
+		gameState.ai.HQ.OnPhaseUp(gameState, i);
+		break;
+	}
+};
+
 m.ResearchPlan.prototype.Serialize = function()
 {
-	let prop = {
+	return {
 		"category": this.category,
 		"type": this.type,
 		"ID": this.ID,
 		"metadata": this.metadata,
 		"cost": this.cost.Serialize(),
 		"number": this.number,
-		"rush": this.rush
+		"rush": this.rush,
+		"queueToReset": this.queueToReset || undefined
 	};
-
-	let func = {
-		"isGo": uneval(this.isGo),
-		"onStart": uneval(this.onStart)
-	};
-
-	return { "prop": prop, "func": func };
 };
 
 m.ResearchPlan.prototype.Deserialize = function(gameState, data)
 {
-	for (let key in data.prop)
-		this[key] = data.prop[key];
+	for (let key in data)
+		this[key] = data[key];
 
-	let cost = new API3.Resources();
-	cost.Deserialize(data.prop.cost);
-	this.cost = cost;
-
-	for (let fun in data.func)
-		this[fun] = eval(data.func[fun]);
+	this.cost = new API3.Resources();
+	this.cost.Deserialize(data.cost);
 };
 
 return m;

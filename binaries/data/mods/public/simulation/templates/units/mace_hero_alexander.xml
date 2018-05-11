@@ -10,22 +10,19 @@
       </Bonuses>
     </Melee>
   </Attack>
-  <Auras datatype="tokens">mace_hero_alexander</Auras>
-  <Cost>
-    <Resources>
-      <metal>300</metal>
-    </Resources>
-  </Cost>
+  <Auras datatype="tokens">
+    units/heroes/mace_hero_alexander_1
+    units/heroes/mace_hero_alexander_2
+  </Auras>
   <Identity>
     <Civ>mace</Civ>
     <Lang>greek</Lang>
     <GenericName>Alexander The Great</GenericName>
     <SpecificName>Mégās Aléxandros</SpecificName>
     <Tooltip>"Herocide" Bonus: +20% attack bonus vs. enemy Heroes.</Tooltip>
-    <History>The most powerful hero of them all - son of Philip II, king of Macedonia (336 BC - 323 BC). After conquering the rest of the Thracians and quelling the unrest of the Greeks, Alexander embarked on a world-conquest march. Defeating the Persian forces at Granicus (334 BC), Issus (333 BC) and Gaugamela (331 BC), he became master of the Persian Empire. Entering India, he defeated king Porus at Hydaspes (326 BC), but his weary troops made him halt. Died in Babylon at the age of 33 while planning a campaign against Arabia.</History>
     <Icon>units/hele_hero_alexander.png</Icon>
   </Identity>
   <VisualActor>
-    <Actor>units/macedonians/alexander.xml</Actor>
+    <Actor>units/macedonians/hero_cavalry_swordsman_alexander_m.xml</Actor>
   </VisualActor>
 </Entity>

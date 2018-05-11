@@ -1,28 +1,51 @@
-const BARTER_RESOURCE_AMOUNT_TO_SELL = 100;
-const BARTER_BUNCH_MULTIPLIER = 5;
-const BARTER_RESOURCES = ["food", "wood", "stone", "metal"];
-const BARTER_ACTIONS = ["Sell", "Buy"];
-const GATE_ACTIONS = ["lock", "unlock"];
+/**
+ * @file Contains all helper functions that are needed only for selection_panels.js
+ * and some that are needed for hotkeys, but not for anything inside input.js.
+ */
 
-// upgrade constants
 const UPGRADING_NOT_STARTED = -2;
 const UPGRADING_CHOSEN_OTHER = -1;
-
-// ==============================================
-// BARTER HELPERS
-// Resources to sell on barter panel
-var g_BarterSell = "food";
 
 function canMoveSelectionIntoFormation(formationTemplate)
 {
 	if (!(formationTemplate in g_canMoveIntoFormation))
-	{
 		g_canMoveIntoFormation[formationTemplate] = Engine.GuiInterfaceCall("CanMoveEntsIntoFormation", {
 			"ents": g_Selection.toList(),
 			"formationTemplate": formationTemplate
 		});
-	}
+
 	return g_canMoveIntoFormation[formationTemplate];
+}
+
+function hasSameRestrictionCategory(templateName1, templateName2)
+{
+	let template1 = GetTemplateData(templateName1);
+	let template2 = GetTemplateData(templateName2);
+
+	if (template1.trainingRestrictions && template2.trainingRestrictions)
+		return template1.trainingRestrictions.category == template2.trainingRestrictions.category;
+
+	if (template1.buildRestrictions && template2.buildRestrictions)
+		return template1.buildRestrictions.category == template2.buildRestrictions.category;
+
+	return false;
+}
+
+function getPlayerHighlightColor(player)
+{
+	return "color:" + rgbToGuiColor(g_DisplayedPlayerColors[player], 160);
+}
+
+/**
+ * Returns a "color:255 0 0 Alpha" string based on how many resources are needed.
+ */
+function resourcesToAlphaMask(neededResources)
+{
+	let totalCost = 0;
+	for (let resource in neededResources)
+		totalCost += +neededResources[resource];
+
+	return "color:255 0 0 " + Math.min(125, Math.round(+totalCost / 10) + 50);
 }
 
 function getStanceDisplayName(name)
@@ -78,7 +101,7 @@ function formatLimitString(trainEntLimit, trainEntCount, trainEntLimitChangers)
 	});
 
 	if (trainEntCount >= trainEntLimit)
-		text = "[color=\"red\"]" + text + "[/color]";
+		text = coloredText(text, "red");
 
 	for (var c in trainEntLimitChangers)
 	{
@@ -116,17 +139,14 @@ function formatBatchTrainingString(buildingsCountToTrainFullBatch, fullBatchSize
 	if (totalBatchTrainingCount < 2)
 		return "";
 
-	var fullBatchesString = "";
-	if (buildingsCountToTrainFullBatch > 0)
-	{
-		if (buildingsCountToTrainFullBatch > 1)
-			fullBatchesString = sprintf(translate("%(buildings)s*%(batchSize)s"), {
-				"buildings": buildingsCountToTrainFullBatch,
-				"batchSize": fullBatchSize
-			});
-		else
-			fullBatchesString = fullBatchSize;
-	}
+	let fullBatchesString = "";
+	if (buildingsCountToTrainFullBatch > 1)
+		fullBatchesString = sprintf(translate("%(buildings)s*%(batchSize)s"), {
+			"buildings": buildingsCountToTrainFullBatch,
+			"batchSize": fullBatchSize
+		});
+	else if (buildingsCountToTrainFullBatch == 1)
+		fullBatchesString = fullBatchSize;
 
 	// We need to display the batch details part if there is either more than
 	// one building with full batch or one building with the full batch and
@@ -134,21 +154,328 @@ function formatBatchTrainingString(buildingsCountToTrainFullBatch, fullBatchSize
 	let batchString;
 	if (buildingsCountToTrainFullBatch > 1 ||
 	    buildingsCountToTrainFullBatch == 1 && remainderBatch > 0)
-	{
 		if (remainderBatch > 0)
 			batchString = translate("%(action)s to train %(number)s (%(fullBatch)s + %(remainderBatch)s).");
 		else
 			batchString = translate("%(action)s to train %(number)s (%(fullBatch)s).");
-	}
 	else
 		batchString = translate("%(action)s to train %(number)s.");
 
-	return "[font=\"sans-13\"]" + sprintf(batchString, {
-		"action": "[font=\"sans-bold-13\"]" + translate("Shift-click") + "[/font]",
-		"number": totalBatchTrainingCount,
-		"fullBatch": fullBatchesString,
-		"remainderBatch": remainderBatch
-	}) + "[/font]";
+	return "[font=\"sans-13\"]" +
+		setStringTags(
+			sprintf(batchString, {
+				"action": "[font=\"sans-bold-13\"]" + translate("Shift-click") + "[/font]",
+				"number": totalBatchTrainingCount,
+				"fullBatch": fullBatchesString,
+				"remainderBatch": remainderBatch
+			}),
+			g_HotkeyTags) +
+		"[/font]";
 }
 
+/**
+ * Camera jumping: when the user presses a hotkey the current camera location is marked.
+ * When pressing another camera jump hotkey the camera jumps back to that position.
+ * When the camera is already roughly at that location, jump back to where it was previously.
+ */
+var g_JumpCameraPositions = [];
+var g_JumpCameraLast;
 
+function jumpCamera(index)
+{
+	let position = g_JumpCameraPositions[index];
+	if (!position)
+		return;
+
+	let threshold = Engine.ConfigDB_GetValue("user", "gui.session.camerajump.threshold");
+	if (g_JumpCameraLast &&
+	    Math.abs(Engine.CameraGetX() - position.x) < threshold &&
+	    Math.abs(Engine.CameraGetZ() - position.z) < threshold)
+		Engine.CameraMoveTo(g_JumpCameraLast.x, g_JumpCameraLast.z);
+	else
+	{
+		g_JumpCameraLast = { "x": Engine.CameraGetX(), "z": Engine.CameraGetZ() };
+		Engine.CameraMoveTo(position.x, position.z);
+	}
+}
+
+function setJumpCamera(index)
+{
+	g_JumpCameraPositions[index] = { "x": Engine.CameraGetX(), "z": Engine.CameraGetZ() };
+}
+
+/**
+ * Called by GUI when user clicks a research button.
+ */
+function addResearchToQueue(entity, researchType)
+{
+	Engine.PostNetworkCommand({
+		"type": "research",
+		"entity": entity,
+		"template": researchType
+	});
+}
+
+/**
+ * Called by GUI when user clicks a production queue item.
+ */
+function removeFromProductionQueue(entity, id)
+{
+	Engine.PostNetworkCommand({
+		"type": "stop-production",
+		"entity": entity,
+		"id": id
+	});
+}
+
+/**
+ * Called by unit selection buttons.
+ */
+function changePrimarySelectionGroup(templateName, deselectGroup)
+{
+	g_Selection.makePrimarySelection(templateName,
+		Engine.HotkeyIsPressed("session.deselectgroup") || deselectGroup);
+}
+
+function performCommand(entStates, commandName)
+{
+	if (!entStates.length)
+		return;
+
+	// Don't check all entities, because we assume a player cannot
+	// select entities from more than one player
+	if (!controlsPlayer(entStates[0].player) &&
+	    !(g_IsObserver && commandName == "focus-rally"))
+		return;
+
+	if (g_EntityCommands[commandName])
+		g_EntityCommands[commandName].execute(entStates);
+}
+
+function performAllyCommand(entity, commandName)
+{
+	if (!entity)
+		return;
+
+	let entState = GetEntityState(entity);
+	let playerState = GetSimState().players[Engine.GetPlayerID()];
+	if (!playerState.isMutualAlly[entState.player] || g_IsObserver)
+		return;
+
+	if (g_AllyEntityCommands[commandName])
+		g_AllyEntityCommands[commandName].execute(entState);
+}
+
+function performFormation(entities, formationTemplate)
+{
+	if (!entities)
+		return;
+
+	Engine.PostNetworkCommand({
+		"type": "formation",
+		"entities": entities,
+		"name": formationTemplate
+	});
+}
+
+function performStance(entities, stanceName)
+{
+	if (!entities)
+		return;
+
+	Engine.PostNetworkCommand({
+		"type": "stance",
+		"entities": entities,
+		"name": stanceName
+	});
+}
+
+function lockGate(lock)
+{
+	Engine.PostNetworkCommand({
+		"type": "lock-gate",
+		"entities": g_Selection.toList(),
+		"lock": lock
+	});
+}
+
+function packUnit(pack)
+{
+	Engine.PostNetworkCommand({
+		"type": "pack",
+		"entities": g_Selection.toList(),
+		"pack": pack,
+		"queued": false
+	});
+}
+
+function cancelPackUnit(pack)
+{
+	Engine.PostNetworkCommand({
+		"type": "cancel-pack",
+		"entities": g_Selection.toList(),
+		"pack": pack,
+		"queued": false
+	});
+}
+
+function upgradeEntity(Template)
+{
+	Engine.PostNetworkCommand({
+		"type": "upgrade",
+		"entities": g_Selection.toList(),
+		"template": Template,
+		"queued": false
+	});
+}
+
+function cancelUpgradeEntity()
+{
+	Engine.PostNetworkCommand({
+		"type": "cancel-upgrade",
+		"entities": g_Selection.toList(),
+		"queued": false
+	});
+}
+
+/**
+ * Set the camera to follow the given entity if it's a unit.
+ * Otherwise stop following.
+ */
+function setCameraFollow(entity)
+{
+	let entState = entity && GetEntityState(entity);
+	if (entState && hasClass(entState, "Unit"))
+		Engine.CameraFollow(entity);
+	else
+		Engine.CameraFollow(0);
+}
+
+function stopUnits(entities)
+{
+	Engine.PostNetworkCommand({
+		"type": "stop",
+		"entities": entities,
+		"queued": false
+	});
+}
+
+function unloadTemplate(template, owner)
+{
+	Engine.PostNetworkCommand({
+		"type": "unload-template",
+		"all": Engine.HotkeyIsPressed("session.unloadtype"),
+		"template": template,
+		"owner": owner,
+		// Filter out all entities that aren't garrisonable.
+		"garrisonHolders": g_Selection.toList().filter(ent => {
+			let state = GetEntityState(ent);
+			return state && !!state.garrisonHolder;
+		})
+	});
+}
+
+function unloadSelection()
+{
+	let parent = 0;
+	let ents = [];
+	for (let ent in g_Selection.selected)
+	{
+		let state = GetEntityState(+ent);
+		if (!state || !state.turretParent)
+			continue;
+		if (!parent)
+		{
+			parent = state.turretParent;
+			ents.push(+ent);
+		}
+		else if (state.turretParent == parent)
+			ents.push(+ent);
+	}
+	if (parent)
+		Engine.PostNetworkCommand({
+			"type": "unload",
+			"entities": ents,
+			"garrisonHolder": parent
+		});
+}
+
+function unloadAll()
+{
+	let garrisonHolders = g_Selection.toList().filter(e => {
+		let state = GetEntityState(e);
+		return state && !!state.garrisonHolder;
+	});
+
+	if (!garrisonHolders.length)
+		return;
+
+	let ownEnts = [];
+	let otherEnts = [];
+
+	for (let ent of garrisonHolders)
+	{
+		if (controlsPlayer(GetEntityState(ent).player))
+			ownEnts.push(ent);
+		else
+			otherEnts.push(ent);
+	}
+
+	if (ownEnts.length)
+		Engine.PostNetworkCommand({
+			"type": "unload-all",
+			"garrisonHolders": ownEnts
+		});
+
+	if (otherEnts.length)
+		Engine.PostNetworkCommand({
+			"type": "unload-all-by-owner",
+			"garrisonHolders": otherEnts
+		});
+}
+
+function backToWork()
+{
+	Engine.PostNetworkCommand({
+		"type": "back-to-work",
+		// Filter out all entities that can't go back to work.
+		"entities": g_Selection.toList().filter(ent => {
+			let state = GetEntityState(ent);
+			return state && state.unitAI && state.unitAI.hasWorkOrders;
+		})
+	});
+}
+
+function removeGuard()
+{
+	Engine.PostNetworkCommand({
+		"type": "remove-guard",
+		// Filter out all entities that are currently guarding/escorting.
+		"entities": g_Selection.toList().filter(ent => {
+			let state = GetEntityState(ent);
+			return state && state.unitAI && state.unitAI.isGuarding;
+		})
+	});
+}
+
+function raiseAlert()
+{
+	Engine.PostNetworkCommand({
+		"type": "alert-raise",
+		"entities": g_Selection.toList().filter(ent => {
+			let state = GetEntityState(ent);
+			return state && !!state.alertRaiser;
+		})
+	});
+}
+
+function endOfAlert()
+{
+	Engine.PostNetworkCommand({
+		"type": "alert-end",
+		"entities": g_Selection.toList().filter(ent => {
+			let state = GetEntityState(ent);
+			return state && !!state.alertRaiser;
+		})
+	});
+}

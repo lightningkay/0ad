@@ -21,8 +21,6 @@
 				<Waviness>3.0</Waviness>
 				<Murkiness>0.635742</Murkiness>
 				<Tint r="0" g="1" b="1"/>
-				<ReflectionTint r="0.27451" g="0.294118" b="0.584314"/>
-				<ReflectionTintStrength>0</ReflectionTintStrength>
 			</WaterBody>
 		</Water>
 		<Postproc>
@@ -42,7 +40,6 @@
 {
   "CircularMap": true,
   "Description": "Two Mediterranean land masses connected by a narrow spit of land, called an 'Isthmus'.",
-  "GameType": "conquest",
   "Keywords": [],
   "LockTeams": false,
   "Name": "Corinthian Isthmus (2)",
@@ -55,7 +52,10 @@
     }
   ],
   "Preview": "isthmus_scenario.png",
-  "RevealMap": false
+  "RevealMap": false,
+  "VictoryConditions": [
+    "conquest"
+  ]
 }
 ]]></ScriptSettings>
 	<Entities>

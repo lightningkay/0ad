@@ -6,6 +6,8 @@
 	"History":"The Ptolemaic dynasty was a Macedonian Greek royal family which ruled the Ptolemaic Empire in Egypt during the Hellenistic period. Their rule lasted for 275 years, from 305 BC to 30 BC. They were the last dynasty of ancient Egypt.",
 	"Music":[
 			{"File":"Ammon-Ra.ogg", "Type":"peace"},
+			{"File":"Sands_of_Time.ogg", "Type":"peace"},
+			{"File":"Land_between_the_two_Seas.ogg", "Type":"peace"},
 			{"File":"Valley_of_the_Nile.ogg", "Type":"peace"}
 		],
 	"Factions":
@@ -61,7 +63,7 @@
 	[
 		{
 			"Name":"Mercenary Army",
-			"History":"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and foreign mercenaries for the bulk of its military force, mainly because the loyalty of native Egyptian units was often suspect. Indeed, during one native uprising, Upper Egypt was lost to the Ptolemies for decades. Mercenaries were often battle-hardened and their loyalty can be bought, sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt under the Ptolemies was so prosperous as to be the richest of Alexander's successor states.",
+			"History":"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and foreign mercenaries for the bulk of its military force, mainly because the loyalty of native Egyptian units was often suspect. Indeed, during one native uprising, Upper Egypt was lost to the Ptolemies for decades. Mercenaries were often battle-hardened and their loyalty could be bought, sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt under the Ptolemies was so prosperous as to be the richest of Alexander's successor states.",
 			"Description":"The Ptolemies receive the Mercenary Camp, a barracks that is constructed in neutral territory and trains mercenary soldiers."
 		},
 		{
@@ -113,6 +115,11 @@
 			"Special":"When built along the shoreline, removes shroud of darkness over all the water, revealing all the coast lines on the map. Limit: 1."
 		}
 	],
+	"WallSets":
+	[
+		"other/wallset_palisade",
+		"structures/ptol_wallset_stone"
+	],
 	"StartEntities":
 	[
 		{
@@ -127,7 +134,7 @@
 			"Count": 2
 		},
 		{
-			"Template": "units/ptol_infantry_archer_b",
+			"Template": "units/ptol_infantry_javelinist_b",
 			"Count": 2
 		},
 		{
@@ -136,18 +143,18 @@
 	],
 	"Formations":
 	[
-		"formations/null",
-		"formations/box",
-		"formations/column_closed",
-		"formations/line_closed",
-		"formations/column_open",
-		"formations/line_open",
-		"formations/flank",
-		"formations/skirmish",
-		"formations/wedge",
-		"formations/battle_line",
-		"formations/phalanx",
-		"formations/syntagma"
+		"special/formations/null",
+		"special/formations/box",
+		"special/formations/column_closed",
+		"special/formations/line_closed",
+		"special/formations/column_open",
+		"special/formations/line_open",
+		"special/formations/flank",
+		"special/formations/skirmish",
+		"special/formations/wedge",
+		"special/formations/battle_line",
+		"special/formations/phalanx",
+		"special/formations/syntagma"
 	],
 	"AINames":
 	[
@@ -173,7 +180,6 @@
 	],
 	"SkirmishReplacements":
 	{
-		"skirmish/units/default_infantry_ranged_b": "units/ptol_infantry_archer_b",
 		"skirmish/units/default_infantry_melee_b": "units/ptol_infantry_pikeman_b",
 		"skirmish/units/default_cavalry": "units/ptol_cavalry_archer_b",
 		"skirmish/structures/default_house_5": "structures/{civ}_house"

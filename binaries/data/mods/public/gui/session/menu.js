@@ -1,11 +1,11 @@
 // Menu / panel border size
-const MARGIN = 4;
+var MARGIN = 4;
 
 // Includes the main menu button
-const NUM_BUTTONS = 9;
+const NUM_BUTTONS = 10;
 
 // Regular menu buttons
-const BUTTON_HEIGHT = 32;
+var BUTTON_HEIGHT = 32;
 
 // The position where the bottom of the menu will end up (currently 228)
 const END_MENU_POSITION = (BUTTON_HEIGHT * NUM_BUTTONS) + MARGIN;
@@ -16,20 +16,43 @@ const MENU_BOTTOM = 0;
 // Menu starting position: top
 const MENU_TOP = MENU_BOTTOM - END_MENU_POSITION;
 
-// Menu starting position: overall
-const INITIAL_MENU_POSITION = "100%-164 " + MENU_TOP + " 100% " + MENU_BOTTOM;
-
 // Number of pixels per millisecond to move
-const MENU_SPEED = 1.2;
-
-// Available resources in trade and tribute menu
-const RESOURCES = ["food", "wood", "stone", "metal"];
+var MENU_SPEED = 1.2;
 
 // Trade menu: step for probability changes
-const STEP = 5;
+var STEP = 5;
 
 // Shown in the trade dialog.
-const g_IdleTraderTextColor = "orange";
+var g_IdleTraderTextColor = "orange";
+
+/**
+ * Store civilization code and page (structree or history) opened in civilization info.
+ */
+var g_CivInfo = {
+	"code": "",
+	"page": "page_structree.xml"
+};
+
+/**
+ * The barter constants should match with the simulation
+ * Quantity of goods to sell per click.
+ */
+const g_BarterResourceSellQuantity = 100;
+
+/**
+ * Multiplier to be applied when holding the massbarter hotkey.
+ */
+const g_BarterMultiplier = 5;
+
+/**
+ * Barter actions, as mapped to the names of GUI Buttons.
+ */
+const g_BarterActions = ["Buy", "Sell"];
+
+/**
+ * Currently selected resource type to sell in the barter GUI.
+ */
+var g_BarterSell;
 
 var g_IsMenuOpen = false;
 
@@ -37,13 +60,27 @@ var g_IsDiplomacyOpen = false;
 var g_IsTradeOpen = false;
 var g_IsObjectivesOpen = false;
 
+/**
+ * Used to disable a specific bribe button for the time we are waiting for the result of the bribe after it was clicked.
+ * It contains an array per viewedPlayer. This array is a list of the players that were bribed.
+ */
+var g_BribeButtonsWaiting = {};
+
+/**
+ * Remember last viewed summary panel and charts.
+ */
+var g_SummarySelectedData;
+
 // Redefined every time someone makes a tribute (so we can save some data in a closure). Called in input.js handleInputBeforeGui.
 var g_FlushTributing = function() {};
 
-// Ignore size defined in XML and set the actual menu size here
-function initMenuPosition()
+function initMenu()
 {
-	Engine.GetGUIObjectByName("menu").size = INITIAL_MENU_POSITION;
+	Engine.GetGUIObjectByName("menu").size = "100%-164 " + MENU_TOP + " 100% " + MENU_BOTTOM;
+
+	// TODO: Atlas should pass g_GameAttributes.settings
+	for (let button of ["menuExitButton", "summaryButton", "objectivesButton", "diplomacyButton"])
+		Engine.GetGUIObjectByName(button).enabled = !Engine.IsAtlasRunning();
 }
 
 function updateMenuPosition(dt)
@@ -86,6 +123,15 @@ function optionsMenuButton()
 {
 	closeOpenDialogs();
 	openOptions();
+}
+
+function lobbyDialogButton()
+{
+	if (!Engine.HasXmppClient())
+		return;
+
+	closeOpenDialogs();
+	Engine.PushGuiPage("page_lobby.xml", { "dialog": true });
 }
 
 function chatMenuButton()
@@ -167,7 +213,7 @@ function openDeleteDialog(selection)
 {
 	closeOpenDialogs();
 
-	let deleteSelectedEntities = function (selectionArg)
+	let deleteSelectedEntities = function(selectionArg)
 	{
 		Engine.PostNetworkCommand({
 			"type": "delete-entities",
@@ -202,11 +248,20 @@ function openOptions()
 	pauseGame();
 
 	Engine.PushGuiPage("page_options.xml", {
-		"callback": "resumeGame"
+		"callback": "optionsPageClosed"
 	});
 }
 
-function openChat(teamChat = false)
+function optionsPageClosed(data)
+{
+	for (let callback of data)
+		if (global[callback])
+			global[callback]();
+
+	resumeGame();
+}
+
+function openChat(command = "")
 {
 	if (g_Disconnected)
 		return;
@@ -214,11 +269,12 @@ function openChat(teamChat = false)
 	closeOpenDialogs();
 
 	let chatAddressee = Engine.GetGUIObjectByName("chatAddressee");
-	let command = teamChat ? (g_IsObserver ? "/observers" : "/allies") : "";
 	chatAddressee.selected = chatAddressee.list_data.indexOf(command);
 
 	Engine.GetGUIObjectByName("chatInput").focus();
 	Engine.GetGUIObjectByName("chatDialogPanel").hidden = false;
+
+	updateChatHistory();
 }
 
 function closeChat()
@@ -226,6 +282,92 @@ function closeChat()
 	Engine.GetGUIObjectByName("chatInput").caption = "";
 	Engine.GetGUIObjectByName("chatInput").blur(); // Remove focus
 	Engine.GetGUIObjectByName("chatDialogPanel").hidden = true;
+}
+
+function resizeDiplomacyDialog()
+{
+	let dialog = Engine.GetGUIObjectByName("diplomacyDialogPanel");
+	let size = dialog.size;
+
+	let tribSize = Engine.GetGUIObjectByName("diplomacyPlayer[0]_tribute[0]").size;
+	let widthOffset = g_ResourceData.GetCodes().length * (tribSize.right - tribSize.left) / 2;
+	size.left -= widthOffset;
+	size.right += widthOffset;
+
+	let firstRow = Engine.GetGUIObjectByName("diplomacyPlayer[0]").size;
+	let heightOffset = (g_Players.length - 1) * (firstRow.bottom - firstRow.top) / 2;
+	size.top -= heightOffset;
+	size.bottom += heightOffset;
+
+	dialog.size = size;
+}
+
+function initChatWindow()
+{
+	let filters = prepareForDropdown(g_ChatHistoryFilters);
+	let chatHistoryFilter = Engine.GetGUIObjectByName("chatHistoryFilter");
+	chatHistoryFilter.list = filters.text;
+	chatHistoryFilter.list_data = filters.key;
+	chatHistoryFilter.selected = 0;
+
+	Engine.GetGUIObjectByName("extendedChat").checked =
+		Engine.ConfigDB_GetValue("user", "chat.session.extended") == "true";
+
+	resizeChatWindow();
+}
+
+function resizeChatWindow()
+{
+	// Hide/show the panel
+	let chatHistoryPage = Engine.GetGUIObjectByName("chatHistoryPage");
+	let extended = Engine.GetGUIObjectByName("extendedChat").checked;
+	chatHistoryPage.hidden = !extended;
+
+	// Resize the window
+	let chatDialogPanel = Engine.GetGUIObjectByName("chatDialogPanel");
+	if (extended)
+	{
+		chatDialogPanel.size = Engine.GetGUIObjectByName("chatDialogPanelLarge").size;
+		// Adjust the width so that the chat history is in the golden ratio
+		let chatHistory = Engine.GetGUIObjectByName("chatHistory");
+		let height = chatHistory.getComputedSize().bottom - chatHistory.getComputedSize().top;
+		let width = (1 + Math.sqrt(5)) / 2 * height;
+		let size = chatDialogPanel.size;
+		size.left = -width / 2 - chatHistory.size.left;
+		size.right = width / 2 + chatHistory.size.left;
+		chatDialogPanel.size = size;
+	}
+	else
+		chatDialogPanel.size = Engine.GetGUIObjectByName("chatDialogPanelSmall").size;
+}
+
+function updateChatHistory()
+{
+	if (Engine.GetGUIObjectByName("chatDialogPanel").hidden ||
+	    !Engine.GetGUIObjectByName("extendedChat").checked)
+		return;
+
+	let chatHistoryFilter = Engine.GetGUIObjectByName("chatHistoryFilter");
+	let selected = chatHistoryFilter.list_data[chatHistoryFilter.selected];
+
+	Engine.GetGUIObjectByName("chatHistory").caption =
+		g_ChatHistory.filter(msg => msg.filter[selected]).map(msg =>
+			Engine.ConfigDB_GetValue("user", "chat.timestamp") == "true" ?
+				sprintf(translate("%(time)s %(message)s"), {
+					"time": msg.timePrefix,
+					"message": msg.txt
+				}) :
+				msg.txt
+		).join("\n");
+}
+
+function onToggleChatWindowExtended()
+{
+	saveSettingAndWriteToUserConfig("chat.session.extended", String(Engine.GetGUIObjectByName("extendedChat").checked));
+
+	resizeChatWindow();
+
+	Engine.GetGUIObjectByName("chatInput").focus();
 }
 
 function openDiplomacy()
@@ -237,130 +379,9 @@ function openDiplomacy()
 
 	g_IsDiplomacyOpen = true;
 
-	let isCeasefireActive = GetSimState().ceasefireActive;
-
-	// Get offset for one line
-	let onesize = Engine.GetGUIObjectByName("diplomacyPlayer[0]").size;
-	let rowsize = onesize.bottom - onesize.top;
-
-	// We don't include gaia
-	for (let i = 1; i < g_Players.length; ++i)
-	{
-		let myself = i == g_ViewedPlayer;
-		let playerInactive = isPlayerObserver(g_ViewedPlayer) || isPlayerObserver(i);
-		let hasAllies = g_Players.filter(player => player.isMutualAlly[g_ViewedPlayer]).length > 1;
-
-		diplomacySetupTexts(i, rowsize);
-		diplomacyFormatStanceButtons(i, myself || playerInactive || isCeasefireActive || g_Players[g_ViewedPlayer].teamsLocked);
-		diplomacyFormatTributeButtons(i, myself || playerInactive);
-		diplomacyFormatAttackRequestButton(i, myself || playerInactive || isCeasefireActive || !hasAllies || !g_Players[i].isEnemy[g_ViewedPlayer]);
-	}
+	updateDiplomacy(true);
 
 	Engine.GetGUIObjectByName("diplomacyDialogPanel").hidden = false;
-}
-
-function diplomacySetupTexts(i, rowsize)
-{
-	// Apply offset
-	let row = Engine.GetGUIObjectByName("diplomacyPlayer["+(i-1)+"]");
-	let size = row.size;
-	size.top = rowsize * (i-1);
-	size.bottom = rowsize * i;
-	row.size = size;
-
-	row.sprite = "color: " + rgbToGuiColor(g_Players[i].color) + " 32";
-
-	Engine.GetGUIObjectByName("diplomacyPlayerName["+(i-1)+"]").caption = colorizePlayernameByID(i);
-	Engine.GetGUIObjectByName("diplomacyPlayerCiv["+(i-1)+"]").caption = g_CivData[g_Players[i].civ].Name;
-
-	Engine.GetGUIObjectByName("diplomacyPlayerTeam["+(i-1)+"]").caption =
-		g_Players[i].team < 0 ? translateWithContext("team", "None") : g_Players[i].team+1;
-
-	Engine.GetGUIObjectByName("diplomacyPlayerTheirs["+(i-1)+"]").caption =
-		i == g_ViewedPlayer ? "" :
-		g_Players[i].isAlly[g_ViewedPlayer] ? translate("Ally") :
-		g_Players[i].isNeutral[g_ViewedPlayer] ? translate("Neutral") : translate("Enemy");
-}
-
-function diplomacyFormatStanceButtons(i, hidden)
-{
-	for (let stance of ["Ally", "Neutral", "Enemy"])
-	{
-		let button = Engine.GetGUIObjectByName("diplomacyPlayer"+stance+"["+(i-1)+"]");
-		button.hidden = hidden;
-		if (hidden)
-			continue;
-
-		button.caption = g_Players[g_ViewedPlayer]["is" + stance][i] ? translate("x") : "";
-		button.enabled = controlsPlayer(g_ViewedPlayer);
-
-		button.onPress = (function(player, stance) { return function() {
-			Engine.PostNetworkCommand({
-				"type": "diplomacy",
-				"player": i,
-				"to": stance.toLowerCase()
-			});
-		}; })(i, stance);
-	}
-}
-
-function diplomacyFormatTributeButtons(i, hidden)
-{
-	for (let resource of RESOURCES)
-	{
-		let button = Engine.GetGUIObjectByName("diplomacyPlayerTribute"+resource[0].toUpperCase()+resource.substring(1)+"["+(i-1)+"]");
-		button.hidden = hidden;
-		if (hidden)
-			continue;
-
-		button.enabled = controlsPlayer(g_ViewedPlayer);
-		button.tooltip = formatTributeTooltip(i, resource, 100);
-		button.onpress = (function(i, resource, button) {
-			// Shift+click to send 500, shift+click+click to send 1000, etc.
-			// See INPUT_MASSTRIBUTING in input.js
-			let multiplier = 1;
-			return function() {
-				let isBatchTrainPressed = Engine.HotkeyIsPressed("session.masstribute");
-				if (isBatchTrainPressed)
-				{
-					inputState = INPUT_MASSTRIBUTING;
-					multiplier += multiplier == 1 ? 4 : 5;
-				}
-
-				let amounts = {};
-				for (let type of RESOURCES)
-					amounts[type] = 0;
-				amounts[resource] = 100 * multiplier;
-
-				button.tooltip = formatTributeTooltip(i, resource, amounts[resource]);
-
-				// This is in a closure so that we have access to `player`, `amounts`, and `multiplier` without some
-				// evil global variable hackery.
-				g_FlushTributing = function() {
-					Engine.PostNetworkCommand({ "type": "tribute", "player": i, "amounts":  amounts });
-					multiplier = 1;
-					button.tooltip = formatTributeTooltip(i, resource, 100);
-				};
-
-				if (!isBatchTrainPressed)
-					g_FlushTributing();
-			};
-		})(i, resource, button);
-	}
-}
-
-function diplomacyFormatAttackRequestButton(i, hidden)
-{
-	let button = Engine.GetGUIObjectByName("diplomacyAttackRequest["+(i-1)+"]");
-	button.hidden = hidden;
-	if (hidden)
-		return;
-
-	button.enabled = controlsPlayer(g_ViewedPlayer);
-	button.tooltip = translate("Request your allies to attack this enemy");
-	button.onpress = (function(i) { return function() {
-		Engine.PostNetworkCommand({ "type": "attack-request", "source": g_ViewedPlayer, "target": i });
-	}; })(i);
 }
 
 function closeDiplomacy()
@@ -378,6 +399,252 @@ function toggleDiplomacy()
 		openDiplomacy();
 }
 
+function updateDiplomacy(opening = false)
+{
+	if (g_ViewedPlayer < 1 || !g_IsDiplomacyOpen)
+		return;
+
+	let simState = GetSimState();
+	let isCeasefireActive = simState.ceasefireActive;
+	let hasSharedLos = GetSimState().players[g_ViewedPlayer].hasSharedLos;
+
+	// Get offset for one line
+	let onesize = Engine.GetGUIObjectByName("diplomacyPlayer[0]").size;
+	let rowsize = onesize.bottom - onesize.top;
+
+	// We don't include gaia
+	for (let i = 1; i < g_Players.length; ++i)
+	{
+		let myself = i == g_ViewedPlayer;
+		let playerInactive = isPlayerObserver(g_ViewedPlayer) || isPlayerObserver(i);
+		let hasAllies = g_Players.filter(player => player.isMutualAlly[g_ViewedPlayer]).length > 1;
+
+		diplomacySetupTexts(i, rowsize);
+		diplomacyFormatStanceButtons(i, myself || playerInactive || isCeasefireActive || g_Players[g_ViewedPlayer].teamsLocked);
+		// Tribute buttons do not need to be updated onTick, and should not because of massTributing
+		if (opening)
+			diplomacyFormatTributeButtons(i, myself || playerInactive);
+		diplomacyFormatAttackRequestButton(i, myself || playerInactive || isCeasefireActive || !hasAllies || !g_Players[i].isEnemy[g_ViewedPlayer]);
+		diplomacyFormatSpyRequestButton(i, myself || playerInactive || g_Players[i].isMutualAlly[g_ViewedPlayer] && hasSharedLos);
+	}
+
+	let diplomacyCeasefireCounter = Engine.GetGUIObjectByName("diplomacyCeasefireCounter");
+	diplomacyCeasefireCounter.caption = sprintf(
+		translateWithContext("ceasefire", "Remaining ceasefire time: %(time)s."),
+		{ "time": timeToString(simState.ceasefireTimeRemaining) }
+	);
+	diplomacyCeasefireCounter.hidden = !isCeasefireActive;
+}
+
+function diplomacySetupTexts(i, rowsize)
+{
+	// Apply offset
+	let row = Engine.GetGUIObjectByName("diplomacyPlayer[" + (i - 1) + "]");
+	let size = row.size;
+	size.top = rowsize * (i - 1);
+	size.bottom = rowsize * i;
+	row.size = size;
+	row.hidden = false;
+
+	row.sprite = "color:" + rgbToGuiColor(g_DisplayedPlayerColors[i], 32);
+
+	setOutcomeIcon(g_Players[i].state, "diplomacyPlayerOutcome[" + (i - 1) + "]");
+
+	let diplomacyPlayerName = Engine.GetGUIObjectByName("diplomacyPlayerName[" + (i - 1) + "]");
+	diplomacyPlayerName.caption = colorizePlayernameByID(i);
+	diplomacyPlayerName.tooltip = translateAISettings(g_GameAttributes.settings.PlayerData[i]);
+
+	Engine.GetGUIObjectByName("diplomacyPlayerCiv[" + (i - 1) + "]").caption = g_CivData[g_Players[i].civ].Name;
+
+	Engine.GetGUIObjectByName("diplomacyPlayerTeam[" + (i - 1) + "]").caption =
+		g_Players[i].team < 0 ? translateWithContext("team", "None") : g_Players[i].team + 1;
+
+	Engine.GetGUIObjectByName("diplomacyPlayerTheirs[" + (i - 1) + "]").caption =
+		i == g_ViewedPlayer ? "" :
+			g_Players[i].isAlly[g_ViewedPlayer] ?
+				translate("Ally") :
+				g_Players[i].isNeutral[g_ViewedPlayer] ? translate("Neutral") : translate("Enemy");
+}
+
+function diplomacyFormatStanceButtons(i, hidden)
+{
+	for (let stance of ["Ally", "Neutral", "Enemy"])
+	{
+		let button = Engine.GetGUIObjectByName("diplomacyPlayer" + stance + "[" + (i - 1) + "]");
+		button.hidden = hidden;
+		if (hidden)
+			continue;
+
+		let isCurrentStance = g_Players[g_ViewedPlayer]["is" + stance][i];
+		button.caption = isCurrentStance ? translate("x") : "";
+		button.enabled = controlsPlayer(g_ViewedPlayer) && !isCurrentStance;
+
+		button.onPress = (function(player, stance) { return function() {
+			Engine.PostNetworkCommand({
+				"type": "diplomacy",
+				"player": i,
+				"to": stance.toLowerCase()
+			});
+		}; })(i, stance);
+	}
+}
+
+function diplomacyFormatTributeButtons(i, hidden)
+{
+	let resCodes = g_ResourceData.GetCodes();
+	let r = 0;
+	for (let resCode of resCodes)
+	{
+		let button = Engine.GetGUIObjectByName("diplomacyPlayer[" + (i - 1) + "]_tribute[" + r + "]");
+		if (!button)
+		{
+			warn("Current GUI limits prevent displaying more than " + r + " tribute buttons!");
+			break;
+		}
+
+		Engine.GetGUIObjectByName("diplomacyPlayer[" + (i - 1) + "]_tribute[" + r + "]_image").sprite = "stretched:session/icons/resources/" + resCode + ".png";
+		button.hidden = hidden;
+		setPanelObjectPosition(button, r, r + 1, 0);
+		++r;
+		if (hidden)
+			continue;
+
+		button.enabled = controlsPlayer(g_ViewedPlayer);
+		button.tooltip = formatTributeTooltip(i, resCode, 100);
+		button.onPress = (function(i, resCode, button) {
+			// Shift+click to send 500, shift+click+click to send 1000, etc.
+			// See INPUT_MASSTRIBUTING in input.js
+			let multiplier = 1;
+			return function() {
+				let isBatchTrainPressed = Engine.HotkeyIsPressed("session.masstribute");
+				if (isBatchTrainPressed)
+				{
+					inputState = INPUT_MASSTRIBUTING;
+					multiplier += multiplier == 1 ? 4 : 5;
+				}
+
+				let amounts = {};
+				for (let res of resCodes)
+					amounts[res] = 0;
+				amounts[resCode] = 100 * multiplier;
+
+				button.tooltip = formatTributeTooltip(i, resCode, amounts[resCode]);
+
+				// This is in a closure so that we have access to `player`, `amounts`, and `multiplier` without some
+				// evil global variable hackery.
+				g_FlushTributing = function() {
+					Engine.PostNetworkCommand({ "type": "tribute", "player": i, "amounts": amounts });
+					multiplier = 1;
+					button.tooltip = formatTributeTooltip(i, resCode, 100);
+				};
+
+				if (!isBatchTrainPressed)
+					g_FlushTributing();
+			};
+		})(i, resCode, button);
+	}
+}
+
+function diplomacyFormatAttackRequestButton(i, hidden)
+{
+	let button = Engine.GetGUIObjectByName("diplomacyAttackRequest[" + (i - 1) + "]");
+	button.hidden = hidden;
+	if (hidden)
+		return;
+
+	button.enabled = controlsPlayer(g_ViewedPlayer);
+	button.tooltip = translate("Request your allies to attack this enemy");
+	button.onPress = (function(i) { return function() {
+		Engine.PostNetworkCommand({ "type": "attack-request", "source": g_ViewedPlayer, "player": i });
+	}; })(i);
+}
+
+function diplomacyFormatSpyRequestButton(i, hidden)
+{
+	let button = Engine.GetGUIObjectByName("diplomacySpyRequest[" + (i - 1) + "]");
+	let template = GetTemplateData("special/spy");
+	button.hidden = hidden || !template || GetSimState().players[g_ViewedPlayer].disabledTemplates["special/spy"];
+	if (button.hidden)
+		return;
+
+	button.enabled = controlsPlayer(g_ViewedPlayer) &&
+	                 !(g_BribeButtonsWaiting[g_ViewedPlayer] && g_BribeButtonsWaiting[g_ViewedPlayer].indexOf(i) != -1);
+	let modifier = "";
+	let tooltips = [translate("Bribe a random unit from this player and share its vision during a limited period.")];
+	if (!button.enabled)
+		modifier = "color:0 0 0 127:grayscale:";
+	else
+	{
+		if (template.requiredTechnology)
+		{
+			let technologyEnabled = Engine.GuiInterfaceCall("IsTechnologyResearched", {
+				"tech": template.requiredTechnology,
+				"player": g_ViewedPlayer
+			});
+			if (!technologyEnabled)
+			{
+				modifier = "color:0 0 0 127:grayscale:";
+				button.enabled = false;
+				tooltips.push(getRequiredTechnologyTooltip(technologyEnabled, template.requiredTechnology, GetSimState().players[g_ViewedPlayer].civ));
+			}
+		}
+
+		if (template.cost)
+		{
+			let modifiedTemplate = clone(template);
+			for (let res in template.cost)
+				modifiedTemplate.cost[res] = Math.floor(GetSimState().players[i].spyCostMultiplier * template.cost[res]);
+			tooltips.push(getEntityCostTooltip(modifiedTemplate));
+			let neededResources = Engine.GuiInterfaceCall("GetNeededResources", {
+				"cost": modifiedTemplate.cost,
+				"player": g_ViewedPlayer
+			});
+			let costRatio = Engine.GetTemplate("special/spy").VisionSharing.FailureCostRatio;
+			if (costRatio > 0)
+			{
+				tooltips.push(translate("A failed bribe will cost you:"));
+				for (let res in modifiedTemplate.cost)
+					modifiedTemplate.cost[res] = Math.floor(costRatio * modifiedTemplate.cost[res]);
+				tooltips.push(getEntityCostTooltip(modifiedTemplate));
+			}
+
+			if (neededResources)
+			{
+				if (button.enabled)
+					modifier = resourcesToAlphaMask(neededResources) + ":";
+				button.enabled = false;
+				tooltips.push(getNeededResourcesTooltip(neededResources));
+			}
+		}
+	}
+	let icon = Engine.GetGUIObjectByName("diplomacySpyRequestImage[" + (i - 1) + "]");
+	icon.sprite = modifier + "stretched:session/icons/bribes.png";
+	button.tooltip = tooltips.filter(tip => tip).join("\n");
+	button.onPress = (function(i, button) { return function() {
+		Engine.PostNetworkCommand({ "type": "spy-request", "source": g_ViewedPlayer, "player": i });
+		if (!g_BribeButtonsWaiting[g_ViewedPlayer])
+			g_BribeButtonsWaiting[g_ViewedPlayer] = [];
+		// Don't push i twice
+		if (g_BribeButtonsWaiting[g_ViewedPlayer].indexOf(i) == -1)
+			g_BribeButtonsWaiting[g_ViewedPlayer].push(i);
+		diplomacyFormatSpyRequestButton(i, false);
+	}; })(i, button);
+}
+
+function resizeTradeDialog()
+{
+	let dialog = Engine.GetGUIObjectByName("tradeDialogPanel");
+	let size = dialog.size;
+	let width = size.right - size.left;
+
+	let tradeSize = Engine.GetGUIObjectByName("tradeResource[0]").size;
+	width += g_ResourceData.GetCodes().length * (tradeSize.right - tradeSize.left);
+
+	size.left = -width / 2;
+	size.right = width / 2;
+	dialog.size = size;
+}
+
 function openTrade()
 {
 	closeOpenDialogs();
@@ -387,85 +654,226 @@ function openTrade()
 
 	g_IsTradeOpen = true;
 
-	var updateButtons = function()
+	let proba = Engine.GuiInterfaceCall("GetTradingGoods", g_ViewedPlayer);
+	let button = {};
+	let resCodes = g_ResourceData.GetCodes();
+	let currTradeSelection = resCodes[0];
+
+	let updateTradeButtons = function()
 	{
-		for (var res in button)
+		for (let res in button)
 		{
 			button[res].label.caption = proba[res] + "%";
 
-			button[res].sel.hidden = !controlsPlayer(g_ViewedPlayer) || res != selec;
-			button[res].up.hidden = !controlsPlayer(g_ViewedPlayer) || res == selec || proba[res] == 100 || proba[selec] == 0;
-			button[res].dn.hidden = !controlsPlayer(g_ViewedPlayer) || res == selec || proba[res] == 0 || proba[selec] == 100;
+			button[res].sel.hidden = !controlsPlayer(g_ViewedPlayer) || res != currTradeSelection;
+			button[res].up.hidden = !controlsPlayer(g_ViewedPlayer) || res == currTradeSelection || proba[res] == 100 || proba[currTradeSelection] == 0;
+			button[res].dn.hidden = !controlsPlayer(g_ViewedPlayer) || res == currTradeSelection || proba[res] == 0 || proba[currTradeSelection] == 100;
 		}
 	};
 
-	var proba = Engine.GuiInterfaceCall("GetTradingGoods", g_ViewedPlayer);
-	var button = {};
-	var selec = RESOURCES[0];
-	for (var i = 0; i < RESOURCES.length; ++i)
-	{
-		var buttonResource = Engine.GetGUIObjectByName("tradeResource["+i+"]");
-		if (i > 0)
-		{
-			var size = Engine.GetGUIObjectByName("tradeResource["+(i-1)+"]").size;
-			var width = size.right - size.left;
-			size.left += width;
-			size.right += width;
-			Engine.GetGUIObjectByName("tradeResource["+i+"]").size = size;
-		}
-		var resource = RESOURCES[i];
-		proba[resource] = (proba[resource] ? proba[resource] : 0);
-		var buttonResource = Engine.GetGUIObjectByName("tradeResourceButton["+i+"]");
-		var icon = Engine.GetGUIObjectByName("tradeResourceIcon["+i+"]");
-		icon.sprite = "stretched:session/icons/resources/" + resource + ".png";
-		var label = Engine.GetGUIObjectByName("tradeResourceText["+i+"]");
-		var buttonUp = Engine.GetGUIObjectByName("tradeArrowUp["+i+"]");
-		var buttonDn = Engine.GetGUIObjectByName("tradeArrowDn["+i+"]");
-		var iconSel = Engine.GetGUIObjectByName("tradeResourceSelection["+i+"]");
-		button[resource] = { "up": buttonUp, "dn": buttonDn, "label": label, "sel": iconSel };
+	hideRemaining("tradeResources", resCodes.length);
+	Engine.GetGUIObjectByName("tradeHelp").hidden = false;
 
+	for (let i = 0; i < resCodes.length; ++i)
+	{
+		let resCode = resCodes[i];
+
+		let barterResource = Engine.GetGUIObjectByName("barterResource[" + i + "]");
+		if (!barterResource)
+		{
+			 warn("Current GUI limits prevent displaying more than " + i + " resources in the barter dialog!");
+			 break;
+		}
+
+		// Barter:
+		barterOpenCommon(resCode, i, "barter");
+		setPanelObjectPosition(barterResource, i, i + 1);
+
+		// Trade:
+		let tradeResource = Engine.GetGUIObjectByName("tradeResource[" + i + "]");
+		if (!tradeResource)
+		{
+			 warn("Current GUI limits prevent displaying more than " + i + " resources in the trading goods selection dialog!");
+			 break;
+		}
+
+		setPanelObjectPosition(tradeResource, i, i + 1);
+
+		let icon = Engine.GetGUIObjectByName("tradeResourceIcon[" + i + "]");
+		icon.sprite = "stretched:session/icons/resources/" + resCode + ".png";
+
+		let buttonUp = Engine.GetGUIObjectByName("tradeArrowUp[" + i + "]");
+		let buttonDn = Engine.GetGUIObjectByName("tradeArrowDn[" + i + "]");
+
+		button[resCode] = {
+			"up": buttonUp,
+			"dn": buttonDn,
+			"label": Engine.GetGUIObjectByName("tradeResourceText[" + i + "]"),
+			"sel": Engine.GetGUIObjectByName("tradeResourceSelection[" + i + "]")
+		};
+
+		proba[resCode] = proba[resCode] || 0;
+
+		let buttonResource = Engine.GetGUIObjectByName("tradeResourceButton[" + i + "]");
 		buttonResource.enabled = controlsPlayer(g_ViewedPlayer);
-		buttonResource.onpress = (function(resource){
-			return function() {
+		buttonResource.onPress = (resource => {
+			return () => {
 				if (Engine.HotkeyIsPressed("session.fulltradeswap"))
 				{
-					for (var ress of RESOURCES)
-						proba[ress] = 0;
+					for (let res of resCodes)
+						proba[res] = 0;
 					proba[resource] = 100;
-					Engine.PostNetworkCommand({"type": "set-trading-goods", "tradingGoods": proba});
+					Engine.PostNetworkCommand({ "type": "set-trading-goods", "tradingGoods": proba });
 				}
-				selec = resource;
-				updateButtons();
+				currTradeSelection = resource;
+				updateTradeButtons();
 			};
-		})(resource);
+		})(resCode);
 
 		buttonUp.enabled = controlsPlayer(g_ViewedPlayer);
-		buttonUp.onpress = (function(resource){
-			return function() {
-				proba[resource] += Math.min(STEP, proba[selec]);
-				proba[selec]    -= Math.min(STEP, proba[selec]);
-				Engine.PostNetworkCommand({"type": "set-trading-goods", "tradingGoods": proba});
-				updateButtons();
+		buttonUp.onPress = (resource => {
+			return () => {
+				proba[resource] += Math.min(STEP, proba[currTradeSelection]);
+				proba[currTradeSelection] -= Math.min(STEP, proba[currTradeSelection]);
+				Engine.PostNetworkCommand({ "type": "set-trading-goods", "tradingGoods": proba });
+				updateTradeButtons();
 			};
-		})(resource);
+		})(resCode);
 
 		buttonDn.enabled = controlsPlayer(g_ViewedPlayer);
-		buttonDn.onpress = (function(resource){
-			return function() {
-				proba[selec]    += Math.min(STEP, proba[resource]);
+		buttonDn.onPress = (resource => {
+			return () => {
+				proba[currTradeSelection] += Math.min(STEP, proba[resource]);
 				proba[resource] -= Math.min(STEP, proba[resource]);
-				Engine.PostNetworkCommand({"type": "set-trading-goods", "tradingGoods": proba});
-				updateButtons();
+				Engine.PostNetworkCommand({ "type": "set-trading-goods", "tradingGoods": proba });
+				updateTradeButtons();
 			};
-		})(resource);
+		})(resCode);
 	}
-	updateButtons();
 
-	let traderNumber = Engine.GuiInterfaceCall("GetTraderNumber", g_ViewedPlayer);
-	Engine.GetGUIObjectByName("landTraders").caption = getIdleLandTradersText(traderNumber);
-	Engine.GetGUIObjectByName("shipTraders").caption = getIdleShipTradersText(traderNumber);
+	updateTradeButtons();
+	updateTraderTexts();
 
 	Engine.GetGUIObjectByName("tradeDialogPanel").hidden = false;
+}
+
+function updateTraderTexts()
+{
+	let traderNumber = Engine.GuiInterfaceCall("GetTraderNumber", g_ViewedPlayer);
+	Engine.GetGUIObjectByName("traderCountText").caption = getIdleLandTradersText(traderNumber) + "\n\n" + getIdleShipTradersText(traderNumber);
+}
+
+function initBarterButtons()
+{
+	g_BarterSell = g_ResourceData.GetCodes()[0];
+}
+
+/**
+ * Code common to both the Barter Panel and the Trade/Barter Dialog, that
+ * only needs to be run when the panel or dialog is opened by the player.
+ *
+ * @param {string} resourceCode
+ * @param {number} idx - Element index within its set
+ * @param {string} prefix - Common prefix of the gui elements to be worked upon
+ */
+function barterOpenCommon(resourceCode, idx, prefix)
+{
+	let barterButton = {};
+	for (let action of g_BarterActions)
+		barterButton[action] = Engine.GetGUIObjectByName(prefix + action + "Button[" + idx + "]");
+
+	let resource = resourceNameWithinSentence(resourceCode);
+	barterButton.Buy.tooltip = sprintf(translate("Buy %(resource)s"), { "resource": resource });
+	barterButton.Sell.tooltip = sprintf(translate("Sell %(resource)s"), { "resource": resource });
+
+	barterButton.Sell.onPress = function() {
+		g_BarterSell = resourceCode;
+		updateSelectionDetails();
+		updateBarterButtons();
+	};
+}
+
+/**
+ * Code common to both the Barter Panel and the Trade/Barter Dialog, that
+ * needs to be run on simulation update and when relevant hotkeys
+ * (i.e. massbarter) are pressed.
+ *
+ * @param {string} resourceCode
+ * @param {number} idx - Element index within its set
+ * @param {string} prefix - Common prefix of the gui elements to be worked upon
+ * @param {number} player
+ */
+function barterUpdateCommon(resourceCode, idx, prefix, player)
+{
+	let barterButton = {};
+	let barterIcon = {};
+	let barterAmount = {};
+	for (let action of g_BarterActions)
+	{
+		barterButton[action] = Engine.GetGUIObjectByName(prefix + action + "Button[" + idx + "]");
+		barterIcon[action] = Engine.GetGUIObjectByName(prefix + action + "Icon[" + idx + "]");
+		barterAmount[action] = Engine.GetGUIObjectByName(prefix + action + "Amount[" + idx + "]");
+	}
+	let selectionIcon = Engine.GetGUIObjectByName(prefix + "SellSelection[" + idx + "]");
+
+	let amountToSell = g_BarterResourceSellQuantity;
+	if (Engine.HotkeyIsPressed("session.massbarter"))
+		amountToSell *= g_BarterMultiplier;
+
+	let isSelected = resourceCode == g_BarterSell;
+	let grayscale = isSelected ? "color:0 0 0 100:grayscale:" : "";
+
+	// Select color of the sell button
+	let neededRes = {};
+	neededRes[resourceCode] = amountToSell;
+	let canSellCurrent = Engine.GuiInterfaceCall("GetNeededResources", {
+		"cost": neededRes,
+		"player": player
+	}) ? "color:255 0 0 80:" : "";
+
+	// Select color of the buy button
+	neededRes = {};
+	neededRes[g_BarterSell] = amountToSell;
+	let canBuyAny = Engine.GuiInterfaceCall("GetNeededResources", {
+		"cost": neededRes,
+		"player": player
+	}) ? "color:255 0 0 80:" : "";
+
+	barterIcon.Sell.sprite = canSellCurrent + "stretched:" + grayscale + "session/icons/resources/" + resourceCode + ".png";
+	barterIcon.Buy.sprite = canBuyAny + "stretched:" + grayscale + "session/icons/resources/" + resourceCode + ".png";
+
+	barterAmount.Sell.caption = "-" + amountToSell;
+	let prices = GetSimState().players[player].barterPrices;
+	barterAmount.Buy.caption = "+" + Math.round(prices.sell[g_BarterSell] / prices.buy[resourceCode] * amountToSell);
+
+	barterButton.Buy.onPress = function() {
+		Engine.PostNetworkCommand({
+			"type": "barter",
+			"sell": g_BarterSell,
+			"buy": resourceCode,
+			"amount": amountToSell
+		});
+	};
+
+	barterButton.Buy.hidden = isSelected;
+	barterButton.Buy.enabled = controlsPlayer(player);
+	barterButton.Sell.hidden = false;
+	selectionIcon.hidden = !isSelected;
+}
+
+function updateBarterButtons()
+{
+	let playerState = GetSimState().players[g_ViewedPlayer];
+	if (!playerState)
+		return;
+
+	let canBarter = playerState.canBarter;
+	Engine.GetGUIObjectByName("barterNoMarketsMessage").hidden = canBarter;
+	Engine.GetGUIObjectByName("barterResources").hidden = !canBarter;
+	Engine.GetGUIObjectByName("barterHelp").hidden = !canBarter;
+
+	if (canBarter)
+		g_ResourceData.GetCodes().forEach((resCode, i) => { barterUpdateCommon(resCode, i, "barter", g_ViewedPlayer) });
 }
 
 function getIdleLandTradersText(traderNumber)
@@ -478,11 +886,11 @@ function getIdleLandTradersText(traderNumber)
 		"active": {
 			"garrisoned": {
 				"no-inactive": translate("%(openingTradingString)s, and %(garrisonedString)s."),
-				"inactive":    translate("%(openingTradingString)s, %(garrisonedString)s, and %(inactiveString)s.")
+				"inactive": translate("%(openingTradingString)s, %(garrisonedString)s, and %(inactiveString)s.")
 			},
 			"no-garrisoned": {
 				"no-inactive": translate("%(openingTradingString)s."),
-				"inactive":    translate("%(openingTradingString)s, and %(inactiveString)s.")
+				"inactive": translate("%(openingTradingString)s, and %(inactiveString)s.")
 			}
 		},
 		"no-active": {
@@ -508,31 +916,33 @@ function getIdleLandTradersText(traderNumber)
 		{ "numberTrading": active }
 	);
 
-	let inactiveString = sprintf(active || garrisoned ?
-		translatePlural(
-			"%(numberOfLandTraders)s inactive",
-			"%(numberOfLandTraders)s inactive",
-			inactive
-		) :
-		translatePlural(
-			"%(numberOfLandTraders)s land trader inactive",
-			"%(numberOfLandTraders)s land traders inactive",
-			inactive
-		),
+	let inactiveString = sprintf(
+		active || garrisoned ?
+			translatePlural(
+				"%(numberOfLandTraders)s inactive",
+				"%(numberOfLandTraders)s inactive",
+				inactive
+			) :
+			translatePlural(
+				"%(numberOfLandTraders)s land trader inactive",
+				"%(numberOfLandTraders)s land traders inactive",
+				inactive
+			),
 		{ "numberOfLandTraders": inactive }
 	);
 
-	let garrisonedString = sprintf(active || inactive ?
-		translatePlural(
-			"%(numberGarrisoned)s garrisoned on a trading merchant ship",
-			"%(numberGarrisoned)s garrisoned on a trading merchant ship",
-			garrisoned
-		) :
-		translatePlural(
-			"There is %(numberGarrisoned)s land trader garrisoned on a trading merchant ship",
-			"There are %(numberGarrisoned)s land traders garrisoned on a trading merchant ship",
-			garrisoned
-		),
+	let garrisonedString = sprintf(
+		active || inactive ?
+			translatePlural(
+				"%(numberGarrisoned)s garrisoned on a trading merchant ship",
+				"%(numberGarrisoned)s garrisoned on a trading merchant ship",
+				garrisoned
+			) :
+			translatePlural(
+				"There is %(numberGarrisoned)s land trader garrisoned on a trading merchant ship",
+				"There are %(numberGarrisoned)s land traders garrisoned on a trading merchant ship",
+				garrisoned
+			),
 		{ "numberGarrisoned": garrisoned }
 	);
 
@@ -540,7 +950,7 @@ function getIdleLandTradersText(traderNumber)
 		"openingTradingString": activeString,
 		"openingGarrisonedString": garrisonedString,
 		"garrisonedString": garrisonedString,
-		"inactiveString": "[color=\"" + g_IdleTraderTextColor + "\"]" + inactiveString + "[/color]"
+		"inactiveString": coloredText(inactiveString, g_IdleTraderTextColor)
 	});
 }
 
@@ -571,23 +981,24 @@ function getIdleShipTradersText(traderNumber)
 		{ "numberTrading": active }
 	);
 
-	let inactiveString = sprintf(active ?
-		translatePlural(
-			"%(numberOfShipTraders)s inactive",
-			"%(numberOfShipTraders)s inactive",
-			inactive
-		) :
-		translatePlural(
-			"%(numberOfShipTraders)s merchant ship inactive",
-			"%(numberOfShipTraders)s merchant ships inactive",
-			inactive
-		),
+	let inactiveString = sprintf(
+		active ?
+			translatePlural(
+				"%(numberOfShipTraders)s inactive",
+				"%(numberOfShipTraders)s inactive",
+				inactive
+			) :
+			translatePlural(
+				"%(numberOfShipTraders)s merchant ship inactive",
+				"%(numberOfShipTraders)s merchant ships inactive",
+				inactive
+			),
 		{ "numberOfShipTraders": inactive }
 	);
 
 	return sprintf(message, {
 		"openingTradingString": activeString,
-		"inactiveString": "[color=\"" + g_IdleTraderTextColor + "\"]" + inactiveString + "[/color]"
+		"inactiveString": coloredText(inactiveString, g_IdleTraderTextColor)
 	});
 }
 
@@ -604,6 +1015,36 @@ function toggleTrade()
 
 	if (!open)
 		openTrade();
+}
+
+function toggleTutorial()
+{
+	let tutorialPanel = Engine.GetGUIObjectByName("tutorialPanel");
+	tutorialPanel.hidden = !tutorialPanel.hidden ||
+	                       !Engine.GetGUIObjectByName("tutorialText").caption;
+}
+
+function updateGameSpeedControl()
+{
+	Engine.GetGUIObjectByName("gameSpeedButton").hidden = g_IsNetworked;
+
+	let player = g_Players[Engine.GetPlayerID()];
+	g_GameSpeeds = getGameSpeedChoices(!player || player.state != "active");
+
+	let gameSpeed = Engine.GetGUIObjectByName("gameSpeed");
+	gameSpeed.list = g_GameSpeeds.Title;
+	gameSpeed.list_data = g_GameSpeeds.Speed;
+
+	let simRate = Engine.GetSimRate();
+
+	let gameSpeedIdx = g_GameSpeeds.Speed.indexOf(+simRate.toFixed(2));
+	if (gameSpeedIdx == -1)
+		warn("Unknown gamespeed:" + simRate);
+
+	gameSpeed.selected = gameSpeedIdx != -1 ? gameSpeedIdx : g_GameSpeeds.Default;
+	gameSpeed.onSelectionChange = function() {
+		changeGameSpeed(+this.list_data[this.selected]);
+	};
 }
 
 function toggleGameSpeed()
@@ -629,7 +1070,7 @@ function openObjectives()
 	let playerState = player && player.state;
 	let isActive = !playerState || playerState == "active";
 
-	Engine.GetGUIObjectByName("gameDescriptionText").caption = getGameDescription(true);
+	Engine.GetGUIObjectByName("gameDescriptionText").caption = getGameDescription();
 
 	let objectivesPlayerstate = Engine.GetGUIObjectByName("objectivesPlayerstate");
 	objectivesPlayerstate.hidden = isActive;
@@ -663,15 +1104,17 @@ function openGameSummary()
 	Engine.PushGuiPage("page_summary.xml", {
 		"sim": {
 			"mapSettings": g_GameAttributes.settings,
-			"playerStates":extendedSimState.players.filter((state,player) =>
+			"playerStates": extendedSimState.players.filter((state, player) =>
 				g_IsObserver || player == 0 || player == g_ViewedPlayer ||
 				extendedSimState.players[g_ViewedPlayer].hasSharedLos && g_Players[player].isMutualAlly[g_ViewedPlayer]),
-			"timeElapsed" : extendedSimState.timeElapsed
+			"timeElapsed": extendedSimState.timeElapsed
 		},
 		"gui": {
+			"dialog": true,
 			"isInGame": true
 		},
-		"callback": "resumeGame"
+		"selectedData": g_SummarySelectedData,
+		"callback": "resumeGameAndSaveSummarySelectedData"
 	});
 }
 
@@ -681,10 +1124,18 @@ function openStrucTree()
 	pauseGame();
 
 	// TODO add info about researched techs and unlocked entities
-	Engine.PushGuiPage("page_structree.xml", {
-		"civ" : g_Players[g_ViewedPlayer].civ,
-		"callback": "resumeGame",
+
+	Engine.PushGuiPage(g_CivInfo.page, {
+		"civ": g_CivInfo.code || g_Players[g_ViewedPlayer].civ,
+		"callback": "storeCivInfoPage"
 	});
+}
+
+function storeCivInfoPage(data)
+{
+	g_CivInfo.code = data.civ;
+	g_CivInfo.page = data.page;
+	resumeGame();
 }
 
 /**
@@ -696,7 +1147,8 @@ function openStrucTree()
  */
 function pauseGame(pause = true, explicit = false)
 {
-	if (g_IsNetworked && !explicit)
+	// The NetServer only supports pausing after all clients finished loading the game.
+	if (g_IsNetworked && (!explicit || !g_IsNetworkedActive))
 		return;
 
 	if (explicit)
@@ -716,6 +1168,12 @@ function pauseGame(pause = true, explicit = false)
 function resumeGame(explicit = false)
 {
 	pauseGame(false, explicit);
+}
+
+function resumeGameAndSaveSummarySelectedData(data)
+{
+	g_SummarySelectedData = data.summarySelectedData;
+	resumeGame(data.explicitResume);
 }
 
 /**
@@ -753,12 +1211,12 @@ function setClientPauseState(guid, paused)
  */
 function updatePauseOverlay()
 {
-	Engine.GetGUIObjectByName("pauseButtonText").caption = g_Paused ? translate("Resume") : translate("Pause");
+	Engine.GetGUIObjectByName("pauseButton").caption = g_Paused ? translate("Resume") : translate("Pause");
 	Engine.GetGUIObjectByName("resumeMessage").hidden = !g_Paused;
 
 	Engine.GetGUIObjectByName("pausedByText").hidden = !g_IsNetworked;
 	Engine.GetGUIObjectByName("pausedByText").caption = sprintf(translate("Paused by %(players)s"),
-		{ "players": g_PausingClients.map(guid => colorizePlayernameByGUID(guid)).join(translate(", ")) });
+		{ "players": g_PausingClients.map(guid => colorizePlayernameByGUID(guid)).join(translateWithContext("Separator for a list of players", ", ")) });
 
 	Engine.GetGUIObjectByName("pauseOverlay").hidden = !(g_Paused || g_PausingClients.length);
 	Engine.GetGUIObjectByName("pauseOverlay").onPress = g_Paused ? togglePause : function() {};
@@ -779,8 +1237,7 @@ function openManual()
 
 function toggleDeveloperOverlay()
 {
-	// The developer overlay is disabled in ranked games
-	if (Engine.HasXmppClient() && Engine.IsRankedGame())
+	if (!g_GameAttributes.settings.CheatsEnabled && !g_IsReplay)
 		return;
 
 	let devCommands = Engine.GetGUIObjectByName("devCommands");
@@ -790,18 +1247,21 @@ function toggleDeveloperOverlay()
 		markForTranslation("The Developer Overlay was closed.") :
 		markForTranslation("The Developer Overlay was opened.");
 
-	Engine.PostNetworkCommand({
-		"type": "aichat",
-		"message": message,
-		"translateMessage": true,
-		"translateParameters": [],
-		"parameters": {}
-	});
+	// Only players can send the simulation chat command
+	if (Engine.GetPlayerID() == -1)
+		submitChatDirectly(message);
+	else
+		Engine.PostNetworkCommand({
+			"type": "aichat",
+			"message": message,
+			"translateMessage": true,
+			"translateParameters": [],
+			"parameters": {}
+		});
 }
 
 function closeOpenDialogs()
 {
-	 // TODO: also close message boxes
 	closeMenu();
 	closeChat();
 	closeDiplomacy();
@@ -809,11 +1269,11 @@ function closeOpenDialogs()
 	closeObjectives();
 }
 
-function formatTributeTooltip(playerID, resource, amount)
+function formatTributeTooltip(playerID, resourceCode, amount)
 {
 	return sprintf(translate("Tribute %(resourceAmount)s %(resourceType)s to %(playerName)s. Shift-click to tribute %(greaterAmount)s."), {
 		"resourceAmount": amount,
-		"resourceType": getLocalizedResourceName(resource, "withinSentence"),
+		"resourceType": resourceNameWithinSentence(resourceCode),
 		"playerName": colorizePlayernameByID(playerID),
 		"greaterAmount": amount < 500 ? 500 : amount + 500
 	});

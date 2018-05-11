@@ -2,10 +2,14 @@
 
 <objects>
 
-	<script file="gui/common/functions_civinfo.js"/>
-	<script file="gui/common/functions_global_object.js"/>
-	<script file="gui/common/functions_utility.js"/>
-	<script file="gui/civinfo/civinfo.js"/>
+	<script directory="gui/common/"/>
+	<script directory="gui/civinfo/"/>
+
+	<object	hotkey="civinfo">
+		<action on="Press">
+			close();
+		</action>
+	</object>
 
 	<!-- Add a translucent black background to fade out the menu page -->
 	<object type="image" z="0" sprite="BackgroundTranslucent"/>
@@ -28,7 +32,7 @@
 				<translatableAttribute id="caption">Civilization Selection</translatableAttribute>
 			</object>
 
-			<object name="civSelection" type="dropdown" style="ModernDropDown" size="50%-96 10 50%+96 40">
+			<object name="civSelection" type="dropdown" style="ModernDropDown" size="50%-96 10 50%+96 40" dropdown_size="424">
 				<action on="SelectionChange">selectCiv(this.list_data[this.selected]);</action>
 			</object>
 		</object>
@@ -110,17 +114,29 @@
 
 		</object>
 
+		<!-- Structure tree page -->
+		<object
+			type="button"
+			style="StoneButton"
+			size="100%-309 100%-52 100%-169 100%-24"
+			name="structreeButton"
+			hotkey="structree"
+		>
+			<translatableAttribute id="caption">Structure Tree</translatableAttribute>
+			<action on="Press">switchToStrucTreePage();</action>
+		</object>
+
+		<!-- Close dialog -->
 		<object
 			type="button"
 			style="StoneButton"
 			size="100%-164 100%-52 100%-24 100%-24"
+			name="close"
 			hotkey="cancel"
 		>
 			<translatableAttribute id="caption">Close</translatableAttribute>
 			<action on="Press">
-				<![CDATA[
-					Engine.PopGuiPage();
-				]]>
+				close();
 			</action>
 		</object>
 

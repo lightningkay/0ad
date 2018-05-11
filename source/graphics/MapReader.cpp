@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@
 #include "renderer/SkyManager.h"
 #include "renderer/WaterManager.h"
 #include "simulation2/Simulation2.h"
+#include "simulation2/components/ICmpCinemaManager.h"
 #include "simulation2/components/ICmpObstruction.h"
 #include "simulation2/components/ICmpOwnership.h"
 #include "simulation2/components/ICmpPlayer.h"
@@ -56,11 +57,6 @@ CMapReader::CMapReader()
 	: xml_reader(0), m_PatchesPerSide(0), m_MapGen(0)
 {
 	cur_terrain_tex = 0;	// important - resets generator state
-
-	// Maps that don't override the default probably want the old lighting model
-	//m_LightEnv.SetLightingModel("old");
-	//pPostproc->SetPostEffect(L"default");
-
 }
 
 // LoadMap: try to load the map from given file; reinitialise the scene to new data if successful
@@ -69,7 +65,6 @@ void CMapReader::LoadMap(const VfsPath& pathname, JSRuntime* rt,  JS::HandleValu
 						 CLightEnv *pLightEnv_, CGameView *pGameView_, CCinemaManager* pCinema_, CTriggerManager* pTrigMan_, CPostprocManager* pPostproc_,
 						 CSimulation2 *pSimulation2_, const CSimContext* pSimContext_, int playerID_, bool skipEntities)
 {
-	// latch parameters (held until DelayedLoadFinished)
 	pTerrain = pTerrain_;
 	pLightEnv = pLightEnv_;
 	pGameView = pGameView_;
@@ -144,8 +139,6 @@ void CMapReader::LoadMap(const VfsPath& pathname, JSRuntime* rt,  JS::HandleValu
 
 	// load map settings script (must be done after reading map)
 	RegMemFun(this, &CMapReader::LoadMapSettings, L"CMapReader::LoadMapSettings", 5);
-
-	RegMemFun(this, &CMapReader::DelayLoadFinished, L"CMapReader::DelayLoadFinished", 5);
 }
 
 // LoadRandomMap: try to load the map data; reinitialise the scene to new data if successful
@@ -154,7 +147,6 @@ void CMapReader::LoadRandomMap(const CStrW& scriptFile, JSRuntime* rt, JS::Handl
 						 CLightEnv *pLightEnv_, CGameView *pGameView_, CCinemaManager* pCinema_, CTriggerManager* pTrigMan_, CPostprocManager* pPostproc_,
 						 CSimulation2 *pSimulation2_, int playerID_)
 {
-	// latch parameters (held until DelayedLoadFinished)
 	m_ScriptFile = scriptFile;
 	pSimulation2 = pSimulation2_;
 	pSimContext = pSimulation2 ? &pSimulation2->GetSimContext() : NULL;
@@ -184,7 +176,7 @@ void CMapReader::LoadRandomMap(const CStrW& scriptFile, JSRuntime* rt, JS::Handl
 	RegMemFun(this, &CMapReader::LoadPlayerSettings, L"CMapReader::LoadPlayerSettings", 50);
 
 	// load map generator with random map script
-	RegMemFun(this, &CMapReader::GenerateMap, L"CMapReader::GenerateMap", 5000);
+	RegMemFun(this, &CMapReader::GenerateMap, L"CMapReader::GenerateMap", 20000);
 
 	// parse RMS results into terrain structure
 	RegMemFun(this, &CMapReader::ParseTerrain, L"CMapReader::ParseTerrain", 500);
@@ -206,21 +198,12 @@ void CMapReader::LoadRandomMap(const CStrW& scriptFile, JSRuntime* rt, JS::Handl
 
 	// load map settings script (must be done after reading map)
 	RegMemFun(this, &CMapReader::LoadMapSettings, L"CMapReader::LoadMapSettings", 5);
-
-	RegMemFun(this, &CMapReader::DelayLoadFinished, L"CMapReader::DelayLoadFinished", 5);
 }
 
 // UnpackMap: unpack the given data from the raw data stream into local variables
 int CMapReader::UnpackMap()
 {
-	// now unpack everything into local data
-	int ret = UnpackTerrain();
-	if (ret != 0)	// failed or timed out
-	{
-		return ret;
-	}
-
-	return 0;
+	return UnpackTerrain();
 }
 
 // UnpackTerrain: unpack the terrain from the end of the input data stream
@@ -384,7 +367,7 @@ PSRETURN CMapSummaryReader::LoadMap(const VfsPath& pathname)
 	return PSRETURN_OK;
 }
 
-void CMapSummaryReader::GetMapSettings(ScriptInterface& scriptInterface, JS::MutableHandleValue ret)
+void CMapSummaryReader::GetMapSettings(const ScriptInterface& scriptInterface, JS::MutableHandleValue ret)
 {
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
@@ -591,7 +574,6 @@ void CXMLReader::ReadEnvironment(XMBElement parent)
 {
 #define EL(x) int el_##x = xmb_file.GetElementID(#x)
 #define AT(x) int at_##x = xmb_file.GetAttributeID(#x)
-	EL(lightingmodel);
 	EL(posteffect);
 	EL(skyset);
 	EL(suncolor);
@@ -605,12 +587,9 @@ void CXMLReader::ReadEnvironment(XMBElement parent)
 	EL(color);
 	EL(tint);
 	EL(height);
-	EL(shininess);	// for compatibility
 	EL(waviness);
 	EL(murkiness);
 	EL(windangle);
-	EL(reflectiontint);	// for compatibility
-	EL(reflectiontintstrength);	// for compatibility
 	EL(fog);
 	EL(fogcolor);
 	EL(fogfactor);
@@ -630,11 +609,7 @@ void CXMLReader::ReadEnvironment(XMBElement parent)
 
 		XMBAttributeList attrs = element.GetAttributes();
 
-		if (element_name == el_lightingmodel)
-		{
-			// NOP - obsolete.
-		}
-		else if (element_name == el_skyset)
+		if (element_name == el_skyset)
 		{
 			if (m_MapReader.pSkyMan)
 				m_MapReader.pSkyMan->SetSkySet(element.GetText().FromUTF8());
@@ -747,10 +722,6 @@ void CXMLReader::ReadEnvironment(XMBElement parent)
 						else
 							m_MapReader.pWaterMan->m_WaterType =  waterelement.GetText().FromUTF8();
 					}
-					else if (element_name == el_shininess || element_name == el_reflectiontint || element_name == el_reflectiontintstrength)
-					{
-						// deprecated.
-					}
 #define READ_COLOR(el, out) \
 					else if (element_name == el) \
 					{ \
@@ -862,6 +833,7 @@ void CXMLReader::ReadPaths(XMBElement parent)
 #undef EL
 #undef AT
 
+	CmpPtr<ICmpCinemaManager> cmpCinemaManager(*m_MapReader.pSimContext, SYSTEM_ENTITY);
 	XERO_ITER_EL(parent, element)
 	{
 		int elementName = element.GetNodeName();
@@ -871,14 +843,15 @@ void CXMLReader::ReadPaths(XMBElement parent)
 			CCinemaData pathData;
 			XMBAttributeList attrs = element.GetAttributes();
 			CStrW pathName(attrs.GetNamedItem(at_name).FromUTF8());
-			pathData.m_Timescale = fixed::FromString(attrs.GetNamedItem(at_timescale));
-			TNSpline pathSpline, targetSpline;
-			fixed lastTargetTime = fixed::Zero();
-
 			pathData.m_Name = pathName;
+			pathData.m_Timescale = fixed::FromString(attrs.GetNamedItem(at_timescale));
 			pathData.m_Orientation = attrs.GetNamedItem(at_orientation).FromUTF8();
 			pathData.m_Mode = attrs.GetNamedItem(at_mode).FromUTF8();
 			pathData.m_Style = attrs.GetNamedItem(at_style).FromUTF8();
+
+			TNSpline positionSpline, targetSpline;
+			fixed lastPositionTime = fixed::Zero();
+			fixed lastTargetTime = fixed::Zero();
 
 			XERO_ITER_EL(element, pathChild)
 			{
@@ -888,9 +861,7 @@ void CXMLReader::ReadPaths(XMBElement parent)
 				// Load node data used for spline
 				if (elementName == el_node)
 				{
-					bool positionDeclared = false;
-					SplineData data;
-					data.Distance = fixed::FromString(attrs.GetNamedItem(at_deltatime));
+					lastPositionTime += fixed::FromString(attrs.GetNamedItem(at_deltatime));
 					lastTargetTime += fixed::FromString(attrs.GetNamedItem(at_deltatime));
 					XERO_ITER_EL(pathChild, nodeChild)
 					{
@@ -899,23 +870,22 @@ void CXMLReader::ReadPaths(XMBElement parent)
 
 						if (elementName == el_position)
 						{
-							data.Position.X = fixed::FromString(attrs.GetNamedItem(at_x));
-							data.Position.Y = fixed::FromString(attrs.GetNamedItem(at_y));
-							data.Position.Z = fixed::FromString(attrs.GetNamedItem(at_z));
-							positionDeclared = true;
+							CFixedVector3D position(fixed::FromString(attrs.GetNamedItem(at_x)),
+								fixed::FromString(attrs.GetNamedItem(at_y)),
+								fixed::FromString(attrs.GetNamedItem(at_z)));
+
+							positionSpline.AddNode(position, CFixedVector3D(), lastPositionTime);
+							lastPositionTime = fixed::Zero();
 						}
 						else if (elementName == el_rotation)
 						{
-							data.Rotation.X = fixed::FromString(attrs.GetNamedItem(at_x));
-							data.Rotation.Y = fixed::FromString(attrs.GetNamedItem(at_y));
-							data.Rotation.Z = fixed::FromString(attrs.GetNamedItem(at_z));
+							// TODO: Implement rotation slerp/spline as another object
 						}
 						else if (elementName == el_target)
 						{
-							CFixedVector3D targetPosition;
-							targetPosition.X = fixed::FromString(attrs.GetNamedItem(at_x));
-							targetPosition.Y = fixed::FromString(attrs.GetNamedItem(at_y));
-							targetPosition.Z = fixed::FromString(attrs.GetNamedItem(at_z));
+							CFixedVector3D targetPosition(fixed::FromString(attrs.GetNamedItem(at_x)),
+								fixed::FromString(attrs.GetNamedItem(at_y)),
+								fixed::FromString(attrs.GetNamedItem(at_z)));
 
 							targetSpline.AddNode(targetPosition, CFixedVector3D(), lastTargetTime);
 							lastTargetTime = fixed::Zero();
@@ -923,25 +893,23 @@ void CXMLReader::ReadPaths(XMBElement parent)
 						else
 							LOGWARNING("Invalid cinematic element for node child");
 					}
-
-					// Skip the node if no position
-					if (positionDeclared)
-						pathSpline.AddNode(data.Position, data.Rotation, data.Distance);
 				}
 				else
 					LOGWARNING("Invalid cinematic element for path child");
 			}
 
 			// Construct cinema path with data gathered
-			CCinemaPath path(pathData, pathSpline, targetSpline);
+			CCinemaPath path(pathData, positionSpline, targetSpline);
 			if (path.Empty())
 			{
 				LOGWARNING("Path with name '%s' is empty", pathName.ToUTF8());
 				return;
 			}
 
-			if (!m_MapReader.pCinema->HasPath(pathName))
-				m_MapReader.pCinema->AddPath(pathName, path);
+			if (!cmpCinemaManager)
+				continue;
+			if (!cmpCinemaManager->HasPath(pathName))
+				cmpCinemaManager->AddPath(path);
 			else
 				LOGWARNING("Path with name '%s' already exists", pathName.ToUTF8());
 		}
@@ -1227,14 +1195,6 @@ int CMapReader::ReadXMLEntities()
 	return ret;
 }
 
-int CMapReader::DelayLoadFinished()
-{
-	// we were dynamically allocated by CWorld::Initialize
-	delete this;
-
-	return 0;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1280,7 +1240,7 @@ int CMapReader::GenerateMap()
 	}
 	else if (progress == 0)
 	{
-		// Finished, get results as StructuredClone object, which must be read to obtain the JS val
+		// Finished, get results as StructuredClone object, which must be read to obtain the JS::Value
 		shared_ptr<ScriptInterface::StructuredClone> results = m_MapGen->GetResults();
 
 		// Parse data into simulation context
@@ -1423,7 +1383,7 @@ int CMapReader::ParseEntities()
 			CmpPtr<ICmpPosition> cmpPosition(sim, ent);
 			if (cmpPosition)
 			{
-				cmpPosition->JumpTo(currEnt.position.X, currEnt.position.Z);
+				cmpPosition->JumpTo(currEnt.position.X * (int)TERRAIN_TILE_SIZE, currEnt.position.Z * (int)TERRAIN_TILE_SIZE);
 				cmpPosition->SetYRotation(currEnt.rotation.Y);
 				// TODO: other parts of the position
 			}
@@ -1471,7 +1431,6 @@ int CMapReader::ParseEnvironment()
 		return 0;
 	}
 
-	//m_LightEnv.SetLightingModel("standard");
 	if (pPostproc)
 		pPostproc->SetPostEffect(L"default");
 

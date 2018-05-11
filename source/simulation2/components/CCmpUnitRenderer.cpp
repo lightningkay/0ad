@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -256,9 +256,9 @@ public:
 	void Interpolate(float frameTime, float frameOffset);
 	void RenderSubmit(SceneCollector& collector, const CFrustum& frustum, bool culling);
 
-	void UpdateVisibility(SUnit& unit);
+	void UpdateVisibility(SUnit& unit) const;
 
-	virtual float GetFrameOffset()
+	virtual float GetFrameOffset() const
 	{
 		return m_FrameOffset;
 	}
@@ -267,21 +267,20 @@ public:
 	{
 		m_EnableDebugOverlays = enabled;
 	}
-	
-	virtual void PickAllEntitiesAtPoint(std::vector<std::pair<CEntityHandle, CVector3D> >& outEntities, const CVector3D& origin, const CVector3D& dir, bool allowEditorSelectables)
+
+	virtual void PickAllEntitiesAtPoint(std::vector<std::pair<CEntityHandle, CVector3D> >& outEntities, const CVector3D& origin, const CVector3D& dir, bool allowEditorSelectables) const
 	{
-		// First, make a rough test with the worst-case bounding boxes to pick all 
+		// First, make a rough test with the worst-case bounding boxes to pick all
 		// entities/models that could possibly be hit by the ray.
-		std::vector<SUnit*> candidates;
-		for (size_t i = 0; i < m_Units.size(); ++i)
+		std::vector<const SUnit*> candidates;
+		for (const SUnit& unit : m_Units)
 		{
-			SUnit& unit = m_Units[i];
 			if (!unit.actor || !unit.inWorld)
 				continue;
 			if (unit.sweptBounds.RayIntersect(origin, dir))
 				candidates.push_back(&unit);
 		}
-		
+
 		// Now make a more precise test to get rid of the remaining false positives
 		float tmin, tmax;
 		CVector3D center;
@@ -298,27 +297,27 @@ public:
 			{
 				if (!allowEditorSelectables)
 					continue;
-			
+
 				// Fall back to using old AABB selection method for decals
 				//	see: http://trac.wildfiregames.com/ticket/1032
 				// Decals are flat objects without a selectionShape defined,
 				// but they should still be selectable in the editor to move them
-				// around or delete them after they are placed. 
+				// around or delete them after they are placed.
 				// Check campaigns/labels/ in the Actors tab of atlas for examples.
 				CBoundingBoxAligned aABBox = cmpVisual->GetBounds();
 				if (aABBox.IsEmpty())
 					continue;
-				
+
 				if (!aABBox.RayIntersect(origin, dir, tmin, tmax))
 					continue;
-		
+
 				aABBox.GetCentre(center);
 			}
 			else
 			{
 				if (!selectionBox.RayIntersect(origin, dir, tmin, tmax))
 					continue;
-				
+
 				center = selectionBox.m_Center;
 			}
 			outEntities.emplace_back(unit.entity, center);
@@ -398,7 +397,13 @@ void CCmpUnitRenderer::RenderSubmit(SceneCollector& collector, const CFrustum& f
 
 		unit.culled = true;
 
-		if (!(unit.actor && unit.inWorld))
+		if (!unit.actor)
+			continue;
+
+		if (unit.visibilityDirty)
+			UpdateVisibility(unit);
+
+		if (unit.visibility == ICmpRangeManager::VIS_HIDDEN)
 			continue;
 
 		if (!g_AtlasGameLoop->running && !g_RenderActors && (unit.flags & ACTOR_ONLY))
@@ -408,11 +413,6 @@ void CCmpUnitRenderer::RenderSubmit(SceneCollector& collector, const CFrustum& f
 			continue;
 
 		if (culling && !frustum.IsSphereVisible(unit.sweptBounds.GetCenter(), unit.sweptBounds.GetRadius()))
-			continue;
-
-		if (unit.visibilityDirty)
-			UpdateVisibility(unit);
-		if (unit.visibility == ICmpRangeManager::VIS_HIDDEN)
 			continue;
 
 		unit.culled = false;
@@ -442,7 +442,7 @@ void CCmpUnitRenderer::RenderSubmit(SceneCollector& collector, const CFrustum& f
 		collector.Submit(&m_DebugSpheres[i]);
 }
 
-void CCmpUnitRenderer::UpdateVisibility(SUnit& unit)
+void CCmpUnitRenderer::UpdateVisibility(SUnit& unit) const
 {
 	if (unit.inWorld)
 	{

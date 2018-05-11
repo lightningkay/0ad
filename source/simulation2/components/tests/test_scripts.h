@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ class TestComponentScripts : public CxxTest::TestSuite
 public:
 	void setUp()
 	{
-		g_VFS = CreateVfs(20 * MiB);
+		g_VFS = CreateVfs();
 		g_VFS->Mount(L"", DataDir()/"mods"/"mod", VFS_MOUNT_MUST_EXIST);
 		g_VFS->Mount(L"", DataDir()/"mods"/"public", VFS_MOUNT_MUST_EXIST, 1); // ignore directory-not-found errors
 		CXeromyces::Startup();
@@ -36,7 +36,7 @@ public:
 		g_VFS.reset();
 	}
 
-	static void load_script(ScriptInterface& scriptInterface, const VfsPath& pathname)
+	static void load_script(const ScriptInterface& scriptInterface, const VfsPath& pathname)
 	{
 		CVFSFile file;
 		TS_ASSERT_EQUALS(file.Load(g_VFS, pathname), PSRETURN_OK);
@@ -66,6 +66,7 @@ public:
 
 		VfsPaths paths;
 		TS_ASSERT_OK(vfs::GetPathnames(g_VFS, L"simulation/components/tests/", L"test_*.js", paths));
+		paths.push_back(VfsPath(L"simulation/components/tests/setup_test.js"));
 		for (const VfsPath& path : paths)
 		{
 			CSimContext context;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -97,14 +97,21 @@ static u32 CalcSharedLosMask(std::vector<player_id_t> players)
 }
 
 /**
- * Add a player to mask, which is a 1-bit mask representing a list of players.
+ * Add/remove a player to/from mask, which is a 1-bit mask representing a list of players.
  * Returns true if the mask is modified.
  */
-static bool AddPlayerSharedDirtyVisibilityMask(u16& mask, player_id_t player)
+static bool SetPlayerSharedDirtyVisibilityBit(u16& mask, player_id_t player, bool enable)
 {
+	if (player <= 0 || player > 16)
+		return false;
+
 	u16 oldMask = mask;
-	if (player > 0 && player <= 16)
+
+	if (enable)
 		mask |= (0x1 << (player - 1));
+	else
+		mask &= ~(0x1 << (player - 1));
+
 	return oldMask != mask;
 }
 
@@ -126,6 +133,22 @@ static inline bool IsVisibilityDirty(u16 dirty, player_id_t player)
 	if (player > 0 && player <= 16)
 		return (dirty >> (player - 1)) & 0x1;
 	return false;
+}
+
+/**
+ * Test whether a player share this vision
+ */
+static inline bool HasVisionSharing(u16 visionSharing, player_id_t player)
+{
+	return visionSharing & 1 << (player-1);
+}
+
+/**
+ * Computes the shared vision mask for the player
+ */
+static inline u16 CalcVisionSharingMask(player_id_t player)
+{
+	return 1 << (player-1);
 }
 
 /**
@@ -168,21 +191,48 @@ static std::map<entity_id_t, EntityParabolicRangeOutline> ParabolicRangesOutline
 /**
  * Representation of an entity, with the data needed for queries.
  */
+enum FlagMasks
+{
+	// flags used for queries
+	None = 0x00,
+	Normal = 0x01,
+	Injured = 0x02,
+	AllQuery = Normal | Injured,
+
+	// 0x04 reserved for future use
+
+	// general flags
+	InWorld = 0x08,
+	RetainInFog = 0x10,
+	RevealShore = 0x20,
+	ScriptedVisibility = 0x40,
+	SharedVision = 0x80
+};
+
 struct EntityData
 {
-	EntityData() : visibilities(0), size(0), retainInFog(0), owner(-1), inWorld(0), flags(1), scriptedVisibility(0) { }
+	EntityData() :
+		visibilities(0), size(0), visionSharing(0),
+		owner(-1), flags(FlagMasks::Normal)
+		{ }
 	entity_pos_t x, z;
 	entity_pos_t visionRange;
 	u32 visibilities; // 2-bit visibility, per player
 	u32 size;
-	u8 retainInFog; // boolean
+	u16 visionSharing; // 1-bit per player
 	i8 owner;
-	u8 inWorld; // boolean
-	u8 flags; // See GetEntityFlagMask
-	u8 scriptedVisibility; // boolean, see ComputeLosVisibility
+	u8 flags; // See the FlagMasks enum
+
+	template<int mask>
+	inline bool HasFlag() const { return (flags & mask) != 0; }
+
+	template<int mask>
+	inline void SetFlag(bool val) { flags = val ? (flags | mask) : (flags & ~mask); }
+
+	inline void SetFlag(u8 mask, bool val) { flags = val ? (flags | mask) : (flags & ~mask); }
 };
 
-cassert(sizeof(EntityData) == 28);
+cassert(sizeof(EntityData) == 24);
 
 /**
  * Serialization helper template for Query
@@ -236,14 +286,11 @@ struct SerializeEntityData
 		serialize.NumberFixed_Unbounded("vision", value.visionRange);
 		serialize.NumberU32_Unbounded("visibilities", value.visibilities);
 		serialize.NumberU32_Unbounded("size", value.size);
-		serialize.NumberU8("retain in fog", value.retainInFog, 0, 1);
+		serialize.NumberU16_Unbounded("vision sharing", value.visionSharing);
 		serialize.NumberI8_Unbounded("owner", value.owner);
-		serialize.NumberU8("in world", value.inWorld, 0, 1);
 		serialize.NumberU8_Unbounded("flags", value.flags);
-		serialize.NumberU8_Unbounded("scripted visibility", value.scriptedVisibility);
 	}
 };
-
 
 /**
  * Functor for sorting entities by distance from a source point.
@@ -257,7 +304,7 @@ struct EntityDistanceOrdering
 	{
 	}
 
-	bool operator()(entity_id_t a, entity_id_t b)
+	bool operator()(entity_id_t a, entity_id_t b) const
 	{
 		const EntityData& da = m_EntityData.find(a)->second;
 		const EntityData& db = m_EntityData.find(b)->second;
@@ -292,9 +339,10 @@ public:
 		componentManager.SubscribeGloballyToMessageType(MT_OwnershipChanged);
 		componentManager.SubscribeGloballyToMessageType(MT_Destroy);
 		componentManager.SubscribeGloballyToMessageType(MT_VisionRangeChanged);
+		componentManager.SubscribeGloballyToMessageType(MT_VisionSharingChanged);
 
+		componentManager.SubscribeToMessageType(MT_Deserialized);
 		componentManager.SubscribeToMessageType(MT_Update);
-
 		componentManager.SubscribeToMessageType(MT_RenderSubmit); // for debug overlays
 	}
 
@@ -328,7 +376,7 @@ public:
 	std::vector<bool> m_LosRevealAll;
 	bool m_LosCircular;
 	i32 m_TerrainVerticesPerSide;
-	
+
 	// Cache for visibility tracking
 	i32 m_LosTilesPerSide;
 	bool m_GlobalVisibilityUpdate;
@@ -440,17 +488,21 @@ public:
 		Init(paramNode);
 
 		SerializeCommon(deserialize);
-
-		// Reinitialise subdivisions and LOS data
-		m_Deserializing = true;
-		ResetDerivedData();
-		m_Deserializing = false;
 	}
 
 	virtual void HandleMessage(const CMessage& msg, bool UNUSED(global))
 	{
 		switch (msg.GetType())
 		{
+		case MT_Deserialized:
+		{
+			// Reinitialize subdivisions and LOS data after all
+			// other components have been deserialized.
+			m_Deserializing = true;
+			ResetDerivedData();
+			m_Deserializing = false;
+			break;
+		}
 		case MT_Create:
 		{
 			const CMessageCreate& msgData = static_cast<const CMessageCreate&> (msg);
@@ -473,10 +525,13 @@ public:
 			// Store the LOS data, if any
 			CmpPtr<ICmpVision> cmpVision(GetSimContext(), ent);
 			if (cmpVision)
+			{
 				entdata.visionRange = cmpVision->GetRange();
+				entdata.SetFlag<FlagMasks::RevealShore>(cmpVision->GetRevealShore());
+			}
 			CmpPtr<ICmpVisibility> cmpVisibility(GetSimContext(), ent);
 			if (cmpVisibility)
-				entdata.retainInFog = (cmpVisibility->GetRetainInFog() ? 1 : 0);
+				entdata.SetFlag<FlagMasks::RetainInFog>(cmpVisibility->GetRetainInFog());
 
 			// Store the size
 			CmpPtr<ICmpObstruction> cmpObstruction(GetSimContext(), ent);
@@ -500,12 +555,15 @@ public:
 
 			if (msgData.inWorld)
 			{
-				if (it->second.inWorld)
+				if (it->second.HasFlag<FlagMasks::InWorld>())
 				{
 					CFixedVector2D from(it->second.x, it->second.z);
 					CFixedVector2D to(msgData.x, msgData.z);
 					m_Subdivision.Move(ent, from, to, it->second.size);
-					LosMove(it->second.owner, it->second.visionRange, from, to);
+					if (it->second.HasFlag<FlagMasks::SharedVision>())
+						SharingLosMove(it->second.visionSharing, it->second.visionRange, from, to);
+					else
+						LosMove(it->second.owner, it->second.visionRange, from, to);
 					i32 oldLosTile = PosToLosTilesHelper(it->second.x, it->second.z);
 					i32 newLosTile = PosToLosTilesHelper(msgData.x, msgData.z);
 					if (oldLosTile != newLosTile)
@@ -518,25 +576,31 @@ public:
 				{
 					CFixedVector2D to(msgData.x, msgData.z);
 					m_Subdivision.Add(ent, to, it->second.size);
-					LosAdd(it->second.owner, it->second.visionRange, to);
+					if (it->second.HasFlag<FlagMasks::SharedVision>())
+						SharingLosAdd(it->second.visionSharing, it->second.visionRange, to);
+					else
+						LosAdd(it->second.owner, it->second.visionRange, to);
 					AddToTile(PosToLosTilesHelper(msgData.x, msgData.z), ent);
 				}
 
-				it->second.inWorld = 1;
+				it->second.SetFlag<FlagMasks::InWorld>(true);
 				it->second.x = msgData.x;
 				it->second.z = msgData.z;
 			}
 			else
 			{
-				if (it->second.inWorld)
+				if (it->second.HasFlag<FlagMasks::InWorld>())
 				{
 					CFixedVector2D from(it->second.x, it->second.z);
 					m_Subdivision.Remove(ent, from, it->second.size);
-					LosRemove(it->second.owner, it->second.visionRange, from);
+					if (it->second.HasFlag<FlagMasks::SharedVision>())
+						SharingLosRemove(it->second.visionSharing, it->second.visionRange, from);
+					else
+						LosRemove(it->second.owner, it->second.visionRange, from);
 					RemoveFromTile(PosToLosTilesHelper(it->second.x, it->second.z), ent);
 				}
 
-				it->second.inWorld = 0;
+				it->second.SetFlag<FlagMasks::InWorld>(false);
 				it->second.x = entity_pos_t::Zero();
 				it->second.z = entity_pos_t::Zero();
 			}
@@ -556,11 +620,22 @@ public:
 			if (it == m_EntityData.end())
 				break;
 
-			if (it->second.inWorld)
+			if (it->second.HasFlag<FlagMasks::InWorld>())
 			{
-				CFixedVector2D pos(it->second.x, it->second.z);
-				LosRemove(it->second.owner, it->second.visionRange, pos);
-				LosAdd(msgData.to, it->second.visionRange, pos);
+				// Entity vision is taken into account in VisionSharingChanged
+				// when sharing component activated
+				if (!it->second.HasFlag<FlagMasks::SharedVision>())
+				{
+					CFixedVector2D pos(it->second.x, it->second.z);
+					LosRemove(it->second.owner, it->second.visionRange, pos);
+					LosAdd(msgData.to, it->second.visionRange, pos);
+				}
+
+				if (it->second.HasFlag<FlagMasks::RevealShore>())
+				{
+					RevealShore(it->second.owner, false);
+					RevealShore(msgData.to, true);
+				}
 			}
 
 			ENSURE(-128 <= msgData.to && msgData.to <= 127);
@@ -579,7 +654,7 @@ public:
 			if (it == m_EntityData.end())
 				break;
 
-			if (it->second.inWorld)
+			if (it->second.HasFlag<FlagMasks::InWorld>())
 			{
 				m_Subdivision.Remove(ent, CFixedVector2D(it->second.x, it->second.z), it->second.size);
 				RemoveFromTile(PosToLosTilesHelper(it->second.x, it->second.z), ent);
@@ -613,15 +688,63 @@ public:
 
 			// If the range changed and the entity's in-world, we need to manually adjust it
 			//	but if it's not in-world, we only need to set the new vision range
-			CFixedVector2D pos(it->second.x, it->second.z);
-			if (it->second.inWorld)
-				LosRemove(it->second.owner, oldRange, pos);
 
 			it->second.visionRange = newRange;
 
-			if (it->second.inWorld)
-				LosAdd(it->second.owner, newRange, pos);
+			if (it->second.HasFlag<FlagMasks::InWorld>())
+			{
+				CFixedVector2D pos(it->second.x, it->second.z);
+				if (it->second.HasFlag<FlagMasks::SharedVision>())
+				{
+					SharingLosRemove(it->second.visionSharing, oldRange, pos);
+					SharingLosAdd(it->second.visionSharing, newRange, pos);
+				}
+				else
+				{
+					LosRemove(it->second.owner, oldRange, pos);
+					LosAdd(it->second.owner, newRange, pos);
+				}
+			}
 
+			break;
+		}
+		case MT_VisionSharingChanged:
+		{
+			const CMessageVisionSharingChanged& msgData = static_cast<const CMessageVisionSharingChanged&> (msg);
+			entity_id_t ent = msgData.entity;
+
+			EntityMap<EntityData>::iterator it = m_EntityData.find(ent);
+
+			// Ignore if we're not already tracking this entity
+			if (it == m_EntityData.end())
+				break;
+
+			ENSURE(msgData.player > 0 && msgData.player < MAX_LOS_PLAYER_ID+1);
+			u16 visionChanged = CalcVisionSharingMask(msgData.player);
+
+			if (!it->second.HasFlag<FlagMasks::SharedVision>())
+			{
+				// Activation of the Vision Sharing
+				ENSURE(it->second.owner == (i8)msgData.player);
+				it->second.visionSharing = visionChanged;
+				it->second.SetFlag<FlagMasks::SharedVision>(true);
+				break;
+			}
+
+			if (it->second.HasFlag<FlagMasks::InWorld>())
+			{
+				entity_pos_t range = it->second.visionRange;
+				CFixedVector2D pos(it->second.x, it->second.z);
+				if (msgData.add)
+					LosAdd(msgData.player, range, pos);
+				else
+					LosRemove(msgData.player, range, pos);
+			}
+
+			if (msgData.add)
+				it->second.visionSharing |= visionChanged;
+			else
+				it->second.visionSharing &= ~visionChanged;
 			break;
 		}
 		case MT_Update:
@@ -716,16 +839,10 @@ public:
 		{
 			// recalc current exploration stats.
 			for (i32 j = 0; j < m_TerrainVerticesPerSide; j++)
-			{
 				for (i32 i = 0; i < m_TerrainVerticesPerSide; i++)
-				{
 					if (!LosIsOffWorld(i, j))
-					{
 						for (u8 k = 1; k < MAX_LOS_PLAYER_ID+1; ++k)
 							m_ExploredVertices.at(k) += ((m_LosState[j*m_TerrainVerticesPerSide + i] & (LOS_EXPLORED << (2*(k-1)))) > 0);
-					}
-				}
-			}
 		}
 		else
 		{
@@ -746,13 +863,17 @@ public:
 		m_LosTiles.resize(m_LosTilesPerSide*m_LosTilesPerSide);
 
 		for (EntityMap<EntityData>::const_iterator it = m_EntityData.begin(); it != m_EntityData.end(); ++it)
-		{
-			if (it->second.inWorld)
+			if (it->second.HasFlag<FlagMasks::InWorld>())
 			{
-				LosAdd(it->second.owner, it->second.visionRange, CFixedVector2D(it->second.x, it->second.z));
+				if (it->second.HasFlag<FlagMasks::SharedVision>())
+					SharingLosAdd(it->second.visionSharing, it->second.visionRange, CFixedVector2D(it->second.x, it->second.z));
+				else
+					LosAdd(it->second.owner, it->second.visionRange, CFixedVector2D(it->second.x, it->second.z));
 				AddToTile(PosToLosTilesHelper(it->second.x, it->second.z), it->first);
+
+				if (it->second.HasFlag<FlagMasks::RevealShore>())
+					RevealShore(it->second.owner, true);
 			}
-		}
 
 		m_TotalInworldVertices = 0;
 		for (ssize_t j = 0; j < m_TerrainVerticesPerSide; ++j)
@@ -773,10 +894,8 @@ public:
 		m_Subdivision.Reset(x1, z1);
 
 		for (EntityMap<EntityData>::const_iterator it = m_EntityData.begin(); it != m_EntityData.end(); ++it)
-		{
-			if (it->second.inWorld)
+			if (it->second.HasFlag<FlagMasks::InWorld>())
 				m_Subdivision.Add(it->first, CFixedVector2D(it->second.x, it->second.z), it->second.size);
-		}
 	}
 
 	virtual tag_t CreateActiveQuery(entity_id_t source,
@@ -836,7 +955,7 @@ public:
 		q.enabled = false;
 	}
 
-	virtual bool IsActiveQueryEnabled(tag_t tag)
+	virtual bool IsActiveQueryEnabled(tag_t tag) const
 	{
 		std::map<tag_t, Query>::const_iterator it = m_Queries.find(tag);
 		if (it == m_Queries.end())
@@ -924,17 +1043,22 @@ public:
 		return r;
 	}
 
-	virtual std::vector<entity_id_t> GetEntitiesByPlayer(player_id_t player)
+	virtual std::vector<entity_id_t> GetEntitiesByPlayer(player_id_t player) const
 	{
 		return GetEntitiesByMask(CalcOwnerMask(player));
 	}
 
-	virtual std::vector<entity_id_t> GetNonGaiaEntities()
+	virtual std::vector<entity_id_t> GetNonGaiaEntities() const
 	{
-		return GetEntitiesByMask(((1 << MAX_LOS_PLAYER_ID) - 1) << 1);
+		return GetEntitiesByMask(~3); // bit 0 for owner=-1 and bit 1 for gaia
 	}
 
-	std::vector<entity_id_t> GetEntitiesByMask(u32 ownerMask)
+	virtual std::vector<entity_id_t> GetGaiaAndNonGaiaEntities() const
+	{
+		return GetEntitiesByMask(~1); // bit 0 for owner=-1
+	}
+
+	std::vector<entity_id_t> GetEntitiesByMask(u32 ownerMask) const
 	{
 		std::vector<entity_id_t> entities;
 
@@ -977,14 +1101,13 @@ public:
 			if (!query.enabled)
 				continue;
 
-			CmpPtr<ICmpPosition> cmpSourcePosition(query.source);
-			if (!cmpSourcePosition || !cmpSourcePosition->IsInWorld())
-				continue;
-
 			results.clear();
-			results.reserve(query.lastMatch.size());
-			CFixedVector2D pos = cmpSourcePosition->GetPosition2D();
-			PerformQuery(query, results, pos);
+			CmpPtr<ICmpPosition> cmpSourcePosition(query.source);
+			if (cmpSourcePosition && cmpSourcePosition->IsInWorld())
+			{
+				results.reserve(query.lastMatch.size());
+				PerformQuery(query, results, cmpSourcePosition->GetPosition2D());
+			}
 
 			// Compute the changes vs the last match
 			added.clear();
@@ -998,7 +1121,8 @@ public:
 			if (added.empty() && removed.empty())
 				continue;
 
-			std::stable_sort(added.begin(), added.end(), EntityDistanceOrdering(m_EntityData, cmpSourcePosition->GetPosition2D()));
+			if (cmpSourcePosition && cmpSourcePosition->IsInWorld())
+				std::stable_sort(added.begin(), added.end(), EntityDistanceOrdering(m_EntityData, cmpSourcePosition->GetPosition2D()));
 
 			messages.resize(messages.size() + 1);
 			std::pair<entity_id_t, CMessageRangeUpdate>& back = messages.back();
@@ -1006,7 +1130,7 @@ public:
 			back.second.tag = it->first;
 			back.second.added.swap(added);
 			back.second.removed.swap(removed);
-			it->second.lastMatch.swap(results);
+			query.lastMatch.swap(results);
 		}
 
 		CComponentManager& cmpMgr = GetSimContext().GetComponentManager();
@@ -1017,18 +1141,18 @@ public:
 	/**
 	 * Returns whether the given entity matches the given query (ignoring maxRange)
 	 */
-	bool TestEntityQuery(const Query& q, entity_id_t id, const EntityData& entity)
+	bool TestEntityQuery(const Query& q, entity_id_t id, const EntityData& entity) const
 	{
 		// Quick filter to ignore entities with the wrong owner
 		if (!(CalcOwnerMask(entity.owner) & q.ownersMask))
 			return false;
 
 		// Ignore entities not present in the world
-		if (!entity.inWorld)
+		if (!entity.HasFlag<FlagMasks::InWorld>())
 			return false;
 
 		// Ignore entities that don't match the current flags
-		if (!(entity.flags & q.flagsMask))
+		if (!((entity.flags & FlagMasks::AllQuery) & q.flagsMask))
 			return false;
 
 		// Ignore self
@@ -1134,10 +1258,10 @@ public:
 		}
 	}
 
-	virtual entity_pos_t GetElevationAdaptedRange(const CFixedVector3D& pos1, const CFixedVector3D& rot, entity_pos_t range, entity_pos_t elevationBonus, entity_pos_t angle)
+	virtual entity_pos_t GetElevationAdaptedRange(const CFixedVector3D& pos1, const CFixedVector3D& rot, entity_pos_t range, entity_pos_t elevationBonus, entity_pos_t angle) const
 	{
+		entity_pos_t r = entity_pos_t::Zero();
 		CFixedVector3D pos(pos1);
-		entity_pos_t r = entity_pos_t::Zero() ;
 
 		pos.Y += elevationBonus;
 		entity_pos_t orientation = rot.Y;
@@ -1152,96 +1276,91 @@ public:
 
 		std::vector<entity_pos_t> coords = getParabolicRangeForm(pos, range, range*2, minAngle, maxAngle, numberOfSteps);
 
-		entity_pos_t part =  entity_pos_t::FromInt(numberOfSteps);
+		entity_pos_t part = entity_pos_t::FromInt(numberOfSteps);
 
-		for (int i = 0; i < numberOfSteps; i++)
-		{
+		for (int i = 0; i < numberOfSteps; ++i)
 			r = r + CFixedVector2D(coords[2*i],coords[2*i+1]).Length() / part;
-		}
 
 		return r;
 
 	}
 
-	virtual std::vector<entity_pos_t> getParabolicRangeForm(CFixedVector3D pos, entity_pos_t maxRange, entity_pos_t cutoff, entity_pos_t minAngle, entity_pos_t maxAngle, int numberOfSteps)
+	virtual std::vector<entity_pos_t> getParabolicRangeForm(CFixedVector3D pos, entity_pos_t maxRange, entity_pos_t cutoff, entity_pos_t minAngle, entity_pos_t maxAngle, int numberOfSteps) const
 	{
+		std::vector<entity_pos_t> r;
+
+		CmpPtr<ICmpTerrain> cmpTerrain(GetSystemEntity());
+		if (!cmpTerrain)
+			return r;
 
 		// angle = 0 goes in the positive Z direction
 		entity_pos_t precision = entity_pos_t::FromInt((int)TERRAIN_TILE_SIZE)/8;
 
-		std::vector<entity_pos_t> r;
-
-
-		CmpPtr<ICmpTerrain> cmpTerrain(GetSystemEntity());
 		CmpPtr<ICmpWaterManager> cmpWaterManager(GetSystemEntity());
-		entity_pos_t waterLevel = cmpWaterManager->GetWaterLevel(pos.X,pos.Z);
+		entity_pos_t waterLevel = cmpWaterManager ? cmpWaterManager->GetWaterLevel(pos.X, pos.Z) : entity_pos_t::Zero();
 		entity_pos_t thisHeight = pos.Y > waterLevel ? pos.Y : waterLevel;
 
-		if (cmpTerrain)
+		for (int i = 0; i < numberOfSteps; ++i)
 		{
-			for (int i = 0; i < numberOfSteps; i++)
+			entity_pos_t angle = minAngle + (maxAngle - minAngle) / numberOfSteps * i;
+			entity_pos_t sin;
+			entity_pos_t cos;
+			entity_pos_t minDistance = entity_pos_t::Zero();
+			entity_pos_t maxDistance = cutoff;
+			sincos_approx(angle, sin, cos);
+
+			CFixedVector2D minVector = CFixedVector2D(entity_pos_t::Zero(), entity_pos_t::Zero());
+			CFixedVector2D maxVector = CFixedVector2D(sin, cos).Multiply(cutoff);
+			entity_pos_t targetHeight = cmpTerrain->GetGroundLevel(pos.X+maxVector.X, pos.Z+maxVector.Y);
+			// use water level to display range on water
+			targetHeight = targetHeight > waterLevel ? targetHeight : waterLevel;
+
+			if (InParabolicRange(CFixedVector3D(maxVector.X, targetHeight-thisHeight, maxVector.Y), maxRange))
 			{
-				entity_pos_t angle = minAngle + (maxAngle - minAngle) / numberOfSteps * i;
-				entity_pos_t sin;
-				entity_pos_t cos;
-				entity_pos_t minDistance = entity_pos_t::Zero();
-				entity_pos_t maxDistance = cutoff;
-				sincos_approx(angle,sin,cos);
-
-				CFixedVector2D minVector = CFixedVector2D(entity_pos_t::Zero(),entity_pos_t::Zero());
-				CFixedVector2D maxVector = CFixedVector2D(sin,cos).Multiply(cutoff);
-				entity_pos_t targetHeight = cmpTerrain->GetGroundLevel(pos.X+maxVector.X,pos.Z+maxVector.Y);
-				// use water level to display range on water
-				targetHeight = targetHeight > waterLevel ? targetHeight : waterLevel;
-
-				if (InParabolicRange(CFixedVector3D(maxVector.X,targetHeight-thisHeight,maxVector.Y),maxRange))
-				{
-					r.push_back(maxVector.X);
-					r.push_back(maxVector.Y);
-					continue;
-				}
-
-				// Loop until vectors come close enough
-				while ((maxVector - minVector).CompareLength(precision) > 0)
-				{
-					// difference still bigger than precision, bisect to get smaller difference
-					entity_pos_t newDistance = (minDistance+maxDistance)/entity_pos_t::FromInt(2);
-
-					CFixedVector2D newVector = CFixedVector2D(sin,cos).Multiply(newDistance);
-
-					// get the height of the ground
-					targetHeight = cmpTerrain->GetGroundLevel(pos.X+newVector.X,pos.Z+newVector.Y);
-					targetHeight = targetHeight > waterLevel ? targetHeight : waterLevel;
-
-					if (InParabolicRange(CFixedVector3D(newVector.X,targetHeight-thisHeight,newVector.Y),maxRange))
-					{
-						// new vector is in parabolic range, so this is a new minVector
-						minVector = newVector;
-						minDistance = newDistance;
-					}
-					else
-					{
-						// new vector is out parabolic range, so this is a new maxVector
-						maxVector = newVector;
-						maxDistance = newDistance;
-					}
-
-				}
 				r.push_back(maxVector.X);
 				r.push_back(maxVector.Y);
+				continue;
+			}
+
+			// Loop until vectors come close enough
+			while ((maxVector - minVector).CompareLength(precision) > 0)
+			{
+				// difference still bigger than precision, bisect to get smaller difference
+				entity_pos_t newDistance = (minDistance+maxDistance)/entity_pos_t::FromInt(2);
+
+				CFixedVector2D newVector = CFixedVector2D(sin, cos).Multiply(newDistance);
+
+				// get the height of the ground
+				targetHeight = cmpTerrain->GetGroundLevel(pos.X+newVector.X, pos.Z+newVector.Y);
+				targetHeight = targetHeight > waterLevel ? targetHeight : waterLevel;
+
+				if (InParabolicRange(CFixedVector3D(newVector.X, targetHeight-thisHeight, newVector.Y), maxRange))
+				{
+					// new vector is in parabolic range, so this is a new minVector
+					minVector = newVector;
+					minDistance = newDistance;
+				}
+				else
+				{
+					// new vector is out parabolic range, so this is a new maxVector
+					maxVector = newVector;
+					maxDistance = newDistance;
+				}
 
 			}
-			r.push_back(r[0]);
-			r.push_back(r[1]);
+			r.push_back(maxVector.X);
+			r.push_back(maxVector.Y);
 
 		}
-		return r;
+		r.push_back(r[0]);
+		r.push_back(r[1]);
 
+		return r;
 	}
 
 	Query ConstructQuery(entity_id_t source,
 		entity_pos_t minRange, entity_pos_t maxRange,
-		const std::vector<int>& owners, int requiredInterface, u8 flagsMask)
+		const std::vector<int>& owners, int requiredInterface, u8 flagsMask) const
 	{
 		// Min range must be non-negative
 		if (minRange < entity_pos_t::Zero())
@@ -1274,14 +1393,13 @@ public:
 
 	Query ConstructParabolicQuery(entity_id_t source,
 		entity_pos_t minRange, entity_pos_t maxRange, entity_pos_t elevationBonus,
-		const std::vector<int>& owners, int requiredInterface, u8 flagsMask)
+		const std::vector<int>& owners, int requiredInterface, u8 flagsMask) const
 	{
 		Query q = ConstructQuery(source,minRange,maxRange,owners,requiredInterface,flagsMask);
 		q.parabolic = true;
 		q.elevationBonus = elevationBonus;
 		return q;
 	}
-
 
 	void RenderSubmit(SceneCollector& collector)
 	{
@@ -1373,9 +1491,7 @@ public:
 
 				// Draw the min range circle
 				if (!q.minRange.IsZero())
-				{
 					SimRender::ConstructCircleOnGround(GetSimContext(), pos.X.ToFloat(), pos.Y.ToFloat(), q.minRange.ToFloat(), m_DebugOverlayLines.back(), true);
-				}
 
 				// Draw a ray from the source to each matched entity
 				for (size_t i = 0; i < q.lastMatch.size(); ++i)
@@ -1421,15 +1537,15 @@ public:
 			collector.Submit(&m_DebugOverlayLines[i]);
 	}
 
-	virtual u8 GetEntityFlagMask(const std::string& identifier)
+	virtual u8 GetEntityFlagMask(const std::string& identifier) const
 	{
 		if (identifier == "normal")
-			return 1;
+			return FlagMasks::Normal;
 		if (identifier == "injured")
-			return 2;
+			return FlagMasks::Injured;
 
 		LOGWARNING("CCmpRangeManager: Invalid flag identifier %s", identifier.c_str());
-		return 0;
+		return FlagMasks::None;
 	}
 
 	virtual void SetEntityFlag(entity_id_t ent, const std::string& identifier, bool value)
@@ -1442,24 +1558,17 @@ public:
 
 		u8 flag = GetEntityFlagMask(identifier);
 
-		// We don't have a flag set
-		if (flag == 0)
-		{
+		if (flag == FlagMasks::None)
 			LOGWARNING("CCmpRangeManager: Invalid flag identifier %s for entity %u", identifier.c_str(), ent);
-			return;
-		}
-
-		if (value)
-			it->second.flags |= flag;
 		else
-			it->second.flags &= ~flag;
+			it->second.SetFlag(flag, value);
 	}
 
 	// ****************************************************************
 
 	// LOS implementation:
 
-	virtual CLosQuerier GetLosQuerier(player_id_t player)
+	virtual CLosQuerier GetLosQuerier(player_id_t player) const
 	{
 		if (GetLosRevealAll(player))
 			return CLosQuerier(0xFFFFFFFFu, m_LosStateRevealed, m_TerrainVerticesPerSide);
@@ -1471,10 +1580,10 @@ public:
 	{
 		EntityMap<EntityData>::iterator it = m_EntityData.find(ent);
 		if (it != m_EntityData.end())
-			it->second.scriptedVisibility = status ? 1 : 0;
+			it->second.SetFlag<FlagMasks::ScriptedVisibility>(status);
 	}
 
-	ELosVisibility ComputeLosVisibility(CEntityHandle ent, player_id_t player)
+	ELosVisibility ComputeLosVisibility(CEntityHandle ent, player_id_t player) const
 	{
 		// Entities not with positions in the world are never visible
 		if (ent.GetId() == INVALID_ENTITY)
@@ -1507,10 +1616,10 @@ public:
 		CmpPtr<ICmpVisibility> cmpVisibility(ent);
 
 		// Possibly ask the scripted Visibility component
-		EntityMap<EntityData>::iterator it = m_EntityData.find(ent.GetId());
+		EntityMap<EntityData>::const_iterator it = m_EntityData.find(ent.GetId());
 		if (it != m_EntityData.end())
 		{
-			if (it->second.scriptedVisibility == 1 && cmpVisibility)
+			if (it->second.HasFlag<FlagMasks::ScriptedVisibility>() && cmpVisibility)
 				return cmpVisibility->GetVisibility(player, los.IsVisible(i, j), los.IsExplored(i, j));
 		}
 		else
@@ -1536,7 +1645,7 @@ public:
 		// Try using the 'retainInFog' flag in m_EntityData to save a script call
 		if (it != m_EntityData.end())
 		{
-			if (it->second.retainInFog != 1)
+			if (!it->second.HasFlag<FlagMasks::RetainInFog>())
 				return VIS_HIDDEN;
 		}
 		else
@@ -1572,29 +1681,30 @@ public:
 		return VIS_FOGGED;
 	}
 
-	ELosVisibility ComputeLosVisibility(entity_id_t ent, player_id_t player)
+	ELosVisibility ComputeLosVisibility(entity_id_t ent, player_id_t player) const
 	{
 		CEntityHandle handle = GetSimContext().GetComponentManager().LookupEntityHandle(ent);
 		return ComputeLosVisibility(handle, player);
 	}
 
-	virtual ELosVisibility GetLosVisibility(CEntityHandle ent, player_id_t player)
+	virtual ELosVisibility GetLosVisibility(CEntityHandle ent, player_id_t player) const
 	{
 		entity_id_t entId = ent.GetId();
-		
+
 		// Entities not with positions in the world are never visible
 		if (entId == INVALID_ENTITY)
 			return VIS_HIDDEN;
+
 		CmpPtr<ICmpPosition> cmpPosition(ent);
 		if (!cmpPosition || !cmpPosition->IsInWorld())
 			return VIS_HIDDEN;
 
-		CFixedVector2D pos = cmpPosition->GetPosition2D();
-		i32 n = PosToLosTilesHelper(pos.X, pos.Y);
-
 		// Gaia and observers do not have a visibility cache
 		if (player <= 0)
 			return ComputeLosVisibility(ent, player);
+
+		CFixedVector2D pos = cmpPosition->GetPosition2D();
+		i32 n = PosToLosTilesHelper(pos.X, pos.Y);
 
 		if (IsVisibilityDirty(m_DirtyVisibility[n], player))
 			return ComputeLosVisibility(ent, player);
@@ -1602,20 +1712,20 @@ public:
 		if (std::find(m_ModifiedEntities.begin(), m_ModifiedEntities.end(), entId) != m_ModifiedEntities.end())
 			return ComputeLosVisibility(ent, player);
 
-		EntityMap<EntityData>::iterator it = m_EntityData.find(entId);
+		EntityMap<EntityData>::const_iterator it = m_EntityData.find(entId);
 		if (it == m_EntityData.end())
 			return ComputeLosVisibility(ent, player);
 
 		return static_cast<ELosVisibility>(GetPlayerVisibility(it->second.visibilities, player));
 	}
 
-	virtual ELosVisibility GetLosVisibility(entity_id_t ent, player_id_t player)
+	virtual ELosVisibility GetLosVisibility(entity_id_t ent, player_id_t player) const
 	{
 		CEntityHandle handle = GetSimContext().GetComponentManager().LookupEntityHandle(ent);
 		return GetLosVisibility(handle, player);
 	}
 
-	i32 PosToLosTilesHelper(entity_pos_t x, entity_pos_t z)
+	i32 PosToLosTilesHelper(entity_pos_t x, entity_pos_t z) const
 	{
 		i32 i = Clamp(
 			(x/(entity_pos_t::FromInt(TERRAIN_TILE_SIZE * LOS_TILES_RATIO))).ToInt_RoundToZero(),
@@ -1635,16 +1745,9 @@ public:
 
 	void RemoveFromTile(i32 tile, entity_id_t ent)
 	{
-		for (std::set<entity_id_t>::iterator tileIt = m_LosTiles[tile].begin();
-			tileIt != m_LosTiles[tile].end();
-			++tileIt)
-		{
-			if (*tileIt == ent)
-			{
-				m_LosTiles[tile].erase(tileIt);
-				return;
-			}
-		}
+		std::set<entity_id_t>::const_iterator tileIt = m_LosTiles[tile].find(ent);
+		if (tileIt != m_LosTiles[tile].end())
+			m_LosTiles[tile].erase(tileIt);
 	}
 
 	void UpdateVisibilityData()
@@ -1654,13 +1757,10 @@ public:
 		for (i32 n = 0; n < m_LosTilesPerSide * m_LosTilesPerSide; ++n)
 		{
 			for (player_id_t player = 1; player < MAX_LOS_PLAYER_ID + 1; ++player)
-			{
 				if (IsVisibilityDirty(m_DirtyVisibility[n], player) || m_GlobalPlayerVisibilityUpdate[player-1] == 1 || m_GlobalVisibilityUpdate)
-				{
 					for (const entity_id_t& ent : m_LosTiles[n])
 						UpdateVisibility(ent, player);
-				}
-			}
+
 			m_DirtyVisibility[n] = 0;
 		}
 
@@ -1726,7 +1826,7 @@ public:
 		m_GlobalVisibilityUpdate = true;
 	}
 
-	virtual bool GetLosRevealAll(player_id_t player)
+	virtual bool GetLosRevealAll(player_id_t player) const
 	{
 		// Special player value can force reveal-all for every player
 		if (m_LosRevealAll[MAX_LOS_PLAYER_ID+1] || player == -1)
@@ -1746,7 +1846,7 @@ public:
 		ResetDerivedData();
 	}
 
-	virtual bool GetLosCircular()
+	virtual bool GetLosCircular() const
 	{
 		return m_LosCircular;
 	}
@@ -1755,18 +1855,25 @@ public:
 	{
 		m_SharedLosMasks[player] = CalcSharedLosMask(players);
 
-		// From now on, units belonging to any of 'players' can trigger visibility updates for 'player'.
+		// Units belonging to any of 'players' can now trigger visibility updates for 'player'.
+		// If shared LOS partners have been removed, we disable visibility updates from them
+		// in order to improve performance. That also allows us to properly determine whether
+		// 'player' needs a global visibility update for this turn.
 		bool modified = false;
 
-		for (player_id_t partner : players)
-			if (AddPlayerSharedDirtyVisibilityMask(m_SharedDirtyVisibilityMasks[partner], player))
+		for (player_id_t p = 1; p < MAX_LOS_PLAYER_ID+1; ++p)
+		{
+			bool inList = std::find(players.begin(), players.end(), p) != players.end();
+
+			if (SetPlayerSharedDirtyVisibilityBit(m_SharedDirtyVisibilityMasks[p], player, inList))
 				modified = true;
+		}
 
 		if (modified && (size_t)player <= m_GlobalPlayerVisibilityUpdate.size())
 			m_GlobalPlayerVisibilityUpdate[player-1] = 1;
 	}
 
-	virtual u32 GetSharedLosMask(player_id_t player)
+	virtual u32 GetSharedLosMask(player_id_t player) const
 	{
 		return m_SharedLosMasks[player];
 	}
@@ -1774,7 +1881,6 @@ public:
 	void ExploreAllTiles(player_id_t p)
 	{
 		for (u16 j = 0; j < m_TerrainVerticesPerSide; ++j)
-		{
 			for (u16 i = 0; i < m_TerrainVerticesPerSide; ++i)
 			{
 				if (LosIsOffWorld(i,j))
@@ -1783,7 +1889,6 @@ public:
 				explored += !(m_LosState[i + j*m_TerrainVerticesPerSide] & (LOS_EXPLORED << (2*(p-1))));
 				m_LosState[i + j*m_TerrainVerticesPerSide] |= (LOS_EXPLORED << (2*(p-1)));
 			}
-		}
 
 		SeeExploredEntities(p);
 	}
@@ -1811,28 +1916,27 @@ public:
 		ENSURE(grid.m_W*scale == m_TerrainVerticesPerSide-1 && grid.m_H*scale == m_TerrainVerticesPerSide-1);
 
 		for (u16 j = 0; j < grid.m_H; ++j)
-		{
 			for (u16 i = 0; i < grid.m_W; ++i)
 			{
 				u8 p = grid.get(i, j) & ICmpTerritoryManager::TERRITORY_PLAYER_MASK;
 				if (p > 0 && p <= MAX_LOS_PLAYER_ID)
 				{
 					u32& explored = m_ExploredVertices.at(p);
-					for (int dj = 0; dj <= scale; ++dj)
-					{
-						for (int di = 0; di <= scale; ++di)
+					for (int tj = j * scale; tj <= (j+1) * scale; ++tj)
+						for (int ti = i * scale; ti <= (i+1) * scale; ++ti)
 						{
-							u32& losState = m_LosState[(i*scale+di) + (j*scale+dj)*m_TerrainVerticesPerSide];
+							if (LosIsOffWorld(ti, tj))
+								continue;
+
+							u32& losState = m_LosState[ti + tj * m_TerrainVerticesPerSide];
 							if (!(losState & (LOS_EXPLORED << (2*(p-1)))))
 							{
-								explored++;
+								++explored;
 								losState |= (LOS_EXPLORED << (2*(p-1)));
 							}
 						}
-					}
 				}
 			}
-		}
 
 		for (player_id_t p = 1; p < MAX_LOS_PLAYER_ID+1; ++p)
 			SeeExploredEntities(p);
@@ -1843,16 +1947,16 @@ public:
 	 * This is useful for miraging entities inside the territory borders at the beginning of a game,
 	 * or if the "Explore Map" option has been set.
 	 */
-	void SeeExploredEntities(player_id_t p)
+	void SeeExploredEntities(player_id_t p) const
 	{
 		// Warning: Code related to fogging (like ForceMiraging) shouldn't be
 		// invoked while iterating through m_EntityData.
-		// Otherwise, by deleting mirage entities and so on, that code will 
-		// change the indexes in the map, leading to segfaults. 
+		// Otherwise, by deleting mirage entities and so on, that code will
+		// change the indexes in the map, leading to segfaults.
 		// So we just remember what entities to mirage and do that later.
 		std::vector<entity_id_t> miragableEntities;
-		
-		for (EntityMap<EntityData>::iterator it = m_EntityData.begin(); it != m_EntityData.end(); ++it)
+
+		for (EntityMap<EntityData>::const_iterator it = m_EntityData.begin(); it != m_EntityData.end(); ++it)
 		{
 			CmpPtr<ICmpPosition> cmpPosition(GetSimContext(), it->first);
 			if (!cmpPosition || !cmpPosition->IsInWorld())
@@ -1896,7 +2000,6 @@ public:
 		u16* countsData = &counts[0];
 
 		for (u16 j = 0; j < shoreGrid.m_H; ++j)
-		{
 			for (u16 i = 0; i < shoreGrid.m_W; ++i)
 			{
 				u16 shoredist = shoreGrid.get(i, j);
@@ -1909,14 +2012,13 @@ public:
 				else
 					LosRemoveStripHelper(p, i, i, j, countsData);
 			}
-		}
 	}
 
 	/**
 	 * Returns whether the given vertex is outside the normal bounds of the world
 	 * (i.e. outside the range of a circular map)
 	 */
-	inline bool LosIsOffWorld(ssize_t i, ssize_t j)
+	inline bool LosIsOffWorld(ssize_t i, ssize_t j) const
 	{
 		// WARNING: CCmpPathfinder::UpdateGrid needs to be kept in sync with this
 		const ssize_t edgeSize = 3; // number of vertexes around the edge that will be off-world
@@ -2254,12 +2356,32 @@ public:
 		LosUpdateHelper<true>((u8)owner, visionRange, pos);
 	}
 
+	void SharingLosAdd(u16 visionSharing, entity_pos_t visionRange, CFixedVector2D pos)
+	{
+		if (visionRange.IsZero())
+			return;
+
+		for (player_id_t i = 1; i < MAX_LOS_PLAYER_ID+1; ++i)
+			if (HasVisionSharing(visionSharing, i))
+				LosAdd(i, visionRange, pos);
+	}
+
 	void LosRemove(player_id_t owner, entity_pos_t visionRange, CFixedVector2D pos)
 	{
 		if (visionRange.IsZero() || owner <= 0 || owner > MAX_LOS_PLAYER_ID)
 			return;
 
 		LosUpdateHelper<false>((u8)owner, visionRange, pos);
+	}
+
+	void SharingLosRemove(u16 visionSharing, entity_pos_t visionRange, CFixedVector2D pos)
+	{
+		if (visionRange.IsZero())
+			return;
+
+		for (player_id_t i = 1; i < MAX_LOS_PLAYER_ID+1; ++i)
+			if (HasVisionSharing(visionSharing, i))
+				LosRemove(i, visionRange, pos);
 	}
 
 	void LosMove(player_id_t owner, entity_pos_t visionRange, CFixedVector2D from, CFixedVector2D to)
@@ -2270,45 +2392,47 @@ public:
 		if ((from - to).CompareLength(visionRange) > 0)
 		{
 			// If it's a very large move, then simply remove and add to the new position
-
 			LosUpdateHelper<false>((u8)owner, visionRange, from);
 			LosUpdateHelper<true>((u8)owner, visionRange, to);
 		}
 		else
-		{
 			// Otherwise use the version optimised for mostly-overlapping circles
-
 			LosUpdateHelperIncremental((u8)owner, visionRange, from, to);
-		}
 	}
 
-	virtual u8 GetPercentMapExplored(player_id_t player)
+	void SharingLosMove(u16 visionSharing, entity_pos_t visionRange, CFixedVector2D from, CFixedVector2D to)
+	{
+		if (visionRange.IsZero())
+			return;
+
+		for (player_id_t i = 1; i < MAX_LOS_PLAYER_ID+1; ++i)
+			if (HasVisionSharing(visionSharing, i))
+				LosMove(i, visionRange, from, to);
+	}
+
+	virtual u8 GetPercentMapExplored(player_id_t player) const
 	{
 		return m_ExploredVertices.at((u8)player) * 100 / m_TotalInworldVertices;
 	}
 
-	virtual u8 GetUnionPercentMapExplored(const std::vector<player_id_t>& players)
+	virtual u8 GetUnionPercentMapExplored(const std::vector<player_id_t>& players) const
 	{
 		u32 exploredVertices = 0;
 		std::vector<player_id_t>::const_iterator playerIt;
 
 		for (i32 j = 0; j < m_TerrainVerticesPerSide; j++)
-		{
 			for (i32 i = 0; i < m_TerrainVerticesPerSide; i++)
 			{
 				if (LosIsOffWorld(i, j))
 					continue;
 
 				for (playerIt = players.begin(); playerIt != players.end(); ++playerIt)
-				{
 					if (m_LosState[j*m_TerrainVerticesPerSide + i] & (LOS_EXPLORED << (2*((*playerIt)-1))))
 					{
 						exploredVertices += 1;
 						break;
 					}
-				}
 			}
-		}
 
 		return exploredVertices * 100 / m_TotalInworldVertices;
 	}

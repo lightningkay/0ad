@@ -7,7 +7,6 @@
   <Identity>
     <Civ>ptol</Civ>
     <SpecificName>mktr</SpecificName>
-    <History>Towers were an important part of city fortifications. The defending troops shot arrows at the enemy and poured boiling oil over the assailants.</History>
   </Identity>
   <Obstruction>
     <Static width="10" depth="10"/>
@@ -16,6 +15,6 @@
     <Actor>structures/ptolemies/wall_tower.xml</Actor>
   </VisualActor>
   <WallPiece>
-    <Length>10</Length>
+    <Length>9.6</Length>
   </WallPiece>
 </Entity>

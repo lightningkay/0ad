@@ -15,14 +15,15 @@ Mirage.prototype.Init = function()
 
 	this.miragedIids = new Set();
 
-	this.buildPercentage = 0;
+	this.classesList = [];
+
 	this.numBuilders = 0;
+	this.buildTime = {};
 
 	this.maxHitpoints = null;
 	this.hitpoints = null;
 	this.repairable = null;
 	this.unhealable = null;
-	this.undeletable = null;
 
 	this.capturePoints = [];
 	this.maxCapturePoints = 0;
@@ -63,17 +64,37 @@ Mirage.prototype.Mirages = function(iid)
 // ============================
 // Parent entity data
 
+Mirage.prototype.CopyIdentity = function(cmpIdentity)
+{
+	this.miragedIids.add(IID_Identity);
+	// In almost all cases we want to ignore mirage entities when querying Identity components of owned entities.
+	// To avoid adding a test everywhere, we don't transfer the classeslist in the template but here.
+	// We clone this since the classes list is not synchronized and since the mirage should be a snapshot of the entity at the given time.
+	this.classesList = clone(cmpIdentity.GetClassesList());
+};
+
+Mirage.prototype.GetClassesList = function() { return this.classesList };
+
 // Foundation data
 
 Mirage.prototype.CopyFoundation = function(cmpFoundation)
 {
 	this.miragedIids.add(IID_Foundation);
-	this.buildPercentage = cmpFoundation.GetBuildPercentage();
 	this.numBuilders = cmpFoundation.GetNumBuilders();
+	this.buildTime = cmpFoundation.GetBuildTime();
 };
 
-Mirage.prototype.GetBuildPercentage = function() { return this.buildPercentage; };
 Mirage.prototype.GetNumBuilders = function() { return this.numBuilders; };
+Mirage.prototype.GetBuildTime = function() { return this.buildTime; };
+
+// Repairable data (numBuilders and buildTime shared with foundation as entities can't have both)
+
+Mirage.prototype.CopyRepairable = function(cmpRepairable)
+{
+	this.miragedIids.add(IID_Repairable);
+	this.numBuilders = cmpRepairable.GetNumBuilders();
+	this.buildTime = cmpRepairable.GetBuildTime();
+};
 
 // Health data
 
@@ -84,14 +105,12 @@ Mirage.prototype.CopyHealth = function(cmpHealth)
 	this.hitpoints = cmpHealth.GetHitpoints();
 	this.repairable = cmpHealth.IsRepairable();
 	this.unhealable = cmpHealth.IsUnhealable();
-	this.undeletable = cmpHealth.IsUndeletable();
 };
 
 Mirage.prototype.GetMaxHitpoints = function() { return this.maxHitpoints; };
 Mirage.prototype.GetHitpoints = function() { return this.hitpoints; };
 Mirage.prototype.IsRepairable = function() { return this.repairable; };
 Mirage.prototype.IsUnhealable = function() { return this.unhealable; };
-Mirage.prototype.IsUndeletable = function() { return this.undeletable; };
 
 // Capture data
 
@@ -198,7 +217,7 @@ Mirage.prototype.OnVisibilityChanged = function(msg)
 	if (this.parent == INVALID_ENTITY)
 		Engine.DestroyEntity(this.entity);
 	else
-		Engine.BroadcastMessage(MT_EntityRenamed, { entity: this.entity, newentity: this.parent });
+		Engine.PostMessage(this.entity, MT_EntityRenamed, { "entity": this.entity, "newentity": this.parent });
 };
 
 Engine.RegisterComponentType(IID_Mirage, "Mirage", Mirage);

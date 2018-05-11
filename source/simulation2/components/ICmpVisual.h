@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 #include "maths/BoundingBoxOriented.h"
 #include "maths/BoundingBoxAligned.h"
 #include "maths/Fixed.h"
+#include "maths/FixedVector3D.h"
 #include "lib/file/vfs/vfs_path.h"
 
 class CUnit;
@@ -38,39 +39,40 @@ public:
 	 * Get the world-space bounding box of the object's visual representation.
 	 * (Not safe for use in simulation code.)
 	 */
-	virtual CBoundingBoxAligned GetBounds() = 0;
+	virtual CBoundingBoxAligned GetBounds() const = 0;
 
 	/**
 	 * Get the oriented world-space bounding box of the object's visual representation, clipped at the Y=0 plane in object space
-	 * to prevent it from extending into the terrain. The primary difference with GetBounds is that this bounding box is not aligned 
+	 * to prevent it from extending into the terrain. The primary difference with GetBounds is that this bounding box is not aligned
 	 * to the world axes, but arbitrarily rotated according to the model transform.
 	 */
-	virtual CBoundingBoxOriented GetSelectionBox() = 0;
+	virtual CBoundingBoxOriented GetSelectionBox() const = 0;
 
 	/**
 	 * Get the world-space position of the base point of the object's visual representation.
 	 * (Not safe for use in simulation code.)
 	 */
-	virtual CVector3D GetPosition() = 0;
+	virtual CVector3D GetPosition() const = 0;
 
 	/**
 	 * Return the short name of the actor that's being displayed, or the empty string on error.
 	 * (Not safe for use in simulation code.)
 	 */
-	virtual std::wstring GetActorShortName() = 0;
+	virtual std::wstring GetActorShortName() const = 0;
 
 	/**
 	 * Return the filename of the actor to be used for projectiles from this unit, or the empty string if none.
 	 * (Not safe for use in simulation code.)
 	 */
-	virtual std::wstring GetProjectileActor() = 0;
+	virtual std::wstring GetProjectileActor() const = 0;
 
 	/**
 	 * Return the exact position where a projectile should be launched from (based on the actor's
 	 * ammo prop points).
+	 * Return type is CFixedVector3D because it is exposed to the JS interface.
 	 * Returns (0,0,0) if no point can be found.
 	 */
-	virtual CVector3D GetProjectileLaunchPoint() = 0;
+	virtual CFixedVector3D GetProjectileLaunchPoint() const = 0;
 
 	/**
 	 * Returns the underlying unit of this visual actor. May return NULL to indicate that no unit exists (e.g. may happen if the
@@ -87,6 +89,11 @@ public:
 	virtual void SetVariant(const CStr& key, const CStr& selection) = 0;
 
 	/**
+	 * Returns the name of the currently played animation.
+	 */
+	virtual std::string GetAnimationName() const = 0;
+
+	/**
 	 * Start playing the given animation. If there are multiple possible animations then it will
 	 * pick one at random (not network-synchronised).
 	 * If @p soundgroup is specified, then the sound will be played at each 'event' point in the
@@ -96,7 +103,7 @@ public:
 	 * @param speed animation speed multiplier (typically 1.0 for the default speed)
 	 * @param soundgroup VFS path of sound group .xml, relative to audio/, or empty string for none
 	 */
-	virtual void SelectAnimation(const std::string& name, bool once, fixed speed, const std::wstring& soundgroup) = 0;
+	virtual void SelectAnimation(const std::string& name, bool once, fixed speed) = 0;
 
 	/**
 	 * Replaces a specified animation with another. Only affects the special speed-based
@@ -151,8 +158,8 @@ public:
 	/**
 	 * Get actor seed used for random variations
 	 */
-	virtual u32 GetActorSeed() = 0;
-	
+	virtual u32 GetActorSeed() const = 0;
+
 	/**
 	 * Set actor seed for random variations and reload model
 	 */
@@ -161,7 +168,7 @@ public:
 	/**
 	 * Returns true if this entity should have a construction preview
 	 */
-	virtual bool HasConstructionPreview() = 0;
+	virtual bool HasConstructionPreview() const = 0;
 
 	/**
 	 * Called when an actor file has been modified and reloaded dynamically.

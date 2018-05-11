@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Wildfire Games
+/* Copyright (C) 2013 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -42,7 +42,7 @@ void GetSystemVersion(int &major, int &minor, int &bugfix)
 		dispatch_once(&onceToken, ^{
 			NSString* versionString = [[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"];
 			NSArray* versions = [versionString componentsSeparatedByString:@"."];
-			check(versions.count >= 2);
+
 			if (versions.count >= 1)
 				mMajor = [[versions objectAtIndex:0] integerValue];
 			if (versions.count >= 2)

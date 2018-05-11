@@ -37,7 +37,7 @@ m.QueueManager = function(Config, queues)
 		this.queueArrays.push([q, this.queues[q]]);
 	}
 	let priorities = this.priorities;
-	this.queueArrays.sort((a,b) => priorities[b[0]] - priorities[a[0]]);
+	this.queueArrays.sort((a, b) => priorities[b[0]] - priorities[a[0]]);
 };
 
 m.QueueManager.prototype.getAvailableResources = function(gameState)
@@ -59,7 +59,7 @@ m.QueueManager.prototype.getTotalAccountedResources = function()
 m.QueueManager.prototype.currentNeeds = function(gameState)
 {
 	let needed = new API3.Resources();
-	//queueArrays because it's faster.
+	// queueArrays because it's faster.
 	for (let q of this.queueArrays)
 	{
 		let queue = q[1];
@@ -70,7 +70,7 @@ m.QueueManager.prototype.currentNeeds = function(gameState)
 	}
 	// get out current resources, not removing accounts.
 	let current = gameState.getResources();
-	for (let res of needed.types)
+	for (let res of Resources.GetCodes())
 		needed[res] = Math.max(0, needed[res] - current[res]);
 
 	return needed;
@@ -84,8 +84,8 @@ m.QueueManager.prototype.wantedGatherRates = function(gameState)
 	if (gameState.ai.playedTurn === 0)
 	{
 		let ret = {};
-		for (let res of gameState.sharedScript.resourceList)
-			ret[res] = (res === "food" || res === "wood" ) ? 10 : 0;
+		for (let res of Resources.GetCodes())
+			ret[res] = this.Config.queues.firstTurn[res] || this.Config.queues.firstTurn.default;
 		return ret;
 	}
 
@@ -97,14 +97,14 @@ m.QueueManager.prototype.wantedGatherRates = function(gameState)
 	let totalShort = {};
 	let totalMedium = {};
 	let totalLong = {};
-	for (let res of gameState.sharedScript.resourceList)
+	for (let res of Resources.GetCodes())
 	{
-		totalShort[res] = (res === "food" || res === "wood" ) ? 200 : 100;
-		totalMedium[res] = 0;
-		totalLong[res] = 0;
+		totalShort[res] = this.Config.queues.short[res] || this.Config.queues.short.default;
+		totalMedium[res] = this.Config.queues.medium[res] || this.Config.queues.medium.default;
+		totalLong[res] = this.Config.queues.long[res] || this.Config.queues.long.default;
 	}
 	let total;
-	//queueArrays because it's faster.
+	// queueArrays because it's faster.
 	for (let q of this.queueArrays)
 	{
 		let queue = q[1];
@@ -133,7 +133,7 @@ m.QueueManager.prototype.wantedGatherRates = function(gameState)
 	// global rates
 	let rates = {};
 	let diff;
-	for (let res of gameState.sharedScript.resourceList)
+	for (let res of Resources.GetCodes())
 	{
 		if (current[res] > 0)
 		{
@@ -158,8 +158,8 @@ m.QueueManager.prototype.wantedGatherRates = function(gameState)
 m.QueueManager.prototype.printQueues = function(gameState)
 {
 	let numWorkers = 0;
-	gameState.getOwnUnits().forEach (function (ent) {
-		if (ent.getMetadata(PlayerID, "role") === "worker" && ent.getMetadata(PlayerID, "plan") === undefined)
+	gameState.getOwnUnits().forEach(ent => {
+		if (ent.getMetadata(PlayerID, "role") == "worker" && ent.getMetadata(PlayerID, "plan") === undefined)
 			numWorkers++;
 	});
 	API3.warn("---------- QUEUES ------------ with pop " + gameState.getPopulation() + " and workers " + numWorkers);
@@ -185,7 +185,7 @@ m.QueueManager.prototype.printQueues = function(gameState)
 	    API3.warn(p + ": " + uneval(this.accounts[p]));
 	API3.warn("Current Resources: " + uneval(gameState.getResources()));
 	API3.warn("Available Resources: " + uneval(this.getAvailableResources(gameState)));
-	API3.warn("Wanted Gather Rates: " + uneval(this.wantedGatherRates(gameState)));
+	API3.warn("Wanted Gather Rates: " + uneval(gameState.ai.HQ.GetWantedGatherRates(gameState)));
 	API3.warn("Current Gather Rates: " + uneval(gameState.ai.HQ.GetCurrentGatherRates(gameState)));
 	API3.warn("Most needed resources: " + uneval(gameState.ai.HQ.pickMostNeededResources(gameState)));
 	API3.warn("------------------------------------");
@@ -203,7 +203,7 @@ m.QueueManager.prototype.clear = function()
 m.QueueManager.prototype.setAccounts = function(gameState, cost, i)
 {
 	let available = this.getAvailableResources(gameState);
-	for (let res of this.accounts[i].types)
+	for (let res of Resources.GetCodes())
 	{
 		if (this.accounts[i][res] >= cost[res])
 			continue;
@@ -216,7 +216,7 @@ m.QueueManager.prototype.setAccounts = function(gameState, cost, i)
  */
 m.QueueManager.prototype.transferAccounts = function(cost, i, j)
 {
-	for (let res of this.accounts[i].types)
+	for (let res of Resources.GetCodes())
 	{
 		if (this.accounts[j][res] >= cost[res])
 			continue;
@@ -232,7 +232,7 @@ m.QueueManager.prototype.transferAccounts = function(cost, i, j)
 m.QueueManager.prototype.distributeResources = function(gameState)
 {
 	let availableRes = this.getAvailableResources(gameState);
-	for (let res of availableRes.types)
+	for (let res of Resources.GetCodes())
 	{
 		if (availableRes[res] < 0)    // rescale the accounts if we've spent resources already accounted (e.g. by bartering)
 		{
@@ -282,7 +282,7 @@ m.QueueManager.prototype.distributeResources = function(gameState)
 			}
 			else if (this.accounts[j][res] > queueCost[res])
 			{
-				availableRes[res] += (this.accounts[j][res] - queueCost[res]);
+				availableRes[res] += this.accounts[j][res] - queueCost[res];
 				this.accounts[j][res] = queueCost[res];
 			}
 		}
@@ -408,7 +408,7 @@ m.QueueManager.prototype.update = function(gameState)
 
 	if (this.Config.debug > 1 && gameState.ai.playedTurn%50 === 0)
 		this.printQueues(gameState);
-	
+
 	Engine.ProfileStop();
 };
 
@@ -416,34 +416,34 @@ m.QueueManager.prototype.update = function(gameState)
 m.QueueManager.prototype.checkPausedQueues = function(gameState)
 {
 	let numWorkers = gameState.countOwnEntitiesAndQueuedWithRole("worker");
-	let workersMin = Math.min(Math.max(12, 24 * this.Config.popScaling), this.Config.Economy.popForTown);
+	let workersMin = Math.min(Math.max(12, 24 * this.Config.popScaling), this.Config.Economy.popPhase2);
 	for (let q in this.queues)
 	{
 		let toBePaused = false;
-		if (gameState.ai.HQ.numActiveBase() === 0)
-			toBePaused = (q !== "dock" && q !== "civilCentre");
+		if (gameState.ai.HQ.numPotentialBases() == 0)
+			toBePaused = q != "dock" && q != "civilCentre";
 		else if (numWorkers < workersMin / 3)
-			toBePaused = (q !== "citizenSoldier" && q !== "villager" && q !== "emergency");
+			toBePaused = q != "citizenSoldier" && q != "villager" && q != "emergency";
 		else if (numWorkers < workersMin * 2 / 3)
-			toBePaused = (q === "civilCentre" || q === "economicBuilding" ||
-				q === "militaryBuilding" || q === "defenseBuilding" ||
-				q === "majorTech" || q === "minorTech" || q.indexOf("plan_") !== -1);
+			toBePaused = q == "civilCentre" || q == "economicBuilding" ||
+				q == "militaryBuilding" || q == "defenseBuilding" || q == "healer" ||
+				q == "majorTech" || q == "minorTech" || q.indexOf("plan_") != -1;
 		else if (numWorkers < workersMin)
-			toBePaused = (q === "civilCentre" || q === "defenseBuilding" ||
-				q == "majorTech" || q.indexOf("_siege") != -1 || q.indexOf("_champ") != -1);
+			toBePaused = q == "civilCentre" || q == "defenseBuilding" ||
+				q == "majorTech" || q.indexOf("_siege") != -1 || q.indexOf("_champ") != -1;
 
 		if (toBePaused)
 		{
-			if (q === "field" && gameState.ai.HQ.needFarm &&
+			if (q == "field" && gameState.ai.HQ.needFarm &&
 				!gameState.getOwnStructures().filter(API3.Filters.byClass("Field")).hasEntities())
 				toBePaused = false;
-			if (q === "corral" && gameState.ai.HQ.needCorral &&
+			if (q == "corral" && gameState.ai.HQ.needCorral &&
 				!gameState.getOwnStructures().filter(API3.Filters.byClass("Field")).hasEntities())
 				toBePaused = false;
-			if (q === "dock" && gameState.ai.HQ.needFish &&
+			if (q == "dock" && gameState.ai.HQ.needFish &&
 				!gameState.getOwnStructures().filter(API3.Filters.byClass("Dock")).hasEntities())
 				toBePaused = false;
-			if (q === "ships" && gameState.ai.HQ.needFish &&
+			if (q == "ships" && gameState.ai.HQ.needFish &&
 				!gameState.ai.HQ.navalManager.ships.filter(API3.Filters.byClass("FishingBoat")).hasEntities())
 				toBePaused = false;
 		}
@@ -522,7 +522,7 @@ m.QueueManager.prototype.addQueue = function(queueName, priority)
 	for (let q in this.queues)
 		this.queueArrays.push([q, this.queues[q]]);
 	let priorities = this.priorities;
-	this.queueArrays.sort((a,b) => priorities[b[0]] - priorities[a[0]]);
+	this.queueArrays.sort((a, b) => priorities[b[0]] - priorities[a[0]]);
 };
 
 m.QueueManager.prototype.removeQueue = function(queueName)
@@ -533,12 +533,12 @@ m.QueueManager.prototype.removeQueue = function(queueName)
 	delete this.queues[queueName];
 	delete this.priorities[queueName];
 	delete this.accounts[queueName];
-		
+
 	this.queueArrays = [];
 	for (let q in this.queues)
 		this.queueArrays.push([q, this.queues[q]]);
 	let priorities = this.priorities;
-	this.queueArrays.sort((a,b) => priorities[b[0]] - priorities[a[0]]);
+	this.queueArrays.sort((a, b) => priorities[b[0]] - priorities[a[0]]);
 };
 
 m.QueueManager.prototype.getPriority = function(queueName)
@@ -553,7 +553,7 @@ m.QueueManager.prototype.changePriority = function(queueName, newPriority)
 	if (this.queues[queueName] !== undefined)
 		this.priorities[queueName] = newPriority;
 	let priorities = this.priorities;
-	this.queueArrays.sort((a,b) => priorities[b[0]] - priorities[a[0]]);
+	this.queueArrays.sort((a, b) => priorities[b[0]] - priorities[a[0]]);
 };
 
 m.QueueManager.prototype.Serialize = function()
@@ -592,7 +592,7 @@ m.QueueManager.prototype.Deserialize = function(gameState, data)
 		this.accounts[q].Deserialize(data.accounts[q]);
 		this.queueArrays.push([q, this.queues[q]]);
 	}
-	this.queueArrays.sort((a,b) => data.priorities[b[0]] - data.priorities[a[0]]);
+	this.queueArrays.sort((a, b) => data.priorities[b[0]] - data.priorities[a[0]]);
 };
 
 return m;

@@ -4,9 +4,6 @@
 // Additional gain for ships for each garrisoned trader, in percents
 const GARRISONED_TRADER_ADDITION = 20;
 
-// Array of resource names
-const RESOURCES = ["food", "wood", "stone", "metal"];
-
 function Trader() {}
 
 Trader.prototype.Schema =
@@ -14,7 +11,7 @@ Trader.prototype.Schema =
 	"<a:example>" +
 		"<GainMultiplier>0.75</GainMultiplier>" +
 	"</a:example>" +
-	"<element name='GainMultiplier' a:help='Trader gain for a 100m distance'>" +
+	"<element name='GainMultiplier' a:help='Trader gain for a 100m distance and mapSize = 1024'>" +
 		"<ref name='positiveDecimal'/>" +
 	"</element>";
 
@@ -165,58 +162,52 @@ Trader.prototype.CanTrade = function(target)
 	return !cmpTraderPlayer.IsEnemy(targetPlayerId);
 };
 
+Trader.prototype.AddResources = function(ent, gain)
+{
+	let cmpPlayer = QueryOwnerInterface(ent);
+	if (cmpPlayer)
+		cmpPlayer.AddResource(this.goods.type, gain);
+
+	let cmpStatisticsTracker = QueryOwnerInterface(ent, IID_StatisticsTracker);
+	if (cmpStatisticsTracker)
+		cmpStatisticsTracker.IncreaseTradeIncomeCounter(gain);
+};
+
+Trader.prototype.GenerateResources = function(currentMarket, nextMarket)
+{
+	this.AddResources(this.entity, this.goods.amount.traderGain);
+
+	if (this.goods.amount.market1Gain)
+		this.AddResources(currentMarket, this.goods.amount.market1Gain);
+
+	if (this.goods.amount.market2Gain)
+		this.AddResources(nextMarket, this.goods.amount.market2Gain);
+};
+
 Trader.prototype.PerformTrade = function(currentMarket)
 {
-	let previousMarket = this.markets[(this.index+this.markets.length) % this.markets.length];
+	let previousMarket = this.markets[this.index];
 	if (previousMarket != currentMarket)  // Inconsistent markets
 	{
 		this.goods.amount = null;
-		return;
+		return INVALID_ENTITY;
 	}
 
 	this.index = ++this.index % this.markets.length;
-	let nextMarket = this.markets[(this.index+this.markets.length) % this.markets.length];
+	let nextMarket = this.markets[this.index];
 
 	if (this.goods.amount && this.goods.amount.traderGain)
-	{
-		let cmpPlayer = QueryOwnerInterface(this.entity);
-		if (cmpPlayer)
-			cmpPlayer.AddResource(this.goods.type, this.goods.amount.traderGain);
-
-		let cmpStatisticsTracker = QueryOwnerInterface(this.entity, IID_StatisticsTracker);
-		if (cmpStatisticsTracker)
-			cmpStatisticsTracker.IncreaseTradeIncomeCounter(this.goods.amount.traderGain);
-
-		if (this.goods.amount.market1Gain)
-		{
-			cmpPlayer = QueryOwnerInterface(previousMarket);
-			if (cmpPlayer)
-				cmpPlayer.AddResource(this.goods.type, this.goods.amount.market1Gain);
-
-			cmpStatisticsTracker = QueryOwnerInterface(previousMarket, IID_StatisticsTracker);
-			if (cmpStatisticsTracker)
-				cmpStatisticsTracker.IncreaseTradeIncomeCounter(this.goods.amount.market1Gain);
-		}
-
-		if (this.goods.amount.market2Gain)
-		{
-			cmpPlayer = QueryOwnerInterface(nextMarket);
-			if (cmpPlayer)
-				cmpPlayer.AddResource(this.goods.type, this.goods.amount.market2Gain);
-
-			cmpStatisticsTracker = QueryOwnerInterface(nextMarket, IID_StatisticsTracker);
-			if (cmpStatisticsTracker)
-				cmpStatisticsTracker.IncreaseTradeIncomeCounter(this.goods.amount.market2Gain);
-		}
-	}
+		this.GenerateResources(previousMarket, nextMarket);
 
 	let cmpPlayer = QueryOwnerInterface(this.entity);
 	if (!cmpPlayer)
-		return;
+		return INVALID_ENTITY;
 
 	this.goods.type = cmpPlayer.GetNextTradingGoods();
 	this.goods.amount = this.CalculateGain(currentMarket, nextMarket);
 	this.goods.origin = currentMarket;
+
+	return nextMarket;
 };
 
 Trader.prototype.GetGoods = function()
@@ -229,7 +220,7 @@ Trader.prototype.GetGoods = function()
  */
 Trader.prototype.HasMarket = function(market)
 {
-	return this.markets.indexOf(market) != -1; 
+	return this.markets.indexOf(market) != -1;
 };
 
 /**

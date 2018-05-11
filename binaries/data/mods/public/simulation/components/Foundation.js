@@ -1,7 +1,7 @@
 function Foundation() {}
 
 Foundation.prototype.Schema =
-	"<a:component type='internal'/><empty/>";
+	"<empty/>";
 
 Foundation.prototype.Init = function()
 {
@@ -12,13 +12,12 @@ Foundation.prototype.Init = function()
 	// its obstruction once there's nothing in the way.
 	this.committed = false;
 
-	this.builders = []; // builder entities
-	this.buildMultiplier = 1; // Multiplier for the amount of work builders do.
-	
-	this.previewEntity = INVALID_ENTITY;
+	this.builders = new Map(); // Map of builder entities to their work per second
+	this.totalBuilderRate = 0; // Total amount of work the builders do each second
+	this.buildMultiplier = 1; // Multiplier for the amount of work builders do
+	this.buildTimePenalty = 0.7; // Penalty for having multiple builders
 
-	// Penalty for multiple builders
-	this.buildTimePenalty = 0.7;
+	this.previewEntity = INVALID_ENTITY;
 };
 
 Foundation.prototype.InitialiseConstruction = function(owner, template)
@@ -43,7 +42,7 @@ Foundation.prototype.InitialiseConstruction = function(owner, template)
 };
 
 /**
- * Moving the revelation logic from Build to here makes the building sink if 
+ * Moving the revelation logic from Build to here makes the building sink if
  * it is attacked.
  */
 Foundation.prototype.OnHealthChanged = function(msg)
@@ -52,7 +51,7 @@ Foundation.prototype.OnHealthChanged = function(msg)
 	var cmpPosition = Engine.QueryInterface(this.previewEntity, IID_Position);
 	if (cmpPosition)
 		cmpPosition.SetConstructionProgress(this.GetBuildProgress());
-		
+
 	Engine.PostMessage(this.entity, MT_FoundationProgressChanged, { "to": this.GetBuildPercentage() });
 };
 
@@ -78,7 +77,7 @@ Foundation.prototype.GetBuildPercentage = function()
 
 Foundation.prototype.GetNumBuilders = function()
 {
-	return this.builders.length;
+	return this.builders.size;
 };
 
 Foundation.prototype.IsFinished = function()
@@ -122,44 +121,62 @@ Foundation.prototype.OnDestroy = function()
  */
 Foundation.prototype.AddBuilder = function(builderEnt)
 {
-	if (this.builders.indexOf(builderEnt) != -1)
+	if (this.builders.has(builderEnt))
 		return;
 
-	this.builders.push(builderEnt);
+	this.builders.set(builderEnt, Engine.QueryInterface(builderEnt, IID_Builder).GetRate());
+	this.totalBuilderRate += this.builders.get(builderEnt);
+	this.SetBuildMultiplier();
+
 	let cmpVisual = Engine.QueryInterface(this.entity, IID_Visual);
 	if (cmpVisual)
-		cmpVisual.SetVariable("numbuilders", this.builders.length);
+		cmpVisual.SetVariable("numbuilders", this.builders.size);
 
-	this.SetBuildMultiplier();
-	Engine.PostMessage(this.entity, MT_FoundationBuildersChanged, { "to": this.builders });
+	Engine.PostMessage(this.entity, MT_FoundationBuildersChanged, { "to": Array.from(this.builders.keys()) });
 };
 
 Foundation.prototype.RemoveBuilder = function(builderEnt)
 {
-	let index = this.builders.indexOf(builderEnt);
-	if (index == -1)
+	if (!this.builders.has(builderEnt))
 		return;
 
-	this.builders.splice(index, 1);
+	this.totalBuilderRate -= this.builders.get(builderEnt);
+	this.builders.delete(builderEnt);
+	this.SetBuildMultiplier();
+
 	let cmpVisual = Engine.QueryInterface(this.entity, IID_Visual);
 	if (cmpVisual)
-		cmpVisual.SetVariable("numbuilders", this.builders.length);
+		cmpVisual.SetVariable("numbuilders", this.builders.size);
 
-	this.SetBuildMultiplier();
-	Engine.PostMessage(this.entity, MT_FoundationBuildersChanged, { "to": this.builders });
- };
+	Engine.PostMessage(this.entity, MT_FoundationBuildersChanged, { "to": Array.from(this.builders.keys()) });
+};
 
 /**
- * Sets the build rate multiplier, which is applied to all builders.
- * Yields a total rate of construction equal to numBuilders^0.7
+ * The build multiplier is a penalty that is applied to each builder.
+ * For example, ten women build at a combined rate of 10^0.7 = 5.01 instead of 10.
  */
+Foundation.prototype.CalculateBuildMultiplier = function(num)
+{
+	// Avoid division by zero, in particular 0/0 = NaN which isn't reliably serialized
+	return num < 2 ? 1 : Math.pow(num, this.buildTimePenalty) / num;
+};
+
 Foundation.prototype.SetBuildMultiplier = function()
 {
-	let numBuilders = this.builders.length;
-	if (numBuilders < 2)
-		this.buildMultiplier = 1;
-	else
-		this.buildMultiplier = Math.pow(numBuilders, this.buildTimePenalty) / numBuilders;
+	this.buildMultiplier = this.CalculateBuildMultiplier(this.GetNumBuilders());
+};
+
+Foundation.prototype.GetBuildTime = function()
+{
+	let timeLeft = (1 - this.GetBuildProgress()) * Engine.QueryInterface(this.entity, IID_Cost).GetBuildTime();
+	let rate = this.totalBuilderRate * this.buildMultiplier;
+	// The rate if we add another woman to the foundation.
+	let rateNew = (this.totalBuilderRate + 1) * this.CalculateBuildMultiplier(this.GetNumBuilders() + 1);
+	return {
+		// Avoid division by zero, in particular 0/0 = NaN which isn't reliably serialized
+		"timeRemaining": rate ? timeLeft / rate : 0,
+		"timeRemainingNew": timeLeft / rateNew
+	};
 };
 
 /**
@@ -173,30 +190,23 @@ Foundation.prototype.Build = function(builderEnt, work)
 	// this won't happen much)
 	if (this.GetBuildProgress() == 1.0)
 		return;
-	
-	// If there's any units in the way, ask them to move away
-	// and return early from this method.
+
 	var cmpObstruction = Engine.QueryInterface(this.entity, IID_Obstruction);
+	// If there are any units in the way, ask them to move away and return early from this method.
 	if (cmpObstruction && cmpObstruction.GetBlockMovementFlag())
 	{
-		var collisions = cmpObstruction.GetUnitCollisions();
+		// Remove animal corpses
+		for (let ent of cmpObstruction.GetEntitiesDeletedUponConstruction())
+			Engine.DestroyEntity(ent);
+
+		let collisions = cmpObstruction.GetEntitiesBlockingConstruction();
 		if (collisions.length)
 		{
-			var cmpFoundationOwnership = Engine.QueryInterface(this.entity, IID_Ownership);
-			for each (var ent in collisions)
+			for (var ent of collisions)
 			{
 				var cmpUnitAI = Engine.QueryInterface(ent, IID_UnitAI);
 				if (cmpUnitAI)
 					cmpUnitAI.LeaveFoundation(this.entity);
-				else
-				{
-					// If obstructing fauna is gaia or our own but doesn't have UnitAI, just destroy it
-					var cmpOwnership = Engine.QueryInterface(ent, IID_Ownership);
-					var cmpIdentity = Engine.QueryInterface(ent, IID_Identity);
-					if (cmpOwnership && cmpIdentity && cmpIdentity.HasClass("Animal")
-						&& (cmpOwnership.GetOwner() == 0 || cmpFoundationOwnership && cmpOwnership.GetOwner() == cmpFoundationOwnership.GetOwner()))
-						Engine.DestroyEntity(ent);
-				}
 
 				// TODO: What if an obstruction has no UnitAI?
 			}
@@ -219,7 +229,7 @@ Foundation.prototype.Build = function(builderEnt, work)
 		if (cmpObstruction && cmpObstruction.GetBlockMovementFlag())
 			cmpObstruction.SetDisableBlockMovementPathfinding(false, false, -1);
 
-		// Call the related trigger event 
+		// Call the related trigger event
 		var cmpTrigger = Engine.QueryInterface(SYSTEM_ENTITY, IID_Trigger);
 		cmpTrigger.CallEvent("ConstructionStarted", {
 			"foundation": this.entity,
@@ -229,7 +239,7 @@ Foundation.prototype.Build = function(builderEnt, work)
 		// Switch foundation to scaffold variant
 		var cmpFoundationVisual = Engine.QueryInterface(this.entity, IID_Visual);
 		if (cmpFoundationVisual)
-			cmpFoundationVisual.SelectAnimation("scaffold", false, 1.0, "");
+			cmpFoundationVisual.SelectAnimation("scaffold", false, 1.0);
 
 		// Create preview entity and copy various parameters from the foundation
 		if (cmpFoundationVisual && cmpFoundationVisual.HasConstructionPreview())
@@ -268,10 +278,13 @@ Foundation.prototype.Build = function(builderEnt, work)
 		error("Foundation " + this.entity + " does not have a health component.");
 		return;
 	}
-	var maxHealth = cmpHealth.GetMaxHitpoints();
-	var deltaHP = Math.max(work, Math.min(maxHealth, Math.floor(work * this.GetBuildRate() * this.buildMultiplier)));
+	var deltaHP = work * this.GetBuildRate() * this.buildMultiplier;
 	if (deltaHP > 0)
 		cmpHealth.Increase(deltaHP);
+
+	// Update the total builder rate
+	this.totalBuilderRate += work - this.builders.get(builderEnt);
+	this.builders.set(builderEnt, work);
 
 	var progress = this.GetBuildProgress();
 
@@ -354,7 +367,7 @@ Foundation.prototype.Build = function(builderEnt, work)
 			return;
 		}
 		cmpBuildingOwnership.SetOwner(owner);
-		
+
 		/*
 		Copy over the obstruction control group IDs from the foundation
 		entities. This is needed to ensure that when a foundation is completed
@@ -367,34 +380,34 @@ Foundation.prototype.Build = function(builderEnt, work)
 		new control group containing only itself, and will hence block
 		construction of any surrounding foundations that it was previously in
 		the same control group with.
-		
+
 		Note that this will result in the completed building entities having
 		control group IDs that equal entity IDs of old (and soon to be deleted)
 		foundation entities. This should not have any consequences, however,
 		since the control group IDs are only meant to be unique identifiers,
 		which is still true when reusing the old ones.
 		*/
-		
+
 		var cmpBuildingObstruction = Engine.QueryInterface(building, IID_Obstruction);
 		if (cmpObstruction && cmpBuildingObstruction)
 		{
 			cmpBuildingObstruction.SetControlGroup(cmpObstruction.GetControlGroup());
 			cmpBuildingObstruction.SetControlGroup2(cmpObstruction.GetControlGroup2());
 		}
-		
+
 		var cmpPlayerStatisticsTracker = QueryOwnerInterface(this.entity, IID_StatisticsTracker);
 		if (cmpPlayerStatisticsTracker)
 			cmpPlayerStatisticsTracker.IncreaseConstructedBuildingsCounter(building);
 
 		var cmpBuildingHealth = Engine.QueryInterface(building, IID_Health);
 		if (cmpBuildingHealth)
-			cmpBuildingHealth.SetHitpoints(cmpHealth.GetHitpoints());
+			cmpBuildingHealth.SetHitpoints(progress * cmpBuildingHealth.GetMaxHitpoints());
 
 		PlaySound("constructed", building);
 
 		Engine.PostMessage(this.entity, MT_ConstructionFinished,
 			{ "entity": this.entity, "newentity": building });
-		Engine.BroadcastMessage(MT_EntityRenamed, { entity: this.entity, newentity: building });
+		Engine.PostMessage(this.entity, MT_EntityRenamed, { "entity": this.entity, "newentity": building });
 
 		Engine.DestroyEntity(this.entity);
 	}

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -58,6 +58,15 @@ class XMBElement;
  *   <Example4 datatype="tokens">
  *     one two three
  *   </Example4>
+ *   <Example5>
+ *     <E/>
+ *     <F>
+ *       <I>test</I>
+ *     </F>
+ *     <H>
+ *       <J>example</J>
+ *     </H>
+ *   </Example5>
  * </Entity>
  * @endcode
  * then a second like:
@@ -75,6 +84,15 @@ class XMBElement;
  *     four             <!-- add a token to the parent's set -->
  *     -two             <!-- remove a token from the parent's set -->
  *   </Example4>
+ *   <Example5 filtered=""> <!-- drop all children of this node that are not in this file -->
+ *     <F merge="">  <!-- only add this element if it is also present in the parent -->
+ *       <K>example</K> <!-- if F is present merge its children normally -->
+ *     </F>
+ *     <G merge=""/>  <!-- keep the G element of the parent if it exists -->
+ *     <H>
+ *       <J>text</J>
+ *     </H>
+ *   </Example5>
  * </Entity>
  * @endcode
  * is equivalent to loading a single file like:
@@ -90,6 +108,15 @@ class XMBElement;
  *   <Example4>
  *     one three four
  *   </Example4>
+ *   <Example5>
+ *     <F>
+ *       <I>test</I>
+ *       <K>example</K>
+ *     </F>
+ *     <H>
+ *       <J>text</J>
+ *     </H>
+ *   </Example5>
  * </Entity>
  * @endcode
  *
@@ -103,7 +130,16 @@ class XMBElement;
  *     "Example3": {
  *       "D": "new"
  *     },
- *     "Example4": { "@datatype": "tokens", "_string": "one three four" }
+ *     "Example4": { "@datatype": "tokens", "_string": "one three four" },
+ *     "Example5": {
+ *       "F": {
+ *         "I": "test",
+ *         "K": "example"
+ *       },
+ *       "H": {
+ *         "J": "text"
+ *       }
+ *     }
  *   }
  * }
  * @endcode
@@ -123,7 +159,7 @@ public:
 	 * Loads the XML data specified by @a file into the node @a ret.
 	 * Any existing data in @a ret will be overwritten or else kept, so this
 	 * can be called multiple times to build up a node from multiple inputs.
-	 * 
+	 *
 	 * @param sourceIdentifier Optional; string you can pass along to indicate the source of
 	 *        the data getting loaded. Used for output to log messages if an error occurs.
 	 */
@@ -139,26 +175,18 @@ public:
 	/**
 	 * See LoadXML, but parses the XML string @a xml.
 	 * @return error code if parsing failed, else @c PSRETURN_OK
-	 * 
+	 *
 	 * @param sourceIdentifier Optional; string you can pass along to indicate the source of
 	 *        the data getting loaded. Used for output to log messages if an error occurs.
 	 */
 	static PSRETURN LoadXMLString(CParamNode& ret, const char* xml, const wchar_t* sourceIdentifier = NULL);
 
 	/**
-	 * Finds the childs named @a name from @a src and from @a this, and copies the source child's children
-	 * which are in the @a permitted set into this node's child.
-	 * Intended for use as a filtered clone of XML files.
-	 * @a this and @a src must have childs named @a name.
-	 */
-	void CopyFilteredChildrenOfChild(const CParamNode& src, const char* name, const std::set<std::string>& permitted);
-
-	/**
 	 * Returns the (unique) child node with the given name, or a node with IsOk() == false if there is none.
 	 */
 	const CParamNode& GetChild(const char* name) const;
 	// (Children are returned as const in order to allow future optimisations, where we assume
-	// a node is always modified explicitly and not indirectly via its children, e.g. to cache jsvals)
+	// a node is always modified explicitly and not indirectly via its children, e.g. to cache JS::Values)
 
 	/**
 	 * Returns true if this is a valid CParamNode, false if it represents a non-existent node
@@ -212,8 +240,8 @@ public:
 	void ToXML(std::wostream& strm) const;
 
 	/**
-	 * Returns a jsval representation of this node and its children.
-	 * If @p cacheValue is true, then the same jsval will be returned each time
+	 * Returns a JS::Value representation of this node and its children.
+	 * If @p cacheValue is true, then the same JS::Value will be returned each time
 	 * this is called (regardless of whether you passed the same @p cx - be careful
 	 * to only use the cache in one context).
 	 * When caching, the lifetime of @p cx must be longer than the lifetime of this node.
@@ -234,10 +262,10 @@ public:
 	static std::wstring EscapeXMLString(const std::wstring& str);
 
 private:
-	
+
 	/**
 	 * Overlays the specified data onto this node. See class documentation for the concept and examples.
-	 * 
+	 *
 	 * @param xmb Representation of the XMB file containing an element with the data to apply.
 	 * @param element Element inside the specified @p xmb file containing the data to apply.
 	 * @param sourceIdentifier Optional; string you can pass along to indicate the source of

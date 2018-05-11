@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Wildfire Games
+/* Copyright (C) 2017 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -7,10 +7,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -59,7 +59,11 @@ extern void in_dispatch_event(const SDL_Event_* event);
 // be returned by in_poll_event before any standard SDL events
 extern void in_push_priority_event(const SDL_Event_* event);
 
-// reads events that were pushed by in_push_priority_event, or (if there are
+// reads events that were pushed by in_push_priority_event
+// returns 1 if an event was read, 0 otherwise.
+extern int in_poll_priority_event(SDL_Event_* event);
+
+// reads events that were pushed by in_push_priority_event, or, if there are
 // no high-priority events) reads from the SDL event queue with SDL_PollEvent.
 // returns 1 if an event was read, 0 otherwise.
 extern int in_poll_event(SDL_Event_* event);

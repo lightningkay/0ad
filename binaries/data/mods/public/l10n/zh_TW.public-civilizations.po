@@ -5,17 +5,20 @@
 # Translators:
 # Cheng-Chia Tseng <pswo10680@gmail.com>, 2014-2015
 # Cirro Yuan, 2013
-# Jeff Huang <s8321414@gmail.com>, 2013-2014,2016
+# helenkwok2011, 2017
+# Yuan <daan0014119@gmail.com>, 2017
+# Jeff Huang <s8321414@gmail.com>, 2013-2014,2016-2017
 # kevinhykuo <kevinhykuo1994@gmail.com>, 2014
 # Mysterelee <8161525@qq.com>, 2014
 # ryat <mj0011@yopmail.com>, 2015
 # samrmrf, 2013
+# shiung hanching <shiunghanching@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-03-12 18:52+0100\n"
-"PO-Revision-Date: 2016-01-12 03:14+0000\n"
-"Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
+"POT-Creation-Date: 2017-06-05 09:01+0200\n"
+"PO-Revision-Date: 2017-06-11 08:09+0000\n"
+"Last-Translator: helenkwok2011\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/wildfire-games/0ad/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,7 +33,7 @@ msgstr "雅典人"
 
 #: simulation/data/civs/athen.jsonCivBonuses[0].Description
 msgid "Metal mining gathering rates increased by +10% for each passing age."
-msgstr "每過一個時代，金屬礦物採集速率 +10%。"
+msgstr "每前進一個時代，金屬礦物採集速率 +10%。"
 
 #: simulation/data/civs/athen.jsonCivBonuses[0].Name
 msgid "Silver Owls"
@@ -190,13 +193,14 @@ msgstr "經典的方陣陣型是大約在西元前八世紀被發展出來的。
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[0].History
 msgid ""
-"The general whom persuaded the Athenians to invest their income from silver "
+"The general who persuaded the Athenians to invest their income from silver "
 "mines in a war navy of 200 Triremes. A key figure during the Persian Wars, "
 "he commanded the victorious Athenian navy at the decisive battle of Salamis "
 "in 479 B.C. Later, he pursued an active policy against the Persians in the "
-"Aegean, thereby laying the foundations of future Athenian power. Ostracised "
-"by the Athenians, he was forced to flee to the protection of the Persians."
-msgstr "一位極力勸說雅典人把他們在銀礦上所獲得的財富投入建造 200 艘三列槳戰船的將軍。這一行為竟成了左右波斯戰爭的關鍵，他在西元前 479 年指揮雅典的海軍在薩拉米灣的戰役中獲得勝利。爾後，他奉行著在愛琴海積極對抗波斯人的政策，奠定了雅典爾後力量的基石。但他之後被雅典人以貝殼流放法流放，被迫到波斯尋求庇護。"
+"Aegean, thereby laying the foundations of future Athenian power. However, he"
+" was eventually ostracised by the Athenians and forced to flee to the "
+"protection of the Persians."
+msgstr "一個極力勸說雅典人把他們在銀礦上所獲得的財富投入建造 200 艘三列槳戰船的將軍。這一行為竟成了左右波斯戰爭的關鍵，他在西元前 479 年指揮雅典的海軍在薩拉米灣的戰役中獲得勝利。爾後，他奉行著在愛琴海積極對抗波斯人的政策，奠定了雅典爾後力量的基石。但他之後被雅典人以貝殼流放法流放，被迫到波斯尋求庇護。"
 
 #: simulation/data/civs/athen.jsonFactions[0].Heroes[1].History
 msgid "Pericles was the foremost Athenian politician of the 5th Century B.C."
@@ -314,17 +318,14 @@ msgid "Celtic religion and druidry inspired their warlike mindset. "
 msgstr "塞爾特人的宗教信仰及德魯伊激發了他們的好戰心態。"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Description
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
-msgid "Bonus to tech speed."
-msgstr "科技研發速度獎勵。"
+msgid "-20% resources cost for allies healers."
+msgstr "盟友醫療者 -20% 資源消耗。"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].Name
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
-msgid "Druides"
+msgid "Druids"
 msgstr "德魯伊"
 
 #: simulation/data/civs/brit.jsonTeamBonuses[0].History
-#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
 msgid ""
 "The Druids of the Celts maintained an organized religion that advanced the "
 "technology of their people even during wartime."
@@ -478,7 +479,7 @@ msgid ""
 "agreed upon a will with his wife and subordinates; his daughters would "
 "inherit the physical running of the territory, under Boudicca's stewardship "
 "until they were adults, and the Emperor of Rome would have overlordship, "
-"collecting taxes and being allowed to request military aide. Much the same "
+"collecting taxes and being allowed to request military aid. Much the same "
 "situation as he already held. The problem lay in that the Romans did not "
 "recognize female heirs, and thus asserted, upon Prasutagus's death, that "
 "only the Emperor's claim to the kingdom of Icenia was valid. They further "
@@ -519,7 +520,7 @@ msgstr "不列顛人以培養戰犬聞名。"
 #: simulation/data/civs/brit.jsonHistory
 msgid ""
 "The Britons were the Celtic tribes of the British Isles. Using chariots, "
-"longswordsmen and powerful melee soldiers, they staged fearesome revolts "
+"longswordsmen and powerful melee soldiers, they staged fearsome revolts "
 "against Rome to protect their customs and interests. Also, they built "
 "thousands of unique structures such as hill forts, crannogs and brochs."
 msgstr "不列顛人是居住在不列顛群島的塞爾特人。擁有雙輪馬車、長劍兵及強而有力的近戰士兵，他們一直與羅馬進行戰爭以保護他們的習俗及利益。同時，他們也建造了數以千計的獨特建築物，像是丘陵堡壘及圓形石塔。"
@@ -562,8 +563,8 @@ msgid ""
 msgstr "與伊比利半島不同，北非被稱為馬國，每年能生產多達 100,000 頭座騎。這裡也是北非森林象的家。"
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Description
-msgid "+33% trade profit international routes."
-msgstr "國際路線 +33% 貿易利潤。"
+msgid "10% bonus of trade profit for allies' international routes."
+msgstr "盟友的國際貿易路線多 10% 貿易利潤。"
 
 #: simulation/data/civs/cart.jsonTeamBonuses[0].Name
 msgid "Trademasters"
@@ -768,14 +769,28 @@ msgstr "迦太基是個城邦，約位在今日的突尼西亞，曾是地中海
 msgid "Gauls"
 msgstr "高盧人"
 
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Description
+msgid "-10% research time for technologies of allies."
+msgstr "盟友的科技 -10% 研發時間。"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].Name
+msgid "Druidic Wisdom"
+msgstr "德魯伊的睿智"
+
+#: simulation/data/civs/gaul.jsonTeamBonuses[0].History
+msgid ""
+"The Druids of the Gauls maintained an organized religion that advanced the "
+"technology of their people even during wartime."
+msgstr "高廬人的德魯伊保持著有組織的宗教，以便即使是在戰時也能推動科技進步。"
+
 #: simulation/data/civs/gaul.jsonAINames[0]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].Name
-msgid "Britomartos"
-msgstr "Britomartos"
+msgid "Viridomarus"
+msgstr "Viridomarus"
 
 #: simulation/data/civs/gaul.jsonAINames[1]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].Name
-msgid "Brennos"
+msgid "Brennus"
 msgstr "布倫努斯"
 
 #: simulation/data/civs/gaul.jsonAINames[2]
@@ -788,8 +803,8 @@ msgstr "Cingetorix"
 
 #: simulation/data/civs/gaul.jsonAINames[4]
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].Name
-msgid "Uerkingetorix"
-msgstr "Uerkingetorix"
+msgid "Vercingetorix"
+msgstr "維欽托利"
 
 #: simulation/data/civs/gaul.jsonAINames[5]
 msgid "Divico"
@@ -804,8 +819,8 @@ msgid "Liscus"
 msgstr "Liscus"
 
 #: simulation/data/civs/gaul.jsonAINames[8]
-msgid "Valetiacos"
-msgstr "Valetiacos"
+msgid "Valetiacus"
+msgstr "Valetiacus"
 
 #: simulation/data/civs/gaul.jsonAINames[9]
 msgid "Viridovix"
@@ -817,14 +832,17 @@ msgid ""
 msgstr "每個摧毀或佔領的建築物都會給予一定量的金屬及食物。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].Name
-msgid "Uae Uictos"
-msgstr "Uae Uictos"
+msgid "Vae Victis"
+msgstr "Vae Victis"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[0].History
 msgid ""
-"Means Woe to the Defeated. It was the words that the Gallic Leader, Brennos,"
-" spoke at the Capitol at Rome after they took their plunder."
-msgstr "被打敗就意味著災難，這是高盧領袖布倫努斯在攻佔並掠奪了羅馬後，在古羅馬的丘比特神殿說的。"
+"Woe to the Defeated! The Gallic chieftain Brennus seized Rome (with the "
+"exception of a garrison on Capitoline Hill). When Camillus besieged him with"
+" a relief force from Veii, he negotiated his surrender for 1000 pounds of "
+"gold, and adding the weight of his sword on the scale when the Romans "
+"complained that he used false weights he uttered those famous words."
+msgstr "敗者哀嚎!  高盧的酋長布倫努斯攻下了羅馬城(除了卡比特山上的要塞)。當卡密魯斯以維依的軍隊圍攻他，布倫努斯願意為1000磅黃金投降。當羅馬人抱怨布倫努斯在稱黃金的秤桿上動手腳時，布倫努斯拋出了他的劍放在秤桿上，並說了這句名言。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Technologies[1].Description
 msgid "Gallic druids gain a small melee attack."
@@ -843,21 +861,21 @@ msgstr "卡努特斯是來自 Aulercia 的德魯伊。他們在需要時會義�
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[0].History
 msgid ""
-"When celt armies met the enemy, before the battle would start, the celt "
+"When Celtic armies met the enemy, before the battle would start, the Celtic "
 "leader would go to the first line and challenge the bravest of the enemy "
 "warriors to a single combat. The story of how Marcus Claudius Marcellus "
 "killed a Gallic leader at Clastidium (222 B.C.) is typical of such "
-"encounters. Advancing with a smallish army, Marcellus met a combined force "
-"of Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with"
-" the usual rush and terrifying cries, and their king, Britomartos, picking "
+"encounters. Advancing with a small army, Marcellus met a combined force of "
+"Insubrian Gauls and Gaesatae at Clastidium. The Gallic army advanced with "
+"the usual rush and terrifying cries, and their king, Viridomarus, picking "
 "out Marcellus by means of his badges of rank, made for him, shouting a "
-"challenge and brandishing his spear. Britomartos was an outstanding figure "
+"challenge and brandishing his spear. Viridomarus was an outstanding figure "
 "not only for his size but also for his adornments; for he was resplendent in"
 " bright colors and his armor shone with gold and silver. This armor, thought"
 " Marcellus, would be a fitting offering to the gods. He charged the Gaul, "
 "pierced his bright breastplate and cast him to the ground. It was an easy "
-"task to kill Britomartos and strip him of his armor."
-msgstr "當塞爾特軍隊遇到敵人，在戰鬥開始前，塞爾特這一邊的領導人會到最前線與敵方最勇敢的戰士進行一對一的戰鬥。一個關於馬克盧斯如何在 Clastidium 一戰（西元前222年）殺死高盧的一個酋長的故事，就是這種事情的典型。以一個相當小的軍隊前進，馬克盧斯在 Clastidium 遇到了高盧的 Insubrian 及 Gaesatae。高盧軍隊以相當稀鬆平常的方式衝鋒及發出駭人的戰嚎，而他們的國王，Britomarto，因他的階級徽章而挑選出了馬克盧斯，並以他自己的方式挑戰並揮舞著長矛。Britomarto 是一位傑出的人物，不只是他身上的裝飾品，更是因為他的名聲；因為他曾經輝煌，而且他的盔甲上閃耀著黃金以及白銀。馬克盧斯心想這件盔甲會是一個給神的適當祭品，他衝向 Britomarto，刺穿他亮晃晃的胸甲，然後把他丟在地上。對馬克盧斯來說，殺了 Britomarto 並奪取他的盔甲是一件相當容易的事情。"
+"task to kill Viridomarus and strip him of his armor."
+msgstr "當塞爾特人的軍隊遇到敵人時，在戰鬥開始之前，塞爾特人的領導人將走到第一線，挑戰最勇敢的敵方戰士進行單挑。馬庫斯．克勞迪斯．馬塞勒斯（Marcus Claudius Marcellus）在克拉斯科（Clastidium，現今義大利的 Casteggio 市）（西元前222年）殺死高盧領袖的故事即為這種典型的情況。帶著一小批軍隊前進，馬塞勒斯在克拉斯科遇上了因蘇布雷（Insubres）的高盧人與蓋薩塔依（Gaesatae）人的聯軍。高盧軍隊善於使用一般的衝鋒與可怕的戰吼，而他們的國王維迪馬斯洛斯（Viridomarus），根據他的徽章等級挑上了馬塞勒斯，針對著他大聲挑戰並揮舞他的矛。維迪馬斯洛斯是一個傑出的人物，不僅是他的體型與裝扮，還因為他身著亮色，盔甲間發耀著金色與銀色。這件鎧甲，表示著馬塞勒斯將會是眾神一個合適的祭品。後者挑戰了高盧王，穿透了他明亮的胸甲並把他扔在地上。殺死維迪馬斯洛斯並剝下他的盔甲是件容易的事情。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[1].History
 msgid ""
@@ -868,19 +886,19 @@ msgid ""
 "that Britons had conquered Rome, the greatest civilization in the world, "
 "long before Rome conquered the Britons. We know from many ancient sources "
 "which predate Geoffrey that Rome was indeed sacked, but in 387 not 390, and "
-"that the raid was led by a man named Brennos (which was latinized to "
-"Brennus), but he and his invading horde were Gallic Senones, not British. In"
-" this episode several features of Geoffrey's editing method can be seen: he "
-"modified the historical Brennus/Brennos, created the brother Belinus, "
-"borrowed the Gallic invasion, but omitted the parts where the Celts seemed "
-"weak or foolish. His technique is both additive and subtractive. Like the "
-"tale of Trojan origin, the story of the sack of Rome is not pure "
-"fabrication; it is a creative rearrangement of the available facts, with "
-"details added as necessary. By virtue of their historical association, Beli "
-"and Bran are often muddled with the earlier brothers Belinus and Brennus "
-"(the sons of Dunvallo Molmutius) who contended for power in northern Britain"
-" in around 390 B.C., and were regarded as gods in old Celtic tradition."
-msgstr "布倫努斯是一個在羅馬的歷史學家眼中，與羅馬的卡米盧斯齊名的高盧領袖。根據編寫「不列顛國王史」的蒙茅斯的杰弗里牧師，布倫努斯和他的兄弟 Belinus 於西元前390年入侵高盧並戰勝羅馬，「證明」了不列顛人在羅馬，這個世界上最偉大的文明，征服不列顛前就已經征服了他們。我們可以從許多比杰弗里更早的來源中知道，羅馬的確被戰勝了，但是在西元前387年而非390年，並且是由一個名為 Brennos（拉丁名為 Brennus，即布倫努斯）的人主導突襲，但他入侵的部落為高盧的 Senones，而非不列顛。在這裡我們可以看到杰弗里的幾個編輯特點，他修改了歷史上的倫努斯／Brenno，並創造了他的兄弟 Belinus，借用了高盧的入侵，但省略了其中塞爾特人看似較脆弱或愚蠢的部份。他的手法同時有加分及扣分的效果。像是木馬原始的故事，以及羅馬戰敗的故事並不是純屬捏造，它們是真實故事的創意重組，並添加了一些必要的細節。因為他們的歷史關聯，Beli 及 Bran 經常會與在西元前390年，在北不列顛爭權奪利的較早期的兄弟 Belinus 及布倫努斯（Dunvallo Molmutius 的兒子）混淆在一起，並被視為舊塞爾特傳統的神。"
+"that the raid was led by a man named Brennus, but he and his invading horde "
+"were Gallic Senones, not British. In this episode several features of "
+"Geoffrey's editing method can be seen: he modified the historical Brennus, "
+"created the brother Belinus, borrowed the Gallic invasion, but omitted the "
+"parts where the Celts seemed weak or foolish. His technique is both additive"
+" and subtractive. Like the tale of Trojan origin, the story of the sack of "
+"Rome is not pure fabrication; it is a creative rearrangement of the "
+"available facts, with details added as necessary. By virtue of their "
+"historical association, Beli and Bran are often muddled with the earlier "
+"brothers Belinus and Brennus (the sons of Dunvallo Molmutius) who contended "
+"for power in northern Britain in around 390 B.C., and were regarded as gods "
+"in old Celtic tradition."
+msgstr "布倫努斯是一個在羅馬的歷史學家眼中，與羅馬的卡米盧斯齊名的高盧領袖。根據編寫「不列顛國王史」的蒙茅斯的杰弗里牧師，布倫努斯和他的兄弟 Belinus 於西元前390年入侵高盧並戰勝羅馬，「證明」了不列顛人在羅馬，這個世界上最偉大的文明，征服不列顛前就已經征服了他們。我們可以從許多比杰弗里更早的來源中知道，羅馬的確被戰勝了，但是在西元前387年而非390年，並且是由一個名為 布倫努斯的人主導突襲，但他入侵的部落為高盧的 Senones，而非不列顛。在這裡我們可以看到杰弗里的幾個編輯特點，他修改了歷史上的倫努斯／Brenno，並創造了他的兄弟 Belinus，借用了高盧的入侵，但省略了其中塞爾特人看似較脆弱或愚蠢的部份。他的手法同時有加分及扣分的效果。像是木馬原始的故事，以及羅馬戰敗的故事並不是純屬捏造，它們是真實故事的創意重組，並添加了一些必要的細節。因為他們的歷史關聯，Beli 及 Bran 經常會與在西元前390年，在北不列顛爭權奪利的較早期的兄弟 Belinus 及布倫努斯（Dunvallo Molmutius 的兒子）混淆在一起，並被視為舊塞爾特傳統的神。"
 
 #: simulation/data/civs/gaul.jsonFactions[0].Heroes[2].History
 msgid ""
@@ -1067,7 +1085,7 @@ msgstr "考羅什是一個位於東塞爾特伊比利（以努曼西亞為中心
 
 #: simulation/data/civs/iber.jsonFactions[0].Heroes[2].History
 msgid ""
-"Indibil was king of the Ilegetes, a large federation ranged principally "
+"Indibil was king of the Ilergetes, a large federation ranged principally "
 "along the Ebro River in the northwest of the Iberian Peninsula. During the "
 "Barcid expansion, from 212 B.C. he had initially been talked into allying "
 "himself with the Carthaginians who had taken control of a lot of territory "
@@ -1160,8 +1178,8 @@ msgid ""
 msgstr "希臘人同化各種異族人相當成功。在希臘化時代時，希臘語是古代世界的通用語言，從西班牙到印度都被廣泛的使用。"
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Description
-msgid "+15% tribute and trade bonus on metal."
-msgstr "+15% 貢品，並有額外的金屬貿易獎勵。"
+msgid "+20% sell prices at market."
+msgstr "市集賣價 +20%。"
 
 #: simulation/data/civs/mace.jsonTeamBonuses[0].Name
 msgid "Standardized Currency"
@@ -1421,12 +1439,12 @@ msgid ""
 msgstr "剎帝利或 Kashtriya，意思是戰士，是四個印度教種姓（社會階級）其中之一。傳統上來說，剎帝利在印度教社會系統中構成了軍隊及統治階級的精英，在吠陀經及摩奴法典中所描述。"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Description
-msgid "Allied Temple techs -50% cost and research time."
-msgstr "盟友的神廟科技 -50% 花費及研究時間。"
+msgid "Allied temples and temple technologies -50% cost and research time."
+msgstr "盟友的神廟與神廟科技 -50% 資源花費與研究時間。"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].Name
-msgid "Evangelism."
-msgstr "福音主義。"
+msgid "Ashoka's Religious Support"
+msgstr "Ashoka 的宗教支援"
 
 #: simulation/data/civs/maur.jsonTeamBonuses[0].History
 msgid ""
@@ -1599,8 +1617,8 @@ msgid ""
 msgstr "由於阿契美尼德王朝的龐大規模及其組織結構，波斯人可以在戰時大量徵召步兵。儘管波斯步兵整體來說訓練有素且意志堅定。但是他們缺乏肉搏戰的經驗。而且，除了少數的精英部隊以外，波斯的步兵並非職業的常備軍。"
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Description
-msgid "+25% trade profit land routes."
-msgstr "陸地路線 +25%貿易利潤。"
+msgid "Higher income (+15%) from land trade routes for ally's traders."
+msgstr "盟友的商人可從陸地貿易取得較高的利潤 (+15%)。"
 
 #: simulation/data/civs/pers.jsonTeamBonuses[0].Name
 msgid "Royal Road"
@@ -1695,11 +1713,11 @@ msgstr "波斯建築"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[1].History
 msgid ""
-"The Persians built the wonderful 1677 mile-long Royal Highway from Sardis to"
-" Susa; Darius the Great and Xerxes also built the magnificent Persepolis; "
-"Cyrus the Great greatly improved Ecbatana and virtually 'rebuilt' the old "
-"Elamite capital of Susa."
-msgstr "波斯人從薩第斯到蘇薩建造了驚人的 1677 英哩長的皇家道路；大流士大帝及薛西斯也建造了雄偉的波斯波利斯；居魯士大帝則是大大的改善了埃克巴坦那，並幾乎「重建」了古埃蘭首都蘇薩。"
+"The Persians built the wonderful 2700 kilometer-long Royal Highway from "
+"Sardis to Susa; Darius the Great and Xerxes also built the magnificent "
+"Persepolis; Cyrus the Great greatly improved Ecbatana and virtually "
+"'rebuilt' the old Elamite capital of Susa."
+msgstr "波斯人從薩第斯到蘇薩建造了驚人的 2700 公里長的皇家道路；大流士大帝及薛西斯也建造了雄偉的波斯波利斯；居魯士大帝則是大大的改善了埃克巴坦那，並幾乎「重建」了古埃蘭首都蘇薩。"
 
 #: simulation/data/civs/pers.jsonFactions[0].Technologies[2].Description
 msgid "Reduces train time for Anusiya champion infantry by half."
@@ -1814,13 +1832,12 @@ msgid "Mercenary Army"
 msgstr "傭兵軍團"
 
 #: simulation/data/civs/ptol.jsonCivBonuses[0].History
-#: simulation/data/civs/ptol.jsonStructures[1].History
 msgid ""
 "The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
 "foreign mercenaries for the bulk of its military force, mainly because the "
 "loyalty of native Egyptian units was often suspect. Indeed, during one "
 "native uprising, Upper Egypt was lost to the Ptolemies for decades. "
-"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"Mercenaries were often battle-hardened and their loyalty could be bought, "
 "sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
 " under the Ptolemies was so prosperous as to be the richest of Alexander's "
 "successor states."
@@ -2001,6 +2018,18 @@ msgid ""
 "Trains all 'mercenary' units."
 msgstr "必須建造在中立領土。沒有領土範圍效果。訓練所有「傭兵」單位。"
 
+#: simulation/data/civs/ptol.jsonStructures[1].History
+msgid ""
+"The Greco-Macedonian Ptolemy Dynasty relied on large numbers of Greek and "
+"foreign mercenaries for the bulk of its military force, mainly because the "
+"loyalty of native Egyptian units was often suspect. Indeed, during one "
+"native uprising, Upper Egypt was lost to the Ptolemies for decades. "
+"Mercenaries were often battle-hardened and their loyalty can be bought, "
+"sometimes cheaply, sometimes not cheaply. This was of no matter, since Egypt"
+" under the Ptolemies was so prosperous as to be the richest of Alexander's "
+"successor states."
+msgstr "希臘─馬其頓托勒密王朝依靠大量的希臘及外國雇傭兵作為大多數的軍事力量，主要是因為懷疑當地的埃及部隊的忠誠度。事實上，在一次當地的反抗以後，上埃及便脫離了托勒密的掌控幾十年。傭兵們往往久經沙場，而他們的忠誠可以用錢買到，有時便宜，有時昂貴。這並不重要，因為托勒密埃及是所有亞歷山大繼業者的國家裡最富有的。"
+
 #: simulation/data/civs/ptol.jsonStructures[2].Name
 msgid "Lighthouse"
 msgstr "燈塔"
@@ -2066,17 +2095,23 @@ msgid ""
 msgstr "古時候的世界，羅馬國籍相當受敬重。羅馬公民被賦與了其他被征服的民族所沒有的權利與特權。據說，傷害一個羅馬公民就是與整個羅馬為敵，整個羅馬都會團結起來制服施暴者。"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Description
-msgid "Allied citizen-soldiers gain a +15% attack when in Roman territory."
-msgstr "盟國的民兵在羅馬領土上攻擊 +15%"
+msgid "-20% training time for allied infantry."
+msgstr "盟友步兵 -20% 訓練時間。"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].Name
-msgid "Socii"
-msgstr "羅馬盟邦"
+msgid "Conscription"
+msgstr "募兵"
 
 #: simulation/data/civs/rome.jsonTeamBonuses[0].History
 msgid ""
-"Being allied with Rome came with great benefits (as well as great peril)."
-msgstr "與羅馬結盟會帶來極大的好處(同時也伴隨極大的危險)。"
+"Many Roman soldiers were conscripted into service. While volunteers were "
+"preferred, the Roman state did maintain an annual military draft. During an "
+"emergency the draft and the terms of service were enlarged. The importance "
+"of military service in Republican Rome was so great it was a prerequisite "
+"for a political career. Members of the Senate were called Conscript Fathers "
+"because of this, reflected in how the ordo equester was said to have been "
+"\"conscripted\" into the Senate."
+msgstr "許多羅馬士兵都是被徵兵進到軍隊中的。雖然志願者還是首選，但羅馬帝國還是保留了年度軍事草案。在緊急情況下，草案與服務規約會擴大適用範圍。在羅馬共和時期，服兵役仍然相當重要，這是參政的先決條件。參議院的議員被稱為徵兵之父，所以參議院議員通常會被說是「被徵召」的。"
 
 #: simulation/data/civs/rome.jsonAINames[0]
 msgid "Lucius Junius Brutus"
@@ -2457,13 +2492,13 @@ msgstr "勝利者 塞琉古一世"
 msgid ""
 "Antiochus inherited a troubled kingdom upon the beginning of his reign. From"
 " the verge of collapse he managed to weld back together the empire Seleukus "
-"I so hard to found. The rebellious eastern satraps of Bactria and Parthia "
-"were brought to heel , temporarily securing his eastern borders. He then "
-"turned his attention to mother Greece, attempting to fulfill the dreams of "
-"his fathers by invading Greece under the pretext of liberation. The Achaean "
-"League and the Kingdom of Pergamon banded together with the Romans to defeat"
-" him at the Battle of Magnesia, forever burying the dream of reuniting "
-"Alexander's empire."
+"I fought so hard to found. The rebellious eastern satraps of Bactria and "
+"Parthia were brought to heel , temporarily securing his eastern borders. He "
+"then turned his attention to mother Greece, attempting to fulfill the dreams"
+" of his fathers by invading Greece under the pretext of liberation. The "
+"Achaean League and the Kingdom of Pergamon banded together with the Romans "
+"to defeat him at the Battle of Magnesia, forever burying the dream of "
+"reuniting Alexander's empire."
 msgstr "安條克在他統治的初期繼承了一個陷入困境的王國。但他成功的將瀕鄰崩潰的帝國重新融為一體，這連塞琉古一世本人都很難做到。巴克特里亞及帕提亞的反專制起義被帶到了更東邊的地方，使其可以暫時保護好自己的東部邊界。然後他把注意力轉向希臘，企圖以解放希臘為名入侵，以實現他父親的夢想。亞該亞同盟與阿塔羅斯王朝聯合羅馬在馬格尼西亞戰役中打敗他，永遠埋藏了重聚亞歷山大帝國的夢想。"
 
 #: simulation/data/civs/sele.jsonFactions[0].Heroes[1].Name
@@ -2560,8 +2595,10 @@ msgid ""
 msgstr "根據被賦予神權的來古格士所制定的法律，因而確立了斯巴達的教育制度，斯巴達人從6歲開始就會被訓練為勇猛的戰士以防衛斯巴達人的領土。"
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Description
-msgid "Allies can train Spartiates."
-msgstr "盟友可以訓練斯巴達戰士。"
+msgid ""
+"Increases the health for citizen-soldier infantry spearmen by 10% for allies"
+" of Spartan players."
+msgstr "斯巴達玩家的盟友長矛民兵的生命值多 10%。"
 
 #: simulation/data/civs/spart.jsonTeamBonuses[0].Name
 msgid "Peloponnesian League"

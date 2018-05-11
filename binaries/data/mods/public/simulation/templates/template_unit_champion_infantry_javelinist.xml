@@ -3,14 +3,16 @@
   <Attack>
     <Ranged>
       <Hack>0</Hack>
-      <Pierce>36.0</Pierce>
+      <Pierce>26.0</Pierce>
       <Crush>0</Crush>
       <MaxRange>28.0</MaxRange>
       <MinRange>0.0</MinRange>
-      <ProjectileSpeed>50.0</ProjectileSpeed>
-      <PrepareTime>1000</PrepareTime>
+      <ProjectileSpeed>62.5</ProjectileSpeed>
+      <Gravity>9.81</Gravity>
+      <PrepareTime>500</PrepareTime>
       <RepeatTime>1000</RepeatTime>
-      <Spread>1.1</Spread>
+      <Spread>1.0</Spread>
+      <Delay>0</Delay>
       <PreferredClasses datatype="tokens">Human</PreferredClasses>
     </Ranged>
   </Attack>
@@ -26,18 +28,13 @@
     <VisibleClasses datatype="tokens">Ranged Javelin</VisibleClasses>
     <GenericName>Champion Skirmisher</GenericName>
     <Formations datatype="tokens">
-      formations/skirmish
+      special/formations/skirmish
     </Formations>
   </Identity>
-  <Sound>
-    <SoundGroups>
-      <attack>attack/weapon/arrowfly.xml</attack>
-    </SoundGroups>
-  </Sound>
   <UnitMotion>
-    <WalkSpeed>16.0</WalkSpeed>
+    <WalkSpeed op="mul">1.75</WalkSpeed>
     <Run>
-      <Speed>18.0</Speed>
+      <Speed op="mul">1.75</Speed>
     </Run>
   </UnitMotion>
 </Entity>

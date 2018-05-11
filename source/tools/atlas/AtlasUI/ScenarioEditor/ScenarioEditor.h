@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -27,6 +27,8 @@
 #include "CustomControls/FileHistory/FileHistory.h"
 #include "SectionLayout.h"
 
+#include <map>
+
 class ScenarioEditor : public wxFrame
 {
 public:
@@ -35,7 +37,7 @@ public:
 	void OnTimer(wxTimerEvent& event);
 	void OnIdle(wxIdleEvent& event);
 	wxToolBar* OnCreateToolBar(long style, wxWindowID id, const wxString &name);
-	
+
  	void OnNew(wxCommandEvent& event);
 	void OnOpen(wxCommandEvent& event);
 	void OnSave(wxCommandEvent& event);
@@ -57,9 +59,11 @@ public:
 	void OnCameraReset(wxCommandEvent& event);
 	void OnRenderPath(wxCommandEvent& event);
 	void OnDumpState(wxCommandEvent& event);
-    void OnSelectedObjectsChange(const std::vector<AtlasMessage::ObjectID>& selectedObjects);
+	void OnSelectedObjectsChange(const std::vector<AtlasMessage::ObjectID>& selectedObjects);
 
-    void OnMenuOpen(wxMenuEvent& event);
+	void OnHelp(wxCommandEvent& event);
+
+	void OnMenuOpen(wxMenuEvent& event);
 
 	bool OpenFile(const wxString& name, const wxString& filename);
 
@@ -94,6 +98,15 @@ private:
 	FileHistory m_FileHistory;
 
 	wxIcon m_Icon;
+
+	struct HelpItem
+	{
+		wxString m_Title, m_Tooltip, m_URL;
+		HelpItem(const wxString& title, const wxString& tooltip, const wxString& url)
+			: m_Title(title), m_Tooltip(tooltip), m_URL(url)
+		{}
+	};
+	std::map<int, HelpItem> m_HelpData;
 
 	DECLARE_EVENT_TABLE();
 };

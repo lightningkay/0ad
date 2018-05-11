@@ -23,22 +23,19 @@
   </GarrisonHolder>
   <Health>
     <Max>2000</Max>
-    <SpawnEntityOnDeath>rubble/rubble_stone_4x4</SpawnEntityOnDeath>
+    <SpawnEntityOnDeath>decay|rubble/rubble_stone_4x4</SpawnEntityOnDeath>
   </Health>
   <Identity>
-    <GenericName>Blacksmith</GenericName>
-    <Tooltip>Research weapons and armor improvements.</Tooltip>
     <Classes datatype="tokens">-ConquestCritical</Classes>
-    <VisibleClasses datatype="tokens">Town Blacksmith</VisibleClasses>
+    <GenericName>Blacksmith</GenericName>
     <Icon>structures/blacksmith.png</Icon>
     <RequiredTechnology>phase_town</RequiredTechnology>
+    <Tooltip>Research weapons and armor improvements.</Tooltip>
+    <VisibleClasses datatype="tokens">Town Blacksmith</VisibleClasses>
   </Identity>
   <Loot>
-    <xp>100</xp>
-    <food>0</food>
     <wood>50</wood>
-    <stone>0</stone>
-    <metal>100</metal>
+    <metal>25</metal>
   </Loot>
   <Obstruction>
     <Static width="17.0" depth="17.0"/>

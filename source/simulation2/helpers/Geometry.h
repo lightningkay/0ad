@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -91,15 +91,6 @@ fixed DistanceToSquareSquared(const CFixedVector2D& point,
 CFixedVector2D NearestPointOnSquare(const CFixedVector2D& point,
 	const CFixedVector2D& u, const CFixedVector2D& v, const CFixedVector2D& halfSize);
 
-/**
- * Given a circle of radius @p radius, and a chord of length @p chordLength
- * on this circle, computes the central angle formed by
- * connecting the chord's endpoints to the center of the circle.
- *
- * @param radius Radius of the circle; must be strictly positive.
- */
-float ChordToCentralAngle(const float chordLength, const float radius);
-
 bool TestRaySquare(const CFixedVector2D& a, const CFixedVector2D& b, const CFixedVector2D& u, const CFixedVector2D& v, const CFixedVector2D& halfSize);
 
 bool TestRayAASquare(const CFixedVector2D& a, const CFixedVector2D& b, const CFixedVector2D& halfSize);
@@ -107,6 +98,22 @@ bool TestRayAASquare(const CFixedVector2D& a, const CFixedVector2D& b, const CFi
 bool TestSquareSquare(
 		const CFixedVector2D& c0, const CFixedVector2D& u0, const CFixedVector2D& v0, const CFixedVector2D& halfSize0,
 		const CFixedVector2D& c1, const CFixedVector2D& u1, const CFixedVector2D& v1, const CFixedVector2D& halfSize1);
+
+/**
+ * Used in Footprint when spawning units:
+ * Given a grid point (x, y) on the rectangle [-x_max, x_max] x [-y_max, y_max],
+ * this returns the distance travelled in moving from (x_max, 0) to the the point while
+ * walking counter-clockwise along the perimeter of the rectangle.
+ */
+int GetPerimeterDistance(int x_max, int y_max, int x, int y);
+
+/**
+ * Used in Footprint when spawning units:
+ * This returns the grid point on the rectangle [-x_max, x_max] x [-y_max, y_max]
+ * reached after starting at (x_max, 0) and walking a distance k
+ * counter-clockwise along the perimeter of the rectangle.
+ */
+std::pair<int, int> GetPerimeterCoordinates(int x_max, int y_max, int k);
 
 } // namespace
 

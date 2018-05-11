@@ -4,6 +4,7 @@
     <Altitude>0</Altitude>
     <Anchor>upright</Anchor>
     <Floating>false</Floating>
+    <FloatDepth>0.0</FloatDepth>
     <TurnRate>1.0</TurnRate>
   </Position>
   <UnitAI>
@@ -22,6 +23,7 @@
     <FlyingHeight>40.0</FlyingHeight>
     <ClimbRate>4.0</ClimbRate>
     <DiesInWater>false</DiesInWater>
+    <PassabilityClass>unrestricted</PassabilityClass>
   </UnitMotionFlying>
   <VisualActor>
     <Actor>fauna/hawk.xml</Actor>

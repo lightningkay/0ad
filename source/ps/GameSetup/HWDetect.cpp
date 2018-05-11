@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2018 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 #include "scriptinterface/ScriptInterface.h"
 
 #include "lib/ogl.h"
+#include "lib/snd.h"
 #include "lib/svn_revision.h"
 #include "lib/timer.h"
 #include "lib/utf8.h"
@@ -30,7 +31,6 @@
 #include "lib/sysdep/gfx.h"
 #include "lib/sysdep/numa.h"
 #include "lib/sysdep/os_cpu.h"
-#include "lib/sysdep/snd.h"
 #if ARCH_X86_X64
 # include "lib/sysdep/arch/x86_x64/cache.h"
 # include "lib/sysdep/arch/x86_x64/topology.h"
@@ -67,37 +67,37 @@
 
 #endif
 
-static void ReportGLLimits(ScriptInterface& scriptInterface, JS::HandleValue settings);
+static void ReportGLLimits(const ScriptInterface& scriptInterface, JS::HandleValue settings);
 
 #if ARCH_X86_X64
-void ConvertCaches(ScriptInterface& scriptInterface, x86_x64::IdxCache idxCache, JS::MutableHandleValue ret)
+void ConvertCaches(const ScriptInterface& scriptInterface, x86_x64::IdxCache idxCache, JS::MutableHandleValue ret)
 {
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	scriptInterface.Eval("[]", ret);
 	for (size_t idxLevel = 0; idxLevel < x86_x64::Cache::maxLevels; ++idxLevel)
 	{
 		const x86_x64::Cache* pcache = x86_x64::Caches(idxCache+idxLevel);
-		if (pcache->type == x86_x64::Cache::kNull || pcache->numEntries == 0)
+		if (pcache->m_Type == x86_x64::Cache::kNull || pcache->m_NumEntries == 0)
 			continue;
 		JS::RootedValue cache(cx);
 		scriptInterface.Eval("({})", &cache);
-		scriptInterface.SetProperty(cache, "type", (u32)pcache->type);
-		scriptInterface.SetProperty(cache, "level", (u32)pcache->level);
-		scriptInterface.SetProperty(cache, "associativity", (u32)pcache->associativity);
-		scriptInterface.SetProperty(cache, "linesize", (u32)pcache->entrySize);
-		scriptInterface.SetProperty(cache, "sharedby", (u32)pcache->sharedBy);
-		scriptInterface.SetProperty(cache, "totalsize", (u32)pcache->TotalSize());
+		scriptInterface.SetProperty(cache, "type", static_cast<u32>(pcache->m_Type));
+		scriptInterface.SetProperty(cache, "level", static_cast<u32>(pcache->m_Level));
+		scriptInterface.SetProperty(cache, "associativity", static_cast<u32>(pcache->m_Associativity));
+		scriptInterface.SetProperty(cache, "linesize", static_cast<u32>(pcache->m_EntrySize));
+		scriptInterface.SetProperty(cache, "sharedby", static_cast<u32>(pcache->m_SharedBy));
+		scriptInterface.SetProperty(cache, "totalsize",static_cast<u32>(pcache->TotalSize()));
 		scriptInterface.SetPropertyInt(ret, idxLevel, cache);
 	}
 }
 
-void ConvertTLBs(ScriptInterface& scriptInterface, JS::MutableHandleValue ret)
+void ConvertTLBs(const ScriptInterface& scriptInterface, JS::MutableHandleValue ret)
 {
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-	
+
 	scriptInterface.Eval("[]", ret);
 	for(size_t i = 0; ; i++)
 	{
@@ -106,11 +106,11 @@ void ConvertTLBs(ScriptInterface& scriptInterface, JS::MutableHandleValue ret)
 			break;
 		JS::RootedValue tlb(cx);
 		scriptInterface.Eval("({})", &tlb);
-		scriptInterface.SetProperty(tlb, "type", (u32)ptlb->type);
-		scriptInterface.SetProperty(tlb, "level", (u32)ptlb->level);
-		scriptInterface.SetProperty(tlb, "associativity", (u32)ptlb->associativity);
-		scriptInterface.SetProperty(tlb, "pagesize", (u32)ptlb->entrySize);
-		scriptInterface.SetProperty(tlb, "entries", (u32)ptlb->numEntries);
+		scriptInterface.SetProperty(tlb, "type", static_cast<u32>(ptlb->m_Type));
+		scriptInterface.SetProperty(tlb, "level", static_cast<u32>(ptlb->m_Level));
+		scriptInterface.SetProperty(tlb, "associativity", static_cast<u32>(ptlb->m_Associativity));
+		scriptInterface.SetProperty(tlb, "pagesize", static_cast<u32>(ptlb->m_EntrySize));
+		scriptInterface.SetProperty(tlb, "entries", static_cast<u32>(ptlb->m_NumEntries));
 		scriptInterface.SetPropertyInt(ret, i, tlb);
 	}
 }
@@ -150,7 +150,8 @@ void SetDisableShadowPCF(ScriptInterface::CxPrivate* UNUSED(pCxPrivate), bool di
 
 void SetDisableAllWater(ScriptInterface::CxPrivate* UNUSED(pCxPrivate), bool disabled)
 {
-	g_WaterUgly = disabled;
+	if (!IsOverridden("watereffects"))
+		g_WaterEffects = !disabled;
 	if (!IsOverridden("waterfancyeffects"))
 		g_WaterFancyEffects = !disabled;
 	if (!IsOverridden("waterrealdepth"))
@@ -265,8 +266,8 @@ void RunHardwareDetection()
 	scriptInterface.SetProperty(settings, "gfx_card", gfx::CardName());
 	scriptInterface.SetProperty(settings, "gfx_drv_ver", gfx::DriverInfo());
 
-	scriptInterface.SetProperty(settings, "snd_card", std::wstring(snd_card));
-	scriptInterface.SetProperty(settings, "snd_drv_ver", std::wstring(snd_drv_ver));
+	scriptInterface.SetProperty(settings, "snd_card", snd_card);
+	scriptInterface.SetProperty(settings, "snd_drv_ver", snd_drv_ver);
 
 	ReportGLLimits(scriptInterface, settings);
 
@@ -350,7 +351,7 @@ void RunHardwareDetection()
 	scriptInterface.CallFunctionVoid(global, "RunHardwareDetection", settings);
 }
 
-static void ReportGLLimits(ScriptInterface& scriptInterface, JS::HandleValue settings)
+static void ReportGLLimits(const ScriptInterface& scriptInterface, JS::HandleValue settings)
 {
 	const char* errstr = "(error)";
 

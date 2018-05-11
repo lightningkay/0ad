@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -259,7 +259,7 @@ void CProfileViewer::RenderProfile()
 		if (col > 0) // right-align all but the first column
 			x += columns[col].width - w;
 		textRenderer.Put(x, 0.0f, text.c_str());
-		
+
 		colX += columns[col].width;
 	}
 
@@ -484,14 +484,14 @@ namespace
 
 	struct DumpTable
 	{
-		ScriptInterface& m_ScriptInterface;
+		const ScriptInterface& m_ScriptInterface;
 		JS::PersistentRooted<JS::Value> m_Root;
-		DumpTable(ScriptInterface& scriptInterface, JS::HandleValue root) :
+		DumpTable(const ScriptInterface& scriptInterface, JS::HandleValue root) :
 			m_ScriptInterface(scriptInterface), m_Root(scriptInterface.GetJSRuntime(), root)
 		{
 		}
 
-		// std::for_each requires a move constructor and the use of JS::PersistentRooted<T> apparently breaks a requirement for an 
+		// std::for_each requires a move constructor and the use of JS::PersistentRooted<T> apparently breaks a requirement for an
 		// automatic move constructor
 		DumpTable(DumpTable && original) :
 			m_ScriptInterface(original.m_ScriptInterface),
@@ -503,13 +503,13 @@ namespace
 		{
 			JSContext* cx = m_ScriptInterface.GetContext();
 			JSAutoRequest rq(cx);
-			
+
 			JS::RootedValue t(cx);
 			JS::RootedValue rows(cx, DumpRows(table));
 			m_ScriptInterface.Eval(L"({})", &t);
 			m_ScriptInterface.SetProperty(t, "cols", DumpCols(table));
 			m_ScriptInterface.SetProperty(t, "data", rows);
-			
+
 			m_ScriptInterface.SetProperty(m_Root, table->GetTitle().c_str(), t);
 		}
 
@@ -529,7 +529,7 @@ namespace
 		{
 			JSContext* cx = m_ScriptInterface.GetContext();
 			JSAutoRequest rq(cx);
-			
+
 			JS::RootedValue data(cx);
 			m_ScriptInterface.Eval("({})", &data);
 
@@ -600,11 +600,11 @@ void CProfileViewer::SaveToFile()
 	m->outputStream.flush();
 }
 
-JS::Value CProfileViewer::SaveToJS(ScriptInterface& scriptInterface)
+JS::Value CProfileViewer::SaveToJS(const ScriptInterface& scriptInterface)
 {
 	JSContext* cx = scriptInterface.GetContext();
 	JSAutoRequest rq(cx);
-		
+
 	JS::RootedValue root(cx);
 	scriptInterface.Eval("({})", &root);
 

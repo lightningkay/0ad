@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	virtual player_id_t GetOwner()
+	virtual player_id_t GetOwner() const
 	{
 		return m_Owner;
 	}

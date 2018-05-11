@@ -39,24 +39,15 @@ TriggerPoint.prototype.OnDestroy = function()
  */
 TriggerPoint.prototype.RegisterRangeTrigger = function(action, data)
 {
-	
-	if (data.players)
-		var players = data.players;
-	else
-	{
-		var numPlayers = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetNumPlayers();
-		var players = [];
-		for (var i = 0; i < numPlayers; i++)
-			players.push(i);
-	}
+	var players = data.players || Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager).GetAllPlayers();
 	var minRange = data.minRange || 0;
 	var maxRange = data.maxRange || -1;
 	var cid = data.requiredComponent || -1;
-	
+
 	var cmpRangeManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_RangeManager);
 	var tag = cmpRangeManager.CreateActiveQuery(this.entity, minRange, maxRange, players, cid, cmpRangeManager.GetEntityFlagMask("normal"));
 
-    this.currentCollections[tag] = [];
+	this.currentCollections[tag] = [];
 	this.actions[tag] = action;
 	return tag;
 };
@@ -73,8 +64,8 @@ TriggerPoint.prototype.OnRangeUpdate = function(msg)
 		if (index > -1)
 			collection.splice(index, 1);
 	}
-		
-	for each (var entity in msg.added)
+
+	for (var entity of msg.added)
 		collection.push(entity);
 
 	var r = {"currentCollection": collection.slice()};

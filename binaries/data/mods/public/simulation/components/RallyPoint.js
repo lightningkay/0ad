@@ -17,6 +17,16 @@ RallyPoint.prototype.AddPosition = function(x, z)
 	});
 };
 
+RallyPoint.prototype.HasPositions = function()
+{
+	return this.pos.length > 0;
+};
+
+RallyPoint.prototype.GetFirstPosition = function()
+{
+	return this.pos.length ? Vector2D.from3D(this.pos[0]) : new Vector2D(-1, -1);
+};
+
 RallyPoint.prototype.GetPositions = function()
 {
 	// Update positions for moving target entities
@@ -34,7 +44,7 @@ RallyPoint.prototype.GetPositions = function()
 		// Update the rallypoint coordinates if the target is alive
 		if (!this.data[i] || !this.data[i].target || !this.TargetIsAlive(this.data[i].target))
 			continue;
-		
+
 		// and visible
 		if (cmpRangeManager && cmpOwnership &&
 				cmpRangeManager.GetLosVisibility(this.data[i].target, cmpOwnership.GetOwner()) != "visible")
@@ -69,7 +79,7 @@ RallyPoint.prototype.AddData = function(data)
 };
 
 // Returns an array with the data associated with this rally point.  Each element has the structure:
-// {"type": "walk/gather/garrison/...", "target": targetEntityId, "resourceType": "tree/fruit/ore/..."} where target 
+// {"type": "walk/gather/garrison/...", "target": targetEntityId, "resourceType": "tree/fruit/ore/..."} where target
 // and resourceType (specific resource type) are optional, also target may be an invalid entity, check for existence.
 RallyPoint.prototype.GetData = function()
 {
@@ -101,6 +111,15 @@ RallyPoint.prototype.OnGlobalEntityRenamed = function(msg)
 		if (data.source && data.source == msg.entity)
 			data.source = msg.newentity;
 	}
+};
+
+RallyPoint.prototype.OnOwnershipChanged = function(msg)
+{
+	// No need to reset when constructing or destructing the entity
+	if (msg.from == INVALID_PLAYER || msg.to == INVALID_PLAYER)
+		return;
+
+	this.Reset();
 };
 
 /**

@@ -4,18 +4,23 @@
 # 
 # Translators:
 # Alexander Olkhovskiy, 2016
-# Dmitry Oshkalo <dmitry.oshkalo@gmail.com>, 2015-2016
-# dr&mx <dronmax@gmail.com>, 2014
+# Дмитрий Ошкало <dmitry.oshkalo@gmail.com>, 2015-2018
+# Максим Дронь <dronmax@gmail.com>, 2014
+# Ilya Andreev, 2018
+# Ivan Korovin <i.d.korovin@gmail.com>, 2017
 # Prince Moth <princemoth@rambler.ru>, 2016
+# Uzumaker Uzumaki <uzumaki1337pro@gmail.com>, 2017
 # Vladislav Belov <vladislavbelovdev@gmail.com>, 2016
-# Woratiklis, 2015-2016
+# Woratiklis, 2015-2017
+# Дмитрий Ошкало <dmitry.oshkalo@gmail.com>, 2018
 # Николай Авдеев <nickkolok@mail.ru>, 2016
+# Олег Шевченко <olegrock@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: 0 A.D.\n"
-"POT-Creation-Date: 2016-07-04 09:01+0200\n"
-"PO-Revision-Date: 2016-08-10 19:24+0000\n"
-"Last-Translator: Alexander Olkhovskiy\n"
+"POT-Creation-Date: 2018-02-07 09:03+0100\n"
+"PO-Revision-Date: 2018-03-20 18:22+0000\n"
+"Last-Translator: Ilya Andreev\n"
 "Language-Team: Russian (http://www.transifex.com/wildfire-games/0ad/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,30 +32,17 @@ msgstr ""
 msgid "Gaia"
 msgstr "Гея"
 
-#: simulation/templates/template_gaia_flora.xml:8
-msgid "Generic Flora"
-msgstr "Обычная растительность"
-
 #: simulation/templates/template_gaia_flora_bush.xml:8
-#: simulation/templates/template_gaia_flora_bush_berry.xml:8
 msgid "Bush"
 msgstr "Кустарник"
 
-#: simulation/templates/template_gaia_flora_bush_berry.xml:9
-msgid "Berries"
-msgstr "Ягодник"
-
-#: simulation/templates/template_gaia_flora_bush_berry.xml:10
-msgid "Gather the fruit from these bushes to accumulate Food."
-msgstr "Собирайте плоды с этих кустов, чтобы накопить пищу."
-
-#: simulation/templates/template_gaia_flora_tree.xml:5
+#: simulation/templates/template_gaia_flora_tree.xml:8
 msgid "Tree"
 msgstr "Дерево"
 
-#: simulation/templates/template_gaia_flora_tree.xml:7
+#: simulation/templates/template_gaia_flora_tree.xml:9
 msgid "Chop down to accumulate Wood."
-msgstr "Срубите для сбора древесины."
+msgstr "Срубите, чтобы получить древесину."
 
 #: simulation/templates/template_gaia_geo.xml:8
 msgid "Generic Geology"
@@ -78,16 +70,15 @@ msgstr "Каменоломня"
 
 #: simulation/templates/template_gaia_geo_rock.xml:6
 msgid "Mine these to provide Stone building material."
-msgstr "Рудник обеспечивает строительным камнем."
+msgstr "Займитесь разработкой месторождения, чтобы обеспечить себя строительным камнем."
 
 #: simulation/templates/template_gaia_ruins.xml:8
 msgid "Generic Ruins"
 msgstr "Базовые руины"
 
 #: simulation/templates/template_gaia_ruins.xml:9
-#: simulation/templates/gaia/special_ruins.xml:9
-#: simulation/templates/gaia/special_ruins_column_doric.xml:9
-#: simulation/templates/other/unfinished_greek_temple.xml:9
+#: simulation/templates/gaia/ruins/column_doric.xml:9
+#: simulation/templates/gaia/ruins/unfinished_greek_temple.xml:9
 msgid "Ruins"
 msgstr "Руины"
 
@@ -100,32 +91,32 @@ msgid "Generic Treasure"
 msgstr "Базовое сокровище"
 
 #: simulation/templates/template_gaia_treasure.xml:9
-#: simulation/templates/gaia/special_treasure_food_barrel.xml:9
-#: simulation/templates/gaia/special_treasure_food_barrels_buried.xml:9
-#: simulation/templates/gaia/special_treasure_food_bin.xml:9
-#: simulation/templates/gaia/special_treasure_food_crate.xml:9
-#: simulation/templates/gaia/special_treasure_food_jars.xml:9
-#: simulation/templates/gaia/special_treasure_golden_fleece.xml:9
-#: simulation/templates/gaia/special_treasure_pegasus.xml:9
-#: simulation/templates/gaia/special_treasure_stone.xml:9
-#: simulation/templates/gaia/special_treasure_wood.xml:9
-#: simulation/templates/other/special_treasure_shipwreck.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_debris.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_ram_bow.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat.xml:9
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat_cut.xml:9
+#: simulation/templates/gaia/treasure/food_barrel.xml:9
+#: simulation/templates/gaia/treasure/food_barrels_buried.xml:9
+#: simulation/templates/gaia/treasure/food_bin.xml:9
+#: simulation/templates/gaia/treasure/food_crate.xml:9
+#: simulation/templates/gaia/treasure/food_jars.xml:9
+#: simulation/templates/gaia/treasure/golden_fleece.xml:9
+#: simulation/templates/gaia/treasure/pegasus.xml:9
+#: simulation/templates/gaia/treasure/shipwreck.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_debris.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_ram_bow.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat.xml:9
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat_cut.xml:9
+#: simulation/templates/gaia/treasure/stone.xml:9
+#: simulation/templates/gaia/treasure/wood.xml:9
 msgid "Treasure"
 msgstr "Сокровище"
 
 #: simulation/templates/template_gaia_treasure.xml:10
 msgid "A treasure that can be quickly gathered."
-msgstr "Сокровище, которое может быть быстро собрано."
+msgstr "Сокровище, которое можно быстро собрать."
 
-#: simulation/templates/template_structure.xml:58
+#: simulation/templates/template_structure.xml:59
 msgid "Structure"
 msgstr "Строение"
 
-#: simulation/templates/template_unit.xml:39
+#: simulation/templates/template_unit.xml:40
 msgid "Unit"
 msgstr "Юнит"
 
@@ -159,6 +150,11 @@ msgstr "Армия Леонида I."
 msgid "Army of Leonidas I"
 msgstr "Армия Леонида I"
 
+#: simulation/templates/campaigns/campaign_city_minor_test.xml:25
+#: simulation/templates/campaigns/campaign_city_test.xml:25
+msgid "Market"
+msgstr "Рынок"
+
 #: simulation/templates/campaigns/campaign_city_minor_test.xml:26
 #: simulation/templates/campaigns/campaign_city_test.xml:26
 msgid "Settlement"
@@ -188,96 +184,20 @@ msgstr "Святилище"
 msgid "Greek Religious Sanctuary"
 msgstr "Греческое святилище"
 
-#: simulation/templates/formations/battle_line.xml:5
-msgid "Battle Line"
-msgstr "Линия фронта"
-
-#: simulation/templates/formations/box.xml:6
-msgid "4 units required"
-msgstr "Необходимо 4 юнита"
-
-#: simulation/templates/formations/box.xml:7
-msgid "Box"
-msgstr "Прямоугольник"
-
-#: simulation/templates/formations/column_closed.xml:5
-msgid "Column Closed"
-msgstr "Колонна закрыта"
-
-#: simulation/templates/formations/column_open.xml:5
-msgid "Column Open"
-msgstr "Колонна открыта"
-
-#: simulation/templates/formations/flank.xml:6
-msgid "8 units required"
-msgstr "Необходимо 8 юнитов"
-
-#: simulation/templates/formations/flank.xml:7
-msgid "Flank"
-msgstr "Фланг"
-
-#: simulation/templates/formations/line_closed.xml:5
-msgid "Line Closed"
-msgstr "Ряд закрыт"
-
-#: simulation/templates/formations/line_open.xml:5
-msgid "Line Open"
-msgstr "Ряд открыт"
-
-#: simulation/templates/formations/null.xml:5
-msgid "None"
-msgstr "Нет"
-
-#: simulation/templates/formations/phalanx.xml:6
-msgid "10 melee infantry units required"
-msgstr "Необходимо 10 пехотинцев"
-
-#: simulation/templates/formations/phalanx.xml:7
-msgid "Phalanx"
-msgstr "Фаланга"
-
-#: simulation/templates/formations/scatter.xml:5
-msgid "Scatter"
-msgstr "Рассредоточить"
-
-#: simulation/templates/formations/skirmish.xml:5
-msgid "Only ranged units allowed"
-msgstr "Только юниты с оружием дальнего боя."
-
-#: simulation/templates/formations/skirmish.xml:6
-msgid "Skirmish"
-msgstr "Схватка"
-
-#: simulation/templates/formations/syntagma.xml:6
-msgid "9 pike infantry units required"
-msgstr "Необходимо 9 пикинёров"
-
-#: simulation/templates/formations/syntagma.xml:7
-msgid "Syntagma"
-msgstr "Синтагма"
-
-#: simulation/templates/formations/testudo.xml:6
-msgid "9 melee infantry units required"
-msgstr "Необходимо 9 пехотинцев"
-
-#: simulation/templates/formations/testudo.xml:7
-msgid "Testudo"
-msgstr "Черепаха"
-
-#: simulation/templates/formations/wedge.xml:6
-msgid "3 cavalry units required"
-msgstr "Необходимо 3 кавалериста"
-
-#: simulation/templates/formations/wedge.xml:7
-msgid "Wedge"
-msgstr "Клин"
+#: simulation/templates/gaia/fauna_arctic_wolf.xml:4
+msgid "Arctic Wolf"
+msgstr "Полярный волк"
 
 #: simulation/templates/gaia/fauna_bear.xml:18
 msgid "Bear"
 msgstr "Медведь"
 
 #: simulation/templates/gaia/fauna_boar.xml:18
-msgid "Boar"
+msgid "Wild Boar"
+msgstr "Вепрь"
+
+#: simulation/templates/gaia/fauna_boar.xml:19
+msgid "Sus scrofa"
 msgstr "Кабан"
 
 #: simulation/templates/gaia/fauna_camel.xml:9
@@ -300,19 +220,23 @@ msgstr "Нильский крокодил"
 msgid "Deer"
 msgstr "Олень"
 
-#: simulation/templates/gaia/fauna_elephant_african_bush.xml:46
+#: simulation/templates/gaia/fauna_elephant_african_bush.xml:11
 msgid "African Bush Elephant"
 msgstr "Саванный слон"
 
-#: simulation/templates/gaia/fauna_elephant_african_infant.xml:15
-msgid "African Elephant (Infant)"
-msgstr "Африканский слонёнок"
+#: simulation/templates/gaia/fauna_elephant_african_infant.xml:4
+msgid "African Elephant Calf"
+msgstr "Детёныш африканского слона"
 
-#: simulation/templates/gaia/fauna_elephant_asian.xml:46
+#: simulation/templates/gaia/fauna_elephant_asian.xml:11
 msgid "Asian Elephant"
 msgstr "Индийский слон"
 
-#: simulation/templates/gaia/fauna_elephant_north_african.xml:33
+#: simulation/templates/gaia/fauna_elephant_asian_infant.xml:4
+msgid "Asian Elephant Calf"
+msgstr "Детёныш индийского слона"
+
+#: simulation/templates/gaia/fauna_elephant_north_african.xml:11
 msgid "North African Elephant"
 msgstr "Североафриканский слон"
 
@@ -323,16 +247,24 @@ msgstr "Тунец"
 
 #: simulation/templates/gaia/fauna_fish.xml:6
 #: simulation/templates/gaia/fauna_fish_tuna.xml:6
-msgid "Collect food from this bountiful oceanic resource."
-msgstr "Собирайте пищу из этих богатых океанских ресурсов."
+msgid "Gather food from this bountiful oceanic resource."
+msgstr "Собирайте пищу из этого богатого океанских ресурсов."
 
 #: simulation/templates/gaia/fauna_fish_tilapia.xml:5
 msgid "Tilapia Fish"
 msgstr "Тилапия"
 
 #: simulation/templates/gaia/fauna_fish_tilapia.xml:6
-msgid "Collect food from this bountiful riparian resource."
+msgid "Gather food from this bountiful riparian resource."
 msgstr "Собирайте пищу из этих богатых прибрежных ресурсов."
+
+#: simulation/templates/gaia/fauna_fox_arctic.xml:4
+msgid "Arctic Fox"
+msgstr "Песец"
+
+#: simulation/templates/gaia/fauna_fox_red.xml:4
+msgid "Red Fox"
+msgstr "Рыжая лиса"
 
 #: simulation/templates/gaia/fauna_gazelle.xml:9
 msgid "Gazelle"
@@ -346,7 +278,7 @@ msgstr "Жираф"
 msgid "Giraffe (Juvenile)"
 msgstr "Жирафёнок"
 
-#: simulation/templates/gaia/fauna_goat.xml:15
+#: simulation/templates/gaia/fauna_goat.xml:9
 msgid "Goat"
 msgstr "Коза"
 
@@ -362,17 +294,37 @@ msgstr "Лев"
 msgid "Lioness"
 msgstr "Львица"
 
+#: simulation/templates/gaia/fauna_mastiff.xml:4
+msgid "Mastiff"
+msgstr "Мастифф"
+
 #: simulation/templates/gaia/fauna_muskox.xml:9
 msgid "Muskox"
 msgstr "Овцебык"
 
-#: simulation/templates/gaia/fauna_peacock.xml:12
+#: simulation/templates/gaia/fauna_peacock.xml:8
 msgid "Peacock"
 msgstr "Павлин"
 
-#: simulation/templates/gaia/fauna_pig.xml:15
+#: simulation/templates/gaia/fauna_peacock.xml:9
+msgid "Pavo cristatus"
+msgstr "Паво кристатус"
+
+#: simulation/templates/gaia/fauna_pig.xml:9
 msgid "Pig"
 msgstr "Свинья"
+
+#: simulation/templates/gaia/fauna_pig_flaming.xml:18
+msgid "Flaming Pig"
+msgstr "Горящая свинья"
+
+#: simulation/templates/gaia/fauna_pig_flaming.xml:19
+msgid "Sus scrofa domesticus igne"
+msgstr "Домашняя свинья"
+
+#: simulation/templates/gaia/fauna_pony.xml:4
+msgid "Pony"
+msgstr "Пони"
 
 #: simulation/templates/gaia/fauna_rabbit.xml:9
 msgid "Rabbit"
@@ -390,7 +342,7 @@ msgstr "Белая акула"
 msgid "Shark"
 msgstr "Акула"
 
-#: simulation/templates/gaia/fauna_sheep.xml:15
+#: simulation/templates/gaia/fauna_sheep.xml:9
 msgid "Sheep"
 msgstr "Овца"
 
@@ -398,7 +350,7 @@ msgstr "Овца"
 msgid "Tiger"
 msgstr "Тигр"
 
-#: simulation/templates/gaia/fauna_walrus.xml:23
+#: simulation/templates/gaia/fauna_walrus.xml:25
 msgid "Walrus"
 msgstr "Морж"
 
@@ -414,35 +366,43 @@ msgstr "Горбатый кит"
 msgid "Wildebeest"
 msgstr "Гну"
 
-#: simulation/templates/gaia/fauna_wolf.xml:18
+#: simulation/templates/gaia/fauna_wolf.xml:4
 msgid "Wolf"
 msgstr "Волк"
 
-#: simulation/templates/gaia/fauna_wolf_snow.xml:18
-msgid "Snow Wolf"
-msgstr "Снежный волк"
+#: simulation/templates/gaia/fauna_wolfhound.xml:4
+msgid "Wolfhound"
+msgstr "Волкодав"
 
 #: simulation/templates/gaia/fauna_zebra.xml:9
 msgid "Zebra"
 msgstr "Зебра"
 
-#: simulation/templates/gaia/flora_bush_badlands.xml:8
+#: simulation/templates/gaia/fauna_zebu.xml:9
+msgid "Zebu"
+msgstr "Зебу"
+
+#: simulation/templates/gaia/flora_bush_badlands.xml:4
 msgid "Hardy Bush"
 msgstr "Полукустарник"
 
-#: simulation/templates/gaia/flora_bush_grapes.xml:4
-msgid "Forage"
-msgstr "Сбор пищи"
+#: simulation/templates/gaia/flora_bush_berry.xml:4
+msgid "Berries"
+msgstr "Ягодник"
 
-#: simulation/templates/gaia/flora_bush_grapes.xml:5
+#: simulation/templates/gaia/flora_bush_berry.xml:5
+msgid "Gather the fruit from these bushes to accumulate Food."
+msgstr "Собирайте плоды с этих кустов, чтобы пополнить запасы пищи."
+
+#: simulation/templates/gaia/flora_bush_grapes.xml:4
 msgid "Grapes"
 msgstr "Виноград"
 
-#: simulation/templates/gaia/flora_bush_grapes.xml:6
+#: simulation/templates/gaia/flora_bush_grapes.xml:5
 msgid "Gather grapes from these vines for Food."
-msgstr "Собирайте виноград для пищи."
+msgstr "Собирайте виноград с этих виноградников для пополнения запасов пищи."
 
-#: simulation/templates/gaia/flora_bush_temperate.xml:8
+#: simulation/templates/gaia/flora_bush_temperate.xml:4
 msgid "Deciduous Bush"
 msgstr "Лиственный кустарник"
 
@@ -454,7 +414,7 @@ msgstr "Акация"
 msgid "Aleppo Pine Tree"
 msgstr "Сосна Алеппо"
 
-#: simulation/templates/gaia/flora_tree_apple.xml:8
+#: simulation/templates/gaia/flora_tree_apple.xml:4
 msgid "Apple Tree"
 msgstr "Яблоня"
 
@@ -489,11 +449,11 @@ msgstr "Мертвое дерево"
 msgid "European Beech Tree"
 msgstr "Лесной бук"
 
-#: simulation/templates/gaia/flora_tree_fig.xml:8
+#: simulation/templates/gaia/flora_tree_fig.xml:7
 msgid "Fig"
 msgstr "Инжир"
 
-#: simulation/templates/gaia/flora_tree_fig.xml:10
+#: simulation/templates/gaia/flora_tree_fig.xml:8
 msgid "Gather figs for Food."
 msgstr "Собирайте инжир для пищи."
 
@@ -513,7 +473,7 @@ msgstr "Дуб"
 msgid "Large Oak Tree"
 msgstr "Большой дуб"
 
-#: simulation/templates/gaia/flora_tree_olive.xml:8
+#: simulation/templates/gaia/flora_tree_olive.xml:4
 msgid "Olive Tree"
 msgstr "Оливковое дерево"
 
@@ -535,8 +495,8 @@ msgid "Poplar Tree"
 msgstr "Тополь"
 
 #: simulation/templates/gaia/flora_tree_poplar_lombardy.xml:4
-msgid "Lombardy Poplar Tree"
-msgstr "Пирамидальный тополь"
+msgid "Black Poplar Tree"
+msgstr "Чёрный тополь"
 
 #: simulation/templates/gaia/flora_tree_senegal_date_palm.xml:4
 msgid "Senegal Date Palm"
@@ -550,83 +510,137 @@ msgstr "Гребенщик"
 msgid "Toona Tree"
 msgstr "Китайская цедрела"
 
-#: simulation/templates/gaia/special_ruins.xml:10
-#: simulation/templates/gaia/special_ruins_column_doric.xml:10
+#: simulation/templates/gaia/ruins/column_doric.xml:10
 msgid "Ancient Ruins"
 msgstr "Древние руины"
 
-#: simulation/templates/gaia/special_ruins_standing_stone.xml:9
-#: simulation/templates/gaia/special_ruins_stone_statues_egyptian.xml:9
-#: simulation/templates/gaia/special_ruins_stone_statues_roman.xml:9
+#: simulation/templates/gaia/ruins/pyramid_great.xml:9
+#: simulation/templates/gaia/ruins/pyramid_minor.xml:9
+msgid "Pyramid"
+msgstr "Пирамида"
+
+#: simulation/templates/gaia/ruins/pyramid_great.xml:10
+msgid "Great Pyramid"
+msgstr "Великая Пирамида"
+
+#: simulation/templates/gaia/ruins/pyramid_minor.xml:10
+msgid "Minor Pyramid"
+msgstr "Малая Пирамида"
+
+#: simulation/templates/gaia/ruins/standing_stone.xml:9
+#: simulation/templates/gaia/ruins/stone_statues_egyptian.xml:9
+#: simulation/templates/gaia/ruins/stone_statues_kushite.xml:9
+#: simulation/templates/gaia/ruins/stone_statues_roman.xml:9
 msgid "Stone Ruins"
 msgstr "Каменные руины"
 
-#: simulation/templates/gaia/special_ruins_standing_stone.xml:10
-#: simulation/templates/gaia/special_treasure_standing_stone.xml:10
+#: simulation/templates/gaia/ruins/standing_stone.xml:10
+#: simulation/templates/gaia/treasure/standing_stone.xml:10
 msgid "Celtic Standing Stone"
-msgstr "Кельтский стоячий камень"
+msgstr "Кельтский менгир"
 
-#: simulation/templates/gaia/special_ruins_stone_statues_egyptian.xml:10
+#: simulation/templates/gaia/ruins/stone_statues_egyptian.xml:10
 msgid "Ptolemaic Egyptian Statues"
 msgstr "Статуи птолемеев"
 
-#: simulation/templates/gaia/special_ruins_stone_statues_roman.xml:10
+#: simulation/templates/gaia/ruins/stone_statues_kushite.xml:10
+msgid "Kushite Statue"
+msgstr "Кушитская статуя"
+
+#: simulation/templates/gaia/ruins/stone_statues_roman.xml:10
 msgid "Roman Statues"
 msgstr "Римские статуи"
 
-#: simulation/templates/gaia/special_treasure_food_barrel.xml:10
-#: simulation/templates/gaia/special_treasure_food_bin.xml:10
-#: simulation/templates/gaia/special_treasure_food_crate.xml:10
-#: simulation/templates/gaia/special_treasure_food_jars.xml:10
-#: simulation/templates/gaia/special_treasure_food_persian_big.xml:9
-#: simulation/templates/gaia/special_treasure_food_persian_small.xml:9
+#: simulation/templates/gaia/ruins/unfinished_greek_temple.xml:10
+msgid "Unfinished Greek Temple"
+msgstr "Недостроенный греческий храм"
+
+#: simulation/templates/gaia/ruins/unfinished_greek_temple.xml:11
+msgid "This temple is unfinished and has fallen to ruin."
+msgstr "Недостроенный храм превратился в руины."
+
+#: simulation/templates/gaia/treasure/food_barrel.xml:10
+#: simulation/templates/gaia/treasure/food_bin.xml:10
+#: simulation/templates/gaia/treasure/food_crate.xml:10
+#: simulation/templates/gaia/treasure/food_jars.xml:10
+#: simulation/templates/gaia/treasure/food_persian_big.xml:9
+#: simulation/templates/gaia/treasure/food_persian_small.xml:9
 msgid "Food Treasure"
 msgstr "Съедобные сокровища"
 
-#: simulation/templates/gaia/special_treasure_food_barrels_buried.xml:10
+#: simulation/templates/gaia/treasure/food_barrels_buried.xml:10
 msgid "Half-buried Barrels"
 msgstr "Полузакопаные бочки"
 
-#: simulation/templates/gaia/special_treasure_food_persian_big.xml:10
+#: simulation/templates/gaia/treasure/food_persian_big.xml:10
 msgid "Persian Food Stores"
 msgstr "Персидские продуктовые склады"
 
-#: simulation/templates/gaia/special_treasure_food_persian_small.xml:10
+#: simulation/templates/gaia/treasure/food_persian_small.xml:10
 msgid "Persian Food Treasure"
 msgstr "Персидские съедобные сокровища"
 
-#: simulation/templates/gaia/special_treasure_golden_fleece.xml:10
+#: simulation/templates/gaia/treasure/golden_fleece.xml:10
 msgid "Golden Fleece"
 msgstr "Золотое руно"
 
-#: simulation/templates/gaia/special_treasure_metal.xml:9
-#: simulation/templates/gaia/special_treasure_metal_persian_bigl.xml:9
-#: simulation/templates/gaia/special_treasure_metal_persian_small.xml:9
+#: simulation/templates/gaia/treasure/metal.xml:9
+#: simulation/templates/gaia/treasure/metal_persian_big.xml:9
+#: simulation/templates/gaia/treasure/metal_persian_small.xml:9
 msgid "Metal Treasure"
 msgstr "Металлические сокровища"
 
-#: simulation/templates/gaia/special_treasure_metal.xml:10
+#: simulation/templates/gaia/treasure/metal.xml:10
 msgid "Secret Box"
 msgstr "Секретный ящик"
 
-#: simulation/templates/gaia/special_treasure_metal_persian_bigl.xml:10
+#: simulation/templates/gaia/treasure/metal_persian_big.xml:10
 msgid "Persian Wares"
 msgstr "Персидские товары"
 
-#: simulation/templates/gaia/special_treasure_metal_persian_small.xml:10
+#: simulation/templates/gaia/treasure/metal_persian_small.xml:10
 msgid "Persian Rugs"
 msgstr "Персидские ковры"
 
-#: simulation/templates/gaia/special_treasure_pegasus.xml:10
+#: simulation/templates/gaia/treasure/pegasus.xml:10
 msgid "Pegasus"
 msgstr "Пегас"
 
-#: simulation/templates/gaia/special_treasure_standing_stone.xml:9
-#: simulation/templates/gaia/special_treasure_stone.xml:10
+#: simulation/templates/gaia/treasure/shipwreck.xml:10
+#: simulation/templates/gaia/treasure/shipwreck_ram_bow.xml:10
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat.xml:10
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat_cut.xml:10
+msgid "Shipwreck"
+msgstr "Обломки корабля"
+
+#: simulation/templates/gaia/treasure/shipwreck.xml:11
+msgid "A decaying military shipwreck. A good opportunity for any businessman."
+msgstr "Гниющие останки военного корабля. Хорошая возможность для любого дельца."
+
+#: simulation/templates/gaia/treasure/shipwreck_debris.xml:10
+msgid "Shipwreck Cargo"
+msgstr "Груз с утонувшего корабля"
+
+#: simulation/templates/gaia/treasure/shipwreck_ram_bow.xml:11
+msgid ""
+"A shipwreck with much loss of life. A good opportunity for any businessman."
+msgstr "Кораблекрушение с большими человеческим жертвами. Хорошая возможность для любого дельца."
+
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat.xml:11
+msgid ""
+"The wreck of a small cargo ship. A good opportunity for any businessman."
+msgstr "Обломки небольшого грузового судна. Хорошая возможность для любого дельца."
+
+#: simulation/templates/gaia/treasure/shipwreck_sail_boat_cut.xml:11
+msgid "A cargo ship rammed in half. A good opportunity for any businessman."
+msgstr "Грузовое судно, протараненное пополам. Хорошая возможность для любого дельца."
+
+#: simulation/templates/gaia/treasure/standing_stone.xml:9
+#: simulation/templates/gaia/treasure/stone.xml:10
 msgid "Stone Treasure"
 msgstr "Каменные сокровища"
 
-#: simulation/templates/gaia/special_treasure_wood.xml:10
+#: simulation/templates/gaia/treasure/wood.xml:10
 msgid "Wood Treasure"
 msgstr "Лесное сокровище"
 
@@ -648,19 +662,7 @@ msgstr "Мост"
 msgid "Wooden Bridge"
 msgstr "Деревянный мост"
 
-#: simulation/templates/other/cart_tophet.xml:22
-msgid "Sacrificial Temple"
-msgstr "Жертвенный храм"
-
-#: simulation/templates/other/cart_tophet.xml:23
-msgid "Tophet"
-msgstr "Тофет"
-
-#: simulation/templates/other/cart_tophet.xml:24
-msgid "Train physicians and Sacred Band Cavalrymen."
-msgstr "Обучает врачей и кавалеристов священного отряда."
-
-#: simulation/templates/other/celt_hut.xml:21
+#: simulation/templates/other/celt_hut.xml:22
 msgid "Hut"
 msgstr "Хижина"
 
@@ -682,6 +684,14 @@ msgstr "Дорическая колонна"
 #: simulation/templates/other/column_doric_fallen_b.xml:21
 msgid "Fallen Doric Column"
 msgstr "Упавшая дорическая колонна"
+
+#: simulation/templates/other/desert_trading_post.xml:15
+msgid "Desert Trading Post"
+msgstr "Покинуть торговый пост"
+
+#: simulation/templates/other/desert_trading_post.xml:16
+msgid "Ardatašta"
+msgstr "Ардаташта"
 
 #: simulation/templates/other/fence_long.xml:21
 #: simulation/templates/other/fence_short.xml:21
@@ -713,9 +723,9 @@ msgstr "Грандиозный храм"
 msgid "Naos Parthenos"
 msgstr "Наос Парфенос"
 
-#: simulation/templates/other/hellenic_epic_temple.xml:32
+#: simulation/templates/other/hellenic_epic_temple.xml:31
 msgid "Garrison units to heal them at a quick rate."
-msgstr "Разместите юнитов внутри для быстрого восстановления их здоровья."
+msgstr "Разместите юнитов внутри, чтобы быстро восстановить их здоровье."
 
 #: simulation/templates/other/hellenic_propylaea.xml:25
 msgid "Portico"
@@ -733,10 +743,6 @@ msgstr "Стоа"
 msgid "Hellenic Stoa"
 msgstr "Эллинская стоа"
 
-#: simulation/templates/other/maur_palace.xml:12
-msgid "Harmya"
-msgstr "Гармия"
-
 #: simulation/templates/other/obelisk.xml:20
 msgid "Obelisk"
 msgstr "Обелиск"
@@ -745,11 +751,11 @@ msgstr "Обелиск"
 msgid "Egyptian Obelisk"
 msgstr "Египетский обелиск"
 
-#: simulation/templates/other/palisades_angle_spike.xml:16
+#: simulation/templates/other/palisades_angle_spike.xml:15
 msgid "Palisade Angle Spike"
 msgstr "Наклонённый частокол"
 
-#: simulation/templates/other/palisades_angle_spike.xml:17
+#: simulation/templates/other/palisades_angle_spike.xml:16
 msgid "Big Spike"
 msgstr "Большой Шип"
 
@@ -769,19 +775,19 @@ msgstr "Край частокола"
 msgid "Wooden Wall End"
 msgstr "Край деревянной стены"
 
-#: simulation/templates/other/palisades_rocks_fort.xml:5
+#: simulation/templates/other/palisades_rocks_fort.xml:6
 msgid "Palisade Fort"
 msgstr "Укрепление из частокола"
 
-#: simulation/templates/other/palisades_rocks_fort.xml:6
+#: simulation/templates/other/palisades_rocks_fort.xml:7
 msgid "Wooden Tower"
 msgstr "Деревянная башня"
 
-#: simulation/templates/other/palisades_rocks_gate.xml:25
+#: simulation/templates/other/palisades_rocks_gate.xml:18
 msgid "Palisade Gate"
 msgstr "Ворота из частокола"
 
-#: simulation/templates/other/palisades_rocks_gate.xml:26
+#: simulation/templates/other/palisades_rocks_gate.xml:19
 msgid "Wooden Gate"
 msgstr "Деревянные ворота"
 
@@ -789,7 +795,7 @@ msgstr "Деревянные ворота"
 #: simulation/templates/other/palisades_rocks_medium.xml:27
 #: simulation/templates/other/palisades_rocks_short.xml:26
 #: simulation/templates/other/palisades_rocks_straight.xml:15
-#: simulation/templates/other/palisades_rocks_tower.xml:26
+#: simulation/templates/other/palisades_rocks_tower.xml:25
 #: simulation/templates/other/wallset_palisade.xml:6
 msgid "Palisade"
 msgstr "Частокол"
@@ -798,7 +804,7 @@ msgstr "Частокол"
 #: simulation/templates/other/palisades_rocks_medium.xml:28
 #: simulation/templates/other/palisades_rocks_short.xml:27
 #: simulation/templates/other/palisades_rocks_straight.xml:16
-#: simulation/templates/other/palisades_rocks_tower.xml:27
+#: simulation/templates/other/palisades_rocks_tower.xml:26
 #: simulation/templates/other/wallset_palisade.xml:5
 msgid "Wooden Wall"
 msgstr "Деревянная стена"
@@ -816,59 +822,21 @@ msgstr "Деревянная сторожевая башня"
 msgid "Watchtower"
 msgstr "Сторожевая башня"
 
-#: simulation/templates/other/palisades_small_spikes.xml:16
+#: simulation/templates/other/palisades_small_spikes.xml:15
 msgid "Spikes Small"
 msgstr "Пики небольшие"
 
-#: simulation/templates/other/palisades_small_spikes.xml:17
+#: simulation/templates/other/palisades_small_spikes.xml:16
 msgid "Small Spikes"
 msgstr "Небольшие шипы"
 
-#: simulation/templates/other/palisades_tall_spikes.xml:16
+#: simulation/templates/other/palisades_tall_spikes.xml:15
 msgid "Spikes Tall"
 msgstr "Пики большие"
 
-#: simulation/templates/other/palisades_tall_spikes.xml:17
+#: simulation/templates/other/palisades_tall_spikes.xml:16
 msgid "Tall Spikes"
 msgstr "Высокие шипы"
-
-#: simulation/templates/other/pers_apartment_block.xml:15
-msgid "Apartment Block"
-msgstr "Многоквартирный дом"
-
-#: simulation/templates/other/pers_house_a.xml:12
-msgid "House"
-msgstr "Дом"
-
-#: simulation/templates/other/pers_house_b.xml:15
-#: simulation/templates/other/pers_inn.xml:15
-msgid "Inn"
-msgstr "Постоялый двор"
-
-#: simulation/templates/other/pers_warehouse.xml:12
-msgid "Warehouse"
-msgstr "Склад"
-
-#: simulation/templates/other/plane.xml:37
-msgid "P-51 Mustang"
-msgstr "Р-51 Мустанг"
-
-#: simulation/templates/other/plane.xml:39
-msgid "A World War 2 American fighter plane."
-msgstr "Американский истребитель периода Второй мировой войны."
-
-#: simulation/templates/other/pyramid_great.xml:9
-#: simulation/templates/other/pyramid_minor.xml:9
-msgid "Pyramid"
-msgstr "Пирамида"
-
-#: simulation/templates/other/pyramid_great.xml:10
-msgid "Great Pyramid"
-msgstr "Великая Пирамида"
-
-#: simulation/templates/other/pyramid_minor.xml:10
-msgid "Minor Pyramid"
-msgstr "Малая Пирамида"
 
 #: simulation/templates/other/sele_colonnade.xml:20
 msgid "Colonnade"
@@ -877,35 +845,6 @@ msgstr "Колоннада"
 #: simulation/templates/other/sele_colonnade.xml:21
 msgid "Corinthian Colonnade"
 msgstr "Коринфская Колоннада"
-
-#: simulation/templates/other/special_treasure_shipwreck.xml:10
-#: simulation/templates/other/special_treasure_shipwreck_ram_bow.xml:10
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat.xml:10
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat_cut.xml:10
-msgid "Shipwreck"
-msgstr "Обломки корабля"
-
-#: simulation/templates/other/special_treasure_shipwreck.xml:11
-msgid "A decaying military shipwreck. A good opportunity for any businessman."
-msgstr "Разлагающийся военный корабль. Хорошая возможность для любого дельца."
-
-#: simulation/templates/other/special_treasure_shipwreck_debris.xml:10
-msgid "Shipwreck Cargo"
-msgstr "Груз с утонувшего корабля"
-
-#: simulation/templates/other/special_treasure_shipwreck_ram_bow.xml:11
-msgid ""
-"A shipwreck with much loss of life. A good opportunity for any businessman."
-msgstr "Кораблекрушение с большими человеческим жертвам. Хорошая возможность для любого дельца."
-
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat.xml:11
-msgid ""
-"The wreck of a small cargo ship. A good opportunity for any businessman."
-msgstr "Крушение небольшого грузового судна. Хорошая возможность для любого дельца."
-
-#: simulation/templates/other/special_treasure_shipwreck_sail_boat_cut.xml:11
-msgid "A cargo ship rammed in half. A good opportunity for any businessman."
-msgstr "Грузовое судно протараненное пополам. Хорошая возможность для любого дельца."
 
 #: simulation/templates/other/stall_big.xml:12
 msgid "Big stall"
@@ -933,58 +872,106 @@ msgstr "Прямоугольный Стол"
 msgid "Square Table"
 msgstr "Квадратный стол"
 
-#: simulation/templates/other/unfinished_greek_temple.xml:10
-msgid "Unfinished Greek Temple"
-msgstr "Недостроенный греческий храм"
-
-#: simulation/templates/other/unfinished_greek_temple.xml:12
-msgid "This temple is unfinished and has fallen to ruin."
-msgstr "Недостроенный храм превратился в руины."
-
 #: simulation/templates/skirmish/structures/default_house_10.xml:5
 msgid ""
 "Changes in a 10-pop house for civilisations with those houses, is deleted "
 "for other civs"
 msgstr "Меняется в дом с 10 жителями для цивилизаций с такими домами; уничтожается для прочих цивилизаций."
 
-#: simulation/templates/skirmish/structures/default_house_5.xml:5
+#: simulation/templates/skirmish/structures/default_house_5.xml:8
 msgid ""
 "Changes in a 5-pop house for civilisations with those houses, is deleted for"
 " other civs"
 msgstr "Меняется в дом с 5 жителями для цивилизаций с такими домами; уничтожается для прочих цивилизаций."
 
-#: simulation/templates/special/marker_object_sound.xml:15
-#: simulation/templates/special/marker_object_sound.xml:16
-msgid "Marker"
-msgstr "Указатель"
+#: simulation/templates/special/spy.xml:17
+msgid "Spy"
+msgstr "Шпион"
 
-#: simulation/templates/special/player.xml:56
+#: simulation/templates/special/formations/battle_line.xml:5
+msgid "Battle Line"
+msgstr "Линия фронта"
+
+#: simulation/templates/special/formations/box.xml:6
+msgid "4 units required"
+msgstr "Необходимо 4 юнита"
+
+#: simulation/templates/special/formations/box.xml:7
+msgid "Box"
+msgstr "Прямоугольник"
+
+#: simulation/templates/special/formations/column_closed.xml:5
+msgid "Forced March"
+msgstr "Форсированный марш"
+
+#: simulation/templates/special/formations/column_open.xml:5
+msgid "Column Open"
+msgstr "Колонна открыта"
+
+#: simulation/templates/special/formations/flank.xml:6
+msgid "8 units required"
+msgstr "Необходимо 8 юнитов"
+
+#: simulation/templates/special/formations/flank.xml:7
+msgid "Flank"
+msgstr "Фланг"
+
+#: simulation/templates/special/formations/line_closed.xml:5
+msgid "Close Order"
+msgstr "Сомкнутый строй"
+
+#: simulation/templates/special/formations/line_open.xml:5
+msgid "Open Order"
+msgstr "Разомкнутый строй"
+
+#: simulation/templates/special/formations/null.xml:5
+msgid "None"
+msgstr "Нет"
+
+#: simulation/templates/special/formations/phalanx.xml:6
+msgid "10 hoplite infantry required"
+msgstr "Необходимо 10 гоплитов"
+
+#: simulation/templates/special/formations/phalanx.xml:7
+msgid "Phalanx"
+msgstr "Фаланга"
+
+#: simulation/templates/special/formations/scatter.xml:5
+msgid "Scatter"
+msgstr "Рассредоточить"
+
+#: simulation/templates/special/formations/skirmish.xml:5
+msgid "Only ranged units allowed"
+msgstr "Только юниты с оружием дальнего боя."
+
+#: simulation/templates/special/formations/skirmish.xml:6
+msgid "Skirmish"
+msgstr "Схватка"
+
+#: simulation/templates/special/formations/syntagma.xml:6
+msgid "16 pike infantry units required"
+msgstr "Необходимо 16 пикинёров"
+
+#: simulation/templates/special/formations/syntagma.xml:8
+msgid "Syntagma"
+msgstr "Синтагма"
+
+#: simulation/templates/special/formations/testudo.xml:6
+msgid "9 melee infantry units required"
+msgstr "Необходимо 9 пехотинцев"
+
+#: simulation/templates/special/formations/testudo.xml:7
+msgid "Testudo"
+msgstr "Черепаха"
+
+#: simulation/templates/special/formations/wedge.xml:6
+msgid "6 cavalry units required"
+msgstr "Необходимо 6 кавалеристов"
+
+#: simulation/templates/special/formations/wedge.xml:7
+msgid "Wedge"
+msgstr "Клин"
+
+#: simulation/templates/special/player/player.xml:57
 msgid "Player"
 msgstr "Игрок"
-
-#: simulation/templates/special_units/athen_mechanical_siege_lithobolos_common.xml:5
-#: simulation/templates/special_units/mace_mechanical_siege_lithobolos_common.xml:5
-#: simulation/templates/special_units/ptol_mechanical_siege_lithobolos_common.xml:5
-#: simulation/templates/special_units/sele_mechanical_siege_lithobolos_common.xml:5
-msgid "Lithobólos"
-msgstr "Литоболос"
-
-#: simulation/templates/special_units/athen_mechanical_siege_oxybeles_common.xml:5
-#: simulation/templates/special_units/cart_mechanical_siege_oxybeles_common.xml:5
-#: simulation/templates/special_units/mace_mechanical_siege_oxybeles_common.xml:5
-#: simulation/templates/special_units/spart_mechanical_siege_oxybeles_common.xml:5
-msgid "Oxybelḗs"
-msgstr "Оксибелес"
-
-#: simulation/templates/special_units/cart_mechanical_siege_ballista_common.xml:5
-#: simulation/templates/special_units/rome_mechanical_siege_ballista_common.xml:20
-msgid "Ballista"
-msgstr "Баллиста"
-
-#: simulation/templates/special_units/ptol_mechanical_siege_polybolos_common.xml:5
-msgid "Polybolos"
-msgstr "Полибол"
-
-#: simulation/templates/special_units/rome_mechanical_siege_scorpio_common.xml:16
-msgid "Scorpio"
-msgstr "Скорпион"

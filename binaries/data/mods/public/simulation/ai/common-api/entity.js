@@ -2,24 +2,32 @@ var API3 = function(m)
 {
 
 // defines a template.
-// It's completely raw data, except it's slightly cleverer now and then.
 m.Template = m.Class({
 
-	_init: function(template)
+	"_init": function(sharedAI, templateName, template)
 	{
+		this._templateName = templateName;
 		this._template = template;
+		// save a reference to the template tech modifications
+		if (!sharedAI._templatesModifications[this._templateName])
+			sharedAI._templatesModifications[this._templateName] = {};
+		this._templateModif = sharedAI._templatesModifications[this._templateName];
 		this._tpCache = new Map();
 	},
 
 	// helper function to return a template value, optionally adjusting for tech.
 	// TODO: there's no support for "_string" values here.
-	get: function(string)
+	"get": function(string)
 	{
 		let value = this._template;
 		if (this._entityModif && this._entityModif.has(string))
 			return this._entityModif.get(string);
-		else if (this._templateModif && this._templateModif.has(string))
-			return this._templateModif.get(string);
+		else if (this._templateModif)
+		{
+			let owner = this._entity ? this._entity.owner : PlayerID;
+			if (this._templateModif[owner] && this._templateModif[owner].has(string))
+				return this._templateModif[owner].get(string);
+		}
 
 		if (!this._tpCache.has(string))
 		{
@@ -39,54 +47,27 @@ m.Template = m.Class({
 		return this._tpCache.get(string);
 	},
 
-	genericName: function() {
-		return this.get("Identity/GenericName");
-	},
+	"templateName": function() { return this._templateName; },
 
-	rank: function() {
-		return this.get("Identity/Rank");
-	},
+	"genericName": function() { return this.get("Identity/GenericName"); },
 
-	classes: function() {
+	"civ": function() { return this.get("Identity/Civ"); },
+
+	"classes": function() {
 		let template = this.get("Identity");
 		if (!template)
 			return undefined;
 		return GetIdentityClasses(template);
 	},
 
-	requiredTech: function() {
-		return this.get("Identity/RequiredTechnology");
-	},
-
-	available: function(gameState) {
-		let techRequired = this.requiredTech();
-		if (!techRequired)
-			return true;
-		return gameState.isResearched(techRequired);
-	},
-
-	// specifically
-	phase: function() {
-		let techRequired = this.requiredTech();
-		if (!techRequired)
-			return 0;
-		if (techRequired === "phase_village")
-			return 1;
-		if (techRequired === "phase_town")
-			return 2;
-		if (techRequired === "phase_city")
-			return 3;
-		return 0;
-	},
-
-	hasClass: function(name) {
+	"hasClass": function(name) {
 		if (!this._classes)
 			this._classes = this.classes();
 		let classes = this._classes;
-		return classes && classes.indexOf(name) !== -1;
+		return classes && classes.indexOf(name) != -1;
 	},
 
-	hasClasses: function(array) {
+	"hasClasses": function(array) {
 		if (!this._classes)
 			this._classes = this.classes();
 		let classes = this._classes;
@@ -94,13 +75,34 @@ m.Template = m.Class({
 			return false;
 
 		for (let cls of array)
-			if (classes.indexOf(cls) === -1)
+			if (classes.indexOf(cls) == -1)
 				return false;
 		return true;
 	},
 
-	civ: function() {
-		return this.get("Identity/Civ");
+	"requiredTech": function() { return this.get("Identity/RequiredTechnology"); },
+
+	"available": function(gameState) {
+		let techRequired = this.requiredTech();
+		if (!techRequired)
+			return true;
+		return gameState.isResearched(techRequired);
+	},
+
+	// specifically
+	"phase": function() {
+		let techRequired = this.requiredTech();
+		if (!techRequired)
+			return 0;
+		if (techRequired == "phase_village")
+			return 1;
+		if (techRequired == "phase_town")
+			return 2;
+		if (techRequired == "phase_city")
+			return 3;
+		if (techRequired.startsWith("phase_"))
+			return 4;
+		return 0;
 	},
 
 	"cost": function(productionQueue) {
@@ -128,10 +130,11 @@ m.Template = m.Class({
 	},
 
 	/**
-	 * Returns the radius of a circle surrounding this entity's
-	 * obstruction shape, or undefined if no obstruction.
+	 * Returns { "max": max, "min": min } or undefined if no obstruction.
+	 * max: radius of the outer circle surrounding this entity's obstruction shape
+	 * min: radius of the inner circle
 	 */
-	obstructionRadius: function() {
+	"obstructionRadius": function() {
 		if (!this.get("Obstruction"))
 			return undefined;
 
@@ -139,20 +142,32 @@ m.Template = m.Class({
 		{
 			let w = +this.get("Obstruction/Static/@width");
 			let h = +this.get("Obstruction/Static/@depth");
-			return Math.sqrt(w*w + h*h) / 2;
+			return { "max": Math.sqrt(w*w + h*h) / 2, "min": Math.min(h, w) / 2 };
 		}
 
 		if (this.get("Obstruction/Unit"))
-			return +this.get("Obstruction/Unit/@radius");
+		{
+			let r = +this.get("Obstruction/Unit/@radius");
+			return { "max": r, "min": r };
+		}
 
-		return 0; // this should never happen
+		let right = this.get("Obstruction/Obstructions/Right");
+		let left = this.get("Obstruction/Obstructions/Left");
+		if (left && right)
+		{
+			let w = +right["@x"] + right["@width"]/2 - left["@x"] + left["@width"]/2;
+			let h = Math.max(+right["@z"] + right["@depth"]/2, +left["@z"] + left["@depth"]/2) -
+			        Math.min(+right["@z"] - right["@depth"]/2, +left["@z"] - left["@depth"]/2);
+			return { "max": Math.sqrt(w*w + h*h) / 2, "min": Math.min(h, w) / 2 };
+		}
+
+		return { "max": 0, "min": 0 }; // Units have currently no obstructions
 	},
 
 	/**
-	 * Returns the radius of a circle surrounding this entity's
-	 * footprint.
+	 * Returns the radius of a circle surrounding this entity's footprint.
 	 */
-	footprintRadius: function() {
+	"footprintRadius": function() {
 		if (!this.get("Footprint"))
 			return undefined;
 
@@ -169,90 +184,81 @@ m.Template = m.Class({
 		return 0; // this should never happen
 	},
 
-	maxHitpoints: function()
-	{
-		return +(this.get("Health/Max") || 0);
-	},
+	"maxHitpoints": function() { return +(this.get("Health/Max") || 0); },
 
-	isHealable: function()
+	"isHealable": function()
 	{
 		if (this.get("Health") !== undefined)
 			return this.get("Health/Unhealable") !== "true";
 		return false;
 	},
 
-	isRepairable: function()
-	{
-		return this.get("Repairable") !== undefined;
-	},
+	"isRepairable": function() { return this.get("Repairable") !== undefined; },
 
-	getPopulationBonus: function() {
-		return +this.get("Cost/PopulationBonus");
-	},
+	"getPopulationBonus": function() { return +this.get("Cost/PopulationBonus"); },
 
-	armourStrengths: function() {
+	"armourStrengths": function() {
 		if (!this.get("Armour"))
 			return undefined;
 
 		return {
-			hack: +this.get("Armour/Hack"),
-			pierce: +this.get("Armour/Pierce"),
-			crush: +this.get("Armour/Crush")
+			"Hack": +this.get("Armour/Hack"),
+			"Pierce": +this.get("Armour/Pierce"),
+			"Crush": +this.get("Armour/Crush")
 		};
 	},
 
-	attackTypes: function() {
+	"attackTypes": function() {
 		if (!this.get("Attack"))
 			return undefined;
 
 		let ret = [];
 		for (let type in this.get("Attack"))
 			ret.push(type);
-
 		return ret;
 	},
 
-	attackRange: function(type) {
+	"attackRange": function(type) {
 		if (!this.get("Attack/" + type +""))
 			return undefined;
 
 		return {
-			max: +this.get("Attack/" + type +"/MaxRange"),
-			min: +(this.get("Attack/" + type +"/MinRange") || 0)
+			"max": +this.get("Attack/" + type +"/MaxRange"),
+			"min": +(this.get("Attack/" + type +"/MinRange") || 0)
 		};
 	},
 
-	attackStrengths: function(type) {
+	"attackStrengths": function(type) {
 		if (!this.get("Attack/" + type +""))
 			return undefined;
 
 		return {
-			hack: +(this.get("Attack/" + type + "/Hack") || 0),
-			pierce: +(this.get("Attack/" + type + "/Pierce") || 0),
-			crush: +(this.get("Attack/" + type + "/Crush") || 0)
+			"Hack": +(this.get("Attack/" + type + "/Hack") || 0),
+			"Pierce": +(this.get("Attack/" + type + "/Pierce") || 0),
+			"Crush": +(this.get("Attack/" + type + "/Crush") || 0)
 		};
 	},
 
-	captureStrength: function() {
+	"captureStrength": function() {
 		if (!this.get("Attack/Capture"))
 			return undefined;
 
 		return +this.get("Attack/Capture/Value") || 0;
 	},
 
-	attackTimes: function(type) {
+	"attackTimes": function(type) {
 		if (!this.get("Attack/" + type +""))
 			return undefined;
 
 		return {
-			prepare: +(this.get("Attack/" + type + "/PrepareTime") || 0),
-			repeat: +(this.get("Attack/" + type + "/RepeatTime") || 1000)
+			"prepare": +(this.get("Attack/" + type + "/PrepareTime") || 0),
+			"repeat": +(this.get("Attack/" + type + "/RepeatTime") || 1000)
 		};
 	},
 
 	// returns the classes this templates counters:
 	// Return type is [ [-neededClasses- , multiplier], … ].
-	getCounteredClasses: function() {
+	"getCounteredClasses": function() {
 		if (!this.get("Attack"))
 			return undefined;
 
@@ -274,7 +280,7 @@ m.Template = m.Class({
 
 	// returns true if the entity counters those classes.
 	// TODO: refine using the multiplier
-	countersClasses: function(classes) {
+	"countersClasses": function(classes) {
 		if (!this.get("Attack"))
 			return false;
 		let mcounter = [];
@@ -291,15 +297,13 @@ m.Template = m.Class({
 			}
 		}
 		for (let i in classes)
-		{
-			if (mcounter.indexOf(classes[i]) !== -1)
+			if (mcounter.indexOf(classes[i]) != -1)
 				return true;
-		}
 		return false;
 	},
 
 	// returns, if it exists, the multiplier from each attack against a given class
-	getMultiplierAgainst: function(type, againstClass) {
+	"getMultiplierAgainst": function(type, againstClass) {
 		if (!this.get("Attack/" + type +""))
 			return undefined;
 
@@ -310,64 +314,53 @@ m.Template = m.Class({
 				let bonusClasses = this.get("Attack/" + type + "/Bonuses/" + b + "/Classes");
 				if (!bonusClasses)
 					continue;
-				for (let bcl of bonusesClasses.split(" "))
-					if (bcl === againstClass)
+				for (let bcl of bonusClasses.split(" "))
+					if (bcl == againstClass)
 						return +this.get("Attack/" + type + "/Bonuses/" + b + "/Multiplier");
 			}
 		}
 		return 1;
 	},
 
-	// returns true if the entity can attack the given class
-	canAttackClass: function(saidClass) {
-		if (!this.get("Attack"))
-			return false;
-
-		for (let type in this.get("Attack"))
-		{
-			let restrictedClasses = this.get("Attack/" + type + "/RestrictedClasses/_string");
-			if (!restrictedClasses)
-				continue;
-			if (restrictedClasses.split(" ").indexOf(saidClass) !== -1)
-				return false;
-		}
-		return true;
-	},
-
-	"buildableEntities": function() {
+	"buildableEntities": function(civ) {
 		let templates = this.get("Builder/Entities/_string");
 		if (!templates)
 			return [];
-		let civ = this.civ();
-		return templates.replace(/\{civ\}/g, civ).split(/\s+/);
+		return templates.replace(/\{native\}/g, this.civ()).replace(/\{civ\}/g, civ).split(/\s+/);
 	},
 
 	"trainableEntities": function(civ) {
 		let templates = this.get("ProductionQueue/Entities/_string");
 		if (!templates)
 			return undefined;
-		if (civ)
-			templates = templates.replace(/\{civ\}/g, civ);
-		return templates.split(/\s+/);
+		return templates.replace(/\{native\}/g, this.civ()).replace(/\{civ\}/g, civ).split(/\s+/);
 	},
 
-	"researchableTechs": function(civ) {
-		if (this.civ() !== civ)     // techs can only be researched in structures from the player civ TODO no more true
-			return undefined;
+	"researchableTechs": function(gameState, civ) {
 		let templates = this.get("ProductionQueue/Technologies/_string");
 		if (!templates)
 			return undefined;
-		return templates.split(/\s+/);
+		let techs = templates.split(/\s+/);
+		for (let i = 0; i < techs.length; ++i)
+		{
+			let tech = techs[i];
+			if (tech.indexOf("{civ}") == -1)
+				continue;
+			let civTech = tech.replace("{civ}", civ);
+			techs[i] = TechnologyTemplates.Has(civTech) ?
+			           civTech : tech.replace("{civ}", "generic");
+		}
+		return techs;
 	},
 
-	resourceSupplyType: function() {
+	"resourceSupplyType": function() {
 		if (!this.get("ResourceSupply"))
 			return undefined;
 		let [type, subtype] = this.get("ResourceSupply/Type").split('.');
 		return { "generic": type, "specific": subtype };
 	},
 	// will return either "food", "wood", "stone", "metal" and not treasure.
-	getResourceType: function() {
+	"getResourceType": function() {
 		if (!this.get("ResourceSupply"))
 			return undefined;
 		let [type, subtype] = this.get("ResourceSupply/Type").split('.');
@@ -376,15 +369,13 @@ m.Template = m.Class({
 		return type;
 	},
 
-	resourceSupplyMax: function() {
-		return +this.get("ResourceSupply/Amount");
-	},
+	"getDiminishingReturns": function() { return +(this.get("ResourceSupply/DiminishingReturns") || 1); },
 
-	maxGatherers: function() {
-		return +(this.get("ResourceSupply/MaxGatherers") || 0);
-	},
+	"resourceSupplyMax": function() { return +this.get("ResourceSupply/Amount"); },
 
-	resourceGatherRates: function() {
+	"maxGatherers": function() { return +(this.get("ResourceSupply/MaxGatherers") || 0); },
+
+	"resourceGatherRates": function() {
 		if (!this.get("ResourceGatherer"))
 			return undefined;
 		let ret = {};
@@ -394,7 +385,7 @@ m.Template = m.Class({
 		return ret;
 	},
 
-	resourceDropsiteTypes: function() {
+	"resourceDropsiteTypes": function() {
 		if (!this.get("ResourceDropsite"))
 			return undefined;
 
@@ -403,70 +394,44 @@ m.Template = m.Class({
 	},
 
 
-	garrisonableClasses: function() {
-		return this.get("GarrisonHolder/List/_string");
-	},
+	"garrisonableClasses": function() { return this.get("GarrisonHolder/List/_string"); },
 
-	garrisonMax: function() {
-		return this.get("GarrisonHolder/Max");
-	},
+	"garrisonMax": function() { return this.get("GarrisonHolder/Max"); },
 
-	garrisonEjectHealth: function() {
-		return +this.get("GarrisonHolder/EjectHealth");
-	},
+	"garrisonEjectHealth": function() { return +this.get("GarrisonHolder/EjectHealth"); },
 
-	getDefaultArrow: function() {
-		return +this.get("BuildingAI/DefaultArrowCount");
-	},
+	"getDefaultArrow": function() { return +this.get("BuildingAI/DefaultArrowCount"); },
 
-	getArrowMultiplier: function() {
-		return +this.get("BuildingAI/GarrisonArrowMultiplier");
-	},
+	"getArrowMultiplier": function() { return +this.get("BuildingAI/GarrisonArrowMultiplier"); },
 
-	getGarrisonArrowClasses: function() {
+	"getGarrisonArrowClasses": function() {
 		if (!this.get("BuildingAI"))
 			return undefined;
 		return this.get("BuildingAI/GarrisonArrowClasses").split(/\s+/);
 	},
 
-	buffHeal: function() {
-		return +this.get("GarrisonHolder/BuffHeal");
-	},
+	"buffHeal": function() { return +this.get("GarrisonHolder/BuffHeal"); },
 
-	promotion: function() {
-		return this.get("Promotion/Entity");
-	},
+	"promotion": function() { return this.get("Promotion/Entity"); },
+
+	"isPackable": function() { return this.get("Pack") != undefined; },
 
 	/**
 	 * Returns whether this is an animal that is too difficult to hunt.
-	 * (Any non domestic currently.)
 	 */
-	isHuntable: function() {
+	"isHuntable": function() {
 		if(!this.get("ResourceSupply/KillBeforeGather"))
-			return false;
-
-		// special case: rabbits too difficult to hunt for such a small food amount
-		let specificName = this.get("Identity/SpecificName");
-		if (specificName && specificName === "Rabbit")
 			return false;
 
 		// do not hunt retaliating animals (animals without UnitAI are dead animals)
 		let behaviour = this.get("UnitAI/NaturalBehaviour");
-		return !this.get("UnitAI") ||
-		       !(behaviour === "violent" || behaviour === "aggressive" || behaviour === "defensive");
+		return !behaviour ||
+		        behaviour != "violent" && behaviour != "aggressive" && behaviour != "defensive";
 	},
 
-	walkSpeed: function() {
-		return +this.get("UnitMotion/WalkSpeed");
-	},
+	"walkSpeed": function() { return +this.get("UnitMotion/WalkSpeed"); },
 
-	trainingCategory: function() {
-		return this.get("TrainingRestrictions/Category");
-	},
-
-	buildCategory: function() {
-		return this.get("BuildRestrictions/Category");
-	},
+	"trainingCategory": function() { return this.get("TrainingRestrictions/Category"); },
 
 	"buildTime": function(productionQueue) {
 		let time = +this.get("Cost/BuildTime");
@@ -475,147 +440,171 @@ m.Template = m.Class({
 		return time;
 	},
 
-	buildDistance: function() {
-		return this.get("BuildRestrictions/Distance");
+	"buildCategory": function() { return this.get("BuildRestrictions/Category"); },
+
+	"buildDistance": function() {
+		let distance = this.get("BuildRestrictions/Distance");
+		if (!distance)
+			return undefined;
+		let ret = {};
+		for (let key in distance)
+			ret[key] = this.get("BuildRestrictions/Distance/" + key);
+		return ret;
 	},
 
-	buildPlacementType: function() {
-		return this.get("BuildRestrictions/PlacementType");
-	},
+	"buildPlacementType": function() { return this.get("BuildRestrictions/PlacementType"); },
 
-	buildTerritories: function() {
+	"buildTerritories": function() {
 		if (!this.get("BuildRestrictions") || !this.get("BuildRestrictions/Territory"))
 			return undefined;
 		return this.get("BuildRestrictions/Territory").split(/\s+/);
 	},
 
-	hasBuildTerritory: function(territory) {
+	"hasBuildTerritory": function(territory) {
 		let territories = this.buildTerritories();
-		return territories && territories.indexOf(territory) !== -1;
+		return territories && territories.indexOf(territory) != -1;
 	},
 
-	hasTerritoryInfluence: function() {
+	"hasTerritoryInfluence": function() {
 		return this.get("TerritoryInfluence") !== undefined;
 	},
 
-	hasDefensiveFire: function() {
+	"hasDefensiveFire": function() {
 		if (!this.get("Attack/Ranged"))
 			return false;
 		return this.getDefaultArrow() || this.getArrowMultiplier();
 	},
 
-	territoryInfluenceRadius: function() {
+	"territoryInfluenceRadius": function() {
 		if (this.get("TerritoryInfluence") !== undefined)
 			return +this.get("TerritoryInfluence/Radius");
 		return -1;
 	},
 
-	territoryInfluenceWeight: function() {
+	"territoryInfluenceWeight": function() {
 		if (this.get("TerritoryInfluence") !== undefined)
 			return +this.get("TerritoryInfluence/Weight");
 		return -1;
 	},
 
-	territoryDecayRate: function() {
+	"territoryDecayRate": function() {
 		return +(this.get("TerritoryDecay/DecayRate") || 0);
 	},
 
-	defaultRegenRate: function() {
+	"defaultRegenRate": function() {
 		return +(this.get("Capturable/RegenRate") || 0);
 	},
 
-	garrisonRegenRate: function() {
+	"garrisonRegenRate": function() {
 		return +(this.get("Capturable/GarrisonRegenRate") || 0);
 	},
 
-	visionRange: function() {
-		return +this.get("Vision/Range");
+	"visionRange": function() { return +this.get("Vision/Range"); },
+
+	"gainMultiplier": function() { return +this.get("Trader/GainMultiplier"); },
+
+	"isBuilder": function() { return this.get("Builder") !== undefined; },
+
+	"isGatherer": function() { return this.get("ResourceGatherer") !== undefined; },
+
+	"canGather": function(type) {
+		let gatherRates = this.get("ResourceGatherer/Rates");
+		if (!gatherRates)
+			return false;
+		for (let r in gatherRates)
+			if (r.split('.')[0] === type)
+				return true;
+		return false;
 	},
 
-	gainMultiplier: function() {
-		return +this.get("Trader/GainMultiplier");
-	}
+	"isGarrisonHolder": function() { return this.get("GarrisonHolder") !== undefined; },
+
+	/**
+	 * returns true if the tempalte can capture the given target entity
+	 * if no target is given, returns true if the template has the Capture attack
+	 */
+	"canCapture": function(target)
+	{
+		if (!this.get("Attack/Capture"))
+			return false;
+		if (!target)
+			return true;
+		if (!target.get("Capturable"))
+			return false;
+		let restrictedClasses = this.get("Attack/Capture/RestrictedClasses/_string");
+		return !restrictedClasses || !MatchesClassList(target.classes(), restrictedClasses);
+	},
+
+	"isCapturable": function() { return this.get("Capturable") !== undefined; },
+
+	"canGuard": function() { return this.get("UnitAI/CanGuard") === "true"; },
+
+	"canGarrison": function() { return "Garrisonable" in this._template; },
 });
 
 
 // defines an entity, with a super Template.
 // also redefines several of the template functions where the only change is applying aura and tech modifications.
 m.Entity = m.Class({
-	_super: m.Template,
+	"_super": m.Template,
 
-	_init: function(sharedAI, entity)
+	"_init": function(sharedAI, entity)
 	{
-		this._super.call(this, sharedAI.GetTemplate(entity.template));
+		this._super.call(this, sharedAI, entity.template, sharedAI.GetTemplate(entity.template));
 
-		this._templateName = entity.template;
 		this._entity = entity;
-
 		this._ai = sharedAI;
 		// save a reference to the template tech modifications
-		if (!sharedAI._templatesModifications[entity.owner][this._templateName])
-			sharedAI._templatesModifications[entity.owner][this._templateName] = new Map();
-		this._templateModif = sharedAI._templatesModifications[entity.owner][this._templateName];
+		if (!sharedAI._templatesModifications[this._templateName])
+			sharedAI._templatesModifications[this._templateName] = {};
+		this._templateModif = sharedAI._templatesModifications[this._templateName];
 		// save a reference to the entity tech/aura modifications
 		if (!sharedAI._entitiesModifications.has(entity.id))
 			sharedAI._entitiesModifications.set(entity.id, new Map());
 		this._entityModif = sharedAI._entitiesModifications.get(entity.id);
 	},
 
-	toString: function() {
-		return "[Entity " + this.id() + " " + this.templateName() + "]";
-	},
+	"toString": function() { return "[Entity " + this.id() + " " + this.templateName() + "]"; },
 
-	id: function() {
-		return this._entity.id;
-	},
-
-	templateName: function() {
-		return this._templateName;
-	},
+	"id": function() { return this._entity.id; },
 
 	/**
 	 * Returns extra data that the AI scripts have associated with this entity,
 	 * for arbitrary local annotations.
 	 * (This data should not be shared with any other AI scripts.)
 	 */
-	getMetadata: function(player, key) {
-		return this._ai.getMetadata(player, this, key);
-	},
+	"getMetadata": function(player, key) { return this._ai.getMetadata(player, this, key); },
 
 	/**
 	 * Sets extra data to be associated with this entity.
 	 */
-	setMetadata: function(player, key, value) {
-		this._ai.setMetadata(player, this, key, value);
-	},
+	"setMetadata": function(player, key, value) { this._ai.setMetadata(player, this, key, value); },
 
-	deleteAllMetadata: function(player) {
-		delete this._ai._entityMetadata[player][this.id()];
-	},
+	"deleteAllMetadata": function(player) { delete this._ai._entityMetadata[player][this.id()]; },
 
-	deleteMetadata: function(player, key) {
-		this._ai.deleteMetadata(player, this, key);
-	},
+	"deleteMetadata": function(player, key) { this._ai.deleteMetadata(player, this, key); },
 
-	position: function() { return this._entity.position; },
-	angle: function() { return this._entity.angle; },
+	"position": function() { return this._entity.position; },
+	"angle": function() { return this._entity.angle; },
 
-	isIdle: function() {
+	"isIdle": function() {
 		if (typeof this._entity.idle === "undefined")
 			return undefined;
 		return this._entity.idle;
 	},
 
-	unitAIState: function() { return this._entity.unitAIState !== undefined ? this._entity.unitAIState : undefined; },
-	unitAIOrderData: function() { return this._entity.unitAIOrderData !== undefined ? this._entity.unitAIOrderData : undefined; },
+	"getStance": function() { return this._entity.stance !== undefined ? this._entity.stance : undefined; },
+	"unitAIState": function() { return this._entity.unitAIState !== undefined ? this._entity.unitAIState : undefined; },
+	"unitAIOrderData": function() { return this._entity.unitAIOrderData !== undefined ? this._entity.unitAIOrderData : undefined; },
 
-	hitpoints: function() { return this._entity.hitpoints !== undefined ? this._entity.hitpoints : undefined; },
-	isHurt: function() { return this.hitpoints() < this.maxHitpoints(); },
-	healthLevel: function() { return this.hitpoints() / this.maxHitpoints(); },
-	needsHeal: function() { return this.isHurt() && this.isHealable(); },
-	needsRepair: function() { return this.isHurt() && this.isRepairable(); },
-	decaying: function() { return this._entity.decaying !== undefined ? this._entity.decaying : undefined; },
-	capturePoints: function() {return this._entity.capturePoints !== undefined ? this._entity.capturePoints : undefined; },
+	"hitpoints": function() { return this._entity.hitpoints !== undefined ? this._entity.hitpoints : undefined; },
+	"isHurt": function() { return this.hitpoints() < this.maxHitpoints(); },
+	"healthLevel": function() { return this.hitpoints() / this.maxHitpoints(); },
+	"needsHeal": function() { return this.isHurt() && this.isHealable(); },
+	"needsRepair": function() { return this.isHurt() && this.isRepairable(); },
+	"decaying": function() { return this._entity.decaying !== undefined ? this._entity.decaying : undefined; },
+	"capturePoints": function() {return this._entity.capturePoints !== undefined ? this._entity.capturePoints : undefined; },
+	"isInvulnerable": function() { return this._entity.invulnerability || false; },
 
 	"isSharedDropsite": function() { return this._entity.sharedDropsite === true; },
 
@@ -623,12 +612,12 @@ m.Entity = m.Class({
 	 * Returns the current training queue state, of the form
 	 * [ { "id": 0, "template": "...", "count": 1, "progress": 0.5, "metadata": ... }, ... ]
 	 */
-	trainingQueue: function() {
+	"trainingQueue": function() {
 		let queue = this._entity.trainingQueue;
 		return queue;
 	},
 
-	trainingQueueTime: function() {
+	"trainingQueueTime": function() {
 		let queue = this._entity.trainingQueue;
 		if (!queue)
 			return undefined;
@@ -638,13 +627,13 @@ m.Entity = m.Class({
 		return time/1000;
 	},
 
-	foundationProgress: function() {
+	"foundationProgress": function() {
 		if (this._entity.foundationProgress === undefined)
 			return undefined;
 		return this._entity.foundationProgress;
 	},
 
-	getBuilders: function() {
+	"getBuilders": function() {
 		if (this._entity.foundationProgress === undefined)
 			return undefined;
 		if (this._entity.foundationBuilders === undefined)
@@ -652,7 +641,7 @@ m.Entity = m.Class({
 		return this._entity.foundationBuilders;
 	},
 
-	getBuildersNb: function() {
+	"getBuildersNb": function() {
 		if (this._entity.foundationProgress === undefined)
 			return undefined;
 		if (this._entity.foundationBuilders === undefined)
@@ -660,30 +649,30 @@ m.Entity = m.Class({
 		return this._entity.foundationBuilders.length;
 	},
 
-	owner: function() {
+	"owner": function() {
 		return this._entity.owner;
 	},
 
-	isOwn: function(player) {
+	"isOwn": function(player) {
 		if (typeof this._entity.owner === "undefined")
 			return false;
 		return this._entity.owner === player;
 	},
 
-	resourceSupplyAmount: function() {
+	"resourceSupplyAmount": function() {
 		if (this._entity.resourceSupplyAmount === undefined)
 			return undefined;
 		return this._entity.resourceSupplyAmount;
 	},
 
-	resourceSupplyNumGatherers: function()
+	"resourceSupplyNumGatherers": function()
 	{
 		if (this._entity.resourceSupplyNumGatherers !== undefined)
 			return this._entity.resourceSupplyNumGatherers;
 		return undefined;
 	},
 
-	isFull: function()
+	"isFull": function()
 	{
 		if (this._entity.resourceSupplyNumGatherers !== undefined)
 			return this.maxGatherers() === this._entity.resourceSupplyNumGatherers;
@@ -691,23 +680,23 @@ m.Entity = m.Class({
 		return undefined;
 	},
 
-	resourceCarrying: function() {
+	"resourceCarrying": function() {
 		if (this._entity.resourceCarrying === undefined)
 			return undefined;
 		return this._entity.resourceCarrying;
 	},
 
-	currentGatherRate: function() {
+	"currentGatherRate": function() {
 		// returns the gather rate for the current target if applicable.
 		if (!this.get("ResourceGatherer"))
 			return undefined;
 
 		if (this.unitAIOrderData().length &&
-			(this.unitAIState().split(".")[1] === "GATHER" || this.unitAIState().split(".")[1] === "RETURNRESOURCE"))
+			(this.unitAIState().split(".")[1] == "GATHER" || this.unitAIState().split(".")[1] == "RETURNRESOURCE"))
 		{
 			let res;
 			// this is an abuse of "_ai" but it works.
-			if (this.unitAIState().split(".")[1] === "GATHER" && this.unitAIOrderData()[0].target !== undefined)
+			if (this.unitAIState().split(".")[1] == "GATHER" && this.unitAIOrderData()[0].target !== undefined)
 				res = this._ai._entities.get(this.unitAIOrderData()[0].target);
 			else if (this.unitAIOrderData()[1] !== undefined && this.unitAIOrderData()[1].target !== undefined)
 				res = this._ai._entities.get(this.unitAIOrderData()[1].target);
@@ -717,7 +706,7 @@ m.Entity = m.Class({
 			if (!type)
 				return 0;
 
-			if (type.generic === "treasure")
+			if (type.generic == "treasure")
 				return 1000;
 
 			let tstring = type.generic + "." + type.specific;
@@ -730,74 +719,82 @@ m.Entity = m.Class({
 		return undefined;
 	},
 
-	isBuilder: function() { return this.get("Builder") !== undefined; },
-	isGatherer: function() { return this.get("ResourceGatherer") !== undefined; },
-	canGather: function(type) {
-		let gatherRates = this.get("ResourceGatherer/Rates");
-		if (!gatherRates)
+	"garrisoned": function() { return this._entity.garrisoned; },
+	"canGarrisonInside": function() { return this._entity.garrisoned.length < this.garrisonMax(); },
+
+	/**
+	 * returns true if the entity can attack (including capture) the given class.
+	 */
+	"canAttackClass": function(aClass)
+	{
+		if (!this.get("Attack"))
 			return false;
-		for (let r in gatherRates)
-			if (r.split('.')[0] === type)
+
+		for (let type in this.get("Attack"))
+		{
+			if (type == "Slaughter")
+				continue;
+			let restrictedClasses = this.get("Attack/" + type + "/RestrictedClasses/_string");
+			if (!restrictedClasses || !MatchesClassList([aClass], restrictedClasses))
 				return true;
+		}
 		return false;
 	},
 
-	isGarrisonHolder: function() { return this.get("GarrisonHolder") !== undefined; },
-	garrisoned: function() { return this._entity.garrisoned; },
-	canGarrisonInside: function() { return this._entity.garrisoned.length < this.garrisonMax(); },
-
-	move: function(x, z, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "walk", "entities": [this.id()], "x": x, "z": z, "queued": queued });
+	"move": function(x, z, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "walk", "entities": [this.id()], "x": x, "z": z, "queued": queued });
 		return this;
 	},
 
-	moveToRange: function(x, z, min, max, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "walk-to-range", "entities": [this.id()], "x": x, "z": z, "min": min, "max": max, "queued": queued });
+	"moveToRange": function(x, z, min, max, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "walk-to-range", "entities": [this.id()], "x": x, "z": z, "min": min, "max": max, "queued": queued });
 		return this;
 	},
 
-	attackMove: function(x, z, targetClasses, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "attack-walk", "entities": [this.id()], "x": x, "z": z, "targetClasses": targetClasses, "queued": queued });
+	"attackMove": function(x, z, targetClasses, allowCapture = true, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "attack-walk", "entities": [this.id()], "x": x, "z": z, "targetClasses": targetClasses, "allowCapture": allowCapture, "queued": queued });
 		return this;
 	},
 
 	// violent, aggressive, defensive, passive, standground
-	setStance: function(stance, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "stance", "entities": [this.id()], "name" : stance, "queued": queued });
+	"setStance": function(stance, queued = false) {
+		if (this.getStance() === undefined)
+			return undefined;
+		Engine.PostCommand(PlayerID, { "type": "stance", "entities": [this.id()], "name": stance, "queued": queued });
 		return this;
 	},
 
-	stopMoving: function() {
-		Engine.PostCommand(PlayerID,{"type": "stop", "entities": [this.id()], "queued": false});
+	"stopMoving": function() {
+		Engine.PostCommand(PlayerID, { "type": "stop", "entities": [this.id()], "queued": false });
 	},
 
-	unload: function(id) {
+	"unload": function(id) {
 		if (!this.get("GarrisonHolder"))
 			return undefined;
-		Engine.PostCommand(PlayerID,{"type": "unload", "garrisonHolder": this.id(), "entities": [id]});
+		Engine.PostCommand(PlayerID, { "type": "unload", "garrisonHolder": this.id(), "entities": [id] });
 		return this;
 	},
 
 	// Unloads all owned units, don't unload allies
-	unloadAll: function() {
+	"unloadAll": function() {
 		if (!this.get("GarrisonHolder"))
 			return undefined;
-		Engine.PostCommand(PlayerID,{"type": "unload-all-by-owner", "garrisonHolders": [this.id()]});
+		Engine.PostCommand(PlayerID, { "type": "unload-all-by-owner", "garrisonHolders": [this.id()] });
 		return this;
 	},
 
-	garrison: function(target, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "garrison", "entities": [this.id()], "target": target.id(),"queued": queued});
+	"garrison": function(target, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "garrison", "entities": [this.id()], "target": target.id(), "queued": queued });
 		return this;
 	},
 
-	attack: function(unitId, allowCapture = true, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "attack", "entities": [this.id()], "target": unitId, "allowCapture": allowCapture, "queued": queued});
+	"attack": function(unitId, allowCapture = true, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "attack", "entities": [this.id()], "target": unitId, "allowCapture": allowCapture, "queued": queued });
 		return this;
 	},
 
 	// moveApart from a point in the opposite direction with a distance dist
-	moveApart: function(point, dist) {
+	"moveApart": function(point, dist) {
 		if (this.position() !== undefined) {
 			let direction = [this.position()[0] - point[0], this.position()[1] - point[1]];
 			let norm = m.VectorDistance(point, this.position());
@@ -808,67 +805,67 @@ m.Entity = m.Class({
 				direction[0] /= norm;
 				direction[1] /= norm;
 			}
-			Engine.PostCommand(PlayerID,{"type": "walk", "entities": [this.id()], "x": this.position()[0] + direction[0]*dist, "z": this.position()[1] + direction[1]*dist, "queued": false});
+			Engine.PostCommand(PlayerID, { "type": "walk", "entities": [this.id()], "x": this.position()[0] + direction[0]*dist, "z": this.position()[1] + direction[1]*dist, "queued": false });
 		}
 		return this;
 	},
 
 	// Flees from a unit in the opposite direction.
-	flee: function(unitToFleeFrom) {
+	"flee": function(unitToFleeFrom) {
 		if (this.position() !== undefined && unitToFleeFrom.position() !== undefined) {
 			let FleeDirection = [this.position()[0] - unitToFleeFrom.position()[0],
 			                     this.position()[1] - unitToFleeFrom.position()[1]];
-			let dist = m.VectorDistance(unitToFleeFrom.position(), this.position() );
+			let dist = m.VectorDistance(unitToFleeFrom.position(), this.position());
 			FleeDirection[0] = 40 * FleeDirection[0]/dist;
 			FleeDirection[1] = 40 * FleeDirection[1]/dist;
 
-			Engine.PostCommand(PlayerID,{"type": "walk", "entities": [this.id()], "x": this.position()[0] + FleeDirection[0], "z": this.position()[1] + FleeDirection[1], "queued": false});
+			Engine.PostCommand(PlayerID, { "type": "walk", "entities": [this.id()], "x": this.position()[0] + FleeDirection[0], "z": this.position()[1] + FleeDirection[1], "queued": false });
 		}
 		return this;
 	},
 
-	gather: function(target, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "gather", "entities": [this.id()], "target": target.id(), "queued": queued});
+	"gather": function(target, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "gather", "entities": [this.id()], "target": target.id(), "queued": queued });
 		return this;
 	},
 
-	repair: function(target, autocontinue = false, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "repair", "entities": [this.id()], "target": target.id(), "autocontinue": autocontinue, "queued": queued});
+	"repair": function(target, autocontinue = false, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "repair", "entities": [this.id()], "target": target.id(), "autocontinue": autocontinue, "queued": queued });
 		return this;
 	},
 
-	returnResources: function(target, queued = false) {
-		Engine.PostCommand(PlayerID,{"type": "returnresource", "entities": [this.id()], "target": target.id(), "queued": queued});
+	"returnResources": function(target, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "returnresource", "entities": [this.id()], "target": target.id(), "queued": queued });
 		return this;
 	},
 
-	destroy: function() {
-		Engine.PostCommand(PlayerID,{"type": "delete-entities", "entities": [this.id()] });
+	"destroy": function() {
+		Engine.PostCommand(PlayerID, { "type": "delete-entities", "entities": [this.id()] });
 		return this;
 	},
 
-	barter: function(buyType, sellType, amount) {
-		Engine.PostCommand(PlayerID,{"type": "barter", "sell" : sellType, "buy" : buyType, "amount" : amount });
+	"barter": function(buyType, sellType, amount) {
+		Engine.PostCommand(PlayerID, { "type": "barter", "sell": sellType, "buy": buyType, "amount": amount });
 		return this;
 	},
 
-	tradeRoute: function(target, source) {
-		Engine.PostCommand(PlayerID,{"type": "setup-trade-route", "entities": [this.id()], "target": target.id(), "source": source.id(), "route": undefined, "queued": false });
+	"tradeRoute": function(target, source) {
+		Engine.PostCommand(PlayerID, { "type": "setup-trade-route", "entities": [this.id()], "target": target.id(), "source": source.id(), "route": undefined, "queued": false });
 		return this;
 	},
 
-	setRallyPoint: function(target, command) {
-		let data = {"command": command, "target": target.id()};
-		Engine.PostCommand(PlayerID, {"type": "set-rallypoint", "entities": [this.id()], "x": target.position()[0], "z": target.position()[1], "data": data});
+	"setRallyPoint": function(target, command) {
+		let data = { "command": command, "target": target.id() };
+		Engine.PostCommand(PlayerID, { "type": "set-rallypoint", "entities": [this.id()], "x": target.position()[0], "z": target.position()[1], "data": data });
 		return this;
 	},
 
-	unsetRallyPoint: function() {
-		Engine.PostCommand(PlayerID, {"type": "unset-rallypoint", "entities": [this.id()]});
+	"unsetRallyPoint": function() {
+		Engine.PostCommand(PlayerID, { "type": "unset-rallypoint", "entities": [this.id()] });
 		return this;
 	},
 
-	train: function(civ, type, count, metadata, promotedTypes)
+	"train": function(civ, type, count, metadata, promotedTypes)
 	{
 		let trainable = this.trainableEntities(civ);
 		if (!trainable)
@@ -876,13 +873,13 @@ m.Entity = m.Class({
 			error("Called train("+type+", "+count+") on non-training entity "+this);
 			return this;
 		}
-		if (trainable.indexOf(type) === -1)
+		if (trainable.indexOf(type) == -1)
 		{
 			error("Called train("+type+", "+count+") on entity "+this+" which can't train that");
 			return this;
 		}
 
-		Engine.PostCommand(PlayerID,{
+		Engine.PostCommand(PlayerID, {
 			"type": "train",
 			"entities": [this.id()],
 			"template": type,
@@ -893,11 +890,11 @@ m.Entity = m.Class({
 		return this;
 	},
 
-	construct: function(template, x, z, angle, metadata) {
+	"construct": function(template, x, z, angle, metadata) {
 		// TODO: verify this unit can construct this, just for internal
 		// sanity-checking and error reporting
 
-		Engine.PostCommand(PlayerID,{
+		Engine.PostCommand(PlayerID, {
 			"type": "construct",
 			"entities": [this.id()],
 			"template": template,
@@ -907,28 +904,38 @@ m.Entity = m.Class({
 			"autorepair": false,
 			"autocontinue": false,
 			"queued": false,
-			"metadata" : metadata	// can be undefined
+			"metadata": metadata	// can be undefined
 		});
 		return this;
 	},
 
-	research: function(template) {
-		Engine.PostCommand(PlayerID,{ "type": "research", "entity": this.id(), "template": template });
+	"research": function(template) {
+		Engine.PostCommand(PlayerID, { "type": "research", "entity": this.id(), "template": template });
 		return this;
 	},
 
-	stopProduction: function(id) {
-		Engine.PostCommand(PlayerID,{ "type": "stop-production", "entity": this.id(), "id": id });
+	"stopProduction": function(id) {
+		Engine.PostCommand(PlayerID, { "type": "stop-production", "entity": this.id(), "id": id });
 		return this;
 	},
 
-	stopAllProduction: function(percentToStopAt) {
+	"stopAllProduction": function(percentToStopAt) {
 		let queue = this._entity.trainingQueue;
 		if (!queue)
 			return true;	// no queue, so technically we stopped all production.
 		for (let item of queue)
 			if (item.progress < percentToStopAt)
-				Engine.PostCommand(PlayerID,{ "type": "stop-production", "entity": this.id(), "id": item.id });
+				Engine.PostCommand(PlayerID, { "type": "stop-production", "entity": this.id(), "id": item.id });
+		return this;
+	},
+
+	"guard": function(target, queued = false) {
+		Engine.PostCommand(PlayerID, { "type": "guard", "entities": [this.id()], "target": target.id(), "queued": queued });
+		return this;
+	},
+
+	"removeGuard": function() {
+		Engine.PostCommand(PlayerID, { "type": "remove-guard", "entities": [this.id()] });
 		return this;
 	}
 });

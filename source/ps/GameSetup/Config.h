@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Wildfire Games.
+/* Copyright (C) 2017 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 // prevent various OpenGL features from being used. this allows working
 // around issues like buggy drivers.
 
-// when loading S3TC-compressed texture files, do not pass them directly to 
+// when loading S3TC-compressed texture files, do not pass them directly to
 // OpenGL; instead, decompress them via software to regular textures.
 // (necessary on JW's S3 laptop graphics card -- oh, the irony)
 extern bool g_NoGLS3TC;
@@ -50,8 +50,8 @@ extern bool g_RenderActors;
 // flag to switch on shadows
 extern bool g_Shadows;
 
-// Force the use of the fixed function for rendering water.
-extern bool g_WaterUgly;
+// If disabled, force the use of the fixed function for rendering water.
+extern bool g_WaterEffects;
 // Add foam and waves near the shores, trails following ships, and other HQ things.
 extern bool g_WaterFancyEffects;
 // Use real depth for water rendering.
@@ -67,6 +67,8 @@ extern bool g_WaterShadows;
 extern bool g_ShadowPCF;
 // flag to switch on particles rendering
 extern bool g_Particles;
+// flag to switch on fog
+extern bool g_Fog;
 // flag to switch on unit silhouettes
 extern bool g_Silhouettes;
 // flag to switch on sky rendering
@@ -92,6 +94,7 @@ extern bool g_Quickstart;
 extern bool g_DisableAudio;
 
 extern CStrW g_CursorName;
+extern const wchar_t g_DefaultCursor[];
 
 class CmdLineArgs;
 extern void CONFIG_Init(const CmdLineArgs& args);

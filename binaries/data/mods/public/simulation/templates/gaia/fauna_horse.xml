@@ -18,22 +18,20 @@
   <Sound>
     <SoundGroups>
       <select>actor/fauna/animal/horse_select.xml</select>
+      <order_attack>actor/fauna/animal/horse_attack_order.xml</order_attack>
       <order_walk>actor/fauna/animal/horse_order.xml</order_walk>
-      <order_attack>actor/fauna/animal/horse_attack.xml</order_attack>
-      <attack>actor/fauna/animal/horse_attack.xml</attack>
+      <attack_melee>actor/fauna/animal/horse_attack.xml</attack_melee>
       <death>actor/fauna/animal/horse_death.xml</death>
       <trained>actor/fauna/animal/horse_trained.xml</trained>
     </SoundGroups>
   </Sound>
   <UnitMotion>
-    <WalkSpeed>5.0</WalkSpeed>
+    <WalkSpeed op="mul">0.8</WalkSpeed>
     <Run>
-      <Speed>12.0</Speed>
-      <Range>600.0</Range>
-      <RangeMin>5.0</RangeMin>
+      <Speed op="mul">0.8</Speed>
     </Run>
   </UnitMotion>
   <VisualActor>
-    <Actor>fauna/horse_a.xml</Actor>
+    <Actor>fauna/horse.xml</Actor>
   </VisualActor>
 </Entity>
